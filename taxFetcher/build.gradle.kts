@@ -7,21 +7,10 @@ plugins {
     kotlin("kapt")
 }
 
-sourceSets {
-    sharedSources()
-}
-
-repositories {
-    sharedRepos()
-}
-
-java {
-    javaSource()
-}
-
-tasks.withType<KotlinCompile>().all {
-    kotlinOptions.jvmTarget = jvmVersion
-}
+sourceSets { sharedSources() }
+repositories { sharedRepos() }
+java { javaSource() }
+tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = jvmVersion }
 
 dependencies {
     implementation(project(":businessRules"))

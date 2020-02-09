@@ -12,25 +12,12 @@ plugins {
     kotlin("kapt")
 }
 
-sourceSets {
-    sharedSources()
-}
+sourceSets { sharedSources() }
+repositories { sharedRepos() }
+java { javaSource() }
+tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = jvmVersion }
 
-repositories {
-    sharedRepos()
-}
-
-java {
-    javaSource()
-}
-
-tasks.withType<KotlinCompile>().all {
-    kotlinOptions.jvmTarget = jvmVersion
-}
-
-application {
-    mainClassName = "io.ktor.server.netty.EngineMain"
-}
+application { mainClassName = "io.ktor.server.netty.EngineMain" }
 
 task("stage").dependsOn("installDist")
 

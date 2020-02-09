@@ -12,6 +12,4 @@ fun DependencyHandlerScope.kotlinJdk() = kotlin("stdlib-jdk8")
 fun ktorServer(value: String) = ktor("server-$value")
 fun ktorClient(value: String) = ktor("client-$value")
 
-const val groupName = "com.weesnerDevelopment"
-
 const val jvmVersion = "1.8"

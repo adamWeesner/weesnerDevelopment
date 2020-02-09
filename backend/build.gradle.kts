@@ -4,7 +4,6 @@ import Versions.ktor_moshi_version
 import Versions.logback_version
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-group = "com.weesnerdevelopment"
 version = "1.0.0-SNAPSHOT"
 
 plugins {
@@ -13,28 +12,24 @@ plugins {
     kotlin("kapt")
 }
 
+sourceSets {
+    sharedSources()
+}
+
 repositories {
-    mavenCentral()
-    jcenter()
+    sharedRepos()
+}
+
+java {
+    javaSource()
+}
+
+tasks.withType<KotlinCompile>().all {
+    kotlinOptions.jvmTarget = jvmVersion
 }
 
 application {
     mainClassName = "io.ktor.server.netty.EngineMain"
-}
-
-sourceSets {
-    getByName("main").java.srcDirs("src")
-    getByName("test").java.srcDirs("test")
-    getByName("main").resources.srcDirs("resources")
-    getByName("test").resources.srcDirs("testresources")
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks.withType<KotlinCompile>().all {
-    kotlinOptions.jvmTarget = "1.8"
 }
 
 task("stage").dependsOn("installDist")
@@ -43,15 +38,17 @@ dependencies {
     implementation(project(":businessRules"))
     implementation(project(":taxFetcher"))
 
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlinJdk())
     implementation(kotlin("reflect"))
 
-    implementation(ktor("server-netty"))
-    implementation(ktor("server-core"))
+    implementation(ktorServer("netty"))
+    implementation(ktorServer("core"))
     implementation(ktor("websockets"))
-    implementation(ktor("client-websockets"))
-    implementation(ktor("client-okhttp"))
+    implementation(ktorClient("websockets"))
+    implementation(ktorClient("okhttp"))
+
     implementation("com.ryanharter.ktor:ktor-moshi:$ktor_moshi_version")
+
     implementation(moshi())
     implementation(moshi("adapters"))
 

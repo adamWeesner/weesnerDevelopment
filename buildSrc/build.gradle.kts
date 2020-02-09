@@ -5,3 +5,5 @@ plugins {
 repositories {
     jcenter()
 }
+
+group = "com.weesnerDevelopment"

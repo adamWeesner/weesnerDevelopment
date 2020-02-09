@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "1.0.0"
+version = "1.0.0-SNAPSHOT"
 
 plugins {
     kotlin("jvm")
@@ -27,6 +27,4 @@ dependencies {
     implementation(project(":businessRules"))
 
     implementation(kotlinJdk())
-    implementation(moshi())
-    implementation(exposed())
 }

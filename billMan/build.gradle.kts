@@ -16,4 +16,6 @@ dependencies {
     implementation(project(":businessRules"))
 
     implementation(kotlinJdk())
+    implementation(moshi())
+    implementation(exposed())
 }

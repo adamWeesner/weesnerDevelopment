@@ -47,6 +47,7 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
     open suspend fun add(item: O): O? {
         var key = 0
 
+        // TODO Need to check if the item already exists by searching for the exact item in the db
         dbQuery {
             key = (table.insert {
                 it.assignValues(item)

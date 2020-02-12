@@ -4,16 +4,11 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSetContainer
 
 fun SourceSetContainer.sharedSources() {
-    mainSrc()
-    testSrc()
-    mainResources()
-    testResources()
+    getByName("main").java.srcDirs("src/main")
+    getByName("test").java.srcDirs("src/test")
+    getByName("main").resources.srcDirs("resources")
+    getByName("test").resources.srcDirs("testresources")
 }
-
-fun SourceSetContainer.mainSrc() = getByName("main").java.srcDirs("src")
-fun SourceSetContainer.testSrc() = getByName("test").java.srcDirs("test")
-fun SourceSetContainer.mainResources() = getByName("main").resources.srcDirs("resources")
-fun SourceSetContainer.testResources() = getByName("test").resources.srcDirs("testresources")
 
 fun RepositoryHandler.sharedRepos() {
     mavenCentral()

@@ -2,6 +2,7 @@ package com.weesnerdevelopment.service
 
 import com.ryanharter.ktor.moshi.moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.weesnerdevelopment.Paths.*
 import federalIncomeTax.FederalIncomeTaxResponse
 import federalIncomeTax.FederalIncomeTaxService
 import generics.GenericItem
@@ -54,10 +55,10 @@ class DatabaseServer {
         val federalIncomeTaxService = FederalIncomeTaxService()
 
         install(Routing) {
-            route("socialSecurity", ssService) { SocialSecurityResponse(it) }
-            route("medicare", medicareService) { MedicareResponse(it) }
-            route("taxWithholding", taxWithholdingService) { TaxWithholdingResponse(it) }
-            route("federalIncomeTax", federalIncomeTaxService) { FederalIncomeTaxResponse(it) }
+            route(socialSecurity.name, ssService) { SocialSecurityResponse(it) }
+            route(medicare.name, medicareService) { MedicareResponse(it) }
+            route(taxWithholding.name, taxWithholdingService) { TaxWithholdingResponse(it) }
+            route(federalIncomeTax.name, federalIncomeTaxService) { FederalIncomeTaxResponse(it) }
         }
     }
 }

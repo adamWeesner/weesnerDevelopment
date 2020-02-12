@@ -16,6 +16,7 @@ sourceSets { sharedSources() }
 repositories { sharedRepos() }
 java { javaSource() }
 tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = jvmVersion }
+tasks.withType<Test> { useJUnitPlatform() }
 
 application { mainClassName = "io.ktor.server.netty.EngineMain" }
 

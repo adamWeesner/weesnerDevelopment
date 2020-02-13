@@ -1,10 +1,17 @@
+import io.kotlintest.TestCase
+import io.kotlintest.TestResult
+import io.kotlintest.specs.AbstractStringSpec
+import io.kotlintest.specs.StringSpec
 import io.ktor.server.testing.withTestApplication
-import org.junit.After
 import java.io.File
 
-open class BaseTest {
-    @After
-    fun cleanUp() {
+open class BaseTest(block: AbstractStringSpec.() -> Unit = {}) : StringSpec() {
+    init {
+        block(this)
+    }
+
+    override fun afterTest(testCase: TestCase, result: TestResult) {
+        println("cleanup started")
         withTestApplication {
             environment.stop()
         }
@@ -15,5 +22,6 @@ open class BaseTest {
                 File(db, children[i]).delete()
             }
         }
+        println("cleanup ended")
     }
 }

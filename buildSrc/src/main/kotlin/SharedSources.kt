@@ -4,8 +4,8 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSetContainer
 
 fun SourceSetContainer.sharedSources() {
-    getByName("main").java.srcDirs("src/main")
-    getByName("test").java.srcDirs("src/test")
+    getByName("main").java.srcDirs("src/main/kotlin")
+    getByName("test").java.srcDirs("src/test/kotlin")
     getByName("main").resources.srcDirs("resources")
     getByName("test").resources.srcDirs("testresources")
 }

@@ -48,5 +48,5 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     testImplementation(ktor("server-tests"))
-    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.0")
+    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
 }

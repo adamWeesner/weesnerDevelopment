@@ -21,7 +21,7 @@ data class TaxWithholdingResponse(
 
 @JsonClass(generateAdapter = true)
 data class TaxWithholding(
-    override val id: Int?,
+    override val id: Int? = null,
     val year: Int,
     val type: TaxWithholdingTypes,
     val payPeriod: PayPeriod,

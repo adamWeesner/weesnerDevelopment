@@ -12,7 +12,7 @@ data class FederalIncomeTaxResponse(
 
 @JsonClass(generateAdapter = true)
 data class FederalIncomeTax(
-    override val id: Int?,
+    override val id: Int? = null,
     val year: Int,
     val maritalStatus: MaritalStatus,
     val payPeriod: PayPeriod,

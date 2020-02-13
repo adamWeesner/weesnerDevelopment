@@ -1,38 +1,28 @@
 import com.weesnerdevelopment.Paths
 import com.weesnerdevelopment.fromJson
 import com.weesnerdevelopment.main
+import com.weesnerdevelopment.toJson
 import io.kotlintest.shouldBe
 import io.ktor.application.Application
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
-import org.junit.After
 import socialSecurity.SocialSecurity
 import socialSecurity.SocialSecurityResponse
-import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-class SocialSecurityTests {
-    private val newItem = """
-                {
-                	"year": 2017,
-                	"percent": 1.45,
-                	"limit": 127200
-                }
-                """
-
-    private fun TestApplicationEngine.addNewItem() =
-        handleRequest(HttpMethod.Post, "/${Paths.socialSecurity.name}") {
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(newItem)
-        }
+class SocialSecurityTests : BaseTest() {
+    private val newItem = SocialSecurity(
+        year = 2017,
+        percent = 1.45,
+        limit = 127200
+    )
 
     @Test
     fun `verify getting base url returns ok`() = withTestApplication(Application::main) {
@@ -43,8 +33,8 @@ class SocialSecurityTests {
 
     @Test
     fun `verify getting base url returns all items in table`() = withTestApplication(Application::main) {
-        addNewItem()
-        addNewItem()
+        addNewItem(Paths.socialSecurity, newItem.toJson())
+        addNewItem(Paths.socialSecurity, newItem.toJson())
 
         with(handleRequest(HttpMethod.Get, "/${Paths.socialSecurity.name}")) {
             val responseItems = response.content?.fromJson<SocialSecurityResponse>()?.socialSecurity
@@ -58,7 +48,7 @@ class SocialSecurityTests {
 
     @Test
     fun `verify getting an added item`() = withTestApplication(Application::main) {
-        addNewItem()
+        addNewItem(Paths.socialSecurity, newItem.toJson())
 
         with(handleRequest(HttpMethod.Get, "/${Paths.socialSecurity.name}/1")) {
             val addedItem = response.content!!.fromJson<SocialSecurity>()!!
@@ -80,7 +70,7 @@ class SocialSecurityTests {
 
     @Test
     fun `verify adding a new item`() = withTestApplication(Application::main) {
-        with(addNewItem()) {
+        with(addNewItem(Paths.socialSecurity, newItem.toJson())) {
             val addedItem = response.content!!.fromJson<SocialSecurity>()!!
 
             assertEquals(HttpStatusCode.Created, response.status())
@@ -93,20 +83,11 @@ class SocialSecurityTests {
 
     @Test
     fun `verify updating an added item`() = withTestApplication(Application::main) {
-        addNewItem()
+        addNewItem(Paths.socialSecurity, newItem.toJson())
 
         with(handleRequest(HttpMethod.Put, "/${Paths.socialSecurity.name}") {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(
-                """
-                {
-                    "id": 1,
-                	"year": 2017,
-                	"percent": 1.4,
-                	"limit": 128000
-                }
-                """
-            )
+            setBody(newItem.copy(id = 1, percent = 1.4, limit = 128000).toJson())
         }) {
             val addedItem = response.content!!.fromJson<SocialSecurity>()!!
 
@@ -122,16 +103,7 @@ class SocialSecurityTests {
     fun `verify updating a non existent item`() = withTestApplication(Application::main) {
         with(handleRequest(HttpMethod.Put, "/${Paths.socialSecurity.name}") {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(
-                """
-                {
-                    "id": 99,
-                	"year": 2017,
-                	"percent": 1.4,
-                	"limit": 128000
-                }
-                """
-            )
+            setBody(newItem.copy(99).toJson())
         }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
         }
@@ -141,7 +113,7 @@ class SocialSecurityTests {
     fun `verify updating without an id adds a new item`() = withTestApplication(Application::main) {
         with(handleRequest(HttpMethod.Put, "/${Paths.socialSecurity.name}") {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(newItem)
+            setBody(newItem.toJson())
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
         }
@@ -149,7 +121,7 @@ class SocialSecurityTests {
 
     @Test
     fun `verify deleting and item that has been added`() = withTestApplication(Application::main) {
-        addNewItem()
+        addNewItem(Paths.socialSecurity, newItem.toJson())
 
         with(handleRequest(HttpMethod.Delete, "/${Paths.socialSecurity.name}/1") {
         }) {
@@ -162,20 +134,6 @@ class SocialSecurityTests {
         with(handleRequest(HttpMethod.Delete, "/${Paths.socialSecurity.name}/99") {
         }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
-        }
-    }
-
-    @After
-    fun cleanUp() {
-        withTestApplication {
-            environment.stop()
-        }
-        val db = File("server")
-        if (db.isDirectory) {
-            val children = db.list()
-            children?.indices?.forEach { i ->
-                File(db, children[i]).delete()
-            }
         }
     }
 }

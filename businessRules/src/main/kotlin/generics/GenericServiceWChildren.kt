@@ -20,3 +20,5 @@ abstract class GenericServiceWChildren<O : GenericItem, T : IdTable>(
         return listeners.remove(id)
     }
 }
+
+class MissingChildService(type: String) : IllegalArgumentException("${type}Service is required")

@@ -24,7 +24,7 @@ data class MedicareResponse(
 
 @JsonClass(generateAdapter = true)
 data class Medicare(
-    override val id: Int?,
+    override val id: Int? = null,
     val year: Int,
     val percent: Double,
     val additionalPercent: Double,
@@ -35,7 +35,7 @@ data class Medicare(
 
 @JsonClass(generateAdapter = true)
 data class MedicareLimit(
-    override val id: Int?,
+    override val id: Int? = null,
     val year: Int,
     val maritalStatus: MaritalStatus,
     val amount: Int,

@@ -17,7 +17,7 @@ data class SocialSecurityResponse(
 
 @JsonClass(generateAdapter = true)
 data class SocialSecurity(
-    override val id: Int?,
+    override val id: Int? = null,
     val year: Int,
     val percent: Double,
     val limit: Int,

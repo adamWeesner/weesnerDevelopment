@@ -2,6 +2,7 @@ package medicare
 
 import dbQuery
 import generics.GenericServiceWChildren
+import generics.MissingChildService
 import model.ChangeType
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
@@ -13,7 +14,7 @@ class MedicareService : GenericServiceWChildren<Medicare, Medicares>(
 ) {
     private val limitsService: MedicareLimitsService by lazy {
         childServices?.firstOrNull { it.first == "Limits" }?.second as MedicareLimitsService?
-            ?: throw IllegalArgumentException("MedicareLimitsService is a required child of MedicareService")
+            ?: throw MissingChildService("MedicareLimits")
     }
 
     override suspend fun getAll(): List<Medicare> = super.getAll().map {
@@ -59,8 +60,8 @@ class MedicareService : GenericServiceWChildren<Medicare, Medicares>(
 
     override suspend fun delete(id: Int): Boolean {
         getSingle(id)?.run {
-            limitsService.getByYear(year).forEach {
-                if (it.id != null) delete(it.id)
+            limits.forEach {
+                if (it.id != null) limitsService.delete(it.id)
             }
         }
         return super.delete(id)

@@ -1,15 +1,15 @@
 package medicare
 
+import MaritalStatus
 import com.squareup.moshi.JsonClass
 import generics.GenericItem
 
 @JsonClass(generateAdapter = true)
-data class Medicare(
+data class MedicareLimit(
     override val id: Int? = null,
     val year: Int,
-    val percent: Double,
-    val additionalPercent: Double,
-    val limits: List<MedicareLimit>,
+    val maritalStatus: MaritalStatus,
+    val amount: Int,
     override val dateCreated: Long = System.currentTimeMillis(),
     override val dateUpdated: Long = System.currentTimeMillis()
 ) : GenericItem(id, dateCreated, dateUpdated)

@@ -2,18 +2,6 @@ package socialSecurity
 
 import com.squareup.moshi.JsonClass
 import generics.GenericItem
-import generics.IdTable
-
-object SocialSecuritys : IdTable() {
-    val year = integer("year").primaryKey()
-    val percent = double("percent")
-    val limit = integer("limit")
-}
-
-@JsonClass(generateAdapter = true)
-data class SocialSecurityResponse(
-    val socialSecurity: List<SocialSecurity>
-)
 
 @JsonClass(generateAdapter = true)
 data class SocialSecurity(

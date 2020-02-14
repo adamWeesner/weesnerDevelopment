@@ -6,11 +6,6 @@ import com.squareup.moshi.JsonClass
 import generics.GenericItem
 
 @JsonClass(generateAdapter = true)
-data class FederalIncomeTaxResponse(
-    val federalIncomeTax: List<FederalIncomeTax>
-)
-
-@JsonClass(generateAdapter = true)
 data class FederalIncomeTax(
     override val id: Int? = null,
     val year: Int,

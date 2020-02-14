@@ -10,8 +10,8 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.update
 
-class MedicareLimitsService : GenericService<MedicareLimit, MedicareLimits>(
-    MedicareLimits
+class MedicareLimitsService : GenericService<MedicareLimit, MedicareLimitsTable>(
+    MedicareLimitsTable
 ) {
     override suspend fun update(item: MedicareLimit) = item.run {
         dbQuery {
@@ -36,17 +36,17 @@ class MedicareLimitsService : GenericService<MedicareLimit, MedicareLimits>(
 
 
     override suspend fun to(row: ResultRow) = MedicareLimit(
-        id = row[MedicareLimits.id],
-        year = row[MedicareLimits.year],
-        amount = row[MedicareLimits.amount],
-        maritalStatus = MaritalStatus.valueOf(row[MedicareLimits.maritalStatus]),
-        dateCreated = row[MedicareLimits.dateCreated],
-        dateUpdated = row[MedicareLimits.dateUpdated]
+        id = row[MedicareLimitsTable.id],
+        year = row[MedicareLimitsTable.year],
+        amount = row[MedicareLimitsTable.amount],
+        maritalStatus = MaritalStatus.valueOf(row[MedicareLimitsTable.maritalStatus]),
+        dateCreated = row[MedicareLimitsTable.dateCreated],
+        dateUpdated = row[MedicareLimitsTable.dateUpdated]
     )
 
     override fun UpdateBuilder<Int>.assignValues(item: MedicareLimit) {
-        this[MedicareLimits.amount] = item.amount
-        this[MedicareLimits.maritalStatus] = item.maritalStatus.name
-        this[MedicareLimits.year] = item.year
+        this[MedicareLimitsTable.amount] = item.amount
+        this[MedicareLimitsTable.maritalStatus] = item.maritalStatus.name
+        this[MedicareLimitsTable.year] = item.year
     }
 }

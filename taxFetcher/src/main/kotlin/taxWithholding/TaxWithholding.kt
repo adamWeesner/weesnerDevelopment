@@ -3,21 +3,6 @@ package taxWithholding
 import PayPeriod
 import com.squareup.moshi.JsonClass
 import generics.GenericItem
-import generics.IdTable
-
-enum class TaxWithholdingTypes { General, NonResident }
-
-object TaxWithholdings : IdTable() {
-    val year = integer("year").primaryKey()
-    val type = varchar("type", 255)
-    val payPeriod = varchar("payPeriod", 255)
-    val amount = double("amount")
-}
-
-@JsonClass(generateAdapter = true)
-data class TaxWithholdingResponse(
-    val taxWithholding: List<TaxWithholding>
-)
 
 @JsonClass(generateAdapter = true)
 data class TaxWithholding(

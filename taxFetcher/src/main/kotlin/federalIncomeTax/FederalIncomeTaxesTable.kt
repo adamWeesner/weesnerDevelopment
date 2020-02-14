@@ -2,7 +2,7 @@ package federalIncomeTax
 
 import generics.IdTable
 
-object FederalIncomeTaxes : IdTable() {
+object FederalIncomeTaxesTable : IdTable() {
     val year = integer("year").primaryKey()
     val maritalStatus = varchar("maritalStatus", 255)
     val payPeriod = varchar("payPeriod", 255)

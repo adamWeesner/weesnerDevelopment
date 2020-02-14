@@ -1,20 +1,21 @@
 package medicare
 
 import dbQuery
+import generics.GenericItem
+import generics.GenericService
 import generics.GenericServiceWChildren
-import generics.MissingChildService
+import generics.IdTable
 import model.ChangeType
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 
-class MedicareService : GenericServiceWChildren<Medicare, Medicares>(
-    Medicares
+class MedicareService : GenericServiceWChildren<Medicare, MedicareTable>(
+    MedicareTable
 ) {
     private val limitsService: MedicareLimitsService by lazy {
-        childServices?.firstOrNull { it.first == "Limits" }?.second as MedicareLimitsService?
-            ?: throw MissingChildService("MedicareLimits")
+        MedicareLimitsService().apply { childServices.add(this as GenericService<GenericItem, IdTable>) }
     }
 
     override suspend fun getAll(): List<Medicare> = super.getAll().map {
@@ -25,29 +26,25 @@ class MedicareService : GenericServiceWChildren<Medicare, Medicares>(
         copy(limits = limitsService.getByYear(year))
     }
 
-    suspend fun getByYear(year: Int) =
+    private suspend fun getByYear(year: Int) =
         dbQuery { table.select { (table.year eq year) }.mapNotNull { to(it) } }.firstOrNull()
 
     override suspend fun add(item: Medicare): Medicare? {
-        if (getByYear(item.year) == null) {
-            var key = 0
+        if (getByYear(item.year) != null) return null
 
-            dbQuery {
-                key = (table.insert {
-                    it.assignValues(item)
-                    it[dateCreated] = System.currentTimeMillis()
-                    it[dateUpdated] = System.currentTimeMillis()
-                } get table.id)
-            }
-
-            item.limits.forEach { limitsService.add(it) }
-
-            return getSingle(key)!!.also {
-                onChange(ChangeType.Create, key, it)
-            }
+        val key = dbQuery {
+            (table.insert {
+                it.assignValues(item)
+                it[dateCreated] = System.currentTimeMillis()
+                it[dateUpdated] = System.currentTimeMillis()
+            } get table.id)
         }
 
-        return null
+        item.limits.forEach { limitsService.add(it) }
+
+        return getSingle(key)!!.also {
+            onChange(ChangeType.Create, key, it)
+        }
     }
 
     override suspend fun update(item: Medicare): Medicare? {
@@ -68,18 +65,18 @@ class MedicareService : GenericServiceWChildren<Medicare, Medicares>(
     }
 
     override suspend fun to(row: ResultRow) = Medicare(
-        id = row[Medicares.id],
-        percent = row[Medicares.percent],
-        additionalPercent = row[Medicares.additionalPercent],
-        year = row[Medicares.year],
-        limits = limitsService.getByYear(row[Medicares.year]),
-        dateCreated = row[Medicares.dateCreated],
-        dateUpdated = row[Medicares.dateUpdated]
+        id = row[MedicareTable.id],
+        percent = row[MedicareTable.percent],
+        additionalPercent = row[MedicareTable.additionalPercent],
+        year = row[MedicareTable.year],
+        limits = limitsService.getByYear(row[MedicareTable.year]),
+        dateCreated = row[MedicareTable.dateCreated],
+        dateUpdated = row[MedicareTable.dateUpdated]
     )
 
     override fun UpdateBuilder<Int>.assignValues(item: Medicare) {
-        this[Medicares.percent] = item.percent
-        this[Medicares.additionalPercent] = item.additionalPercent
-        this[Medicares.year] = item.year
+        this[MedicareTable.percent] = item.percent
+        this[MedicareTable.additionalPercent] = item.additionalPercent
+        this[MedicareTable.year] = item.year
     }
 }

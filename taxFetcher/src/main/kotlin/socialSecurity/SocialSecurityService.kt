@@ -4,21 +4,21 @@ import generics.GenericService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 
-class SocialSecurityService : GenericService<SocialSecurity, SocialSecuritys>(
-    SocialSecuritys
+class SocialSecurityService : GenericService<SocialSecurity, SocialSecurityTable>(
+    SocialSecurityTable
 ) {
     override suspend fun to(row: ResultRow) = SocialSecurity(
-        id = row[SocialSecuritys.id],
-        percent = row[SocialSecuritys.percent],
-        year = row[SocialSecuritys.year],
-        limit = row[SocialSecuritys.limit],
-        dateCreated = row[SocialSecuritys.dateCreated],
-        dateUpdated = row[SocialSecuritys.dateUpdated]
+        id = row[SocialSecurityTable.id],
+        percent = row[SocialSecurityTable.percent],
+        year = row[SocialSecurityTable.year],
+        limit = row[SocialSecurityTable.limit],
+        dateCreated = row[SocialSecurityTable.dateCreated],
+        dateUpdated = row[SocialSecurityTable.dateUpdated]
     )
 
     override fun UpdateBuilder<Int>.assignValues(item: SocialSecurity) {
-        this[SocialSecuritys.percent] = item.percent
-        this[SocialSecuritys.year] = item.year
-        this[SocialSecuritys.limit] = item.limit
+        this[SocialSecurityTable.percent] = item.percent
+        this[SocialSecurityTable.year] = item.year
+        this[SocialSecurityTable.limit] = item.limit
     }
 }

@@ -1,13 +1,12 @@
 package com.weesnerdevelopment.service
 
+import category.CategoriesResponse
+import category.CategoriesService
 import com.ryanharter.ktor.moshi.moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.weesnerdevelopment.Paths.*
 import federalIncomeTax.FederalIncomeTaxResponse
 import federalIncomeTax.FederalIncomeTaxService
-import generics.GenericItem
-import generics.GenericService
-import generics.IdTable
 import generics.route
 import io.ktor.application.Application
 import io.ktor.application.install
@@ -17,7 +16,6 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.routing.Routing
 import io.ktor.websocket.WebSockets
-import medicare.MedicareLimitsService
 import medicare.MedicareResponse
 import medicare.MedicareService
 import socialSecurity.SocialSecurityResponse
@@ -47,18 +45,14 @@ class DatabaseServer {
 
         DatabaseFactory.init()
 
-        val ssService = SocialSecurityService()
-        val medicareService = MedicareService().apply {
-            childServices = listOf("Limits" to MedicareLimitsService() as GenericService<GenericItem, IdTable>)
-        }
-        val taxWithholdingService = TaxWithholdingService()
-        val federalIncomeTaxService = FederalIncomeTaxService()
-
         install(Routing) {
-            route(socialSecurity.name, ssService) { SocialSecurityResponse(it) }
-            route(medicare.name, medicareService) { MedicareResponse(it) }
-            route(taxWithholding.name, taxWithholdingService) { TaxWithholdingResponse(it) }
-            route(federalIncomeTax.name, federalIncomeTaxService) { FederalIncomeTaxResponse(it) }
+            // tax fetcher
+            route(socialSecurity.name, SocialSecurityService()) { SocialSecurityResponse(it) }
+            route(medicare.name, MedicareService()) { MedicareResponse(it) }
+            route(taxWithholding.name, TaxWithholdingService()) { TaxWithholdingResponse(it) }
+            route(federalIncomeTax.name, FederalIncomeTaxService()) { FederalIncomeTaxResponse(it) }
+            // bill man
+            route(category.name, CategoriesService()) { CategoriesResponse(it) }
         }
     }
 }

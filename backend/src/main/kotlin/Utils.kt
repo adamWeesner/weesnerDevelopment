@@ -4,6 +4,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 enum class Paths {
+    user,
     socialSecurity, medicare, federalIncomeTax, taxWithholding
 }
 

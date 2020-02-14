@@ -1,17 +1,18 @@
 package com.weesnerdevelopment.service
 
+import category.CategoriesTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import federalIncomeTax.FederalIncomeTaxes
-import medicare.MedicareLimits
-import medicare.Medicares
+import federalIncomeTax.FederalIncomeTaxesTable
+import medicare.MedicareLimitsTable
+import medicare.MedicareTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
-import socialSecurity.SocialSecuritys
-import taxWithholding.TaxWithholdings
+import socialSecurity.SocialSecurityTable
+import taxWithholding.TaxWithholdingTable
 
 object DatabaseFactory {
     fun init() {
@@ -19,7 +20,14 @@ object DatabaseFactory {
         transaction {
             addLogger(StdOutSqlLogger)
             // tax fetcher
-            create(SocialSecuritys, Medicares, MedicareLimits, TaxWithholdings, FederalIncomeTaxes)
+            create(
+                SocialSecurityTable,
+                MedicareTable,
+                MedicareLimitsTable,
+                TaxWithholdingTable,
+                FederalIncomeTaxesTable
+            )
+            create(CategoriesTable)
         }
     }
 

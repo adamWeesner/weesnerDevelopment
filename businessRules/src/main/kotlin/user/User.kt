@@ -11,7 +11,7 @@ object Users : IdTable() {
 }
 
 data class User(
-    override var id: Int?,
+    override var id: Int? = null,
     val uuid: String?,
     val name: String?,
     val email: String?,
@@ -19,7 +19,3 @@ data class User(
     override val dateCreated: Long = System.currentTimeMillis(),
     override val dateUpdated: Long = System.currentTimeMillis()
 ) : GenericItem(id, dateCreated, dateUpdated)
-
-class UserNotValidException(
-    reason: String = "Not a valid user, something happened"
-) : IllegalArgumentException(reason)

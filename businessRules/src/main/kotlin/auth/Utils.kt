@@ -11,3 +11,15 @@ fun makeJwtVerifier(issuer: String, audience: String): JWTVerifier = JWT
     .withAudience(audience)
     .withIssuer(issuer)
     .build()
+
+data class InvalidUserException(
+    val url: String,
+    val statusCode: Int? = -1,
+    val reasonCode: Int
+)
+
+enum class InvalidUserReason(val code: Int) {
+    General(1000),
+    Expired(1001),
+    InvalidJwt(1002)
+}

@@ -2,4 +2,7 @@ package auth
 
 import generics.GenericRouter
 
-class UserRouter : GenericRouter<User, UsersTable>(UsersService())
+class UserRouter : GenericRouter<User, UsersTable>(
+    UsersService(),
+    UsersResponse()
+)

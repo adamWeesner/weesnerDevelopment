@@ -11,7 +11,7 @@ import io.ktor.response.respond
 import java.lang.reflect.ParameterizedType
 
 enum class Paths {
-    user,
+    users,
     socialSecurity, medicare, federalIncomeTax, taxWithholding
 }
 

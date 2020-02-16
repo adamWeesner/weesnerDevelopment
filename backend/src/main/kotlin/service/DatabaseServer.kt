@@ -87,10 +87,8 @@ class DatabaseServer {
         DatabaseFactory.init()
 
         install(Routing) {
-            val userService: UsersService
-            route("/user", UserRouter().also {
-                userService = it.service as UsersService
-            })
+            val userRouter = UserRouter()
+            val userService = userRouter.service as UsersService
 
             authenticate {
                 route("/whoAmI") {
@@ -118,7 +116,10 @@ class DatabaseServer {
                         }
                     }
                 }
+
+                route(users.name, userRouter)
             }
+
 
             // tax fetcher
             route(socialSecurity.name, SocialSecurityRouter())

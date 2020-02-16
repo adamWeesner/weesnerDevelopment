@@ -12,7 +12,7 @@ data class User(
     var password: String? = null,
     override val dateCreated: Long = System.currentTimeMillis(),
     override val dateUpdated: Long = System.currentTimeMillis()
-) : GenericItem(id, dateCreated, dateUpdated) {
+) : GenericItem {
     fun asHashed() = if (username != null && password != null) HashedUser(username!!, password!!) else null
 }
 

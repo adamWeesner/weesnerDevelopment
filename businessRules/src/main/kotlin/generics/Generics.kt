@@ -1,25 +1,29 @@
 package generics
 
-import com.squareup.moshi.JsonClass
 import org.jetbrains.exposed.sql.Table
+
+interface GenericTable {
+    val id: Any
+    val dateCreated: Any
+    val dateUpdated: Any
+}
 
 /**
  * Generic [Table] that has [id], [dateCreated], and [dateUpdated] added by default.
  */
-open class IdTable : Table() {
-    val id = integer("id").primaryKey().autoIncrement()
-    val dateCreated = long("dateCreated")
-    val dateUpdated = long("dateUpdated")
+open class IdTable : Table(), GenericTable {
+    override val id = integer("id").primaryKey().autoIncrement()
+    override val dateCreated = long("dateCreated")
+    override val dateUpdated = long("dateUpdated")
 }
 
 /**
  * Generic item to map to the [IdTable].
  */
-@JsonClass(generateAdapter = true)
-open class GenericItem(
-    open val id: Int?,
-    open val dateCreated: Long,
-    open val dateUpdated: Long
-)
+interface GenericItem {
+    val id: Int?
+    val dateCreated: Long
+    val dateUpdated: Long
+}
 
 class InvalidAttributeException(value: String) : IllegalArgumentException("$value is required but missing or invalid")

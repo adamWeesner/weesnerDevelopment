@@ -13,4 +13,4 @@ data class TaxWithholding(
     val amount: Double,
     override val dateCreated: Long = System.currentTimeMillis(),
     override val dateUpdated: Long = System.currentTimeMillis()
-) : GenericItem(id, dateCreated, dateUpdated)
+) : GenericItem

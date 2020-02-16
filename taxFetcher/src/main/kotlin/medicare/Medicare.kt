@@ -12,5 +12,5 @@ data class Medicare(
     val limits: List<MedicareLimit>,
     override val dateCreated: Long = System.currentTimeMillis(),
     override val dateUpdated: Long = System.currentTimeMillis()
-) : GenericItem(id, dateCreated, dateUpdated)
+) : GenericItem
 

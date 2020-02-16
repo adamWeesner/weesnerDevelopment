@@ -70,7 +70,7 @@ class DatabaseServer {
                 try {
                     jwtVerifier.verify((call.request.parseAuthorizationHeader() as HttpAuthHeader.Single).blob)
                 } catch (e: Exception) {
-                    when (e) {
+                    return@status when (e) {
                         is ClassCastException -> call.respondServerError(Throwable("Looks like no token was given"))
                         else -> call.respondServerError(Throwable(e))
                     }

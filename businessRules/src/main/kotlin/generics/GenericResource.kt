@@ -52,10 +52,10 @@ inline fun <reified O : GenericItem, T : IdTable> Route.route(
         val itemType = O::class.createType()
         router.apply {
             getDefault()
-            getSingle("id")
+            getSingle(getParamName)
             postDefault(itemType)
             putDefault(itemType)
-            deleteDefault("id")
+            deleteDefault(deleteParamName)
         }
     }
 

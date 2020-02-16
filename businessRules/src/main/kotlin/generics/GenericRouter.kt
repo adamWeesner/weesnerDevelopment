@@ -7,12 +7,24 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import kotlin.reflect.KType
 
 abstract class GenericRouter<O : GenericItem, T : IdTable>(
     val service: GenericService<O, T>,
     private val response: GenericResponse<O>? = null
 ) {
+    open val getParamName: String = "id"
+    open val deleteParamName: String = "id"
+
+    open fun deleteEq(param: String) = service.table.id eq param.toInt()
+
+    open suspend fun postQualifier(receivedItem: O): O? =
+        service.getSingle { service.table.id eq (receivedItem.id ?: -1) }
+
+    open suspend fun deleteQualifier(param: String): O? =
+        service.getSingle { deleteEq(param) }
+
     open fun Route.getDefault() {
         get("/") {
             response?.let {
@@ -33,6 +45,8 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
     open fun Route.postDefault(type: KType) {
         post("/") {
             val item = call.receive<O>(type)
+
+            if (postQualifier(item) != null) return@post call.respond(HttpStatusCode.Conflict)
 
             when (val added = service.add(item)) {
                 null -> call.respond(HttpStatusCode.Conflict)
@@ -58,11 +72,9 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
         delete("/{$pathParam}") {
             val param = call.parameters[pathParam] ?: return@delete call.respond(HttpStatusCode.BadRequest)
 
-            val id =
-                service.getSingle { service.table.id eq param.toInt() }?.id
-                    ?: return@delete call.respond(HttpStatusCode.NotFound)
+            val id = deleteQualifier(param)?.id ?: return@delete call.respond(HttpStatusCode.NotFound)
 
-            val removed = service.delete(id) { service.table.id eq param.toInt() }
+            val removed = service.delete(id) { deleteEq(param) }
 
             call.respond(if (removed) HttpStatusCode.OK else HttpStatusCode.NotFound)
         }

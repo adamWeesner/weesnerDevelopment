@@ -120,6 +120,16 @@ class FederalIncomeTaxTest : BaseTest({
         }
     }
 
+    "verify adding a duplicate item" {
+        with(engine) {
+            bodyRequest(Post, Paths.federalIncomeTax, newItem(2008).toJson())
+
+            with(bodyRequest(Post, Paths.federalIncomeTax, newItem(2008).toJson())) {
+                response.status() shouldBe HttpStatusCode.Conflict
+            }
+        }
+    }
+
     "verify updating an added item" {
         with(engine) {
             bodyRequest(Post, Paths.federalIncomeTax, newItem(2004).toJson())
@@ -172,13 +182,13 @@ class FederalIncomeTaxTest : BaseTest({
     "verify deleting and item that has been added" {
         with(engine) {
             bodyRequest(Post, Paths.federalIncomeTax, newItem(2007).toJson())
-            request(Delete, Paths.federalIncomeTax, "1").response.status() shouldBe HttpStatusCode.OK
+            request(Delete, Paths.federalIncomeTax, "2007").response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify deleting item that doesn't exist" {
         with(engine) {
-            request(Delete, Paths.federalIncomeTax, "99").response.status() shouldBe HttpStatusCode.NotFound
+            request(Delete, Paths.federalIncomeTax, "2099").response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 })

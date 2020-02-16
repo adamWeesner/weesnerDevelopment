@@ -82,6 +82,16 @@ class TaxWithholdingTests : BaseTest({
         }
     }
 
+    "verify adding a duplicate item" {
+        with(engine) {
+            bodyRequest(Post, Paths.taxWithholding, newItem(2008).toJson())
+
+            with(bodyRequest(Post, Paths.taxWithholding, newItem(2008).toJson())) {
+                response.status() shouldBe HttpStatusCode.Conflict
+            }
+        }
+    }
+
     "verify getting an item that does not exist" {
         with(engine) {
             request(Get, Paths.taxWithholding, "99").response.status() shouldBe HttpStatusCode.NotFound
@@ -157,13 +167,13 @@ class TaxWithholdingTests : BaseTest({
     "verify deleting and item that has been added" {
         with(engine) {
             bodyRequest(Post, Paths.taxWithholding, newItem(2007).toJson())
-            request(Delete, Paths.taxWithholding, "1").response.status() shouldBe HttpStatusCode.OK
+            request(Delete, Paths.taxWithholding, "2007").response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify deleting item that doesn't exist" {
         with(engine) {
-            request(Delete, Paths.taxWithholding, "99").response.status() shouldBe HttpStatusCode.NotFound
+            request(Delete, Paths.taxWithholding, "2099").response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 })

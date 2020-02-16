@@ -99,6 +99,16 @@ class MedicareTests : BaseTest({
         }
     }
 
+    "verify adding a duplicate item" {
+        with(engine) {
+            bodyRequest(Post, Paths.medicare, newItem(2008).toJson())
+
+            with(bodyRequest(Post, Paths.medicare, newItem(2008).toJson())) {
+                response.status() shouldBe HttpStatusCode.Conflict
+            }
+        }
+    }
+
     "verify updating an added item" {
         with(engine) {
             val id = requestToObject<Medicare>(Post, Paths.medicare, newItem(2004).toJson())?.id
@@ -137,15 +147,15 @@ class MedicareTests : BaseTest({
     "verify deleting and item that has been added" {
         with(engine) {
             bodyRequest(Post, Paths.medicare, newItem(2007).toJson())
-            val addedItemId =
-                requestToObject<MedicareResponse>(Get, Paths.medicare)?.items?.find { it.year == 2007 }?.id
-            request(Delete, Paths.medicare, addedItemId?.toString()).response.status() shouldBe HttpStatusCode.OK
+            val addedItem =
+                requestToObject<MedicareResponse>(Get, Paths.medicare)?.items?.find { it.year == 2007 }?.year
+            request(Delete, Paths.medicare, addedItem?.toString()).response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify deleting item that doesn't exist" {
         with(engine) {
-            request(Delete, Paths.medicare, "99").response.status() shouldBe HttpStatusCode.NotFound
+            request(Delete, Paths.medicare, "2099").response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 })

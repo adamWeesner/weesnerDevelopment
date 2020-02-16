@@ -6,9 +6,7 @@ import generics.GenericService
 import generics.GenericServiceWChildren
 import generics.IdTable
 import model.ChangeType
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 
 class MedicareService : GenericServiceWChildren<Medicare, MedicareTable>(
@@ -22,7 +20,7 @@ class MedicareService : GenericServiceWChildren<Medicare, MedicareTable>(
         it.copy(limits = limitsService.getByYear(it.year))
     }
 
-    override suspend fun getSingle(id: Int): Medicare? = super.getSingle(id)?.run {
+    override suspend fun getSingle(op: SqlExpressionBuilder.() -> Op<Boolean>): Medicare? = super.getSingle(op)?.run {
         copy(limits = limitsService.getByYear(year))
     }
 
@@ -42,26 +40,26 @@ class MedicareService : GenericServiceWChildren<Medicare, MedicareTable>(
 
         item.limits.forEach { limitsService.add(it) }
 
-        return getSingle(key)!!.also {
+        return getSingle { table.id eq key }!!.also {
             onChange(ChangeType.Create, key, it)
         }
     }
 
-    override suspend fun update(item: Medicare): Medicare? {
+    override suspend fun update(item: Medicare, op: SqlExpressionBuilder.() -> Op<Boolean>): Medicare? {
         item.limits.forEach {
-            if (limitsService.getByNameAndYear(it.maritalStatus, it.year)?.amount != it.amount) limitsService.update(it)
+            if (limitsService.getByNameAndYear(it.maritalStatus, it.year)?.amount != it.amount)
+                limitsService.apply {
+                    update(it) { (table.year eq it.year) and (table.maritalStatus eq it.maritalStatus.name) }
+                }
         }
-
-        return super.update(item)
+        return super.update(item, op)
     }
 
-    override suspend fun delete(id: Int): Boolean {
-        getSingle(id)?.run {
-            limits.forEach {
-                if (it.id != null) limitsService.delete(it.id)
-            }
+    override suspend fun delete(id: Int, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
+        getSingle { table.id eq id }?.run {
+            limits.forEach { if (it.id != null) limitsService.apply { delete(it.id) { table.id eq it.id } } }
         }
-        return super.delete(id)
+        return super.delete(id, op)
     }
 
     override suspend fun to(row: ResultRow) = Medicare(

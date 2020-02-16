@@ -1,8 +1,9 @@
 package socialSecurity
 
 import com.squareup.moshi.JsonClass
+import generics.GenericResponse
 
 @JsonClass(generateAdapter = true)
 data class SocialSecurityResponse(
-    val socialSecurity: List<SocialSecurity>
-)
+    override var items: List<SocialSecurity>? = null
+) : GenericResponse<SocialSecurity>(items)

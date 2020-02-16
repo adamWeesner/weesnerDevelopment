@@ -2,16 +2,13 @@ import PayPeriod.Biweekly
 import PayPeriod.Weekly
 import com.weesnerdevelopment.Paths
 import com.weesnerdevelopment.fromJson
-import com.weesnerdevelopment.main
 import com.weesnerdevelopment.toJson
 import io.kotlintest.shouldBe
-import io.ktor.application.Application
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.withTestApplication
 import taxWithholding.TaxWithholding
 import taxWithholding.TaxWithholdingResponse
 import taxWithholding.TaxWithholdingTypes.General
@@ -25,18 +22,18 @@ class TaxWithholdingTests : BaseTest({
     )
 
     "verify getting base url returns ok" {
-        withTestApplication(Application::main) {
+        with(engine) {
             request(Get, Paths.taxWithholding).response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify getting base url returns all items in table" {
-        withTestApplication(Application::main) {
+        with(engine) {
             bodyRequest(Post, Paths.taxWithholding, newItem(2000).toJson())
             bodyRequest(Post, Paths.taxWithholding, newItem(2001).toJson())
 
             with(request(Get, Paths.taxWithholding)) {
-                val responseItems = response.content?.fromJson<TaxWithholdingResponse>()?.taxWithholding
+                val responseItems = response.content?.fromJson<TaxWithholdingResponse>()?.items
                 val item1 = responseItems!![responseItems.lastIndex - 1]
                 val item2 = responseItems[responseItems.lastIndex]
 
@@ -65,7 +62,7 @@ class TaxWithholdingTests : BaseTest({
     }
 
     "verify getting an added item" {
-        withTestApplication(Application::main) {
+        with(engine) {
             val id = requestToObject<TaxWithholding>(Post, Paths.taxWithholding, newItem(2002).toJson())?.id
 
             with(request(Get, Paths.taxWithholding, id?.toString())) {
@@ -86,13 +83,13 @@ class TaxWithholdingTests : BaseTest({
     }
 
     "verify getting an item that does not exist" {
-        withTestApplication(Application::main) {
+        with(engine) {
             request(Get, Paths.taxWithholding, "99").response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 
     "verify adding a new item" {
-        withTestApplication(Application::main) {
+        with(engine) {
             with(bodyRequest(Post, Paths.taxWithholding, newItem(2003).toJson())) {
                 val addedItem = response.content!!.fromJson<TaxWithholding>()!!
 
@@ -111,7 +108,7 @@ class TaxWithholdingTests : BaseTest({
     }
 
     "verify updating an added item" {
-        withTestApplication(Application::main) {
+        with(engine) {
             bodyRequest(Post, Paths.taxWithholding, newItem(2004).toJson())
 
             with(
@@ -138,7 +135,7 @@ class TaxWithholdingTests : BaseTest({
     }
 
     "verify updating a non existent item" {
-        withTestApplication(Application::main) {
+        with(engine) {
             bodyRequest(
                 Put,
                 Paths.taxWithholding,
@@ -148,7 +145,7 @@ class TaxWithholdingTests : BaseTest({
     }
 
     "verify updating without an id adds a new item" {
-        withTestApplication(Application::main) {
+        with(engine) {
             bodyRequest(
                 Put,
                 Paths.taxWithholding,
@@ -158,14 +155,14 @@ class TaxWithholdingTests : BaseTest({
     }
 
     "verify deleting and item that has been added" {
-        withTestApplication(Application::main) {
+        with(engine) {
             bodyRequest(Post, Paths.taxWithholding, newItem(2007).toJson())
             request(Delete, Paths.taxWithholding, "1").response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify deleting item that doesn't exist" {
-        withTestApplication(Application::main) {
+        with(engine) {
             request(Delete, Paths.taxWithholding, "99").response.status() shouldBe HttpStatusCode.NotFound
         }
     }

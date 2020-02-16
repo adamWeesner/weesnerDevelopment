@@ -23,22 +23,22 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
 
     open suspend fun getAll() = dbQuery { table.selectAll().map { to(it) } }
 
-    open suspend fun getSingle(id: Int) =
-        dbQuery { table.select { (table.id eq id) }.mapNotNull { to(it) }.singleOrNull() }
+    open suspend fun getSingle(op: SqlExpressionBuilder.() -> Op<Boolean>) =
+        dbQuery { table.select { op() }.mapNotNull { to(it) }.singleOrNull() }
 
-    open suspend fun update(item: O): O? {
+    open suspend fun update(item: O, op: SqlExpressionBuilder.() -> Op<Boolean>): O? {
         val id = item.id
 
         return if (id == null) {
             add(item)
         } else {
             dbQuery {
-                table.update({ table.id eq id }) {
+                table.update({ op() }) {
                     it.assignValues(item)
                     it[dateUpdated] = System.currentTimeMillis()
                 }
             }
-            getSingle(id).also {
+            getSingle { op() }.also {
                 onChange(ChangeType.Update, id, it)
             }
         }
@@ -55,13 +55,14 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
                 it[dateUpdated] = System.currentTimeMillis()
             } get table.id)
         }
-        return getSingle(key).also {
+        return getSingle { table.id eq key }.also {
             onChange(ChangeType.Create, key, it)
         }
     }
 
-    open suspend fun delete(id: Int) = dbQuery {
-        table.deleteWhere { table.id eq id } > 0
+    open suspend fun delete(id: Int, op: SqlExpressionBuilder.() -> Op<Boolean>) = dbQuery {
+        if (getSingle { op() } == null) false
+        else table.deleteWhere { op() } > 0
     }.also {
         if (it) onChange(ChangeType.Delete, id)
     }

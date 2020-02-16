@@ -1,15 +1,12 @@
 import com.weesnerdevelopment.Paths
 import com.weesnerdevelopment.fromJson
-import com.weesnerdevelopment.main
 import com.weesnerdevelopment.toJson
 import io.kotlintest.shouldBe
-import io.ktor.application.Application
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.withTestApplication
 import socialSecurity.SocialSecurity
 import socialSecurity.SocialSecurityResponse
 
@@ -21,17 +18,17 @@ class SocialSecurityTest : BaseTest({
     )
 
     "verify getting base url returns ok" {
-        withTestApplication(Application::main) {
+        with(engine) {
             request(Get, Paths.socialSecurity).response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify getting base url returns all items in table" {
-        withTestApplication(Application::main) {
+        with(engine) {
             bodyRequest(Post, Paths.socialSecurity, newItem(2000).toJson())
             bodyRequest(Post, Paths.socialSecurity, newItem(2001).toJson())
             with(request(Get, Paths.socialSecurity)) {
-                val responseItems = response.content?.fromJson<SocialSecurityResponse>()?.socialSecurity
+                val responseItems = response.content?.fromJson<SocialSecurityResponse>()?.items
                 val item1 = responseItems!![responseItems.lastIndex - 1]
                 val item2 = responseItems[responseItems.lastIndex]
                 response.status() shouldBe HttpStatusCode.OK
@@ -42,7 +39,7 @@ class SocialSecurityTest : BaseTest({
     }
 
     "verify getting an added item" {
-        withTestApplication(Application::main) {
+        with(engine) {
             val id = requestToObject<SocialSecurity>(Post, Paths.socialSecurity, newItem(2002).toJson())?.id
             with(request(Get, Paths.socialSecurity, id?.toString())) {
                 val addedItem = response.content!!.fromJson<SocialSecurity>()!!
@@ -53,13 +50,13 @@ class SocialSecurityTest : BaseTest({
     }
 
     "verify getting an item that does not exist" {
-        withTestApplication(Application::main) {
+        with(engine) {
             request(Get, Paths.socialSecurity, "99").response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 
     "verify adding a new item" {
-        withTestApplication(Application::main) {
+        with(engine) {
             with(bodyRequest(Post, Paths.socialSecurity, newItem(2003).toJson())) {
                 val addedItem = response.content!!.fromJson<SocialSecurity>()!!
                 response.status() shouldBe HttpStatusCode.Created
@@ -76,7 +73,7 @@ class SocialSecurityTest : BaseTest({
     }
 
     "verify updating an added item" {
-        withTestApplication(Application::main) {
+        with(engine) {
             bodyRequest(Post, Paths.socialSecurity, newItem(2004).toJson())
             with(
                 bodyRequest(
@@ -93,7 +90,7 @@ class SocialSecurityTest : BaseTest({
     }
 
     "verify updating a non existent item" {
-        withTestApplication(Application::main) {
+        with(engine) {
             bodyRequest(
                 Put,
                 Paths.socialSecurity,
@@ -103,7 +100,7 @@ class SocialSecurityTest : BaseTest({
     }
 
     "verify updating without an id adds a new item" {
-        withTestApplication(Application::main) {
+        with(engine) {
             bodyRequest(
                 Put,
                 Paths.socialSecurity,
@@ -113,14 +110,14 @@ class SocialSecurityTest : BaseTest({
     }
 
     "verify deleting and item that has been added" {
-        withTestApplication(Application::main) {
+        with(engine) {
             bodyRequest(Post, Paths.socialSecurity, newItem(2007).toJson())
             request(Delete, Paths.socialSecurity, "1").response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify deleting item that doesn't exist" {
-        withTestApplication(Application::main) {
+        with(engine) {
             request(Delete, Paths.socialSecurity, "99").response.status() shouldBe HttpStatusCode.NotFound
         }
     }

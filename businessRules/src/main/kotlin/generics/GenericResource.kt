@@ -1,12 +1,9 @@
 package generics
 
-import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.cio.websocket.Frame
-import io.ktor.request.receive
-import io.ktor.response.respond
-import io.ktor.routing.*
+import io.ktor.routing.Route
+import io.ktor.routing.route
 import io.ktor.websocket.webSocket
+import kotlin.reflect.full.createType
 
 /**
  * ## Routes for the given item type [O] in the table [T]:
@@ -49,55 +46,22 @@ import io.ktor.websocket.webSocket
  */
 inline fun <reified O : GenericItem, T : IdTable> Route.route(
     basePath: String,
-    service: GenericService<O, T>,
-    crossinline getMessage: suspend (items: List<O>) -> Any
+    router: GenericRouter<O, T>
 ) {
     route("/$basePath") {
-        get("/") {
-            call.respond(getMessage(service.getAll()))
-        }
-
-        get("/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalStateException("Must provide id")
-
-            call.respond(service.getSingle(id) ?: HttpStatusCode.NotFound)
-        }
-
-        post("/") {
-            val item = call.receive<O>()
-
-            when (val added = service.add(item)) {
-                null -> call.respond(HttpStatusCode.Conflict)
-                else -> call.respond(HttpStatusCode.Created, added)
-            }
-        }
-
-        put("/") {
-            val item = call.receive<O>()
-            val updated = service.update(item)
-
-            when {
-                updated == null -> call.respond(HttpStatusCode.NotFound)
-                updated.id != item.id -> call.respond(HttpStatusCode.Created, updated)
-                else -> call.respond(HttpStatusCode.OK, updated)
-            }
-        }
-
-        delete("/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Must provide id")
-            val removed = service.delete(id)
-
-            call.respond(if (removed) HttpStatusCode.OK else HttpStatusCode.NotFound)
+        val itemType = O::class.createType()
+        router.apply {
+            getDefault()
+            getSingle("id")
+            postDefault(itemType)
+            putDefault(itemType)
+            deleteDefault("id")
         }
     }
 
     webSocket("/updates") {
-        try {
-            service.addChangeListener(this.hashCode()) {
-                outgoing.send(Frame.Text(it.toString()))
-            }
-        } finally {
-            service.removeChangeListener(this.hashCode())
+        router.apply {
+            webSocketDefault()
         }
     }
 }

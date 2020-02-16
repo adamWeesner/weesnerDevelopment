@@ -122,12 +122,12 @@ class DatabaseServer {
             }
 
             // tax fetcher
-            route(socialSecurity.name, SocialSecurityService()) { SocialSecurityResponse(it) }
-            route(medicare.name, MedicareService()) { MedicareResponse(it) }
-            route(taxWithholding.name, TaxWithholdingService()) { TaxWithholdingResponse(it) }
-            route(federalIncomeTax.name, FederalIncomeTaxService()) { FederalIncomeTaxResponse(it) }
+            route(socialSecurity.name, SocialSecurityRouter())
+            route(medicare.name, MedicareRouter())
+            route(taxWithholding.name, TaxWithholdingRouter())
+            route(federalIncomeTax.name, FederalIncomeTaxRouter())
             // bill man
-            route(category.name, CategoriesService()) { CategoriesResponse(it) }
+            route(category.name, CategoryRouter())
         }
     }
 }

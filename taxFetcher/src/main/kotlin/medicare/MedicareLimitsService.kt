@@ -4,18 +4,15 @@ import MaritalStatus
 import dbQuery
 import generics.GenericService
 import model.ChangeType
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import org.jetbrains.exposed.sql.update
 
 class MedicareLimitsService : GenericService<MedicareLimit, MedicareLimitsTable>(
     MedicareLimitsTable
 ) {
-    override suspend fun update(item: MedicareLimit) = item.run {
+    override suspend fun update(item: MedicareLimit, op: SqlExpressionBuilder.() -> Op<Boolean>) = item.run {
         dbQuery {
-            table.update({ (table.year eq year) and (table.maritalStatus eq maritalStatus.name) }) {
+            table.update({ op() }) {
                 it.assignValues(this@run)
                 it[dateUpdated] = System.currentTimeMillis()
             }

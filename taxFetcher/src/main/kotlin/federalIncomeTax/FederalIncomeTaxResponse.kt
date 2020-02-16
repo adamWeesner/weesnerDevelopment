@@ -1,8 +1,9 @@
 package federalIncomeTax
 
 import com.squareup.moshi.JsonClass
+import generics.GenericResponse
 
 @JsonClass(generateAdapter = true)
 data class FederalIncomeTaxResponse(
-    val federalIncomeTax: List<FederalIncomeTax>
-)
+    override var items: List<FederalIncomeTax>? = null
+) : GenericResponse<FederalIncomeTax>(items)

@@ -67,7 +67,14 @@ class DatabaseServer {
                 }
             }
             status(HttpStatusCode.Unauthorized) {
-                jwtVerifier.verify((call.request.parseAuthorizationHeader() as HttpAuthHeader.Single).blob)
+                try {
+                    jwtVerifier.verify((call.request.parseAuthorizationHeader() as HttpAuthHeader.Single).blob)
+                } catch (e: Exception) {
+                    when (e) {
+                        is ClassCastException -> call.respondServerError(Throwable("Looks like no token was given"))
+                        else -> call.respondServerError(Throwable(e))
+                    }
+                }
 
                 call.respondAuthorizationIssue(InvalidUserReason.General)
             }

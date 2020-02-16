@@ -42,7 +42,14 @@ data class ServerError(
  */
 internal suspend fun ApplicationCall.respondServerError(error: Throwable) {
     val httpStatus = HttpStatusCode.InternalServerError
-    respond(httpStatus, ServerError(httpStatus.description, httpStatus.value, error.localizedMessage))
+    respond(
+        httpStatus,
+        ServerError(
+            httpStatus.description,
+            httpStatus.value,
+            error.localizedMessage ?: error.message ?: error.toString()
+        )
+    )
 }
 
 /**

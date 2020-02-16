@@ -18,6 +18,7 @@ dependencies {
     implementation(ktorServer("netty"))
     implementation(ktorServer("core"))
     implementation(ktor("websockets"))
+    implementation(ktor("auth-jwt"))
     implementation(ktorClient("websockets"))
     implementation(ktorClient("okhttp"))
 

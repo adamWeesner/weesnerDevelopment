@@ -1,5 +1,6 @@
 package com.weesnerdevelopment.service
 
+import auth.UsersTable
 import category.CategoriesTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -19,6 +20,8 @@ object DatabaseFactory {
         Database.connect(hikari())
         transaction {
             addLogger(StdOutSqlLogger)
+
+            create(UsersTable)
             // tax fetcher
             create(
                 SocialSecurityTable,

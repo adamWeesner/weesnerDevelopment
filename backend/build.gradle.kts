@@ -47,6 +47,8 @@ dependencies {
     implementation("com.zaxxer:HikariCP:$hikari_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
+    implementation(ktor("auth-jwt"))
+
     testImplementation(ktor("server-tests"))
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
 }

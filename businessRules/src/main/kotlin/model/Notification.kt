@@ -2,7 +2,7 @@ package model
 
 import com.squareup.moshi.JsonClass
 
-enum class ChangeType { Create, Update, Delete }
+enum class ChangeType { Create, Update, Delete, Error }
 
 @JsonClass(generateAdapter = true)
 data class Notification<T>(

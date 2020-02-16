@@ -47,7 +47,6 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
     open suspend fun add(item: O): O? {
         var key = 0
 
-        // TODO Need to check if the item already exists by searching for the exact item in the db
         dbQuery {
             key = (table.insert {
                 it.assignValues(item)
@@ -61,8 +60,7 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
     }
 
     open suspend fun delete(id: Int, op: SqlExpressionBuilder.() -> Op<Boolean>) = dbQuery {
-        if (getSingle { op() } == null) false
-        else table.deleteWhere { op() } > 0
+        table.deleteWhere { op() } > 0
     }.also {
         if (it) onChange(ChangeType.Delete, id)
     }

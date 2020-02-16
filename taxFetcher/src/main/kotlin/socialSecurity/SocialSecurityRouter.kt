@@ -3,8 +3,10 @@ package socialSecurity
 import generics.GenericRouter
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-class SocialSecurityRouter :
-    GenericRouter<SocialSecurity, SocialSecurityTable>(SocialSecurityService(), SocialSecurityResponse()) {
+class SocialSecurityRouter : GenericRouter<SocialSecurity, SocialSecurityTable>(
+    SocialSecurityService(),
+    SocialSecurityResponse()
+) {
     override val getParamName = "year"
     override val deleteParamName = "year"
 

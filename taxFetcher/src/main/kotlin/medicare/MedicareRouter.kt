@@ -3,7 +3,10 @@ package medicare
 import generics.GenericRouter
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-class MedicareRouter : GenericRouter<Medicare, MedicareTable>(MedicareService(), MedicareResponse()) {
+class MedicareRouter : GenericRouter<Medicare, MedicareTable>(
+    MedicareService(),
+    MedicareResponse()
+) {
     override val getParamName = "year"
     override val deleteParamName = "year"
 

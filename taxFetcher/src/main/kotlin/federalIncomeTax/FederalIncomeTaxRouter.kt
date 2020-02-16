@@ -3,8 +3,10 @@ package federalIncomeTax
 import generics.GenericRouter
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-class FederalIncomeTaxRouter :
-    GenericRouter<FederalIncomeTax, FederalIncomeTaxesTable>(FederalIncomeTaxService(), FederalIncomeTaxResponse()) {
+class FederalIncomeTaxRouter : GenericRouter<FederalIncomeTax, FederalIncomeTaxesTable>(
+    FederalIncomeTaxService(),
+    FederalIncomeTaxResponse()
+) {
     override val getParamName = "year"
     override val deleteParamName = "year"
 

@@ -3,8 +3,10 @@ package taxWithholding
 import generics.GenericRouter
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-class TaxWithholdingRouter :
-    GenericRouter<TaxWithholding, TaxWithholdingTable>(TaxWithholdingService(), TaxWithholdingResponse()) {
+class TaxWithholdingRouter : GenericRouter<TaxWithholding, TaxWithholdingTable>(
+    TaxWithholdingService(),
+    TaxWithholdingResponse()
+) {
     override val getParamName = "year"
     override val deleteParamName = "year"
 

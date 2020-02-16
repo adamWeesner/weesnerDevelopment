@@ -6,7 +6,9 @@ import generics.GenericService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 
-class FederalIncomeTaxService : GenericService<FederalIncomeTax, FederalIncomeTaxesTable>(FederalIncomeTaxesTable) {
+class FederalIncomeTaxService : GenericService<FederalIncomeTax, FederalIncomeTaxesTable>(
+    FederalIncomeTaxesTable
+) {
     override suspend fun to(row: ResultRow) = FederalIncomeTax(
         id = row[FederalIncomeTaxesTable.id],
         year = row[FederalIncomeTaxesTable.year],

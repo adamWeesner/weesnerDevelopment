@@ -1,7 +1,6 @@
 package com.weesnerdevelopment.service
 
 import auth.UsersTable
-import category.CategoriesTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import federalIncomeTax.FederalIncomeTaxesTable
@@ -30,7 +29,6 @@ object DatabaseFactory {
                 TaxWithholdingTable,
                 FederalIncomeTaxesTable
             )
-            create(CategoriesTable)
         }
     }
 

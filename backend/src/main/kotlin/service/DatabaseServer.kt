@@ -1,7 +1,6 @@
 package com.weesnerdevelopment.service
 
 import auth.*
-import category.CategoryRouter
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.ryanharter.ktor.moshi.moshi
@@ -126,8 +125,6 @@ class DatabaseServer {
             route(medicare.name, MedicareRouter())
             route(taxWithholding.name, TaxWithholdingRouter())
             route(federalIncomeTax.name, FederalIncomeTaxRouter())
-            // bill man
-            route(category.name, CategoryRouter())
         }
     }
 }

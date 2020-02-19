@@ -2,6 +2,9 @@ package generics
 
 import org.jetbrains.exposed.sql.Table
 
+/**
+ * Table definition for the database.
+ */
 interface GenericTable {
     val id: Any
     val dateCreated: Any
@@ -9,7 +12,7 @@ interface GenericTable {
 }
 
 /**
- * Generic [Table] that has [id], [dateCreated], and [dateUpdated] added by default.
+ * [GenericTable] that has [id], [dateCreated], and [dateUpdated] added by default.
  */
 open class IdTable : Table(), GenericTable {
     override val id = integer("id").primaryKey().autoIncrement()

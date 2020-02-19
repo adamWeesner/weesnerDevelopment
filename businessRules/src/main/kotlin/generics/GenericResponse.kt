@@ -1,5 +1,8 @@
 package generics
 
-abstract class GenericResponse<T : GenericItem>(
-    open var items: List<T>?
-)
+/**
+ * Generic response to generate a json array from a list of [T] returned from the backend.
+ */
+interface GenericResponse<T> {
+    var items: List<T>?
+}

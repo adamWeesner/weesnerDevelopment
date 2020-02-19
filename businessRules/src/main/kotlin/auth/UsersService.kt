@@ -15,8 +15,9 @@ class UsersService : GenericService<User, UsersTable>(
     UsersTable
 ) {
     suspend fun getUserFromHash(hashedUser: HashedUser) = dbQuery {
-        table.select { (table.username eq hashedUser.username) and (table.password eq hashedUser.password) }
-            .mapNotNull { to(it) }.singleOrNull()
+        table.select {
+            (table.username eq hashedUser.username) and (table.password eq hashedUser.password)
+        }.mapNotNull { to(it) }.singleOrNull()
     }
 
     suspend fun getUserByUuid(uuid: String) =

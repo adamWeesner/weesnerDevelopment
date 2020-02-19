@@ -6,4 +6,4 @@ import generics.GenericResponse
 @JsonClass(generateAdapter = true)
 data class FederalIncomeTaxResponse(
     override var items: List<FederalIncomeTax>? = null
-) : GenericResponse<FederalIncomeTax>(items)
+) : GenericResponse<FederalIncomeTax>

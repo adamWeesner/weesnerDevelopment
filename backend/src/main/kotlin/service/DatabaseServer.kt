@@ -5,10 +5,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.ryanharter.ktor.moshi.moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.weesnerdevelopment.Paths.*
-import com.weesnerdevelopment.respondAuthorizationIssue
-import com.weesnerdevelopment.respondServerError
-import com.weesnerdevelopment.toJson
+import com.weesnerdevelopment.*
 import federalIncomeTax.FederalIncomeTaxRouter
 import generics.route
 import io.ktor.application.Application
@@ -35,19 +32,16 @@ import kotlin.collections.set
 
 class DatabaseServer {
     fun Application.main() {
-        val issuer = environment.config.property("jwt.domain").getString()
-        val audience = environment.config.property("jwt.audience").getString()
-        val realm = environment.config.property("jwt.realm").getString()
-
-        val jwtVerifier = makeJwtVerifier(issuer, audience)
+        val appConfig = AppConfig(environment.config)
+        val jwtProvider =
+            JwtProvider(appConfig.issuer, appConfig.audience, appConfig.expiresIn, Cipher(appConfig.secret))
 
         install(DefaultHeaders)
         install(CallLogging)
         install(WebSockets)
         install(CORS) {
             allowCredentials = true
-            host("weesnerdevelopment.com", subDomains = listOf("api"))
-            host("localhost:3000")
+            host("${appConfig.baseUrl}:${appConfig.port}")
             maxAge = Duration.ofDays(1)
             allowNonSimpleContentTypes = true
         }
@@ -68,10 +62,11 @@ class DatabaseServer {
             }
             status(HttpStatusCode.Unauthorized) {
                 try {
-                    jwtVerifier.verify((call.request.parseAuthorizationHeader() as HttpAuthHeader.Single).blob)
+                    jwtProvider.decodeJWT((call.request.parseAuthorizationHeader() as HttpAuthHeader.Single).blob)
                 } catch (e: Exception) {
                     return@status when (e) {
-                        is ClassCastException -> call.respondServerError(Throwable("Looks like no token was given"))
+                        // usually happens when no token was passed...
+                        is ClassCastException -> call.respondAuthorizationIssue(InvalidUserReason.InvalidJwt)
                         else -> call.respondServerError(Throwable(e))
                     }
                 }
@@ -82,10 +77,10 @@ class DatabaseServer {
 
         install(Authentication) {
             jwt {
-                verifier(jwtVerifier)
-                this.realm = realm
+                verifier(jwtProvider.verifier)
+                this.realm = appConfig.realm
                 validate { credential ->
-                    if (credential.payload.audience.contains(audience)) JWTPrincipal(credential.payload)
+                    if (credential.payload.audience.contains(appConfig.audience)) JWTPrincipal(credential.payload)
                     else null
                 }
             }
@@ -98,7 +93,7 @@ class DatabaseServer {
             val userService = userRouter.service as UsersService
 
             authenticate {
-                route("/whoAmI") {
+                route("/") {
                     handle {
                         val principal = call.authentication.principal<JWTPrincipal>()
 
@@ -115,24 +110,31 @@ class DatabaseServer {
                             val uuid = items["uuid"]
 
                             when {
-                                userName != null && password != null ->
-                                    call.respond(userService.getUserFromHash(HashedUser(userName, password)).toJson())
-                                uuid != null -> call.respond(userService.getUserByUuid(uuid).toJson())
+                                userName != null && password != null -> {
+                                    userService.getUserFromHash(HashedUser(userName, password))?.toJson()?.run {
+                                        call.respond(this)
+                                    } ?: call.respondAuthorizationIssue(InvalidUserReason.NoUserFound)
+                                }
+                                uuid != null -> {
+                                    userService.getUserByUuid(uuid)?.toJson()?.run {
+                                        call.respond(this)
+                                    } ?: call.respondAuthorizationIssue(InvalidUserReason.NoUserFound)
+                                }
                                 else -> call.respondAuthorizationIssue(InvalidUserReason.General)
                             }
                         }
                     }
                 }
 
-                route(users.name, userRouter)
+                // user
+                route(Path.User.me, userRouter)
+
+                // tax fetcher
+                route(Path.TaxFetcher.socialSecurity, SocialSecurityRouter())
+                route(Path.TaxFetcher.medicare, MedicareRouter())
+                route(Path.TaxFetcher.taxWithholding, TaxWithholdingRouter())
+                route(Path.TaxFetcher.federalIncomeTax, FederalIncomeTaxRouter())
             }
-
-
-            // tax fetcher
-            route(socialSecurity.name, SocialSecurityRouter())
-            route(medicare.name, MedicareRouter())
-            route(taxWithholding.name, TaxWithholdingRouter())
-            route(federalIncomeTax.name, FederalIncomeTaxRouter())
         }
     }
 }

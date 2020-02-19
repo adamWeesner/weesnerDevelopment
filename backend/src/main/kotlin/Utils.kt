@@ -4,15 +4,36 @@ import auth.InvalidUserException
 import auth.InvalidUserReason
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.weesnerdevelopment.Path.TaxFetcher.basePath
+import com.weesnerdevelopment.Path.User.basePath
 import io.ktor.application.ApplicationCall
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.uri
 import io.ktor.response.respond
 import java.lang.reflect.ParameterizedType
 
-enum class Paths {
-    users,
-    socialSecurity, medicare, federalIncomeTax, taxWithholding
+/**
+ * The available paths at /[Path].
+ */
+sealed class Path {
+    /**
+     * The available paths at [basePath]/value.
+     */
+    object TaxFetcher : Path() {
+        private val basePath = "taxFetcher/"
+        val socialSecurity = "${basePath}socialSecurity"
+        val medicare = "${basePath}medicare"
+        val federalIncomeTax = "${basePath}federalIncomeTax"
+        val taxWithholding = "${basePath}taxWithholding"
+    }
+
+    /**
+     * The available paths at [basePath]/value.
+     */
+    object User : Path() {
+        private val basePath = "user/"
+        val me = "${basePath}me"
+    }
 }
 
 /**
@@ -31,6 +52,9 @@ inline fun <reified T> String.fromJson(type: ParameterizedType? = null) = moshi<
  */
 inline fun <reified T> T?.toJson() = moshi<T>().toJson(this)
 
+/**
+ * Server Error generating a nice looking json error when there is a server issue.
+ */
 data class ServerError(
     val status: String,
     val statusCode: Int,

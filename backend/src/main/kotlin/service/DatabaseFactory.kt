@@ -14,12 +14,19 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import socialSecurity.SocialSecurityTable
 import taxWithholding.TaxWithholdingTable
 
+/**
+ * The database factory for weesnerDevelopment.com.
+ */
 object DatabaseFactory {
+    /**
+     * Initializes the [DatabaseFactory] and creates the database tables if needed.
+     */
     fun init() {
         Database.connect(hikari())
         transaction {
             addLogger(StdOutSqlLogger)
 
+            // base tables
             create(UsersTable)
             // tax fetcher
             create(
@@ -32,8 +39,8 @@ object DatabaseFactory {
         }
     }
 
-    private fun hikari(): HikariDataSource {
-        val config = HikariConfig().apply {
+    private fun hikari() = HikariDataSource(
+        HikariConfig().apply {
             driverClassName = "org.h2.Driver"
             jdbcUrl = "jdbc:h2:./server/database"
             maximumPoolSize = 3
@@ -41,7 +48,5 @@ object DatabaseFactory {
             transactionIsolation = "TRANSACTION_REPEATABLE_READ"
             validate()
         }
-
-        return HikariDataSource(config)
-    }
+    )
 }

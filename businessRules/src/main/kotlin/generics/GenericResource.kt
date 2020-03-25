@@ -10,7 +10,8 @@ import kotlin.reflect.full.createType
  */
 inline fun <reified O : GenericItem, T : IdTable> Route.route(
     basePath: String,
-    router: GenericRouter<O, T>
+    router: GenericRouter<O, T>,
+    crossinline customRoutes: Route.(router: GenericRouter<O, T>) -> Unit = {}
 ) {
     route("/$basePath") {
         val itemType = O::class.createType()
@@ -21,6 +22,7 @@ inline fun <reified O : GenericItem, T : IdTable> Route.route(
             putDefault(itemType)
             deleteDefault(deleteParamName)
         }
+        customRoutes(router)
     }
 
     webSocket("/updates") {

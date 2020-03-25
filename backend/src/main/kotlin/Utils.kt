@@ -2,15 +2,13 @@ package com.weesnerdevelopment
 
 import auth.InvalidUserException
 import auth.InvalidUserReason
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.weesnerdevelopment.Path.TaxFetcher.basePath
 import com.weesnerdevelopment.Path.User.basePath
 import io.ktor.application.ApplicationCall
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.uri
 import io.ktor.response.respond
-import java.lang.reflect.ParameterizedType
+import toJson
 
 /**
  * The available paths at /[Path].
@@ -35,22 +33,6 @@ sealed class Path {
         val me = "${basePath}me"
     }
 }
-
-/**
- * A moshi instance that can take a [ParameterizedType] if needed.
- */
-inline fun <reified T> moshi(type: ParameterizedType? = null) =
-    Moshi.Builder().add(KotlinJsonAdapterFactory()).build().adapter<T>(type ?: T::class.java)
-
-/**
- * Helper function that creates an object of type [T] from a json string.
- */
-inline fun <reified T> String.fromJson(type: ParameterizedType? = null) = moshi<T>(type).fromJson(this)
-
-/**
- * Helper function to convert an object to a json string.
- */
-inline fun <reified T> T?.toJson() = moshi<T>().toJson(this)
 
 /**
  * Server Error generating a nice looking json error when there is a server issue.

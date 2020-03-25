@@ -1,6 +1,4 @@
-import com.weesnerdevelopment.Paths
-import com.weesnerdevelopment.fromJson
-import com.weesnerdevelopment.toJson
+import com.weesnerdevelopment.Path
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
@@ -26,17 +24,19 @@ class MedicareTests : BaseTest({
         )
     )
 
+    val path = Path.TaxFetcher.medicare
+
     "verify getting base url returns ok" {
         with(engine) {
-            request(Get, Paths.medicare).response.status() shouldBe HttpStatusCode.OK
+            request(Get, path).response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify getting base url returns all items in table" {
         with(engine) {
-            bodyRequest(Post, Paths.medicare, newItem(2000).toJson())
-            bodyRequest(Post, Paths.medicare, newItem(2001).toJson())
-            with(request(Get, Paths.medicare)) {
+            bodyRequest(Post, path, newItem(2000).toJson())
+            bodyRequest(Post, path, newItem(2001).toJson())
+            with(request(Get, path)) {
                 val responseItems = response.content?.fromJson<MedicareResponse>()?.items
                 val item1 = responseItems!![responseItems.lastIndex - 1]
                 val item2 = responseItems[responseItems.lastIndex]
@@ -49,8 +49,8 @@ class MedicareTests : BaseTest({
 
     "verify getting an added item" {
         with(engine) {
-            val id = requestToObject<Medicare>(Post, Paths.medicare, newItem(2002).toJson())?.id
-            with(request(Get, Paths.medicare, id?.toString())) {
+            val id = requestToObject<Medicare>(Post, path, newItem(2002).toJson())?.id
+            with(request(Get, path, id?.toString())) {
                 val addedItem = response.content!!.fromJson<Medicare>()!!
                 response.status() shouldBe HttpStatusCode.OK
                 addedItem shouldBe Medicare(
@@ -68,13 +68,13 @@ class MedicareTests : BaseTest({
 
     "verify getting an item that does not exist" {
         with(engine) {
-            request(Get, Paths.medicare, "99").response.status() shouldBe HttpStatusCode.NotFound
+            request(Get, path, "99").response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 
     "verify adding a new item" {
         with(engine) {
-            with(bodyRequest(Post, Paths.medicare, newItem(2003).toJson())) {
+            with(bodyRequest(Post, path, newItem(2003).toJson())) {
                 val addedItem = response.content?.fromJson<Medicare>()!!
                 response.status() shouldBe HttpStatusCode.Created
                 addedItem shouldBe Medicare(
@@ -101,9 +101,9 @@ class MedicareTests : BaseTest({
 
     "verify adding a duplicate item" {
         with(engine) {
-            bodyRequest(Post, Paths.medicare, newItem(2008).toJson())
+            bodyRequest(Post, path, newItem(2008).toJson())
 
-            with(bodyRequest(Post, Paths.medicare, newItem(2008).toJson())) {
+            with(bodyRequest(Post, path, newItem(2008).toJson())) {
                 response.status() shouldBe HttpStatusCode.Conflict
             }
         }
@@ -111,8 +111,8 @@ class MedicareTests : BaseTest({
 
     "verify updating an added item" {
         with(engine) {
-            val id = requestToObject<Medicare>(Post, Paths.medicare, newItem(2004).toJson())?.id
-            with(bodyRequest(Put, Paths.medicare, newItem(2004).copy(id = id, percent = 6.0).toJson())) {
+            val id = requestToObject<Medicare>(Post, path, newItem(2004).toJson())?.id
+            with(bodyRequest(Put, path, newItem(2004).copy(id = id, percent = 6.0).toJson())) {
                 val addedItem = response.content!!.fromJson<Medicare>()!!
                 response.status() shouldBe HttpStatusCode.OK
                 addedItem shouldBe Medicare(
@@ -132,7 +132,7 @@ class MedicareTests : BaseTest({
         with(engine) {
             bodyRequest(
                 Put,
-                Paths.medicare,
+                path,
                 newItem(2005).copy(99).toJson()
             ).response.status() shouldBe HttpStatusCode.NotFound
         }
@@ -140,22 +140,22 @@ class MedicareTests : BaseTest({
 
     "verify updating without an id adds a new item" {
         with(engine) {
-            bodyRequest(Put, Paths.medicare, newItem(2006).toJson()).response.status() shouldBe HttpStatusCode.Created
+            bodyRequest(Put, path, newItem(2006).toJson()).response.status() shouldBe HttpStatusCode.Created
         }
     }
 
     "verify deleting and item that has been added" {
         with(engine) {
-            bodyRequest(Post, Paths.medicare, newItem(2007).toJson())
+            bodyRequest(Post, path, newItem(2007).toJson())
             val addedItem =
-                requestToObject<MedicareResponse>(Get, Paths.medicare)?.items?.find { it.year == 2007 }?.year
-            request(Delete, Paths.medicare, addedItem?.toString()).response.status() shouldBe HttpStatusCode.OK
+                requestToObject<MedicareResponse>(Get, path)?.items?.find { it.year == 2007 }?.year
+            request(Delete, path, addedItem?.toString()).response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify deleting item that doesn't exist" {
         with(engine) {
-            request(Delete, Paths.medicare, "2099").response.status() shouldBe HttpStatusCode.NotFound
+            request(Delete, path, "2099").response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 })

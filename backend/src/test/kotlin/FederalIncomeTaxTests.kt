@@ -1,8 +1,6 @@
 import MaritalStatus.Single
 import PayPeriod.Weekly
-import com.weesnerdevelopment.Paths
-import com.weesnerdevelopment.fromJson
-import com.weesnerdevelopment.toJson
+import com.weesnerdevelopment.Path
 import federalIncomeTax.FederalIncomeTax
 import federalIncomeTax.FederalIncomeTaxResponse
 import io.kotlintest.shouldBe
@@ -24,17 +22,19 @@ class FederalIncomeTaxTest : BaseTest({
         over = 1.0
     )
 
+    val path = Path.TaxFetcher.federalIncomeTax
+
     "verify getting base url returns ok" {
         with(engine) {
-            request(Get, Paths.federalIncomeTax).response.status() shouldBe HttpStatusCode.OK
+            request(Get, path).response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify getting base url returns all items in table" {
         with(engine) {
-            bodyRequest(Post, Paths.federalIncomeTax, newItem(2000).toJson())
-            bodyRequest(Post, Paths.federalIncomeTax, newItem(2001).toJson())
-            with(request(Get, Paths.federalIncomeTax)) {
+            bodyRequest(Post, path, newItem(2000).toJson())
+            bodyRequest(Post, path, newItem(2001).toJson())
+            with(request(Get, path)) {
                 val responseItems = response.content?.fromJson<FederalIncomeTaxResponse>()?.items
                 val item1 = responseItems!![responseItems.lastIndex - 1]
                 val item2 = responseItems[responseItems.lastIndex]
@@ -71,8 +71,8 @@ class FederalIncomeTaxTest : BaseTest({
 
     "verify getting an added item" {
         with(engine) {
-            val id = requestToObject<FederalIncomeTax>(Post, Paths.federalIncomeTax, newItem(2002).toJson())?.id
-            with(request(Get, Paths.federalIncomeTax, id?.toString())) {
+            val id = requestToObject<FederalIncomeTax>(Post, path, newItem(2002).toJson())?.id
+            with(request(Get, path, id?.toString())) {
                 val addedItem = response.content!!.fromJson<FederalIncomeTax>()!!
                 response.status() shouldBe HttpStatusCode.OK
                 addedItem shouldBe FederalIncomeTax(
@@ -94,13 +94,13 @@ class FederalIncomeTaxTest : BaseTest({
 
     "verify getting an item that does not exist" {
         with(engine) {
-            request(Get, Paths.federalIncomeTax, "99").response.status() shouldBe HttpStatusCode.NotFound
+            request(Get, path, "99").response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 
     "verify adding a new item" {
         with(engine) {
-            with(bodyRequest(Post, Paths.federalIncomeTax, newItem(2003).toJson())) {
+            with(bodyRequest(Post, path, newItem(2003).toJson())) {
                 val addedItem = response.content!!.fromJson<FederalIncomeTax>()!!
                 response.status() shouldBe HttpStatusCode.Created
                 addedItem shouldBe FederalIncomeTax(
@@ -122,9 +122,9 @@ class FederalIncomeTaxTest : BaseTest({
 
     "verify adding a duplicate item" {
         with(engine) {
-            bodyRequest(Post, Paths.federalIncomeTax, newItem(2008).toJson())
+            bodyRequest(Post, path, newItem(2008).toJson())
 
-            with(bodyRequest(Post, Paths.federalIncomeTax, newItem(2008).toJson())) {
+            with(bodyRequest(Post, path, newItem(2008).toJson())) {
                 response.status() shouldBe HttpStatusCode.Conflict
             }
         }
@@ -132,11 +132,11 @@ class FederalIncomeTaxTest : BaseTest({
 
     "verify updating an added item" {
         with(engine) {
-            bodyRequest(Post, Paths.federalIncomeTax, newItem(2004).toJson())
+            bodyRequest(Post, path, newItem(2004).toJson())
             with(
                 bodyRequest(
                     Put,
-                    Paths.federalIncomeTax,
+                    path,
                     newItem(2004).copy(id = 1, percent = 1.4, over = 2.5).toJson()
                 )
             ) {
@@ -163,7 +163,7 @@ class FederalIncomeTaxTest : BaseTest({
         with(engine) {
             bodyRequest(
                 Put,
-                Paths.federalIncomeTax,
+                path,
                 newItem(2005).copy(99).toJson()
             ).response.status() shouldBe HttpStatusCode.NotFound
         }
@@ -173,7 +173,7 @@ class FederalIncomeTaxTest : BaseTest({
         with(engine) {
             bodyRequest(
                 Put,
-                Paths.federalIncomeTax,
+                path,
                 newItem(2006).toJson()
             ).response.status() shouldBe HttpStatusCode.Created
         }
@@ -181,14 +181,14 @@ class FederalIncomeTaxTest : BaseTest({
 
     "verify deleting and item that has been added" {
         with(engine) {
-            bodyRequest(Post, Paths.federalIncomeTax, newItem(2007).toJson())
-            request(Delete, Paths.federalIncomeTax, "2007").response.status() shouldBe HttpStatusCode.OK
+            bodyRequest(Post, path, newItem(2007).toJson())
+            request(Delete, path, "2007").response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify deleting item that doesn't exist" {
         with(engine) {
-            request(Delete, Paths.federalIncomeTax, "2099").response.status() shouldBe HttpStatusCode.NotFound
+            request(Delete, path, "2099").response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 })

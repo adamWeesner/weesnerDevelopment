@@ -1,8 +1,6 @@
 import PayPeriod.Biweekly
 import PayPeriod.Weekly
-import com.weesnerdevelopment.Paths
-import com.weesnerdevelopment.fromJson
-import com.weesnerdevelopment.toJson
+import com.weesnerdevelopment.Path
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
@@ -21,18 +19,20 @@ class TaxWithholdingTests : BaseTest({
         type = General
     )
 
+    val path = Path.TaxFetcher.taxWithholding
+
     "verify getting base url returns ok" {
         with(engine) {
-            request(Get, Paths.taxWithholding).response.status() shouldBe HttpStatusCode.OK
+            request(Get, path).response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify getting base url returns all items in table" {
         with(engine) {
-            bodyRequest(Post, Paths.taxWithholding, newItem(2000).toJson())
-            bodyRequest(Post, Paths.taxWithholding, newItem(2001).toJson())
+            bodyRequest(Post, path, newItem(2000).toJson())
+            bodyRequest(Post, path, newItem(2001).toJson())
 
-            with(request(Get, Paths.taxWithholding)) {
+            with(request(Get, path)) {
                 val responseItems = response.content?.fromJson<TaxWithholdingResponse>()?.items
                 val item1 = responseItems!![responseItems.lastIndex - 1]
                 val item2 = responseItems[responseItems.lastIndex]
@@ -63,9 +63,9 @@ class TaxWithholdingTests : BaseTest({
 
     "verify getting an added item" {
         with(engine) {
-            val id = requestToObject<TaxWithholding>(Post, Paths.taxWithholding, newItem(2002).toJson())?.id
+            val id = requestToObject<TaxWithholding>(Post, path, newItem(2002).toJson())?.id
 
-            with(request(Get, Paths.taxWithholding, id?.toString())) {
+            with(request(Get, path, id?.toString())) {
                 val addedItem = response.content!!.fromJson<TaxWithholding>()!!
 
                 response.status() shouldBe HttpStatusCode.OK
@@ -84,9 +84,9 @@ class TaxWithholdingTests : BaseTest({
 
     "verify adding a duplicate item" {
         with(engine) {
-            bodyRequest(Post, Paths.taxWithholding, newItem(2008).toJson())
+            bodyRequest(Post, path, newItem(2008).toJson())
 
-            with(bodyRequest(Post, Paths.taxWithholding, newItem(2008).toJson())) {
+            with(bodyRequest(Post, path, newItem(2008).toJson())) {
                 response.status() shouldBe HttpStatusCode.Conflict
             }
         }
@@ -94,13 +94,13 @@ class TaxWithholdingTests : BaseTest({
 
     "verify getting an item that does not exist" {
         with(engine) {
-            request(Get, Paths.taxWithholding, "99").response.status() shouldBe HttpStatusCode.NotFound
+            request(Get, path, "99").response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 
     "verify adding a new item" {
         with(engine) {
-            with(bodyRequest(Post, Paths.taxWithholding, newItem(2003).toJson())) {
+            with(bodyRequest(Post, path, newItem(2003).toJson())) {
                 val addedItem = response.content!!.fromJson<TaxWithholding>()!!
 
                 response.status() shouldBe HttpStatusCode.Created
@@ -119,12 +119,12 @@ class TaxWithholdingTests : BaseTest({
 
     "verify updating an added item" {
         with(engine) {
-            bodyRequest(Post, Paths.taxWithholding, newItem(2004).toJson())
+            bodyRequest(Post, path, newItem(2004).toJson())
 
             with(
                 bodyRequest(
                     Put,
-                    Paths.taxWithholding,
+                    path,
                     newItem(2004).copy(id = 1, amount = 1.4, payPeriod = Biweekly).toJson()
                 )
             ) {
@@ -148,7 +148,7 @@ class TaxWithholdingTests : BaseTest({
         with(engine) {
             bodyRequest(
                 Put,
-                Paths.taxWithholding,
+                path,
                 newItem(2005).copy(99).toJson()
             ).response.status() shouldBe HttpStatusCode.NotFound
         }
@@ -158,7 +158,7 @@ class TaxWithholdingTests : BaseTest({
         with(engine) {
             bodyRequest(
                 Put,
-                Paths.taxWithholding,
+                path,
                 newItem(2006).toJson()
             ).response.status() shouldBe HttpStatusCode.Created
         }
@@ -166,14 +166,14 @@ class TaxWithholdingTests : BaseTest({
 
     "verify deleting and item that has been added" {
         with(engine) {
-            bodyRequest(Post, Paths.taxWithholding, newItem(2007).toJson())
-            request(Delete, Paths.taxWithholding, "2007").response.status() shouldBe HttpStatusCode.OK
+            bodyRequest(Post, path, newItem(2007).toJson())
+            request(Delete, path, "2007").response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify deleting item that doesn't exist" {
         with(engine) {
-            request(Delete, Paths.taxWithholding, "2099").response.status() shouldBe HttpStatusCode.NotFound
+            request(Delete, path, "2099").response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 })

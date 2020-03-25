@@ -10,9 +10,9 @@ import java.io.File
 
 open class BaseTest(block: AbstractStringSpec.() -> Unit = {}) : StringSpec() {
     companion object {
-        val engine = TestApplicationEngine(createTestEnvironment({
+        val engine = TestApplicationEngine(createTestEnvironment {
             config = HoconApplicationConfig(ConfigFactory.load("application-test.conf"))
-        }))
+        })
     }
 
     init {

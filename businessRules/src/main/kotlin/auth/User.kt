@@ -14,5 +14,8 @@ data class User(
     override val dateUpdated: Long = System.currentTimeMillis()
 ) : GenericItem {
     fun asHashed() = if (username != null && password != null) HashedUser(username!!, password!!) else null
+
+    fun redacted() =
+        "User { name: $name, email: $email, username: $username, dateCreated: $dateCreated, dateUpdated: $dateUpdated }"
 }
 

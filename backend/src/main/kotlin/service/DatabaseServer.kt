@@ -93,47 +93,16 @@ class DatabaseServer {
         DatabaseFactory.init()
 
         install(Routing) {
-            val userRouter = UserRouter()
-            val userService = userRouter.service as UsersService
-
-            authenticate {
-                route("/") {
-                    handle {
-                        val principal = call.authentication.principal<JWTPrincipal>()
-
-                        principal!!.payload.claims.run {
-                            val items = mutableMapOf<String, String?>()
-
-                            forEach {
-                                if (it.key.startsWith("attr-"))
-                                    items[it.key.replace("attr-", "")] = it.value?.asString()
-                            }
-
-                            val userName = items["username"]
-                            val password = items["password"]
-                            val uuid = items["uuid"]
-
-                            when {
-                                userName != null && password != null -> {
-                                    userService.getUserFromHash(HashedUser(userName, password))?.toJson()?.run {
-                                        call.respond(this)
-                                    } ?: call.respondAuthorizationIssue(InvalidUserReason.NoUserFound)
-                                }
-                                uuid != null -> {
-                                    userService.getUserByUuid(uuid)?.toJson()?.run {
-                                        call.respond(this)
-                                    } ?: call.respondAuthorizationIssue(InvalidUserReason.NoUserFound)
-                                }
-                                else -> call.respondAuthorizationIssue(InvalidUserReason.General)
-                            }
-                        }
-                    }
+            // user
+            route(Path.User.base, UserRouter(jwtProvider, Path.User.account)) { router ->
+                (router as UserRouter).apply {
+                    login(Path.User.login)
+                    signUp(Path.User.signUp)
                 }
+            }
 
-                // user
-                route(Path.User.me, userRouter)
-
-                // tax fetcher
+            // tax fetcher
+            authenticate {
                 route(Path.TaxFetcher.socialSecurity, SocialSecurityRouter())
                 route(Path.TaxFetcher.medicare, MedicareRouter())
                 route(Path.TaxFetcher.taxWithholding, TaxWithholdingRouter())

@@ -1,11 +1,15 @@
 package com.weesnerdevelopment.service
 
-import auth.*
+import auth.Cipher
+import auth.InvalidUserReason
+import auth.JwtProvider
+import auth.UserRouter
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.ryanharter.ktor.moshi.moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.weesnerdevelopment.*
+import com.weesnerdevelopment.AppConfig
+import com.weesnerdevelopment.Path
 import federalIncomeTax.FederalIncomeTaxRouter
 import generics.route
 import io.ktor.application.Application
@@ -13,22 +17,20 @@ import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
-import io.ktor.auth.authentication
 import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
 import io.ktor.auth.parseAuthorizationHeader
 import io.ktor.features.*
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.auth.HttpAuthHeader
-import io.ktor.response.respond
 import io.ktor.routing.Routing
-import io.ktor.routing.route
 import io.ktor.websocket.WebSockets
 import medicare.MedicareRouter
+import respondAuthorizationIssue
+import respondServerError
 import socialSecurity.SocialSecurityRouter
 import taxWithholding.TaxWithholdingRouter
 import java.time.Duration
-import kotlin.collections.set
 
 class DatabaseServer {
     fun Application.main() {
@@ -67,6 +69,8 @@ class DatabaseServer {
                     return@status when (e) {
                         // usually happens when no token was passed...
                         is ClassCastException -> call.respondAuthorizationIssue(InvalidUserReason.InvalidJwt)
+                        is TokenExpiredException -> call.respondAuthorizationIssue(InvalidUserReason.Expired)
+                        is JWTVerificationException -> call.respondAuthorizationIssue(InvalidUserReason.InvalidJwt)
                         else -> call.respondServerError(Throwable(e))
                     }
                 }

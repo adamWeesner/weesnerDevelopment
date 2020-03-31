@@ -1,7 +1,5 @@
 package com.weesnerdevelopment
 
-import auth.InvalidUserException
-import auth.InvalidUserReason
 import com.weesnerdevelopment.Path.TaxFetcher.basePath
 import com.weesnerdevelopment.Path.User.basePath
 import io.ktor.application.ApplicationCall

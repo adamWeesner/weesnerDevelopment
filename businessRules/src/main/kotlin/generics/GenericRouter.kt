@@ -40,7 +40,12 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
     open val deleteParamName: String = "id"
 
     /**
-     * The delete equation to use to identifty which item to delete.
+     * The [putDefault] path url if it is more than '/'.
+     */
+    open val putParamUrl: String = ""
+
+    /**
+     * The delete equation to use to identify which item to delete.
      */
     open fun deleteEq(param: String) = service.table.id eq param.toInt()
 
@@ -56,9 +61,15 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
     open suspend fun deleteQualifier(param: String): O? = service.getSingle { deleteEq(param) }
 
     /**
+     * The qualifier to verify if the the [putDefault] item is in the database before trying to update it.
+     */
+    open suspend fun putQualifier(receivedItem: O): O? =
+        service.update(receivedItem) { service.table.id eq receivedItem.id!! }
+
+    /**
      * Get all items in [T] if there are any or returns an [HttpStatusCode.NotFound]
      *
-     * GET /[basePath]
+     * GET /basePath
      */
     open fun Route.getDefault() {
         get("/") {
@@ -72,10 +83,10 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
     /**
      * Get a single item with the given [pathParam] if there is one or [HttpStatusCode.NotFound].
      *
-     * GET /[basePath]/{pathParam}
+     * GET /basePath/[pathParam]
      */
     open fun Route.getSingle(pathParam: String) {
-        get("/{$pathParam}") {
+        get("/$pathParam") {
             val param = call.parameters[pathParam] ?: return@get call.respond(HttpStatusCode.BadRequest)
 
             call.respond(service.getSingle { service.table.id eq param.toInt() } ?: HttpStatusCode.NotFound)
@@ -90,7 +101,7 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
      * `dateCreated`, and `dateUpdated` be omitted if you choose, but all other item values should be provided
      * example for [SocialSecurity]:
      *
-     * POST /[basePath]
+     * POST /basePath
      * ```json
      * {
      *   "year": 2016,
@@ -118,12 +129,12 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
      * [HttpStatusCode.BadRequest]. Pass in the `id` along with all other non-nullable fields for the item, in the
      * JSON request to determine which record to update.
      *
-     * PUT /[basePath]
+     * PUT /[putParamUrl]
      */
     open fun Route.putDefault(type: KType) {
-        put("/") {
+        put("/$putParamUrl") {
             val item = call.receive<O>(type)
-            val updated = service.update(item) { service.table.id eq item.id!! }
+            val updated = putQualifier(item)
 
             when {
                 updated == null -> call.respond(HttpStatusCode.BadRequest)
@@ -138,10 +149,10 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
      * not given. If there is not item with the given [pathParam], or there was an error deleting the item we respond
      * with [HttpStatusCode.NotFound].
      *
-     * DELETE /[basePath]/{pathParam}
+     * DELETE /basePath/[pathParam]
      */
     open fun Route.deleteDefault(pathParam: String) {
-        delete("/{$pathParam}") {
+        delete("/$pathParam") {
             val param = call.parameters[pathParam] ?: return@delete call.respond(HttpStatusCode.BadRequest)
 
             val id = deleteQualifier(param)?.id ?: return@delete call.respond(HttpStatusCode.NotFound)

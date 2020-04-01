@@ -1,6 +1,7 @@
 package com.weesnerdevelopment
 
 import io.ktor.config.ApplicationConfig
+import java.net.InetAddress
 
 class AppConfig(
     private val config: ApplicationConfig
@@ -17,11 +18,17 @@ class AppConfig(
     val secret = getJwt("secret")
     val expiresIn = getJwt("expiresIn").toLong()
 
-    val baseUrl = if (isDevelopment) "localhost" else "weesnerDevelopment.com"
+    val baseUrl get() = if (isDevelopment) getLocalIp() else "weesnerDevelopment.com"
     val isDevelopment get() = appEnv == Environment.development.name
 
     private fun getDeployment(item: String) = config.property("$deployment.$item").getString()
     private fun getJwt(item: String) = config.property("$jwt.$item").getString()
+
+    private fun getLocalIp(): String = InetAddress.getLocalHost().run {
+        println("Host Address - $hostAddress")
+        println("Host Name - $hostName")
+        hostAddress
+    }
 }
 
 /**

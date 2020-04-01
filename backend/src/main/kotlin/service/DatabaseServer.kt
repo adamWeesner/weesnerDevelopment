@@ -19,7 +19,10 @@ import io.ktor.auth.parseAuthorizationHeader
 import io.ktor.features.*
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.auth.HttpAuthHeader
+import io.ktor.response.respond
 import io.ktor.routing.Routing
+import io.ktor.routing.get
+import io.ktor.routing.route
 import io.ktor.websocket.WebSockets
 import medicare.MedicareRouter
 import respondAuthorizationIssue
@@ -89,6 +92,11 @@ class DatabaseServer {
         DatabaseFactory.init()
 
         install(Routing) {
+            route("/health") {
+                get("/") {
+                    call.respond(HttpStatusCode.OK, "Server is up and running")
+                }
+            }
             // user
             route(Path.User.base, UserRouter(jwtProvider, Path.User.account)) { router ->
                 (router as UserRouter).apply {

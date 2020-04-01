@@ -10,6 +10,7 @@ plugins {
     application
     kotlin("jvm")
     kotlin("kapt")
+    id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 sourceSets { sharedSources() }
@@ -19,6 +20,16 @@ tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = jvmVersion }
 tasks.withType<Test> { useJUnitPlatform() }
 
 application { mainClassName = "io.ktor.server.netty.EngineMain" }
+
+tasks.withType<Jar> {
+    manifest {
+        attributes(
+            mapOf(
+                "Main-Class" to application.mainClassName
+            )
+        )
+    }
+}
 
 task("stage").dependsOn("installDist")
 

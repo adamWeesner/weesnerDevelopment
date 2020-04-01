@@ -4,8 +4,6 @@ import generics.GenericRouter
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
-import io.ktor.auth.authentication
-import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.header
@@ -15,6 +13,7 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.put
 import io.ktor.util.pipeline.PipelineContext
+import loggedUserData
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import respondAuthorizationIssue
 import java.util.*
@@ -42,23 +41,10 @@ class UserRouter(
     override fun Route.getSingle(pathParam: String) {
         authenticate {
             get("/$pathParam") {
-                val principal = call.authentication.principal<JWTPrincipal>()
-
-                principal!!.payload.claims.run {
-                    val items = mutableMapOf<String, String?>()
-
-                    forEach {
-                        if (it.key.startsWith("attr-"))
-                            items[it.key.replace("attr-", "")] = it.value?.asString()
-                    }
-
-                    val userName = items["username"]
-                    val password = items["password"]
-                    val uuid = items["uuid"]
-
+                call.loggedUserData()?.getData()?.apply {
                     when {
-                        userName != null && password != null -> {
-                            (service as UsersService).getUserFromHash(HashedUser(userName, password))?.run {
+                        username != null && password != null -> {
+                            (service as UsersService).getUserFromHash(HashedUser(username, password))?.run {
                                 call.respond(HttpStatusCode.OK, this.redacted())
                             } ?: call.respondAuthorizationIssue(InvalidUserReason.NoUserFound)
                         }
@@ -77,7 +63,11 @@ class UserRouter(
     override fun Route.putDefault(type: KType) {
         authenticate {
             put("/$putParamUrl") {
+                val authToken = call.loggedUserData()
                 val item = call.receive<User>(type)
+
+                if (authToken?.getData()?.uuid != item.uuid) return@put call.respond(HttpStatusCode.Unauthorized)
+
                 val updated = putQualifier(item)
 
                 when {

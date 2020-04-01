@@ -1,8 +1,10 @@
+import auth.CustomPrincipal
 import auth.InvalidUserException
 import auth.InvalidUserReason
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.ktor.application.ApplicationCall
+import io.ktor.auth.authentication
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.uri
 import io.ktor.response.respond
@@ -61,3 +63,8 @@ suspend fun ApplicationCall.respondAuthorizationIssue(reason: InvalidUserReason)
     val httpStatus = HttpStatusCode.Unauthorized
     respond(httpStatus, InvalidUserException(request.uri, httpStatus.value, reason.code).toJson())
 }
+
+/**
+ * Gets the Authentication principal from the [ApplicationCall].
+ */
+fun ApplicationCall.loggedUserData() = authentication.principal<CustomPrincipal>()

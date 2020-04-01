@@ -1,9 +1,6 @@
 package com.weesnerdevelopment.service
 
-import auth.Cipher
-import auth.InvalidUserReason
-import auth.JwtProvider
-import auth.UserRouter
+import auth.*
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.ryanharter.ktor.moshi.moshi
@@ -17,7 +14,6 @@ import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
-import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
 import io.ktor.auth.parseAuthorizationHeader
 import io.ktor.features.*
@@ -84,7 +80,7 @@ class DatabaseServer {
                 verifier(jwtProvider.verifier)
                 this.realm = appConfig.realm
                 validate { credential ->
-                    if (credential.payload.audience.contains(appConfig.audience)) JWTPrincipal(credential.payload)
+                    if (credential.payload.audience.contains(appConfig.audience)) CustomPrincipal(credential.payload)
                     else null
                 }
             }

@@ -2,6 +2,7 @@ package socialSecurity
 
 import generics.GenericRouter
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import taxFetcher.SocialSecurity
 
 class SocialSecurityRouter : GenericRouter<SocialSecurity, SocialSecurityTable>(
     SocialSecurityService(),

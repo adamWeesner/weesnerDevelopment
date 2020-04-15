@@ -1,5 +1,6 @@
 package generics
 
+import base.GenericItem
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.cio.websocket.DefaultWebSocketSession

@@ -5,9 +5,10 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import medicare.Medicare
-import medicare.MedicareLimit
 import medicare.MedicareResponse
+import taxFetcher.MaritalStatus.Single
+import taxFetcher.Medicare
+import taxFetcher.MedicareLimit
 
 
 class MedicareTests : BaseTest({
@@ -19,7 +20,7 @@ class MedicareTests : BaseTest({
             MedicareLimit(
                 year = year,
                 amount = 200000,
-                maritalStatus = MaritalStatus.Single
+                maritalStatus = Single
             )
         )
     )
@@ -86,7 +87,7 @@ class MedicareTests : BaseTest({
                         MedicareLimit(
                             addedItem.limits[0].id,
                             2003,
-                            MaritalStatus.Single,
+                            Single,
                             200000,
                             addedItem.limits[0].dateCreated,
                             addedItem.limits[0].dateUpdated

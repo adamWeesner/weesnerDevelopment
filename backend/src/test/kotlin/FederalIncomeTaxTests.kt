@@ -1,7 +1,4 @@
-import MaritalStatus.Single
-import PayPeriod.Weekly
 import com.weesnerdevelopment.Path
-import federalIncomeTax.FederalIncomeTax
 import federalIncomeTax.FederalIncomeTaxResponse
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
@@ -9,6 +6,9 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
+import taxFetcher.FederalIncomeTax
+import taxFetcher.MaritalStatus.Single
+import taxFetcher.PayPeriod.Weekly
 
 class FederalIncomeTaxTest : BaseTest({
     fun newItem(year: Int) = FederalIncomeTax(

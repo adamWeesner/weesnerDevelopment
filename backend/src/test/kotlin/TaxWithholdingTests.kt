@@ -1,5 +1,3 @@
-import PayPeriod.Biweekly
-import PayPeriod.Weekly
 import com.weesnerdevelopment.Path
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
@@ -7,9 +5,11 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import taxWithholding.TaxWithholding
+import taxFetcher.PayPeriod.Biweekly
+import taxFetcher.PayPeriod.Weekly
+import taxFetcher.TaxWithholding
+import taxFetcher.TaxWithholdingTypes.General
 import taxWithholding.TaxWithholdingResponse
-import taxWithholding.TaxWithholdingTypes.General
 
 class TaxWithholdingTests : BaseTest({
     fun newItem(year: Int) = TaxWithholding(

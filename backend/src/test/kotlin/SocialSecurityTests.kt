@@ -5,8 +5,8 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import socialSecurity.SocialSecurity
 import socialSecurity.SocialSecurityResponse
+import taxFetcher.SocialSecurity
 
 class SocialSecurityTest : BaseTest({
     fun newItem(year: Int) = SocialSecurity(

@@ -46,7 +46,7 @@ class UsersService : GenericService<User, UsersTable>(
                 if (it == null) onChange(ChangeType.Error, key)
                 else onChange(ChangeType.Create, key, it)
             }
-            item.uuid != null -> getUserByUuid(item.uuid).also {
+            item.uuid != null -> getUserByUuid(item.uuid!!).also {
                 if (it == null) onChange(ChangeType.Error, key)
                 else onChange(ChangeType.Create, key, it)
             }

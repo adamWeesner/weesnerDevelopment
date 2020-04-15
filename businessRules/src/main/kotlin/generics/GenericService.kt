@@ -1,5 +1,6 @@
 package generics
 
+import base.GenericItem
 import dbQuery
 import model.ChangeType
 import model.Notification

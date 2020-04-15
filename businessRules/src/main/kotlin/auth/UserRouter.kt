@@ -45,12 +45,12 @@ class UserRouter(
                     when {
                         username != null && password != null -> {
                             (service as UsersService).getUserFromHash(HashedUser(username, password))?.run {
-                                call.respond(HttpStatusCode.OK, this.redacted())
+                                call.respond(HttpStatusCode.OK, this.redacted() ?: "")
                             } ?: call.respondAuthorizationIssue(InvalidUserReason.NoUserFound)
                         }
                         uuid != null -> {
                             (service as UsersService).getUserByUuid(uuid)?.run {
-                                call.respond(HttpStatusCode.OK, this.redacted())
+                                call.respond(HttpStatusCode.OK, this.redacted() ?: "")
                             } ?: call.respondAuthorizationIssue(InvalidUserReason.NoUserFound)
                         }
                         else -> call.respondAuthorizationIssue(InvalidUserReason.General)
@@ -72,8 +72,8 @@ class UserRouter(
 
                 when {
                     updated == null -> call.respond(HttpStatusCode.BadRequest)
-                    updated.id != item.id -> call.respond(HttpStatusCode.Created, updated.redacted())
-                    else -> call.respond(HttpStatusCode.OK, updated.redacted())
+                    updated.id != item.id -> call.respond(HttpStatusCode.Created, updated.redacted() ?: "")
+                    else -> call.respond(HttpStatusCode.OK, updated.redacted() ?: "")
                 }
             }
         }

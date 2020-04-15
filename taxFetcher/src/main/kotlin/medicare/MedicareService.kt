@@ -1,13 +1,14 @@
 package medicare
 
+import base.GenericItem
 import dbQuery
-import generics.GenericItem
 import generics.GenericService
 import generics.GenericServiceWChildren
 import generics.IdTable
 import model.ChangeType
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import taxFetcher.Medicare
 
 class MedicareService : GenericServiceWChildren<Medicare, MedicareTable>(
     MedicareTable
@@ -57,7 +58,7 @@ class MedicareService : GenericServiceWChildren<Medicare, MedicareTable>(
 
     override suspend fun delete(id: Int, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
         getSingle { table.id eq id }?.run {
-            limits.forEach { if (it.id != null) limitsService.apply { delete(it.id) { table.id eq it.id } } }
+            limits.forEach { it.id?.let { limitsService.apply { delete(it) { table.id eq it } } } }
         }
         return super.delete(id, op)
     }

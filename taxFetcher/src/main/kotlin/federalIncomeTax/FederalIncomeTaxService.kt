@@ -1,10 +1,11 @@
 package federalIncomeTax
 
-import MaritalStatus
-import PayPeriod
 import generics.GenericService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import taxFetcher.FederalIncomeTax
+import taxFetcher.MaritalStatus
+import taxFetcher.PayPeriod
 
 class FederalIncomeTaxService : GenericService<FederalIncomeTax, FederalIncomeTaxesTable>(
     FederalIncomeTaxesTable

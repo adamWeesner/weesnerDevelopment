@@ -20,13 +20,4 @@ open class IdTable : Table(), GenericTable {
     override val dateUpdated = long("dateUpdated")
 }
 
-/**
- * Generic item to map to the [IdTable].
- */
-interface GenericItem {
-    val id: Int?
-    val dateCreated: Long
-    val dateUpdated: Long
-}
-
 class InvalidAttributeException(value: String) : IllegalArgumentException("$value is required but missing or invalid")

@@ -1,11 +1,12 @@
 package medicare
 
-import MaritalStatus
 import dbQuery
 import generics.GenericService
 import model.ChangeType
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import taxFetcher.MaritalStatus
+import taxFetcher.MedicareLimit
 
 class MedicareLimitsService : GenericService<MedicareLimit, MedicareLimitsTable>(
     MedicareLimitsTable

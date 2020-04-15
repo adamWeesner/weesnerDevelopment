@@ -17,6 +17,8 @@ import io.ktor.auth.authenticate
 import io.ktor.auth.jwt.jwt
 import io.ktor.auth.parseAuthorizationHeader
 import io.ktor.features.*
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.response.respond
@@ -41,9 +43,12 @@ class DatabaseServer {
         install(CallLogging)
         install(WebSockets)
         install(CORS) {
-            allowCredentials = true
+            method(HttpMethod.Options)
+            header(HttpHeaders.Authorization)
             host("${appConfig.baseUrl}:${appConfig.port}")
+            host("localhost:3000")
             maxAge = Duration.ofDays(1)
+            allowCredentials = true
             allowNonSimpleContentTypes = true
         }
 

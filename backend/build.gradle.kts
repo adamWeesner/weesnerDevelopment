@@ -4,7 +4,7 @@ import Versions.ktor_moshi_version
 import Versions.logback_version
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "1.1.0-SNAPSHOT"
+version = "1.1.0"
 
 plugins {
     application

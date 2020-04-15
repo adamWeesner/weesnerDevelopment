@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "1.1.0"
+version = "1.1.1"
 
 plugins {
     kotlin("jvm")

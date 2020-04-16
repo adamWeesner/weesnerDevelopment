@@ -2,7 +2,7 @@ package socialSecurity
 
 import com.squareup.moshi.JsonClass
 import generics.GenericResponse
-import taxFetcher.SocialSecurity
+import shared.taxFetcher.SocialSecurity
 
 @JsonClass(generateAdapter = true)
 data class SocialSecurityResponse(

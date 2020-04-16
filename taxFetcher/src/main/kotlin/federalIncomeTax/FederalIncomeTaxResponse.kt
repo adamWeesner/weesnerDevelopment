@@ -2,7 +2,7 @@ package federalIncomeTax
 
 import com.squareup.moshi.JsonClass
 import generics.GenericResponse
-import taxFetcher.FederalIncomeTax
+import shared.taxFetcher.FederalIncomeTax
 
 @JsonClass(generateAdapter = true)
 data class FederalIncomeTaxResponse(

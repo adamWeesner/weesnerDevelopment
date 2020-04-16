@@ -1,6 +1,5 @@
 package medicare
 
-import base.GenericItem
 import dbQuery
 import generics.GenericService
 import generics.GenericServiceWChildren
@@ -8,7 +7,8 @@ import generics.IdTable
 import model.ChangeType
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import taxFetcher.Medicare
+import shared.base.GenericItem
+import shared.taxFetcher.Medicare
 
 class MedicareService : GenericServiceWChildren<Medicare, MedicareTable>(
     MedicareTable

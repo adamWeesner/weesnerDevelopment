@@ -1,11 +1,11 @@
 package generics
 
-import base.GenericItem
 import dbQuery
 import model.ChangeType
 import model.Notification
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import shared.base.GenericItem
 
 /**
  * The service for the given item type [O] and table [T].

@@ -1,6 +1,7 @@
 package auth
 
 import com.squareup.moshi.JsonClass
+import shared.auth.HashedUser
 
 fun HashedUser.asToken(jwtProvider: JwtProvider) = jwtProvider.createJWT(this)
 

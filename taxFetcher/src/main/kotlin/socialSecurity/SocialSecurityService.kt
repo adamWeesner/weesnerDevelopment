@@ -3,7 +3,7 @@ package socialSecurity
 import generics.GenericService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import taxFetcher.SocialSecurity
+import shared.taxFetcher.SocialSecurity
 
 class SocialSecurityService : GenericService<SocialSecurity, SocialSecurityTable>(
     SocialSecurityTable

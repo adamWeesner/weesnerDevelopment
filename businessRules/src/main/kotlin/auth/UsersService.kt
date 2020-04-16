@@ -10,6 +10,8 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import shared.auth.HashedUser
+import shared.auth.User
 
 class UsersService : GenericService<User, UsersTable>(
     UsersTable

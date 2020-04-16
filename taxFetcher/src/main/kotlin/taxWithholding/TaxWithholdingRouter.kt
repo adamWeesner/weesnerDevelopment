@@ -2,7 +2,7 @@ package taxWithholding
 
 import generics.GenericRouter
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import taxFetcher.TaxWithholding
+import shared.taxFetcher.TaxWithholding
 
 class TaxWithholdingRouter : GenericRouter<TaxWithholding, TaxWithholdingTable>(
     TaxWithholdingService(),

@@ -1,9 +1,9 @@
 package generics
 
-import base.GenericItem
 import io.ktor.routing.Route
 import io.ktor.routing.route
 import io.ktor.websocket.webSocket
+import shared.base.GenericItem
 import kotlin.reflect.full.createType
 
 /**

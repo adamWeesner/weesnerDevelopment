@@ -4,6 +4,7 @@ import io.ktor.http.HttpMethod
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
+import shared.fromJson
 
 /**
  * Helper method for building a test request for the given [type] and [path] having [extraUri] will add a /[extraUri]

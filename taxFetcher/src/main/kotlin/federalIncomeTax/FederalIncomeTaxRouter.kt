@@ -2,7 +2,7 @@ package federalIncomeTax
 
 import generics.GenericRouter
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import taxFetcher.FederalIncomeTax
+import shared.taxFetcher.FederalIncomeTax
 
 class FederalIncomeTaxRouter : GenericRouter<FederalIncomeTax, FederalIncomeTaxesTable>(
     FederalIncomeTaxService(),

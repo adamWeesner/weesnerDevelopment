@@ -7,6 +7,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.request.uri
 import io.ktor.response.respond
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import shared.toJson
 
 /**
  * Helper function to query [T] in the table.

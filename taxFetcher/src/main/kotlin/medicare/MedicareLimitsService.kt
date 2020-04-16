@@ -5,8 +5,8 @@ import generics.GenericService
 import model.ChangeType
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import taxFetcher.MaritalStatus
-import taxFetcher.MedicareLimit
+import shared.taxFetcher.MaritalStatus
+import shared.taxFetcher.MedicareLimit
 
 class MedicareLimitsService : GenericService<MedicareLimit, MedicareLimitsTable>(
     MedicareLimitsTable

@@ -5,10 +5,12 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import taxFetcher.PayPeriod.Biweekly
-import taxFetcher.PayPeriod.Weekly
-import taxFetcher.TaxWithholding
-import taxFetcher.TaxWithholdingTypes.General
+import shared.fromJson
+import shared.taxFetcher.PayPeriod.Biweekly
+import shared.taxFetcher.PayPeriod.Weekly
+import shared.taxFetcher.TaxWithholding
+import shared.taxFetcher.TaxWithholdingTypes.General
+import shared.toJson
 import taxWithholding.TaxWithholdingResponse
 
 class TaxWithholdingTests : BaseTest({

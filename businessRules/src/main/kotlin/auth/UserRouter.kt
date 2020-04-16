@@ -16,6 +16,8 @@ import io.ktor.util.pipeline.PipelineContext
 import loggedUserData
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import respondAuthorizationIssue
+import shared.auth.HashedUser
+import shared.auth.User
 import java.util.*
 import kotlin.reflect.KType
 

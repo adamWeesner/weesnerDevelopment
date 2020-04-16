@@ -2,7 +2,7 @@ package medicare
 
 import generics.GenericRouter
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import taxFetcher.Medicare
+import shared.taxFetcher.Medicare
 
 class MedicareRouter : GenericRouter<Medicare, MedicareTable>(
     MedicareService(),

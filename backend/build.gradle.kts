@@ -34,6 +34,8 @@ tasks.withType<Jar> {
 task("stage").dependsOn("installDist")
 
 dependencies {
+    implementation(fileTree(mapOf("dir" to "../libs", "include" to listOf("*.jar"))))
+
     implementation(project(":businessRules"))
     implementation(project(":taxFetcher"))
 

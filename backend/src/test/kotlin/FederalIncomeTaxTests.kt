@@ -6,9 +6,11 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import taxFetcher.FederalIncomeTax
-import taxFetcher.MaritalStatus.Single
-import taxFetcher.PayPeriod.Weekly
+import shared.fromJson
+import shared.taxFetcher.FederalIncomeTax
+import shared.taxFetcher.MaritalStatus.Single
+import shared.taxFetcher.PayPeriod.Weekly
+import shared.toJson
 
 class FederalIncomeTaxTest : BaseTest({
     fun newItem(year: Int) = FederalIncomeTax(

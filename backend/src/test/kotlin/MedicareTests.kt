@@ -6,9 +6,11 @@ import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
 import medicare.MedicareResponse
-import taxFetcher.MaritalStatus.Single
-import taxFetcher.Medicare
-import taxFetcher.MedicareLimit
+import shared.fromJson
+import shared.taxFetcher.MaritalStatus.Single
+import shared.taxFetcher.Medicare
+import shared.taxFetcher.MedicareLimit
+import shared.toJson
 
 
 class MedicareTests : BaseTest({

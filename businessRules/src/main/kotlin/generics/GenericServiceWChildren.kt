@@ -1,7 +1,7 @@
 package generics
 
-import base.GenericItem
 import model.Notification
+import shared.base.GenericItem
 
 /**
  * The service for the given item type [O] and table [T] that has other services that it depends on internally.

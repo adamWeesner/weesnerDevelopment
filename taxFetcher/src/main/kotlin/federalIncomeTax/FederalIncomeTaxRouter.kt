@@ -12,7 +12,17 @@ class FederalIncomeTaxRouter : GenericRouter<FederalIncomeTax, FederalIncomeTaxe
     override val deleteParamName = "year"
 
     override suspend fun postQualifier(receivedItem: FederalIncomeTax) =
-        service.getSingle { service.table.year eq receivedItem.year }
+        service.getAll().filter {
+            it.year == receivedItem.year && it.maritalStatus == receivedItem.maritalStatus && it.payPeriod == receivedItem.payPeriod
+        }.run {
+            forEach {
+                receivedItem.apply {
+                    if ((notOver in it.over..it.notOver) || (over in it.over..it.notOver)) return@run it
+                }
+            }
+
+            null
+        }
 
     override fun deleteEq(param: String) = service.table.year eq param.toInt()
 }

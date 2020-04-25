@@ -137,6 +137,11 @@ class UserRouter(
 
         val hashedUser = HashedUser(username, password)
 
+        if (hashedUser.checkValidity() != null) {
+            call.respondAuthorizationIssue(InvalidUserReason.InvalidUserInfo)
+            return
+        }
+
         try {
             val response = (service as UsersService).getUserFromHash(hashedUser)
 

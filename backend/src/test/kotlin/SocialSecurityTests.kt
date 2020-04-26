@@ -10,7 +10,7 @@ import shared.taxFetcher.SocialSecurity
 import shared.toJson
 import socialSecurity.SocialSecurityResponse
 
-class SocialSecurityTest : BaseTest({
+class SocialSecurityTest : BaseTest({ token ->
     fun newItem(year: Int) = SocialSecurity(
         year = year,
         percent = 1.45,
@@ -21,15 +21,15 @@ class SocialSecurityTest : BaseTest({
 
     "verify getting base url returns ok" {
         with(engine) {
-            request(Get, path).response.status() shouldBe HttpStatusCode.OK
+            request(Get, path, authToken = token).response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify getting base url returns all items in table" {
         with(engine) {
-            bodyRequest(Post, path, newItem(2000).toJson())
-            bodyRequest(Post, path, newItem(2001).toJson())
-            with(request(Get, path)) {
+            bodyRequest(Post, path, newItem(2000).toJson(), token)
+            bodyRequest(Post, path, newItem(2001).toJson(), token)
+            with(request(Get, path, authToken = token)) {
                 val responseItems = response.content?.fromJson<SocialSecurityResponse>()?.items
                 val item1 = responseItems!![responseItems.lastIndex - 1]
                 val item2 = responseItems[responseItems.lastIndex]
@@ -42,20 +42,27 @@ class SocialSecurityTest : BaseTest({
 
     "verify getting an added item" {
         with(engine) {
-            val id = requestToObject<SocialSecurity>(Post, path, newItem(2002).toJson())?.id
-            with(request(Get, path, id?.toString())) {
+            val item = requestToObject<SocialSecurity>(Post, path, newItem(2002).toJson(), token)
+            with(request(Get, path, item?.year?.toString(), authToken = token)) {
                 val addedItem = response.content!!.fromJson<SocialSecurity>()!!
                 response.status() shouldBe HttpStatusCode.OK
-                addedItem shouldBe SocialSecurity(id, 2002, 1.45, 127200, addedItem.dateCreated, addedItem.dateUpdated)
+                addedItem shouldBe SocialSecurity(
+                    item?.id,
+                    2002,
+                    1.45,
+                    127200,
+                    addedItem.dateCreated,
+                    addedItem.dateUpdated
+                )
             }
         }
     }
 
     "verify adding a duplicate item" {
         with(engine) {
-            bodyRequest(Post, path, newItem(2008).toJson())
+            bodyRequest(Post, path, newItem(2008).toJson(), token)
 
-            with(bodyRequest(Post, path, newItem(2008).toJson())) {
+            with(bodyRequest(Post, path, newItem(2008).toJson(), token)) {
                 response.status() shouldBe HttpStatusCode.Conflict
             }
         }
@@ -63,13 +70,13 @@ class SocialSecurityTest : BaseTest({
 
     "verify getting an item that does not exist" {
         with(engine) {
-            request(Get, path, "99").response.status() shouldBe HttpStatusCode.NotFound
+            request(Get, path, "99", authToken = token).response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 
     "verify adding a new item" {
         with(engine) {
-            with(bodyRequest(Post, path, newItem(2003).toJson())) {
+            with(bodyRequest(Post, path, newItem(2003).toJson(), token)) {
                 val addedItem = response.content!!.fromJson<SocialSecurity>()!!
                 response.status() shouldBe HttpStatusCode.Created
                 addedItem shouldBe SocialSecurity(
@@ -86,12 +93,13 @@ class SocialSecurityTest : BaseTest({
 
     "verify updating an added item" {
         with(engine) {
-            bodyRequest(Post, path, newItem(2004).toJson())
+            bodyRequest(Post, path, newItem(2004).toJson(), token)
             with(
                 bodyRequest(
                     Put,
                     path,
-                    newItem(2004).copy(id = 1, percent = 1.4, limit = 128000).toJson()
+                    newItem(2004).copy(id = 1, percent = 1.4, limit = 128000).toJson(),
+                    token
                 )
             ) {
                 val addedItem = response.content!!.fromJson<SocialSecurity>()!!
@@ -106,8 +114,9 @@ class SocialSecurityTest : BaseTest({
             bodyRequest(
                 Put,
                 path,
-                newItem(2005).copy(99).toJson()
-            ).response.status() shouldBe HttpStatusCode.NotFound
+                newItem(2005).copy(99).toJson(),
+                token
+            ).response.status() shouldBe HttpStatusCode.BadRequest
         }
     }
 
@@ -116,21 +125,22 @@ class SocialSecurityTest : BaseTest({
             bodyRequest(
                 Put,
                 path,
-                newItem(2006).toJson()
+                newItem(2006).toJson(),
+                token
             ).response.status() shouldBe HttpStatusCode.Created
         }
     }
 
     "verify deleting and item that has been added" {
         with(engine) {
-            bodyRequest(Post, path, newItem(2007).toJson())
-            request(Delete, path, "2007").response.status() shouldBe HttpStatusCode.OK
+            bodyRequest(Post, path, newItem(2007).toJson(), token)
+            request(Delete, path, "2007", authToken = token).response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify deleting item that doesn't exist" {
         with(engine) {
-            request(Delete, path, "2099").response.status() shouldBe HttpStatusCode.NotFound
+            request(Delete, path, "2099", authToken = token).response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 })

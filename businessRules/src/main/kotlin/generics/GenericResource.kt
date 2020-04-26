@@ -15,13 +15,13 @@ inline fun <reified O : GenericItem, T : IdTable> Route.route(
     crossinline customRoutes: Route.(router: GenericRouter<O, T>) -> Unit = {}
 ) {
     route("/$basePath") {
-        val itemType = O::class.createType()
         router.apply {
+            itemType = O::class.createType()
             getDefault()
-            getSingle(getParamName)
-            postDefault(itemType)
-            putDefault(itemType)
-            deleteDefault(deleteParamName)
+            getSingle()
+            postDefault()
+            putDefault()
+            deleteDefault()
         }
         customRoutes(router)
     }

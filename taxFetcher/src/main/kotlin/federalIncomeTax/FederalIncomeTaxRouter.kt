@@ -8,9 +8,6 @@ class FederalIncomeTaxRouter : GenericRouter<FederalIncomeTax, FederalIncomeTaxe
     FederalIncomeTaxService(),
     FederalIncomeTaxResponse()
 ) {
-    override val getParamName = "year"
-    override val deleteParamName = "year"
-
     override suspend fun postQualifier(receivedItem: FederalIncomeTax) =
         service.getAll().filter {
             it.year == receivedItem.year && it.maritalStatus == receivedItem.maritalStatus && it.payPeriod == receivedItem.payPeriod
@@ -24,5 +21,5 @@ class FederalIncomeTaxRouter : GenericRouter<FederalIncomeTax, FederalIncomeTaxe
             null
         }
 
-    override fun deleteEq(param: String) = service.table.year eq param.toInt()
+    override fun singleEq(param: String) = service.table.year eq param.toInt()
 }

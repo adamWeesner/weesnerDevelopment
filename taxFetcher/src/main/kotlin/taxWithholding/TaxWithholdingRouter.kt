@@ -8,13 +8,10 @@ class TaxWithholdingRouter : GenericRouter<TaxWithholding, TaxWithholdingTable>(
     TaxWithholdingService(),
     TaxWithholdingResponse()
 ) {
-    override val getParamName = "year"
-    override val deleteParamName = "year"
-
     override suspend fun postQualifier(receivedItem: TaxWithholding) =
         service.getAll().firstOrNull {
             it.year == receivedItem.year && it.type == receivedItem.type && it.payPeriod == receivedItem.payPeriod
         }
 
-    override fun deleteEq(param: String) = service.table.year eq param.toInt()
+    override fun singleEq(param: String) = service.table.year eq param.toInt()
 }

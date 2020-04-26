@@ -1,6 +1,5 @@
 import auth.InvalidUserException
 import auth.InvalidUserReason
-import auth.SymmetricEncryption
 import auth.TokenResponse
 import com.weesnerdevelopment.Path
 import io.kotlintest.shouldBe
@@ -13,19 +12,19 @@ import shared.toJson
 import java.util.*
 
 class UserTests : BaseTest({
-    val path = Path.User.base
-
-    val newItemNotEncrypted = User(
+    val newUser = User(
         name = "Adam",
         email = "randomemail@email.com",
         username = "adam.weesner",
         password = "password"
     )
 
-    val newItemEncrypted = newItemNotEncrypted.copy(
-        username = Base64.getEncoder().encodeToString(newItemNotEncrypted.username?.toByteArray()),
-        password = Base64.getEncoder().encodeToString(newItemNotEncrypted.password?.toByteArray())
+    val newUserHashed = newUser.copy(
+        username = Base64.getEncoder().encodeToString(newUser.username?.toByteArray()),
+        password = Base64.getEncoder().encodeToString(newUser.password?.toByteArray())
     )
+
+    val path = Path.User.base
 
     "access account without login gives InvalidJwt" {
         with(engine) {
@@ -38,7 +37,7 @@ class UserTests : BaseTest({
 
     "login with non-encrypted data gives InvalidUserInfo" {
         with(engine) {
-            val request = bodyRequest(Post, path + Path.User.login, newItemNotEncrypted.asHashed().toJson())
+            val request = bodyRequest(Post, path + Path.User.login, newUser.asHashed().toJson())
 
             val response = request.response.content?.fromJson<InvalidUserException>()
             response?.reasonCode shouldBe InvalidUserReason.InvalidUserInfo.code
@@ -47,7 +46,7 @@ class UserTests : BaseTest({
 
     "sign up with non-encrypted data gives InvalidUserInfo" {
         with(engine) {
-            val request = bodyRequest(Post, path + Path.User.signUp, newItemNotEncrypted.toJson())
+            val request = bodyRequest(Post, path + Path.User.signUp, newUser.toJson())
 
             val response = request.response.content?.fromJson<InvalidUserException>()
             response?.reasonCode shouldBe InvalidUserReason.InvalidUserInfo.code
@@ -56,7 +55,7 @@ class UserTests : BaseTest({
 
     "login with user data that does not exist gives NoUserFound" {
         with(engine) {
-            val request = bodyRequest(Post, path + Path.User.login, newItemEncrypted.asHashed().toJson())
+            val request = bodyRequest(Post, path + Path.User.login, newUserHashed.asHashed().toJson())
 
             val response = request.response.content?.fromJson<InvalidUserException>()
             response?.reasonCode shouldBe InvalidUserReason.NoUserFound.code
@@ -65,7 +64,7 @@ class UserTests : BaseTest({
 
     "sign up gives Created" {
         with(engine) {
-            val request = bodyRequest(Post, path + Path.User.signUp, newItemEncrypted.toJson())
+            val request = bodyRequest(Post, path + Path.User.signUp, newUserHashed.toJson())
 
             request.response.status() shouldBe HttpStatusCode.Created
         }
@@ -73,7 +72,7 @@ class UserTests : BaseTest({
 
     "login with created user gives OK" {
         with(engine) {
-            val request = bodyRequest(Post, path + Path.User.login, newItemEncrypted.asHashed().toJson())
+            val request = bodyRequest(Post, path + Path.User.login, newUserHashed.asHashed().toJson())
 
             request.response.status() shouldBe HttpStatusCode.OK
         }
@@ -81,25 +80,14 @@ class UserTests : BaseTest({
 
     "get account info with created user gives user data" {
         with(engine) {
-            val loginRequest = bodyRequest(Post, path + Path.User.login, newItemEncrypted.asHashed().toJson())
+            val loginRequest = bodyRequest(Post, path + Path.User.login, newUserHashed.asHashed().toJson())
             val authToken = loginRequest.response.content?.fromJson<TokenResponse>()
 
             val request = request(Get, path, Path.User.account, authToken = authToken?.token)
             val response =
                 request.response.content?.fromJson<User>()?.copy(uuid = null, dateCreated = -1, dateUpdated = -1)
 
-            response shouldBe newItemEncrypted.copy(password = null, dateCreated = -1, dateUpdated = -1)
+            response shouldBe newUserHashed.copy(password = null, dateCreated = -1, dateUpdated = -1)
         }
-    }
-
-    "encrypting/decrypting data works properly" {
-        val secret = "this is a secret"
-        val encryption = SymmetricEncryption()
-
-        val encryptedUser = encryption.encrypt(newItemNotEncrypted.username ?: "", secret)
-        println("user data $encryptedUser")
-        val decryptedUser = encryption.decrypt(encryptedUser, secret)
-        println("decrypted $decryptedUser")
-        decryptedUser shouldBe newItemNotEncrypted.username
     }
 })

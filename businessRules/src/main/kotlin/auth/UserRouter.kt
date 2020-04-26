@@ -19,30 +19,25 @@ import respondAuthorizationIssue
 import shared.auth.HashedUser
 import shared.auth.User
 import java.util.*
-import kotlin.reflect.KType
 
 class UserRouter(
     private val jwtProvider: JwtProvider,
-    accountUrl: String
+    private val accountUrl: String
 ) : GenericRouter<User, UsersTable>(
     UsersService(),
     UsersResponse()
 ) {
-    override val getParamName = accountUrl
-    override val deleteParamName = "uuid"
-    override val putParamUrl = accountUrl
-
     override suspend fun postQualifier(receivedItem: User) =
         service.getSingle { service.table.uuid eq receivedItem.uuid }
 
-    override fun deleteEq(param: String) = service.table.uuid eq param
+    override fun singleEq(param: String) = service.table.uuid eq param
 
     override suspend fun putQualifier(receivedItem: User) =
         service.update(receivedItem) { service.table.uuid eq receivedItem.uuid }
 
-    override fun Route.getSingle(pathParam: String) {
+    override fun Route.getSingle() {
         authenticate {
-            get("/$pathParam") {
+            get("/$accountUrl") {
                 call.loggedUserData()?.getData()?.apply {
                     when {
                         username != null && password != null -> {
@@ -62,11 +57,11 @@ class UserRouter(
         }
     }
 
-    override fun Route.putDefault(type: KType) {
+    override fun Route.putDefault() {
         authenticate {
-            put("/$putParamUrl") {
+            put("/") {
                 val authToken = call.loggedUserData()
-                val item = call.receive<User>(type)
+                val item = call.receive<User>()
 
                 if (authToken?.getData()?.uuid != item.uuid) return@put call.respond(HttpStatusCode.Unauthorized)
 

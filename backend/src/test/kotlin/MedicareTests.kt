@@ -13,7 +13,7 @@ import shared.taxFetcher.MedicareLimit
 import shared.toJson
 
 
-class MedicareTests : BaseTest({
+class MedicareTests : BaseTest({ token ->
     fun newItem(year: Int) = Medicare(
         year = year,
         percent = 6.25,
@@ -31,15 +31,15 @@ class MedicareTests : BaseTest({
 
     "verify getting base url returns ok" {
         with(engine) {
-            request(Get, path).response.status() shouldBe HttpStatusCode.OK
+            request(Get, path, authToken = token).response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify getting base url returns all items in table" {
         with(engine) {
-            bodyRequest(Post, path, newItem(2000).toJson())
-            bodyRequest(Post, path, newItem(2001).toJson())
-            with(request(Get, path)) {
+            bodyRequest(Post, path, newItem(2000).toJson(), token)
+            bodyRequest(Post, path, newItem(2001).toJson(), token)
+            with(request(Get, path, authToken = token)) {
                 val responseItems = response.content?.fromJson<MedicareResponse>()?.items
                 val item1 = responseItems!![responseItems.lastIndex - 1]
                 val item2 = responseItems[responseItems.lastIndex]
@@ -52,12 +52,12 @@ class MedicareTests : BaseTest({
 
     "verify getting an added item" {
         with(engine) {
-            val id = requestToObject<Medicare>(Post, path, newItem(2002).toJson())?.id
-            with(request(Get, path, id?.toString())) {
+            val item = requestToObject<Medicare>(Post, path, newItem(2002).toJson(), token)
+            with(request(Get, path, item?.year?.toString(), authToken = token)) {
                 val addedItem = response.content!!.fromJson<Medicare>()!!
                 response.status() shouldBe HttpStatusCode.OK
                 addedItem shouldBe Medicare(
-                    id,
+                    item?.id,
                     2002,
                     6.25,
                     0.9,
@@ -71,13 +71,13 @@ class MedicareTests : BaseTest({
 
     "verify getting an item that does not exist" {
         with(engine) {
-            request(Get, path, "99").response.status() shouldBe HttpStatusCode.NotFound
+            request(Get, path, "99", token).response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 
     "verify adding a new item" {
         with(engine) {
-            with(bodyRequest(Post, path, newItem(2003).toJson())) {
+            with(bodyRequest(Post, path, newItem(2003).toJson(), authToken = token)) {
                 val addedItem = response.content?.fromJson<Medicare>()!!
                 response.status() shouldBe HttpStatusCode.Created
                 addedItem shouldBe Medicare(
@@ -104,9 +104,9 @@ class MedicareTests : BaseTest({
 
     "verify adding a duplicate item" {
         with(engine) {
-            bodyRequest(Post, path, newItem(2008).toJson())
+            bodyRequest(Post, path, newItem(2008).toJson(), token)
 
-            with(bodyRequest(Post, path, newItem(2008).toJson())) {
+            with(bodyRequest(Post, path, newItem(2008).toJson(), authToken = token)) {
                 response.status() shouldBe HttpStatusCode.Conflict
             }
         }
@@ -114,8 +114,8 @@ class MedicareTests : BaseTest({
 
     "verify updating an added item" {
         with(engine) {
-            val id = requestToObject<Medicare>(Post, path, newItem(2004).toJson())?.id
-            with(bodyRequest(Put, path, newItem(2004).copy(id = id, percent = 6.0).toJson())) {
+            val id = requestToObject<Medicare>(Post, path, newItem(2004).toJson(), token)?.id
+            with(bodyRequest(Put, path, newItem(2004).copy(id = id, percent = 6.0).toJson(), token)) {
                 val addedItem = response.content!!.fromJson<Medicare>()!!
                 response.status() shouldBe HttpStatusCode.OK
                 addedItem shouldBe Medicare(
@@ -136,29 +136,30 @@ class MedicareTests : BaseTest({
             bodyRequest(
                 Put,
                 path,
-                newItem(2005).copy(99).toJson()
-            ).response.status() shouldBe HttpStatusCode.NotFound
+                newItem(2005).copy(99).toJson(),
+                token
+            ).response.status() shouldBe HttpStatusCode.BadRequest
         }
     }
 
     "verify updating without an id adds a new item" {
         with(engine) {
-            bodyRequest(Put, path, newItem(2006).toJson()).response.status() shouldBe HttpStatusCode.Created
+            bodyRequest(Put, path, newItem(2006).toJson(), token).response.status() shouldBe HttpStatusCode.Created
         }
     }
 
     "verify deleting and item that has been added" {
         with(engine) {
-            bodyRequest(Post, path, newItem(2007).toJson())
+            bodyRequest(Post, path, newItem(2007).toJson(), token)
             val addedItem =
-                requestToObject<MedicareResponse>(Get, path)?.items?.find { it.year == 2007 }?.year
-            request(Delete, path, addedItem?.toString()).response.status() shouldBe HttpStatusCode.OK
+                requestToObject<MedicareResponse>(Get, path, token)?.items?.find { it.year == 2007 }?.year
+            request(Delete, path, addedItem?.toString(), authToken = token).response.status() shouldBe HttpStatusCode.OK
         }
     }
 
     "verify deleting item that doesn't exist" {
         with(engine) {
-            request(Delete, path, "2099").response.status() shouldBe HttpStatusCode.NotFound
+            request(Delete, path, "2099", authToken = token).response.status() shouldBe HttpStatusCode.NotFound
         }
     }
 })

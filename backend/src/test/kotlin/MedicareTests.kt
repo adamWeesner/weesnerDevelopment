@@ -44,8 +44,26 @@ class MedicareTests : BaseTest({ token ->
                 val item1 = responseItems!![responseItems.lastIndex - 1]
                 val item2 = responseItems[responseItems.lastIndex]
                 response.status() shouldBe HttpStatusCode.OK
-                item1 shouldBe Medicare(item1.id, 2000, 6.25, 0.9, item1.limits, item1.dateCreated, item1.dateUpdated)
-                item2 shouldBe Medicare(item2.id, 2001, 6.25, 0.9, item2.limits, item2.dateCreated, item2.dateUpdated)
+                item1 shouldBe Medicare(
+                    item1.id,
+                    2000,
+                    6.25,
+                    0.9,
+                    item1.limits,
+                    null,
+                    item1.dateCreated,
+                    item1.dateUpdated
+                )
+                item2 shouldBe Medicare(
+                    item2.id,
+                    2001,
+                    6.25,
+                    0.9,
+                    item2.limits,
+                    null,
+                    item2.dateCreated,
+                    item2.dateUpdated
+                )
             }
         }
     }
@@ -62,6 +80,7 @@ class MedicareTests : BaseTest({ token ->
                     6.25,
                     0.9,
                     addedItem.limits,
+                    null,
                     addedItem.dateCreated,
                     addedItem.dateUpdated
                 )
@@ -91,10 +110,12 @@ class MedicareTests : BaseTest({ token ->
                             2003,
                             Single,
                             200000,
+                            null,
                             addedItem.limits[0].dateCreated,
                             addedItem.limits[0].dateUpdated
                         )
                     ),
+                    null,
                     addedItem.dateCreated,
                     addedItem.dateUpdated
                 )
@@ -124,6 +145,7 @@ class MedicareTests : BaseTest({ token ->
                     6.0,
                     addedItem.additionalPercent,
                     addedItem.limits,
+                    null,
                     addedItem.dateCreated,
                     addedItem.dateUpdated
                 )

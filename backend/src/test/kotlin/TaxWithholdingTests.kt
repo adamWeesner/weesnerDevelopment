@@ -47,6 +47,7 @@ class TaxWithholdingTests : BaseTest({ token ->
                     General,
                     Weekly,
                     1.23,
+                    null,
                     item1.dateCreated,
                     item1.dateUpdated
                 )
@@ -56,6 +57,7 @@ class TaxWithholdingTests : BaseTest({ token ->
                     General,
                     Weekly,
                     1.23,
+                    null,
                     item2.dateCreated,
                     item2.dateUpdated
                 )
@@ -77,6 +79,7 @@ class TaxWithholdingTests : BaseTest({ token ->
                     General,
                     Weekly,
                     1.23,
+                    null,
                     addedItem.dateCreated,
                     addedItem.dateUpdated
                 )
@@ -112,6 +115,7 @@ class TaxWithholdingTests : BaseTest({ token ->
                     General,
                     Weekly,
                     1.23,
+                    null,
                     addedItem.dateCreated,
                     addedItem.dateUpdated
                 )
@@ -140,6 +144,7 @@ class TaxWithholdingTests : BaseTest({ token ->
                     General,
                     Biweekly,
                     1.4,
+                    null,
                     addedItem.dateCreated,
                     addedItem.dateUpdated
                 )

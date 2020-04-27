@@ -34,8 +34,8 @@ class SocialSecurityTest : BaseTest({ token ->
                 val item1 = responseItems!![responseItems.lastIndex - 1]
                 val item2 = responseItems[responseItems.lastIndex]
                 response.status() shouldBe HttpStatusCode.OK
-                item1 shouldBe SocialSecurity(item1.id, 2000, 1.45, 127200, item1.dateCreated, item1.dateUpdated)
-                item2 shouldBe SocialSecurity(item2.id, 2001, 1.45, 127200, item2.dateCreated, item2.dateUpdated)
+                item1 shouldBe SocialSecurity(item1.id, 2000, 1.45, 127200, null, item1.dateCreated, item1.dateUpdated)
+                item2 shouldBe SocialSecurity(item2.id, 2001, 1.45, 127200, null, item2.dateCreated, item2.dateUpdated)
             }
         }
     }
@@ -51,6 +51,7 @@ class SocialSecurityTest : BaseTest({ token ->
                     2002,
                     1.45,
                     127200,
+                    null,
                     addedItem.dateCreated,
                     addedItem.dateUpdated
                 )
@@ -84,6 +85,7 @@ class SocialSecurityTest : BaseTest({ token ->
                     2003,
                     1.45,
                     127200,
+                    null,
                     addedItem.dateCreated,
                     addedItem.dateUpdated
                 )
@@ -104,7 +106,15 @@ class SocialSecurityTest : BaseTest({ token ->
             ) {
                 val addedItem = response.content!!.fromJson<SocialSecurity>()!!
                 response.status() shouldBe HttpStatusCode.OK
-                addedItem shouldBe SocialSecurity(1, 2004, 1.4, 128000, addedItem.dateCreated, addedItem.dateUpdated)
+                addedItem shouldBe SocialSecurity(
+                    1,
+                    2004,
+                    1.4,
+                    128000,
+                    null,
+                    addedItem.dateCreated,
+                    addedItem.dateUpdated
+                )
             }
         }
     }

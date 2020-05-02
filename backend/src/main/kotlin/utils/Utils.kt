@@ -1,7 +1,8 @@
-package com.weesnerdevelopment
+package com.weesnerdevelopment.utils
 
-import com.weesnerdevelopment.Path.TaxFetcher.basePath
-import com.weesnerdevelopment.Path.User.base
+import com.weesnerdevelopment.utils.Path.BillMan.basePath
+import com.weesnerdevelopment.utils.Path.TaxFetcher.basePath
+import com.weesnerdevelopment.utils.Path.User.base
 
 /**
  * The available paths at /[Path].
@@ -26,5 +27,15 @@ sealed class Path {
         const val account = "/account"
         const val login = "/login"
         const val signUp = "/signUp"
+    }
+
+    /**
+     * The available paths at [basePath]/value.
+     */
+    object BillMan : Path() {
+        private val basePath = "billMan/"
+        val bills = "${basePath}bills"
+        val categories = "${basePath}categories"
+        val income = "${basePath}income"
     }
 }

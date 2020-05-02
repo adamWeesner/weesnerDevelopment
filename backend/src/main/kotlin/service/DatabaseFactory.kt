@@ -46,6 +46,17 @@ object DatabaseFactory {
                 TaxWithholdingTable,
                 FederalIncomeTaxesTable
             )
+            // bill man
+            create(
+                BillsTable,
+                IncomeTable,
+                CategoriesTable,
+                ColorsTable,
+                PaymentsTable,
+                OccurrencesTable,
+                BillCategoriesTable,
+                BillsSharedUsersTable
+            )
         }
     }
 

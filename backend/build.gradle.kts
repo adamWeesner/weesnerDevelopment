@@ -38,6 +38,7 @@ dependencies {
 
     implementation(project(":businessRules"))
     implementation(project(":taxFetcher"))
+    implementation(project(":billMan"))
 
     implementation(kotlinJdk())
     implementation(kotlin("reflect"))

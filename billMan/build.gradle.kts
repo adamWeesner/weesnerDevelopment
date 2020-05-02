@@ -1,10 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "1.2.0"
+version = "1.0.0"
 
 plugins {
     kotlin("jvm")
-    kotlin("kapt")
 }
 
 sourceSets { sharedSources() }
@@ -14,19 +13,13 @@ tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = jvmVersion }
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "../libs", "include" to listOf("*.jar"))))
+    implementation(project(":businessRules"))
 
     implementation(kotlinJdk())
-
-    implementation(ktorServer("netty"))
-    implementation(ktorServer("core"))
-
-    implementation(ktor("websockets"))
-    implementation(ktor("auth-jwt"))
-
-    implementation(ktorClient("websockets"))
-    implementation(ktorClient("okhttp"))
 
     implementation(moshi())
 
     implementation(exposed())
+
+    implementation(kodein())
 }

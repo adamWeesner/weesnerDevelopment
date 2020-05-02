@@ -50,3 +50,10 @@ suspend fun ApplicationCall.respondAuthorizationIssue(reason: InvalidUserReason)
  * Gets the Authentication principal from the [ApplicationCall].
  */
 fun ApplicationCall.loggedUserData() = authentication.principal<CustomPrincipal>()
+
+enum class HistoryTypes {
+    Bill,
+    Color,
+    BillSharedUsers,
+    Categories
+}

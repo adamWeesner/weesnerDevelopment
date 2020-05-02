@@ -27,6 +27,7 @@ import kotlin.reflect.KType
  * [webSocketDefault]
  */
 abstract class GenericRouter<O : GenericItem, T : IdTable>(
+    val basePath: String,
     val service: GenericService<O, T>,
     private val response: GenericResponse<O>? = null
 ) {

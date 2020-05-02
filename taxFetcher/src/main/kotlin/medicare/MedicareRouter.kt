@@ -4,8 +4,12 @@ import generics.GenericRouter
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import shared.taxFetcher.Medicare
 
-class MedicareRouter : GenericRouter<Medicare, MedicareTable>(
-    MedicareService(),
+class MedicareRouter(
+    basePath: String,
+    medicareService: MedicareService
+) : GenericRouter<Medicare, MedicareTable>(
+    basePath,
+    medicareService,
     MedicareResponse()
 ) {
     override suspend fun postQualifier(receivedItem: Medicare) =

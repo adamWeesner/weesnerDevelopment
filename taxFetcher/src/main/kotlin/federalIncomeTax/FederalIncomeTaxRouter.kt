@@ -4,8 +4,12 @@ import generics.GenericRouter
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import shared.taxFetcher.FederalIncomeTax
 
-class FederalIncomeTaxRouter : GenericRouter<FederalIncomeTax, FederalIncomeTaxesTable>(
-    FederalIncomeTaxService(),
+class FederalIncomeTaxRouter(
+    basePath: String,
+    federalIncomeTaxService: FederalIncomeTaxService
+) : GenericRouter<FederalIncomeTax, FederalIncomeTaxesTable>(
+    basePath,
+    federalIncomeTaxService,
     FederalIncomeTaxResponse()
 ) {
     override suspend fun postQualifier(receivedItem: FederalIncomeTax) =

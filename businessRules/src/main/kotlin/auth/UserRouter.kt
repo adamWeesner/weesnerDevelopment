@@ -21,19 +21,22 @@ import shared.auth.User
 import java.util.*
 
 class UserRouter(
+    basePath: String,
+    usersService: UsersService,
     private val jwtProvider: JwtProvider,
     private val accountUrl: String
 ) : GenericRouter<User, UsersTable>(
-    UsersService(),
+    basePath,
+    usersService,
     UsersResponse()
 ) {
     override suspend fun postQualifier(receivedItem: User) =
-        service.getSingle { service.table.uuid eq receivedItem.uuid }
+        service.getSingle { service.table.uuid eq receivedItem.uuid!! }
 
     override fun singleEq(param: String) = service.table.uuid eq param
 
     override suspend fun putQualifier(receivedItem: User) =
-        service.update(receivedItem) { service.table.uuid eq receivedItem.uuid }
+        service.update(receivedItem) { service.table.uuid eq receivedItem.uuid!! }
 
     override fun Route.getSingle() {
         authenticate {

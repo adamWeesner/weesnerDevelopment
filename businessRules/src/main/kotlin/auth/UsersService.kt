@@ -24,6 +24,7 @@ class UsersService : GenericService<User, UsersTable>(
 
     suspend fun getUserByUuid(uuid: String) =
         dbQuery { table.select { (table.uuid eq uuid) }.mapNotNull { to(it) }.singleOrNull() }
+            ?: throw IllegalArgumentException("No user found for item.")
 
     override suspend fun add(item: User): User? {
         var key = 0

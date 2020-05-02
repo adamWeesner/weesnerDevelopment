@@ -4,8 +4,12 @@ import generics.GenericRouter
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import shared.taxFetcher.TaxWithholding
 
-class TaxWithholdingRouter : GenericRouter<TaxWithholding, TaxWithholdingTable>(
-    TaxWithholdingService(),
+class TaxWithholdingRouter(
+    basePath: String,
+    taxWithholdingService: TaxWithholdingService
+) : GenericRouter<TaxWithholding, TaxWithholdingTable>(
+    basePath,
+    taxWithholdingService,
     TaxWithholdingResponse()
 ) {
     override suspend fun postQualifier(receivedItem: TaxWithholding) =

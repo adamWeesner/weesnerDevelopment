@@ -7,4 +7,5 @@ object Versions {
     const val hikari_version = "3.4.1"
     const val ktor_moshi_version = "1.0.1"
     const val moshi_version = "1.9.2"
+    const val kodein_version = "6.5.5"
 }

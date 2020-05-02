@@ -1,19 +1,22 @@
 package com.weesnerdevelopment.service
 
-import auth.*
+import auth.CustomPrincipal
+import auth.InvalidUserReason
+import auth.JwtProvider
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.ryanharter.ktor.moshi.moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.weesnerdevelopment.AppConfig
-import com.weesnerdevelopment.Path
-import federalIncomeTax.FederalIncomeTaxRouter
-import generics.route
+import com.weesnerdevelopment.injecton.kodeinSetup
+import com.weesnerdevelopment.routes.billManRoutes
+import com.weesnerdevelopment.routes.serverRoutes
+import com.weesnerdevelopment.routes.taxFetcherRoutes
+import com.weesnerdevelopment.routes.userRoutes
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
-import io.ktor.auth.authenticate
 import io.ktor.auth.jwt.jwt
 import io.ktor.auth.parseAuthorizationHeader
 import io.ktor.features.*
@@ -21,23 +24,22 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.auth.HttpAuthHeader
-import io.ktor.response.respond
 import io.ktor.routing.Routing
-import io.ktor.routing.get
-import io.ktor.routing.route
 import io.ktor.websocket.WebSockets
-import medicare.MedicareRouter
+import org.kodein.di.generic.instance
+import org.kodein.di.ktor.kodein
 import respondAuthorizationIssue
 import respondServerError
-import socialSecurity.SocialSecurityRouter
-import taxWithholding.TaxWithholdingRouter
 import java.time.Duration
 
 class DatabaseServer {
     fun Application.main() {
-        val appConfig = AppConfig(environment.config)
-        val jwtProvider =
-            JwtProvider(appConfig.issuer, appConfig.audience, appConfig.expiresIn, Cipher(appConfig.secret))
+        kodeinSetup()
+
+        val appConfig by kodein().instance<AppConfig>()
+        val jwtProvider by kodein().instance<JwtProvider>()
+
+        DatabaseFactory.init()
 
         install(DefaultHeaders)
         install(CallLogging)
@@ -90,30 +92,11 @@ class DatabaseServer {
                 }
             }
         }
-
-        DatabaseFactory.init()
-
         install(Routing) {
-            route("/health") {
-                get("/") {
-                    call.respond(HttpStatusCode.OK, "Server is up and running")
-                }
-            }
-            // user
-            route(Path.User.base, UserRouter(jwtProvider, Path.User.account)) { router ->
-                (router as UserRouter).apply {
-                    login(Path.User.login)
-                    signUp(Path.User.signUp)
-                }
-            }
-
-            // tax fetcher
-            authenticate {
-                route(Path.TaxFetcher.socialSecurity, SocialSecurityRouter())
-                route(Path.TaxFetcher.medicare, MedicareRouter())
-                route(Path.TaxFetcher.taxWithholding, TaxWithholdingRouter())
-                route(Path.TaxFetcher.federalIncomeTax, FederalIncomeTaxRouter())
-            }
+            serverRoutes()
+            userRoutes()
+            taxFetcherRoutes()
+            billManRoutes()
         }
     }
 }

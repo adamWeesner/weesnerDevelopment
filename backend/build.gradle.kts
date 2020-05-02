@@ -57,6 +57,9 @@ dependencies {
     implementation(exposed())
     implementation(exposed("jdbc"))
 
+    implementation(kodein())
+    implementation(kodein("framework-ktor-server"))
+
     implementation("com.h2database:h2:$h2_version")
     implementation("com.zaxxer:HikariCP:$hikari_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")

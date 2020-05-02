@@ -2,21 +2,16 @@ package medicare
 
 import dbQuery
 import generics.GenericService
-import generics.GenericServiceWChildren
-import generics.IdTable
 import model.ChangeType
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.base.GenericItem
 import shared.taxFetcher.Medicare
 
-class MedicareService : GenericServiceWChildren<Medicare, MedicareTable>(
+class MedicareService(
+    private val limitsService: MedicareLimitsService
+) : GenericService<Medicare, MedicareTable>(
     MedicareTable
 ) {
-    private val limitsService: MedicareLimitsService by lazy {
-        MedicareLimitsService().apply { childServices.add(this as GenericService<GenericItem, IdTable>) }
-    }
-
     override suspend fun getAll(): List<Medicare> = super.getAll().map {
         it.copy(limits = limitsService.getByYear(it.year))
     }

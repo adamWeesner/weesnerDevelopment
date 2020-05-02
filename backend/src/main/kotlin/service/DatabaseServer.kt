@@ -51,13 +51,11 @@ class DatabaseServer {
             allowCredentials = true
             allowNonSimpleContentTypes = true
         }
-
         install(ContentNegotiation) {
             moshi {
                 add(KotlinJsonAdapterFactory())
             }
         }
-
         install(StatusPages) {
             exception<Throwable> { e ->
                 when (e) {
@@ -82,7 +80,6 @@ class DatabaseServer {
                 call.respondAuthorizationIssue(InvalidUserReason.General)
             }
         }
-
         install(Authentication) {
             jwt {
                 verifier(jwtProvider.verifier)

@@ -1,6 +1,6 @@
 object Versions {
     const val ktor_version = "1.2.6"
-    const val kotlin_version = "1.3.60"
+    const val kotlin_version = "1.3.71"
     const val logback_version = "1.2.1"
     const val exposed_version = "0.18.1"
     const val h2_version = "1.4.200"

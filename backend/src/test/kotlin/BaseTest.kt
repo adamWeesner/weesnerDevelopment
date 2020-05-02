@@ -1,6 +1,6 @@
 import auth.TokenResponse
 import com.typesafe.config.ConfigFactory
-import com.weesnerdevelopment.Path
+import com.weesnerdevelopment.utils.Path
 import io.kotlintest.TestCase
 import io.kotlintest.TestResult
 import io.kotlintest.specs.AbstractStringSpec

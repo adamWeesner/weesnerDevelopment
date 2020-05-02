@@ -1,4 +1,4 @@
-import com.weesnerdevelopment.Path
+import com.weesnerdevelopment.utils.Path
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get

@@ -1,7 +1,7 @@
 import auth.InvalidUserException
 import auth.InvalidUserReason
 import auth.TokenResponse
-import com.weesnerdevelopment.Path
+import com.weesnerdevelopment.utils.Path
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post

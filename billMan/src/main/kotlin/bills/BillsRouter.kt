@@ -1,26 +1,26 @@
-package income
+package bills
 
 import auth.UsersService
 import generics.GenericRouter
 import history.HistoryService
 import io.ktor.application.ApplicationCall
 import io.ktor.util.pipeline.PipelineContext
-import shared.billMan.Income
+import shared.billMan.Bill
 
-class IncomeRouter(
+class BillsRouter(
     basePath: String,
-    service: IncomeService,
+    billsService: BillsService,
     private val usersService: UsersService,
     private val historyService: HistoryService
-) : GenericRouter<Income, IncomeTable>(
+) : GenericRouter<Bill, BillsTable>(
     basePath,
-    service,
-    IncomeResponse()
+    billsService,
+    BillsResponse()
 ) {
     override suspend fun PipelineContext<Unit, ApplicationCall>.putAdditional(
-        item: Income,
-        updatedItem: Income
-    ): Income? {
+        item: Bill,
+        updatedItem: Bill
+    ): Bill? {
         val history = handleHistory(item, updatedItem, usersService, historyService)
         return updatedItem.copy(history = history)
     }

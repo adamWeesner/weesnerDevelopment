@@ -18,7 +18,8 @@ class IncomeService(
 ) {
     override suspend fun to(row: ResultRow) = Income(
         id = row[IncomeTable.id],
-        owner = usersService.getUserByUuid(row[IncomeTable.ownerId]),
+        owner = usersService.getUserByUuid(row[IncomeTable.ownerId])
+            ?: throw IllegalArgumentException("No user found for income."),
         name = row[IncomeTable.name],
         amount = row[IncomeTable.amount],
         varyingAmount = row[IncomeTable.varyingAmount],

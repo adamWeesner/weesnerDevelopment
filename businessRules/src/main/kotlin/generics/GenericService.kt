@@ -83,11 +83,11 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
         var key = 0
 
         dbQuery {
-            key = (table.insert {
+            key = table.insert {
                 it.assignValues(item)
                 it[dateCreated] = System.currentTimeMillis()
                 it[dateUpdated] = System.currentTimeMillis()
-            } get table.id)
+            } get table.id
         }
         return getSingle { table.id eq key }.also {
             onChange(ChangeType.Create, key, it)

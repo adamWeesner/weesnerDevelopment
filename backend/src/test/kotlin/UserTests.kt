@@ -6,9 +6,9 @@ import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpStatusCode
+import shared.auth.HashedUser
 import shared.auth.User
 import shared.fromJson
-import shared.toJson
 import java.util.*
 
 class UserTests : BaseTest({
@@ -27,67 +27,58 @@ class UserTests : BaseTest({
     val path = Path.User.base
 
     "access account without login gives InvalidJwt" {
-        with(engine) {
-            val request = request(Get, path, Path.User.account)
-
-            val response = request.response.content?.fromJson<InvalidUserException>()
-            response?.reasonCode shouldBe InvalidUserReason.InvalidJwt.code
-        }
+        BuiltRequest(
+            engine,
+            Get,
+            path + Path.User.account
+        ).asObject<InvalidUserException>()?.reasonCode shouldBe InvalidUserReason.InvalidJwt.code
     }
 
     "login with non-encrypted data gives InvalidUserInfo" {
-        with(engine) {
-            val request = bodyRequest(Post, path + Path.User.login, newUser.asHashed().toJson())
-
-            val response = request.response.content?.fromJson<InvalidUserException>()
-            response?.reasonCode shouldBe InvalidUserReason.InvalidUserInfo.code
-        }
+        BuiltRequest(
+            engine,
+            Post,
+            path + Path.User.login
+        ).asClass<HashedUser, InvalidUserException>(newUser.asHashed())?.reasonCode shouldBe InvalidUserReason.InvalidUserInfo.code
     }
 
     "sign up with non-encrypted data gives InvalidUserInfo" {
-        with(engine) {
-            val request = bodyRequest(Post, path + Path.User.signUp, newUser.toJson())
-
-            val response = request.response.content?.fromJson<InvalidUserException>()
-            response?.reasonCode shouldBe InvalidUserReason.InvalidUserInfo.code
-        }
+        BuiltRequest(
+            engine,
+            Post,
+            path + Path.User.signUp
+        ).asClass<User, InvalidUserException>(newUser)?.reasonCode shouldBe InvalidUserReason.InvalidUserInfo.code
     }
 
     "login with user data that does not exist gives NoUserFound" {
-        with(engine) {
-            val request = bodyRequest(Post, path + Path.User.login, newUserHashed.asHashed().toJson())
-
-            val response = request.response.content?.fromJson<InvalidUserException>()
-            response?.reasonCode shouldBe InvalidUserReason.NoUserFound.code
-        }
+        BuiltRequest(
+            engine,
+            Post,
+            path + Path.User.login
+        ).asClass<HashedUser, InvalidUserException>(newUserHashed.asHashed())?.reasonCode shouldBe InvalidUserReason.NoUserFound.code
     }
 
     "sign up gives Created" {
-        with(engine) {
-            val request = bodyRequest(Post, path + Path.User.signUp, newUserHashed.toJson())
-
-            request.response.status() shouldBe HttpStatusCode.Created
-        }
+        BuiltRequest(engine, Post, path + Path.User.signUp).sendStatus(newUserHashed) shouldBe HttpStatusCode.Created
     }
 
     "login with created user gives OK" {
-        with(engine) {
-            val request = bodyRequest(Post, path + Path.User.login, newUserHashed.asHashed().toJson())
-
-            request.response.status() shouldBe HttpStatusCode.OK
-        }
+        BuiltRequest(
+            engine,
+            Post,
+            path + Path.User.login
+        ).sendStatus(newUserHashed.asHashed()) shouldBe HttpStatusCode.OK
     }
 
     "get account info with created user gives user data" {
-        with(engine) {
-            val loginRequest = bodyRequest(Post, path + Path.User.login, newUserHashed.asHashed().toJson())
-            val authToken = loginRequest.response.content?.fromJson<TokenResponse>()
+        val loginRequest = BuiltRequest(engine, Post, path + Path.User.login).send(newUserHashed.asHashed())
+        val authToken = loginRequest.response.content?.fromJson<TokenResponse>()
 
-            val request = request(Get, path, Path.User.account, authToken = authToken?.token)
-            val response =
-                request.response.content?.fromJson<User>()?.copy(uuid = null, dateCreated = -1, dateUpdated = -1)
-
-            response shouldBe newUserHashed.copy(password = null, dateCreated = -1, dateUpdated = -1)
-        }
+        BuiltRequest(engine, Get, path + Path.User.account, authToken?.token).asObject<User>()
+            ?.copy(uuid = null, dateCreated = -1, dateUpdated = -1) shouldBe newUserHashed.copy(
+            password = null,
+            dateCreated = -1,
+            dateUpdated = -1
+        )
     }
 })

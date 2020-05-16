@@ -1,12 +1,18 @@
 package federalIncomeTax
 
+import auth.UsersService
 import generics.GenericRouter
+import history.HistoryService
+import io.ktor.application.ApplicationCall
+import io.ktor.util.pipeline.PipelineContext
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import shared.taxFetcher.FederalIncomeTax
 
 class FederalIncomeTaxRouter(
     basePath: String,
-    federalIncomeTaxService: FederalIncomeTaxService
+    federalIncomeTaxService: FederalIncomeTaxService,
+    private val usersService: UsersService,
+    private val historyService: HistoryService
 ) : GenericRouter<FederalIncomeTax, FederalIncomeTaxesTable>(
     basePath,
     federalIncomeTaxService,
@@ -26,4 +32,12 @@ class FederalIncomeTaxRouter(
         }
 
     override fun singleEq(param: String) = service.table.year eq param.toInt()
+
+    override suspend fun PipelineContext<Unit, ApplicationCall>.putAdditional(
+        item: FederalIncomeTax,
+        updatedItem: FederalIncomeTax
+    ): FederalIncomeTax? {
+        val history = handleHistory(item, updatedItem, usersService, historyService)
+        return updatedItem.copy(history = history)
+    }
 }

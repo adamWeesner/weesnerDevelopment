@@ -1,6 +1,7 @@
 package auth
 
 import generics.GenericRouter
+import history.HistoryService
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
@@ -22,7 +23,8 @@ import java.util.*
 
 class UserRouter(
     basePath: String,
-    usersService: UsersService,
+    private val usersService: UsersService,
+    private val historyService: HistoryService,
     private val jwtProvider: JwtProvider,
     private val accountUrl: String
 ) : GenericRouter<User, UsersTable>(
@@ -44,12 +46,12 @@ class UserRouter(
                 call.loggedUserData()?.getData()?.apply {
                     when {
                         username != null && password != null -> {
-                            (service as UsersService).getUserFromHash(HashedUser(username, password))?.run {
+                            usersService.getUserFromHash(HashedUser(username, password))?.run {
                                 call.respond(HttpStatusCode.OK, this.redacted() ?: "")
                             } ?: call.respondAuthorizationIssue(InvalidUserReason.NoUserFound)
                         }
                         uuid != null -> {
-                            (service as UsersService).getUserByUuid(uuid)?.run {
+                            usersService.getUserByUuid(uuid)?.run {
                                 call.respond(HttpStatusCode.OK, this.redacted() ?: "")
                             } ?: call.respondAuthorizationIssue(InvalidUserReason.NoUserFound)
                         }
@@ -77,6 +79,14 @@ class UserRouter(
                 }
             }
         }
+    }
+
+    override suspend fun PipelineContext<Unit, ApplicationCall>.putAdditional(
+        item: User,
+        updatedItem: User
+    ): User? {
+        val history = handleHistory(item, updatedItem, usersService, historyService)
+        return updatedItem.copy(history = history)
     }
 
     fun Route.login(pathParam: String) {

@@ -16,12 +16,24 @@ import taxWithholding.TaxWithholdingRouter
 
 val routers = Kodein.Module("routers") {
     // user
-    bind<UserRouter>() with singleton { UserRouter(User.base, instance(), instance(), User.account) }
+    bind<UserRouter>() with singleton {
+        UserRouter(User.base, instance(), instance(), instance(), User.account)
+    }
+
     // taxFetcher
-    bind<FederalIncomeTaxRouter>() with singleton { FederalIncomeTaxRouter(TaxFetcher.federalIncomeTax, instance()) }
-    bind<MedicareRouter>() with singleton { MedicareRouter(TaxFetcher.medicare, instance()) }
-    bind<SocialSecurityRouter>() with singleton { SocialSecurityRouter(TaxFetcher.socialSecurity, instance()) }
-    bind<TaxWithholdingRouter>() with singleton { TaxWithholdingRouter(TaxFetcher.taxWithholding, instance()) }
+    bind<FederalIncomeTaxRouter>() with singleton {
+        FederalIncomeTaxRouter(TaxFetcher.federalIncomeTax, instance(), instance(), instance())
+    }
+    bind<MedicareRouter>() with singleton {
+        MedicareRouter(TaxFetcher.medicare, instance(), instance(), instance())
+    }
+    bind<SocialSecurityRouter>() with singleton {
+        SocialSecurityRouter(TaxFetcher.socialSecurity, instance(), instance(), instance())
+    }
+    bind<TaxWithholdingRouter>() with singleton {
+        TaxWithholdingRouter(TaxFetcher.taxWithholding, instance(), instance(), instance())
+    }
+
     // billMan
     bind<BillsRouter>() with singleton { BillsRouter(BillMan.bills, instance()) }
     bind<CategoriesRouter>() with singleton { CategoriesRouter(BillMan.categories, instance()) }

@@ -1,5 +1,9 @@
 package generics
 
+import auth.UsersService
+import diff
+import history.HistoryService
+import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.cio.websocket.DefaultWebSocketSession
@@ -7,8 +11,14 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.*
+import io.ktor.util.pipeline.PipelineContext
+import loggedUserData
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import shared.auth.HashedUser
+import shared.auth.User
 import shared.base.GenericItem
+import shared.base.History
+import shared.base.HistoryItem
 import kotlin.reflect.KType
 
 /**
@@ -112,6 +122,40 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
     }
 
     /**
+     * Attempts to update additional information that pertains to the [item], things like a [HistoryItem] or
+     * other things. By default this function does nothing.
+     */
+    open suspend fun PipelineContext<Unit, ApplicationCall>.putAdditional(item: O, updatedItem: O): O? = updatedItem
+
+    suspend inline fun <reified O : GenericItem> PipelineContext<Unit, ApplicationCall>.handleHistory(
+        item: O,
+        updatedItem: O,
+        usersService: UsersService,
+        historyService: HistoryService
+    ): List<History>? {
+        val callData = call.loggedUserData()?.getData()
+        val user: User? = callData?.let {
+            if (it.username == null || it.password == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return null
+            }
+            usersService.getUserFromHash(HashedUser(it.username, it.password))
+        }
+
+        if (user == null) {
+            call.respond(HttpStatusCode.Unauthorized)
+            return null
+        }
+
+        val history = mutableListOf<History>()
+        item.diff(updatedItem, user).forEach {
+            historyService.add(it)?.let(history::add)
+        }
+
+        return history
+    }
+
+    /**
      * Attempts to update the item in the body of the http request. If no `id` is given in the body then the item tries
      * to add itself to the database. If something happens when updating or adding the item we respond with
      * [HttpStatusCode.BadRequest]. Pass in the `id` along with all other non-nullable fields for the item, in the
@@ -122,7 +166,12 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
     open fun Route.putDefault() {
         put("/") {
             val item = call.receive<O>(itemType)
-            val updated = putQualifier(item)
+            val oldItem = item.id?.let { service.getSingle { service.table.id eq it } }
+
+            var updated = putQualifier(item)
+
+            if (oldItem != null && updated != null)
+                updated = putAdditional(oldItem, updated)
 
             when {
                 updated == null -> call.respond(HttpStatusCode.BadRequest)

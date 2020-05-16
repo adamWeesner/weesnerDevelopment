@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":businessRules"))
 
     implementation(kotlinJdk())
+    implementation(ktorServer("core"))
     implementation(moshi())
     implementation(exposed())
 }

@@ -20,7 +20,8 @@ class OccurrencesService(
 ) {
     override suspend fun to(row: ResultRow) = Occurrence(
         id = row[OccurrencesTable.id],
-        owner = usersService.getUserByUuid(row[OccurrencesTable.ownerId]),
+        owner = usersService.getUserByUuid(row[OccurrencesTable.ownerId])
+            ?: throw IllegalArgumentException("No user found for occurrence."),
         amount = row[OccurrencesTable.amount],
         sharedUsers = sharedUsersService.getByOccurrence(row[OccurrencesTable.id]),
         itemId = row[OccurrencesTable.itemId].toString(),

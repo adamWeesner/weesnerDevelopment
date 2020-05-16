@@ -19,6 +19,9 @@ dependencies {
 
     implementation(moshi())
 
+    implementation(ktorServer("core"))
+    implementation(ktor("auth-jwt"))
+
     implementation(exposed())
 
     implementation(kodein())

@@ -33,13 +33,13 @@ val services = Kodein.Module("services") {
     bind<SocialSecurityService>() with singleton { SocialSecurityService() }
     bind<TaxWithholdingService>() with singleton { TaxWithholdingService() }
     // billMan
-    bind<BillSharedUsersService>() with singleton { BillSharedUsersService(instance(), instance()) }
-    bind<BillCategoriesService>() with singleton { BillCategoriesService(instance(), instance()) }
+    bind<BillSharedUsersService>() with singleton { BillSharedUsersService(instance()) }
+    bind<BillCategoriesService>() with singleton { BillCategoriesService(instance()) }
     bind<CategoriesService>() with singleton { CategoriesService(instance(), instance()) }
     bind<ColorsService>() with singleton { ColorsService(instance()) }
     bind<BillsService>() with singleton { BillsService(instance(), instance(), instance(), instance(), instance()) }
     bind<IncomeService>() with singleton { IncomeService(instance(), instance(), instance()) }
     bind<PaymentsService>() with singleton { PaymentsService(instance(), instance()) }
-    bind<OccurrenceSharedUsersService>() with singleton { OccurrenceSharedUsersService(instance(), instance()) }
+    bind<OccurrenceSharedUsersService>() with singleton { OccurrenceSharedUsersService(instance()) }
     bind<OccurrencesService>() with singleton { OccurrencesService(instance(), instance(), instance(), instance()) }
 }

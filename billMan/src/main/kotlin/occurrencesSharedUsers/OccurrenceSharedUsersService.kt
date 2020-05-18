@@ -1,17 +1,14 @@
 package occurrencesSharedUsers
 
-import HistoryTypes
 import auth.UsersService
 import dbQuery
 import generics.GenericService
-import history.HistoryService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 
 class OccurrenceSharedUsersService(
-    private val usersService: UsersService,
-    private val historyService: HistoryService
+    private val usersService: UsersService
 ) : GenericService<OccurrenceSharedUsers, OccurrenceSharedUsersTable>(
     OccurrenceSharedUsersTable
 ) {
@@ -24,7 +21,6 @@ class OccurrenceSharedUsersService(
         id = row[OccurrenceSharedUsersTable.id],
         occurrenceId = row[OccurrenceSharedUsersTable.occurrenceId],
         userId = row[OccurrenceSharedUsersTable.userId],
-        history = historyService.getFor(HistoryTypes.BillSharedUsers.name, row[OccurrenceSharedUsersTable.id]),
         dateCreated = row[OccurrenceSharedUsersTable.dateCreated],
         dateUpdated = row[OccurrenceSharedUsersTable.dateUpdated]
     )

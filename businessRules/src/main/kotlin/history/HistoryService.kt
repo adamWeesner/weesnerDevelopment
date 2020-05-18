@@ -6,9 +6,7 @@ import generics.GenericService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.auth.User
 import shared.base.History
-import shared.fromJson
 
 class HistoryService(
     private val usersService: UsersService
@@ -17,6 +15,9 @@ class HistoryService(
 ) {
     suspend fun getFor(type: String, typeId: Int) =
         dbQuery { table.select { table.field like "$type $typeId .*" }.mapNotNull { to(it) } }
+
+    suspend fun getIdsFor(type: String, typeId: Int) =
+        dbQuery { table.select { table.field like "$type $typeId .*" }.mapNotNull { to(it).id } }
 
     override suspend fun to(row: ResultRow) = History(
         id = row[HistoryTable.id],

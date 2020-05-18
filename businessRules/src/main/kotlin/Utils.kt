@@ -59,7 +59,6 @@ fun ApplicationCall.loggedUserData() = authentication.principal<CustomPrincipal>
 enum class HistoryTypes {
     Bill,
     Color,
-    BillSharedUsers,
     Categories
 }
 

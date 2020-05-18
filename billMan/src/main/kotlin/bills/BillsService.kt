@@ -3,11 +3,19 @@ package bills
 import HistoryTypes
 import auth.UsersService
 import billCategories.BillCategoriesService
+import billCategories.BillCategory
+import billSharedUsers.BillSharedUsers
 import billSharedUsers.BillSharedUsersService
 import colors.ColorsService
+import dbQuery
 import generics.GenericService
+import generics.InvalidAttributeException
 import history.HistoryService
+import model.ChangeType
+import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.billMan.Bill
 
@@ -20,10 +28,39 @@ class BillsService(
 ) : GenericService<Bill, BillsTable>(
     BillsTable
 ) {
+    override suspend fun add(item: Bill): Bill? {
+        val key = dbQuery {
+            table.insert {
+                it.assignValues(item)
+                it[dateCreated] = System.currentTimeMillis()
+                it[dateUpdated] = System.currentTimeMillis()
+            } get table.id
+        }
+
+        item.sharedUsers?.forEach {
+            sharedUsersService.add(BillSharedUsers(billId = key, userId = it.uuid!!))
+        }
+        item.categories.forEach {
+            billCategoriesService.add(BillCategory(billId = key, categoryId = it.id!!))
+        }
+        colorsService.add(key, item.color)
+
+        return getSingle { table.id eq key }?.also {
+            onChange(ChangeType.Create, key, it)
+        }
+    }
+
+    override suspend fun delete(id: Int, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
+        sharedUsersService.deleteForBill(id)
+        billCategoriesService.deleteForBill(id)
+        colorsService.deleteForBill(id)
+        historyService.apply { getIdsFor(HistoryTypes.Bill.name, id).forEach { delete(it) { table.id eq it } } }
+        return super.delete(id, op)
+    }
+
     override suspend fun to(row: ResultRow) = Bill(
         id = row[BillsTable.id],
-        owner = usersService.getUserByUuid(row[BillsTable.ownerId])
-            ?: throw IllegalArgumentException("No user found for bill."),
+        owner = usersService.getUserByUuidRedacted(row[BillsTable.ownerId]) ?: throw InvalidAttributeException("User"),
         name = row[BillsTable.name],
         amount = row[BillsTable.amount],
         varyingAmount = row[BillsTable.varyingAmount],
@@ -37,7 +74,7 @@ class BillsService(
     )
 
     override fun UpdateBuilder<Int>.assignValues(item: Bill) {
-        this[BillsTable.ownerId] = item.owner.uuid!!
+        this[BillsTable.ownerId] = item.owner.uuid ?: throw InvalidAttributeException("Uuid")
         this[BillsTable.name] = item.name
         this[BillsTable.amount] = item.amount
         this[BillsTable.varyingAmount] = item.varyingAmount

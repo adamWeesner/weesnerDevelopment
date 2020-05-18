@@ -2,8 +2,8 @@ package billMan
 
 import BaseTest
 import BuiltRequest
-import bills.BillsResponse
 import com.weesnerdevelopment.utils.Path
+import income.IncomeResponse
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
@@ -11,41 +11,31 @@ import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
 import shared.auth.User
-import shared.billMan.Bill
-import shared.billMan.Category
 import shared.billMan.Color
+import shared.billMan.Income
 import shared.fromJson
 
-class BillTests : BaseTest({ token ->
-    val billStart = "randomBill"
+class IncomeTests : BaseTest({ token ->
+    val billStart = "randomIncome"
     val signedInUser =
         BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
             ?: throw IllegalArgumentException("Need to have a user signed in...")
-
-    val startCategory = BuiltRequest(engine, Post, Path.BillMan.categories, token).asObject(
-        Category(name = "randomCategory")
-    ) ?: throw IllegalArgumentException("Could not save category for some reason...")
 
     fun newItem(
         addition: Int,
         id: Int? = null,
         varyingAmount: Boolean = false,
-        payoffAmount: String? = null,
-        sharedUsers: List<User>? = null,
         owner: User = signedInUser
-    ) = Bill(
+    ) = Income(
         id = id,
         owner = owner,
         name = "$billStart$addition",
         amount = "1.23",
         varyingAmount = varyingAmount,
-        payoffAmount = payoffAmount,
-        sharedUsers = sharedUsers,
-        categories = listOf(startCategory),
         color = Color(red = 255, green = 255, blue = 255, alpha = 255)
     )
 
-    val path = Path.BillMan.bills
+    val path = Path.BillMan.income
 
     "verify getting base url returns ok" {
         BuiltRequest(engine, Get, path, token).sendStatus<Unit>() shouldBe HttpStatusCode.OK
@@ -55,7 +45,7 @@ class BillTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).send(newItem(0))
         BuiltRequest(engine, Post, path, token).send(newItem(1))
         with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content?.fromJson<BillsResponse>()?.items
+            val responseItems = response.content?.fromJson<IncomeResponse>()?.items
             val item1 = responseItems!![responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe HttpStatusCode.OK
@@ -66,10 +56,10 @@ class BillTests : BaseTest({ token ->
 
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2))
-        with(BuiltRequest(engine, Get, "$path/${item?.id}", token).send<Bill>()) {
-            val addedItem = response.content!!.fromJson<Bill>()!!
+        with(BuiltRequest(engine, Get, "$path/${item?.id}", token).send<Income>()) {
+            val addedItem = response.content!!.fromJson<Income>()!!
             response.status() shouldBe HttpStatusCode.OK
-            addedItem::class.java shouldBe Bill::class.java
+            addedItem::class.java shouldBe Income::class.java
             addedItem.name shouldBe "${billStart}2"
         }
     }
@@ -80,7 +70,7 @@ class BillTests : BaseTest({ token ->
 
     "verify adding a new item" {
         with(BuiltRequest(engine, Post, path, token).send(newItem(3))) {
-            val addedItem = response.content?.fromJson<Bill>()
+            val addedItem = response.content?.fromJson<Income>()
             response.status() shouldBe HttpStatusCode.Created
             addedItem?.name shouldBe "${billStart}3"
         }
@@ -92,12 +82,12 @@ class BillTests : BaseTest({ token ->
     }
 
     "verify updating an added item" {
-        val updatedName = "cat4"
-        val bill = BuiltRequest(engine, Post, path, token).asObject(newItem(4))
-        val updateRequest = BuiltRequest(engine, Put, path, token).send(bill?.copy(name = updatedName))
+        val updatedName = "income4"
+        val income = BuiltRequest(engine, Post, path, token).asObject(newItem(4))
+        val updateRequest = BuiltRequest(engine, Put, path, token).send(income?.copy(name = updatedName))
 
         with(updateRequest) {
-            val addedItem = response.content?.fromJson<Bill>()
+            val addedItem = response.content?.fromJson<Income>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem?.name shouldBe updatedName
             addedItem?.history?.get(0)?.field shouldBe "${addedItem!!::class.java.simpleName} ${addedItem.id} name"
@@ -113,7 +103,7 @@ class BillTests : BaseTest({ token ->
     }
 
     "verify deleting and item that has been added" {
-        val addedItem = BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content?.fromJson<Bill>()
+        val addedItem = BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content?.fromJson<Income>()
         BuiltRequest(engine, Delete, "$path/${addedItem?.id}", token).sendStatus<Unit>() shouldBe HttpStatusCode.OK
     }
 

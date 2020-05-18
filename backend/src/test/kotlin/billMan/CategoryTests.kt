@@ -10,8 +10,6 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import shared.auth.User
-import shared.base.History
 import shared.billMan.Category
 import shared.fromJson
 
@@ -36,38 +34,17 @@ class CategoryTests : BaseTest({ token ->
             val item1 = responseItems!![responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe HttpStatusCode.OK
-            item1 shouldBe Category(
-                item1.id,
-                null,
-                "${categoryStart}0",
-                listOf(),
-                item1.dateCreated,
-                item1.dateUpdated
-            )
-            item2 shouldBe Category(
-                item2.id,
-                null,
-                "${categoryStart}1",
-                listOf(),
-                item2.dateCreated,
-                item2.dateUpdated
-            )
+            item1.name shouldBe "${categoryStart}0"
+            item2.name shouldBe "${categoryStart}1"
         }
     }
 
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2))
         with(BuiltRequest(engine, Get, "$path/${item?.id}", token).send<Category>()) {
-            val addedItem = response.content!!.fromJson<Category>()!!
+            val addedItem = response.content?.fromJson<Category>()
             response.status() shouldBe HttpStatusCode.OK
-            addedItem shouldBe Category(
-                item?.id,
-                null,
-                "${categoryStart}2",
-                listOf(),
-                addedItem.dateCreated,
-                addedItem.dateUpdated
-            )
+            addedItem?.name shouldBe "${categoryStart}2"
         }
     }
 
@@ -76,18 +53,7 @@ class CategoryTests : BaseTest({ token ->
     }
 
     "verify adding a new item" {
-        with(BuiltRequest(engine, Post, path, token).send(newItem(3))) {
-            val addedItem = response.content?.fromJson<Category>()!!
-            response.status() shouldBe HttpStatusCode.Created
-            addedItem shouldBe Category(
-                addedItem.id,
-                null,
-                "${categoryStart}3",
-                listOf(),
-                addedItem.dateCreated,
-                addedItem.dateUpdated
-            )
-        }
+        BuiltRequest(engine, Post, path, token).sendStatus(newItem(3)) shouldBe HttpStatusCode.Created
     }
 
     "verify adding a duplicate item" {
@@ -97,31 +63,14 @@ class CategoryTests : BaseTest({ token ->
 
     "verify updating an added item" {
         val updatedName = "cat4"
-        val userAccount = BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
         val category = BuiltRequest(engine, Post, path, token).asObject(newItem(4))
         val updateRequest = BuiltRequest(engine, Put, path, token).send(category?.copy(name = updatedName))
 
         with(updateRequest) {
             val addedItem = response.content?.fromJson<Category>()
             response.status() shouldBe HttpStatusCode.OK
-            addedItem shouldBe Category(
-                category?.id,
-                null,
-                updatedName,
-                listOf(
-                    History(
-                        addedItem?.history?.firstOrNull()?.id,
-                        "${addedItem!!::class.java.simpleName} ${addedItem.id} name",
-                        "${categoryStart}4",
-                        updatedName,
-                        userAccount!!,
-                        addedItem.history?.firstOrNull()?.dateCreated ?: 0,
-                        addedItem.history?.firstOrNull()?.dateUpdated ?: 0
-                    )
-                ),
-                addedItem.dateCreated,
-                addedItem.dateUpdated
-            )
+            addedItem?.name shouldBe updatedName
+            addedItem?.history?.get(0)?.field shouldBe "${addedItem!!::class.java.simpleName} ${addedItem.id} name"
         }
     }
 

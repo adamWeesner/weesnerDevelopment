@@ -10,8 +10,6 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import shared.auth.User
-import shared.base.History
 import shared.fromJson
 import shared.taxFetcher.FederalIncomeTax
 import shared.taxFetcher.MaritalStatus.Single
@@ -43,41 +41,15 @@ class FederalIncomeTaxTests : BaseTest({ token ->
             val item1 = responseItems!![responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe HttpStatusCode.OK
-            item1 shouldBe FederalIncomeTax(
-                item1.id,
-                2000,
-                Single,
-                Weekly,
-                1.0,
-                5.0,
-                0.0,
-                10.0,
-                0.0,
-                null,
-                item1.dateCreated,
-                item1.dateUpdated
-            )
-            item2 shouldBe FederalIncomeTax(
-                item2.id,
-                2001,
-                Single,
-                Weekly,
-                1.0,
-                5.0,
-                0.0,
-                10.0,
-                0.0,
-                null,
-                item2.dateCreated,
-                item2.dateUpdated
-            )
+            item1.year shouldBe 2000
+            item2.year shouldBe 2001
         }
     }
 
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2002))
         with(BuiltRequest(engine, Get, "$path/${item?.year?.toString()}", token).send<Unit>()) {
-            val addedItem = response.content!!.fromJson<FederalIncomeTax>()!!
+            val addedItem = response.content?.fromJson<FederalIncomeTax>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem shouldBe FederalIncomeTax(
                 item?.id,
@@ -90,8 +62,8 @@ class FederalIncomeTaxTests : BaseTest({ token ->
                 10.0,
                 0.0,
                 null,
-                addedItem.dateCreated,
-                addedItem.dateUpdated
+                addedItem?.dateCreated ?: 0,
+                addedItem?.dateUpdated ?: 0
             )
         }
     }
@@ -101,24 +73,7 @@ class FederalIncomeTaxTests : BaseTest({ token ->
     }
 
     "verify adding a new item" {
-        with(BuiltRequest(engine, Post, path, token).send(newItem(2003))) {
-            val addedItem = response.content!!.fromJson<FederalIncomeTax>()!!
-            response.status() shouldBe HttpStatusCode.Created
-            addedItem shouldBe FederalIncomeTax(
-                addedItem.id,
-                2003,
-                Single,
-                Weekly,
-                1.0,
-                5.0,
-                0.0,
-                10.0,
-                0.0,
-                null,
-                addedItem.dateCreated,
-                addedItem.dateUpdated
-            )
-        }
+        BuiltRequest(engine, Post, path, token).sendStatus(newItem(2003)) shouldBe HttpStatusCode.Created
     }
 
     "verify adding a duplicate item" {
@@ -127,7 +82,6 @@ class FederalIncomeTaxTests : BaseTest({ token ->
     }
 
     "verify updating an added item" {
-        val userAccount = BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
         val federalIncomeTax = BuiltRequest(engine, Post, path, token).asObject(newItem(2004))
         val updateRequest =
             BuiltRequest(engine, Put, path, token).send(federalIncomeTax?.copy(percent = 1.4, over = 2.5))
@@ -145,43 +99,21 @@ class FederalIncomeTaxTests : BaseTest({ token ->
                 0.0,
                 1.4,
                 0.0,
-                listOf(
-                    History(
-                        addedItem!!.history!![0].id,
-                        "${addedItem::class.java.simpleName} ${addedItem.id} over",
-                        "1.0",
-                        "2.5",
-                        userAccount!!,
-                        addedItem.history!![0].dateCreated,
-                        addedItem.history!![0].dateUpdated
-                    ),
-                    History(
-                        addedItem.history!![1].id,
-                        "${addedItem::class.java.simpleName} ${addedItem.id} percent",
-                        "10.0",
-                        "1.4",
-                        userAccount,
-                        addedItem.history!![1].dateCreated,
-                        addedItem.history!![1].dateUpdated
-                    )
-                ),
-                addedItem.dateCreated,
-                addedItem.dateUpdated
+                addedItem?.history,
+                addedItem?.dateCreated ?: 0,
+                addedItem?.dateUpdated ?: 0
             )
+            addedItem?.history?.get(0)?.field shouldBe "${addedItem!!::class.java.simpleName} ${addedItem.id} over"
+            addedItem.history?.get(1)?.field shouldBe "${addedItem::class.java.simpleName} ${addedItem.id} percent"
         }
     }
 
     "verify updating a non existent item" {
-        BuiltRequest(
-            engine,
-            Put,
-            path,
-            token
-        ).send(newItem(2005).copy(99)).response.status() shouldBe HttpStatusCode.BadRequest
+        BuiltRequest(engine, Put, path, token).sendStatus(newItem(2005).copy(99)) shouldBe HttpStatusCode.BadRequest
     }
 
     "verify updating without an id adds a new item" {
-        BuiltRequest(engine, Put, path, token).send(newItem(2006)).response.status() shouldBe HttpStatusCode.Created
+        BuiltRequest(engine, Put, path, token).sendStatus(newItem(2006)) shouldBe HttpStatusCode.Created
     }
 
     "verify deleting and item that has been added" {
@@ -194,29 +126,17 @@ class FederalIncomeTaxTests : BaseTest({ token ->
     }
 
     "verify adding new data where 'over' is between" {
-        BuiltRequest(
-            engine,
-            Post,
-            path,
-            token
-        ).send(newItem(2006).copy(over = 2.0)).response.status() shouldBe HttpStatusCode.Conflict
+        BuiltRequest(engine, Post, path, token)
+            .sendStatus(newItem(2006).copy(over = 2.0)) shouldBe HttpStatusCode.Conflict
     }
 
     "verify adding new data where 'notOver' is between" {
-        BuiltRequest(
-            engine,
-            Post,
-            path,
-            token
-        ).send(newItem(2006).copy(notOver = 2.0)).response.status() shouldBe HttpStatusCode.Conflict
+        BuiltRequest(engine, Post, path, token)
+            .sendStatus(newItem(2006).copy(notOver = 2.0)) shouldBe HttpStatusCode.Conflict
     }
 
     "verify adding new data where 'over' is between and 'notOver' is not" {
-        BuiltRequest(engine, Post, path, token).send(
-            newItem(2006).copy(
-                over = 2.0,
-                notOver = 10.0
-            )
-        ).response.status() shouldBe HttpStatusCode.Conflict
+        BuiltRequest(engine, Post, path, token)
+            .sendStatus(newItem(2006).copy(over = 2.0, notOver = 10.0)) shouldBe HttpStatusCode.Conflict
     }
 })

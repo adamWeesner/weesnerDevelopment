@@ -11,7 +11,6 @@ import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
 import shared.auth.User
-import shared.base.History
 import shared.billMan.Bill
 import shared.billMan.Category
 import shared.billMan.Color
@@ -102,17 +101,7 @@ class BillTests : BaseTest({ token ->
             val addedItem = response.content?.fromJson<Bill>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem?.name shouldBe updatedName
-            addedItem?.history shouldBe listOf(
-                History(
-                    addedItem?.history?.firstOrNull()?.id,
-                    "${addedItem!!::class.java.simpleName} ${addedItem.id} name",
-                    "${billStart}4",
-                    updatedName,
-                    userAccount!!,
-                    addedItem.history?.firstOrNull()?.dateCreated ?: 0,
-                    addedItem.history?.firstOrNull()?.dateUpdated ?: 0
-                )
-            )
+            addedItem?.history?.get(0)?.field shouldBe "${addedItem!!::class.java.simpleName} ${addedItem.id} name"
         }
     }
 

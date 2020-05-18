@@ -3,6 +3,7 @@ package taxFetcher
 import BaseTest
 import BuiltRequest
 import com.weesnerdevelopment.utils.Path
+import generics.InvalidAttributeException
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
@@ -10,8 +11,6 @@ import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
 import medicare.MedicareResponse
-import shared.auth.User
-import shared.base.History
 import shared.fromJson
 import shared.taxFetcher.MaritalStatus.Single
 import shared.taxFetcher.Medicare
@@ -45,43 +44,25 @@ class MedicareTests : BaseTest({ token ->
             val item1 = responseItems!![responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe HttpStatusCode.OK
-            item1 shouldBe Medicare(
-                item1.id,
-                2000,
-                6.25,
-                0.9,
-                item1.limits,
-                null,
-                item1.dateCreated,
-                item1.dateUpdated
-            )
-            item2 shouldBe Medicare(
-                item2.id,
-                2001,
-                6.25,
-                0.9,
-                item2.limits,
-                null,
-                item2.dateCreated,
-                item2.dateUpdated
-            )
+            item1.year shouldBe 2000
+            item2.year shouldBe 2001
         }
     }
 
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2002))
         with(BuiltRequest(engine, Get, "$path/${item?.year?.toString()}", token).send<Unit>()) {
-            val addedItem = response.content!!.fromJson<Medicare>()!!
+            val addedItem = response.content?.fromJson<Medicare>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem shouldBe Medicare(
                 item?.id,
                 2002,
                 6.25,
                 0.9,
-                addedItem.limits,
+                addedItem?.limits ?: listOf(),
                 null,
-                addedItem.dateCreated,
-                addedItem.dateUpdated
+                addedItem?.dateCreated ?: 0,
+                addedItem?.dateUpdated ?: 0
             )
         }
     }
@@ -91,30 +72,7 @@ class MedicareTests : BaseTest({ token ->
     }
 
     "verify adding a new item" {
-        with(BuiltRequest(engine, Post, path, token).send(newItem(2003))) {
-            val addedItem = response.content?.fromJson<Medicare>()!!
-            response.status() shouldBe HttpStatusCode.Created
-            addedItem shouldBe Medicare(
-                addedItem.id,
-                2003,
-                6.25,
-                0.9,
-                listOf(
-                    MedicareLimit(
-                        addedItem.limits[0].id,
-                        2003,
-                        Single,
-                        200000,
-                        null,
-                        addedItem.limits[0].dateCreated,
-                        addedItem.limits[0].dateUpdated
-                    )
-                ),
-                null,
-                addedItem.dateCreated,
-                addedItem.dateUpdated
-            )
-        }
+        BuiltRequest(engine, Post, path, token).sendStatus(newItem(2003)) shouldBe HttpStatusCode.Created
     }
 
     "verify adding a duplicate item" {
@@ -123,12 +81,13 @@ class MedicareTests : BaseTest({ token ->
     }
 
     "verify updating an added item" {
-        val userAccount = BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
         val medicare = BuiltRequest(engine, Post, path, token).asObject(newItem(2004))
+        val newLimits = listOf(medicare?.limits?.run {
+            first().copy(amount = 123456)
+        } ?: throw InvalidAttributeException("Limits"))
+
         val updateRequest =
-            BuiltRequest(engine, Put, path, token).send(medicare?.copy(percent = 6.0, limits = medicare.limits.apply {
-                first().copy(amount = 123456)
-            }))
+            BuiltRequest(engine, Put, path, token).send(medicare?.copy(percent = 6.0, limits = newLimits))
 
         with(updateRequest) {
             val addedItem = response.content?.fromJson<Medicare>()
@@ -139,29 +98,12 @@ class MedicareTests : BaseTest({ token ->
                 6.0,
                 addedItem.additionalPercent,
                 addedItem.limits,
-                listOf(
-                    History(
-                        addedItem.history!![0].id,
-                        "${addedItem::class.java.simpleName} ${addedItem.id} percent",
-                        "6.25",
-                        "6.0",
-                        userAccount!!,
-                        addedItem.history!![0].dateCreated,
-                        addedItem.history!![0].dateUpdated
-                    ),
-                    History(
-                        addedItem.history!![1].id,
-                        "${MedicareLimit::class.java.simpleName} ${addedItem.limits.first().id} amount",
-                        "200000",
-                        "123456",
-                        userAccount,
-                        addedItem.history!![1].dateCreated,
-                        addedItem.history!![1].dateUpdated
-                    )
-                ),
+                addedItem.history,
                 addedItem.dateCreated,
                 addedItem.dateUpdated
             )
+            addedItem.history?.get(0)?.field shouldBe "${addedItem::class.java.simpleName} ${addedItem.id} percent"
+            addedItem.history?.get(1)?.field shouldBe "${MedicareLimit::class.java.simpleName} ${addedItem.limits.first().id} amount"
         }
     }
 
@@ -177,12 +119,8 @@ class MedicareTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).send(newItem(2007))
         val addedItem =
             BuiltRequest(engine, Get, path, token).asObject<MedicareResponse>()?.items?.find { it.year == 2007 }?.year
-        BuiltRequest(
-            engine,
-            Delete,
-            "$path/${addedItem?.toString()}",
-            token
-        ).sendStatus<Unit>() shouldBe HttpStatusCode.OK
+        BuiltRequest(engine, Delete, "$path/${addedItem?.toString()}", token)
+            .sendStatus<Unit>() shouldBe HttpStatusCode.OK
     }
 
     "verify deleting item that doesn't exist" {

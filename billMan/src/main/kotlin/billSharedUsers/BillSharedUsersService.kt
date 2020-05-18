@@ -14,7 +14,7 @@ class BillSharedUsersService(
 ) {
     suspend fun getByBill(id: Int) =
         dbQuery { table.select { (table.billId eq id) }.mapNotNull { to(it) } }.mapNotNull {
-            usersService.getUserByUuid(it.userId)
+            usersService.getUserByUuidRedacted(it.userId)
         }
 
     suspend fun deleteForBill(billId: Int) = dbQuery {

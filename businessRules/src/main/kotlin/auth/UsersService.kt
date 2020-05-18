@@ -12,6 +12,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.auth.HashedUser
 import shared.auth.User
+import shared.fromJson
 
 class UsersService : GenericService<User, UsersTable>(
     UsersTable
@@ -24,6 +25,8 @@ class UsersService : GenericService<User, UsersTable>(
 
     suspend fun getUserByUuid(uuid: String) =
         dbQuery { table.select { (table.uuid eq uuid) }.mapNotNull { to(it) }.singleOrNull() }
+
+    suspend fun getUserByUuidRedacted(uuid: String) = getUserByUuid(uuid)?.redacted()?.fromJson<User>()
 
     override suspend fun add(item: User): User? {
         var key = 0

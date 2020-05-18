@@ -16,7 +16,7 @@ class CategoriesService(
 ) {
     override suspend fun to(row: ResultRow) = Category(
         id = row[CategoriesTable.id],
-        owner = row[CategoriesTable.ownerId]?.let { usersService.getUserByUuid(it) },
+        owner = row[CategoriesTable.ownerId]?.let { usersService.getUserByUuidRedacted(it) },
         name = row[CategoriesTable.name],
         history = historyService.getFor(HistoryTypes.Categories.name, row[CategoriesTable.id]),
         dateCreated = row[CategoriesTable.dateCreated],

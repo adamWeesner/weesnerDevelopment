@@ -24,7 +24,7 @@ class HistoryService(
         field = row[HistoryTable.field],
         oldValue = row[HistoryTable.oldValue],
         newValue = row[HistoryTable.newValue],
-        updatedBy = usersService.getUserByUuid(row[HistoryTable.updatedBy])?.redacted()?.fromJson<User>()
+        updatedBy = usersService.getUserByUuidRedacted(row[HistoryTable.updatedBy])
             ?: throw IllegalArgumentException("No user found for history.."),
         dateCreated = row[HistoryTable.dateCreated],
         dateUpdated = row[HistoryTable.dateUpdated]

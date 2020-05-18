@@ -21,7 +21,7 @@ class PaymentsService(
 
     override suspend fun to(row: ResultRow) = Payment(
         id = row[PaymentsTable.id],
-        owner = usersService.getUserByUuid(row[PaymentsTable.ownerId])
+        owner = usersService.getUserByUuidRedacted(row[PaymentsTable.ownerId])
             ?: throw IllegalArgumentException("No user found for payment."),
         amount = row[PaymentsTable.amount],
         history = historyService.getFor(HistoryTypes.Color.name, row[PaymentsTable.id]),

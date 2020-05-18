@@ -14,7 +14,7 @@ class OccurrenceSharedUsersService(
 ) {
     suspend fun getByOccurrence(id: Int) =
         dbQuery { table.select { (OccurrenceSharedUsersTable.occurrenceId eq id) }.mapNotNull { to(it) } }.mapNotNull {
-            usersService.getUserByUuid(it.userId)
+            usersService.getUserByUuidRedacted(it.userId)
         }
 
     override suspend fun to(row: ResultRow) = OccurrenceSharedUsers(

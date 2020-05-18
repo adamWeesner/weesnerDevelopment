@@ -89,7 +89,7 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
                 it[dateUpdated] = System.currentTimeMillis()
             } get table.id
         }
-        return getSingle { table.id eq key }.also {
+        return getSingle { table.id eq key }?.also {
             onChange(ChangeType.Create, key, it)
         }
     }

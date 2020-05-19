@@ -7,6 +7,7 @@ import com.weesnerdevelopment.utils.Path.*
 import federalIncomeTax.FederalIncomeTaxRouter
 import income.IncomeRouter
 import medicare.MedicareRouter
+import occurrences.OccurrenceRouter
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
@@ -43,5 +44,8 @@ val routers = Kodein.Module("routers") {
     }
     bind<IncomeRouter>() with singleton {
         IncomeRouter(BillMan.income, instance(), instance(), instance())
+    }
+    bind<OccurrenceRouter>() with singleton {
+        OccurrenceRouter(BillMan.occurrences, instance(), instance(), instance(), instance())
     }
 }

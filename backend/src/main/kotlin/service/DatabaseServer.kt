@@ -28,8 +28,8 @@ import io.ktor.routing.Routing
 import io.ktor.websocket.WebSockets
 import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
-import respondAuthorizationIssue
-import respondServerError
+import respondErrorAuthorizing
+import respondErrorServer
 import java.time.Duration
 
 class DatabaseServer {
@@ -61,9 +61,9 @@ class DatabaseServer {
         install(StatusPages) {
             exception<Throwable> { e ->
                 when (e) {
-                    is TokenExpiredException -> call.respondAuthorizationIssue(InvalidUserReason.Expired)
-                    is JWTVerificationException -> call.respondAuthorizationIssue(InvalidUserReason.InvalidJwt)
-                    else -> call.respondServerError(e)
+                    is TokenExpiredException -> call.respondErrorAuthorizing(InvalidUserReason.Expired)
+                    is JWTVerificationException -> call.respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
+                    else -> call.respondErrorServer(e)
                 }
             }
             status(HttpStatusCode.Unauthorized) {
@@ -72,14 +72,14 @@ class DatabaseServer {
                 } catch (e: Exception) {
                     return@status when (e) {
                         // usually happens when no token was passed...
-                        is ClassCastException -> call.respondAuthorizationIssue(InvalidUserReason.InvalidJwt)
-                        is TokenExpiredException -> call.respondAuthorizationIssue(InvalidUserReason.Expired)
-                        is JWTVerificationException -> call.respondAuthorizationIssue(InvalidUserReason.InvalidJwt)
-                        else -> call.respondServerError(Throwable(e))
+                        is ClassCastException -> call.respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
+                        is TokenExpiredException -> call.respondErrorAuthorizing(InvalidUserReason.Expired)
+                        is JWTVerificationException -> call.respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
+                        else -> call.respondErrorServer(Throwable(e))
                     }
                 }
 
-                call.respondAuthorizationIssue(InvalidUserReason.General)
+                call.respondErrorAuthorizing(InvalidUserReason.General)
             }
         }
         install(Authentication) {

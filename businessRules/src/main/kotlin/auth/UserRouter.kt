@@ -1,11 +1,10 @@
 package auth
 
-import generics.GenericRouter
+import generics.*
 import history.HistoryService
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
-import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.header
 import io.ktor.response.respond
@@ -16,7 +15,8 @@ import io.ktor.routing.put
 import io.ktor.util.pipeline.PipelineContext
 import loggedUserData
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import respondAuthorizationIssue
+import parse
+import respondErrorAuthorizing
 import shared.auth.HashedUser
 import shared.auth.User
 import java.util.*
@@ -46,16 +46,18 @@ class UserRouter(
                 call.loggedUserData()?.getData()?.apply {
                     when {
                         username != null && password != null -> {
-                            usersService.getUserFromHash(HashedUser(username, password))?.run {
-                                call.respond(HttpStatusCode.OK, this.redacted() ?: "")
-                            } ?: call.respondAuthorizationIssue(InvalidUserReason.NoUserFound)
+                            val user = usersService.getUserFromHash(HashedUser(username, password))
+                                ?: return@get call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+
+                            call.respond(Ok(user.redacted().parse()))
                         }
                         uuid != null -> {
-                            usersService.getUserByUuid(uuid)?.run {
-                                call.respond(HttpStatusCode.OK, this.redacted() ?: "")
-                            } ?: call.respondAuthorizationIssue(InvalidUserReason.NoUserFound)
+                            val user = usersService.getUserByUuid(uuid)
+                                ?: return@get call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+
+                            call.respond(Ok(user.redacted().parse()))
                         }
-                        else -> call.respondAuthorizationIssue(InvalidUserReason.General)
+                        else -> call.respondErrorAuthorizing(InvalidUserReason.General)
                     }
                 }
             }
@@ -68,14 +70,14 @@ class UserRouter(
                 val authToken = call.loggedUserData()
                 val item = call.receive<User>()
 
-                if (authToken?.getData()?.uuid != item.uuid) return@put call.respond(HttpStatusCode.Unauthorized)
+                if (authToken?.getData()?.uuid != item.uuid) return@put call.respondErrorAuthorizing(InvalidUserReason.WrongUser)
 
                 val updated = putQualifier(item)
 
                 when {
-                    updated == null -> call.respond(HttpStatusCode.BadRequest)
-                    updated.id != item.id -> call.respond(HttpStatusCode.Created, updated.redacted() ?: "")
-                    else -> call.respond(HttpStatusCode.OK, updated.redacted() ?: "")
+                    updated == null -> call.respond(BadRequest("Error occurred updated user information."))
+                    updated.id != item.id -> call.respond(Created(updated.redacted().parse()))
+                    else -> call.respond(Ok(updated.redacted().parse()))
                 }
             }
         }
@@ -95,12 +97,11 @@ class UserRouter(
 
             hashedUser(credentials.username, credentials.password) {
                 it?.run {
-                    val generatedToken =
-                        asHashed()?.asToken(jwtProvider) ?: throw Exception("Generate token was null")
+                    val generatedToken = asHashed()?.asToken(jwtProvider) ?: throw Exception("Generate token was null")
 
                     call.response.header("x-auth-token", generatedToken)
-                    call.respond(HttpStatusCode.OK, TokenResponse(generatedToken))
-                } ?: call.respondAuthorizationIssue(InvalidUserReason.NoUserFound)
+                    call.respond(Ok(TokenResponse(generatedToken)))
+                } ?: call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
             }
         }
     }
@@ -110,7 +111,7 @@ class UserRouter(
             val credentials = call.receive<User>()
 
             hashedUser(credentials.username, credentials.password) {
-                if (it != null) return@hashedUser call.respond(HttpStatusCode.Conflict)
+                if (it != null) return@hashedUser call.respond(Conflict("Invalid user credentials."))
 
                 val newUser = User(
                     uuid = UUID.nameUUIDFromBytes("${credentials.username}${credentials.password}".toByteArray())
@@ -123,8 +124,8 @@ class UserRouter(
                 )
 
                 when (val added = service.add(newUser)) {
-                    null -> call.respond(HttpStatusCode.Conflict)
-                    else -> call.respond(HttpStatusCode.Created, TokenResponse(added.asHashed()?.asToken(jwtProvider)))
+                    null -> call.respond(Conflict("Unable to save user credentials."))
+                    else -> call.respond(Created(TokenResponse(added.asHashed()?.asToken(jwtProvider))))
                 }
             }
         }
@@ -139,14 +140,14 @@ class UserRouter(
         tryBlock: suspend (hashedUser: User?) -> Unit
     ) {
         if (username == null || password == null) {
-            call.respond(HttpStatusCode.BadRequest, "Username and password must be provided")
+            call.respond(BadRequest("Username and password must be provided"))
             return
         }
 
         val hashedUser = HashedUser(username, password)
 
         if (hashedUser.checkValidity() != null) {
-            call.respondAuthorizationIssue(InvalidUserReason.InvalidUserInfo)
+            call.respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
             return
         }
 
@@ -155,7 +156,7 @@ class UserRouter(
 
             tryBlock(response)
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.BadRequest, e.message ?: "Unknown reason for request failure")
+            call.respond(BadRequest(e.message ?: "Unknown reason for request failure"))
         }
     }
 }

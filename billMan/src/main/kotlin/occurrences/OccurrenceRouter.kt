@@ -2,14 +2,10 @@ package occurrences
 
 import auth.InvalidUserReason
 import auth.UsersService
-import generics.BadRequest
-import generics.Conflict
-import generics.GenericRouter
-import generics.NotFound
+import generics.*
 import history.HistoryService
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
@@ -66,7 +62,7 @@ class OccurrenceRouter(
                 )
             ) { service.table.id eq occurrenceId.toInt() }
 
-            call.respond(HttpStatusCode.Created, added)
+            call.respond(Created(added))
         }
     }
 }

@@ -39,7 +39,12 @@ enum class InvalidUserReason(val code: Int) {
     /**
      * Not valid hashed user data, ie: something is not valid [Base64] data.
      */
-    InvalidUserInfo(1004)
+    InvalidUserInfo(1004),
+
+    /**
+     * Not a user that can access this.
+     */
+    WrongUser(1005)
 }
 
 /**

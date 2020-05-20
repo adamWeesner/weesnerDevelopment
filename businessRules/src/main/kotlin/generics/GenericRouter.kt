@@ -1,5 +1,6 @@
 package generics
 
+import auth.InvalidUserReason
 import auth.UsersService
 import diff
 import history.HistoryService
@@ -14,8 +15,8 @@ import io.ktor.routing.*
 import io.ktor.util.pipeline.PipelineContext
 import loggedUserData
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import respondErrorAuthorizing
 import shared.auth.HashedUser
-import shared.auth.User
 import shared.base.GenericItem
 import shared.base.History
 import shared.base.HistoryItem
@@ -74,8 +75,8 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
         get("/") {
             response?.let {
                 it.items = service.getAll()
-                call.respond(response)
-            } ?: call.respond(HttpStatusCode.NotFound)
+                call.respond(Ok(response))
+            } ?: call.respond(NotFound("Could not get items."))
         }
     }
 
@@ -86,8 +87,8 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
      */
     open fun Route.getSingle() {
         get("/{item}") {
-            val param = call.parameters["item"] ?: return@get call.respond(HttpStatusCode.BadRequest)
-            call.respond(service.getSingle { singleEq(param) } ?: HttpStatusCode.NotFound)
+            val param = call.parameters["item"] ?: return@get call.respond(BadRequest("Invalid param."))
+            call.respond(service.getSingle { singleEq(param) } ?: NotFound("Could not get item for param $param."))
         }
     }
 
@@ -112,11 +113,11 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
         post("/") {
             val item = call.receive<O>(itemType)
 
-            if (postQualifier(item) != null) return@post call.respond(HttpStatusCode.Conflict)
+            if (postQualifier(item) != null) return@post call.respond(Conflict("Item matching $item already in db."))
 
             when (val added = service.add(item)) {
-                null -> call.respond(HttpStatusCode.Conflict)
-                else -> call.respond(HttpStatusCode.Created, added)
+                null -> call.respond(Conflict("An error occurred add item $item."))
+                else -> call.respond(Created(added))
             }
         }
     }
@@ -133,17 +134,10 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
         usersService: UsersService,
         historyService: HistoryService
     ): List<History>? {
-        val callData = call.loggedUserData()?.getData()
-        val user: User? = callData?.let {
-            if (it.username == null || it.password == null) {
-                call.respond(HttpStatusCode.Unauthorized)
-                return null
-            }
-            usersService.getUserFromHash(HashedUser(it.username, it.password))
-        }
+        val user = tokenAsUser(usersService)
 
         if (user == null) {
-            call.respond(HttpStatusCode.Unauthorized)
+            call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
             return null
         }
 
@@ -154,6 +148,16 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
 
         return history
     }
+
+    suspend fun PipelineContext<Unit, ApplicationCall>.tokenAsUser(usersService: UsersService) =
+        call.loggedUserData()?.getData()?.let {
+            if (it.username == null || it.password == null) {
+                call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+                return null
+            } else {
+                usersService.getUserFromHash(HashedUser(it.username, it.password))
+            }
+        }
 
     /**
      * Attempts to update the item in the body of the http request. If no `id` is given in the body then the item tries
@@ -174,9 +178,9 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
                 updated = putAdditional(oldItem, updated)
 
             when {
-                updated == null -> call.respond(HttpStatusCode.BadRequest)
-                updated.id != item.id -> call.respond(HttpStatusCode.Created, updated)
-                else -> call.respond(HttpStatusCode.OK, updated)
+                updated == null -> call.respond(BadRequest("An error occurred updating $item."))
+                updated.id != item.id -> call.respond(Created(updated))
+                else -> call.respond(Ok(updated))
             }
         }
     }
@@ -190,13 +194,14 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
      */
     open fun Route.deleteDefault() {
         delete("/{item}") {
-            val param = call.parameters["item"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
+            val param = call.parameters["item"] ?: return@delete call.respond(BadRequest("Invalid param."))
 
-            val id = deleteQualifier(param)?.id ?: return@delete call.respond(HttpStatusCode.NotFound)
+            val id = deleteQualifier(param)?.id
+                ?: return@delete call.respond(NotFound("Item matching $param was not found."))
 
             val removed = service.delete(id) { singleEq(param) }
 
-            call.respond(if (removed) HttpStatusCode.OK else HttpStatusCode.NotFound)
+            call.respond(if (removed) Ok("Successfully removed item.") else NotFound("Item matching $param was not found."))
         }
     }
 

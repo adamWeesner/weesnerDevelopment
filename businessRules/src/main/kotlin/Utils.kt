@@ -1,6 +1,9 @@
 import auth.CustomPrincipal
 import auth.InvalidUserException
 import auth.InvalidUserReason
+import generics.InternalError
+import generics.Response
+import generics.Unauthorized
 import io.ktor.application.ApplicationCall
 import io.ktor.auth.authentication
 import io.ktor.http.HttpStatusCode
@@ -11,7 +14,7 @@ import shared.auth.User
 import shared.base.GenericItem
 import shared.base.History
 import shared.base.HistoryItem
-import shared.toJson
+import shared.fromJson
 import kotlin.reflect.full.declaredMemberProperties
 
 /**
@@ -25,31 +28,31 @@ suspend fun <T> dbQuery(block: suspend () -> T): T = newSuspendedTransaction { b
 data class ServerError(
     val status: String,
     val statusCode: Int,
-    val message: String
+    val message: Any
 )
+
+/**
+ * Helper function to [respond] with a [Response] and body.
+ */
+suspend fun ApplicationCall.respond(response: Response) = response.run { respond(status, message) }
+
+/**
+ * Helper function to [respond] with a [Response] and error body.
+ */
+suspend fun ApplicationCall.respondError(error: Response) =
+    error.run { respond(status, ServerError(status.description, status.value, message)) }
 
 /**
  * Helper function to [respond] with a [ServerError].
  */
-suspend fun ApplicationCall.respondServerError(error: Throwable) {
-    val httpStatus = HttpStatusCode.InternalServerError
-    respond(
-        httpStatus,
-        ServerError(
-            httpStatus.description,
-            httpStatus.value,
-            error.localizedMessage ?: error.message ?: error.toString()
-        )
-    )
-}
+suspend fun ApplicationCall.respondErrorServer(error: Throwable) =
+    respondError(InternalError(error.message ?: error.toString()))
 
 /**
  * Helper function to [respond] with an [InvalidUserException] with the given [reason].
  */
-suspend fun ApplicationCall.respondAuthorizationIssue(reason: InvalidUserReason) {
-    val httpStatus = HttpStatusCode.Unauthorized
-    respond(httpStatus, InvalidUserException(request.uri, httpStatus.value, reason.code).toJson() ?: "")
-}
+suspend fun ApplicationCall.respondErrorAuthorizing(reason: InvalidUserReason) =
+    respondError(Unauthorized(InvalidUserException(request.uri, HttpStatusCode.Unauthorized.value, reason.code)))
 
 /**
  * Gets the Authentication principal from the [ApplicationCall].
@@ -98,3 +101,6 @@ inline fun <reified O : GenericItem> O.diff(other: O, user: User): List<History>
         else null
     }.toList()
 }
+
+inline fun <reified T> String?.parse(): T =
+    this?.fromJson<T>() ?: throw Throwable("failed to parse $this to ${T::class}.")

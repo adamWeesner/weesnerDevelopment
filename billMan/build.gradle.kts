@@ -1,28 +1,24 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "1.0.0"
-
 plugins {
-    kotlin("jvm")
+    id(Kotlin.jvm)
 }
+
+group = Base.group
+version = BillMan.version
 
 sourceSets { sharedSources() }
 repositories { sharedRepos() }
 java { javaSource() }
-tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = jvmVersion }
+tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "../libs", "include" to listOf("*.jar"))))
-    implementation(project(":businessRules"))
-
-    implementation(kotlinJdk())
-
-    implementation(moshi())
-
-    implementation(ktorServer("core"))
-    implementation(ktor("auth-jwt"))
-
-    implementation(exposed())
-
-    implementation(kodein())
+    implementation(fileTree(Base.jars))
+    implementation(project(BusinessRules.project))
+    implementation(Kotlin.stdLib)
+    implementation(Moshi.core)
+    implementation(Ktor.authJwt)
+    implementation(Ktor.Server.core)
+    implementation(Exposed.core)
+    implementation(KodeIn.core)
 }

@@ -1,24 +1,16 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.60"
+    id(Kotlin.jvm) version Kotlin.version
 }
 
-group = "com.weesnerdevelopment"
-version = "1.0"
+group = Base.group
+version = Base.version
 
-repositories {
-    mavenCentral()
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks.withType<KotlinCompile>().all {
-    kotlinOptions.jvmTarget = jvmVersion
-}
+repositories { sharedRepos() }
+java { javaSource() }
+tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(Kotlin.stdLib)
 }

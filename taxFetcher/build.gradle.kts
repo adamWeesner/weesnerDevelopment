@@ -1,24 +1,23 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "1.0.2"
-
 plugins {
-    kotlin("jvm")
-    kotlin("kapt")
+    id(Kotlin.jvm)
+    id(Kotlin.kapt)
 }
+
+group = Base.group
+version = TaxFetcher.version
 
 sourceSets { sharedSources() }
 repositories { sharedRepos() }
 java { javaSource() }
-tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = jvmVersion }
+tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "../libs", "include" to listOf("*.jar"))))
-
-    implementation(project(":businessRules"))
-
-    implementation(kotlinJdk())
-    implementation(ktorServer("core"))
-    implementation(moshi())
-    implementation(exposed())
+    implementation(fileTree(Base.jars))
+    implementation(project(BusinessRules.project))
+    implementation(Kotlin.stdLib)
+    implementation(Ktor.Server.core)
+    implementation(Moshi.core)
+    implementation(Exposed.core)
 }

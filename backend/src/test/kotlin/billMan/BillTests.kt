@@ -71,7 +71,6 @@ class BillTests : BaseTest({ token ->
             response.status() shouldBe HttpStatusCode.OK
             addedItem::class.java shouldBe Bill::class.java
             addedItem.name shouldBe "${billStart}2"
-            addedItem.color shouldBe Color(red = 255, green = 255, blue = 255, alpha = 255)
         }
     }
 
@@ -81,9 +80,17 @@ class BillTests : BaseTest({ token ->
 
     "verify adding a new item" {
         with(BuiltRequest(engine, Post, path, token).send(newItem(3))) {
-            val addedItem = response.content?.fromJson<Bill>()
+            val addedItem = response.content.parse<Bill>()
             response.status() shouldBe HttpStatusCode.Created
-            addedItem?.name shouldBe "${billStart}3"
+            addedItem.name shouldBe "${billStart}3"
+            addedItem.color.copy(dateUpdated = -1, dateCreated = -1) shouldBe Color(
+                addedItem.color.id,
+                255,
+                255,
+                255,
+                255,
+                listOf()
+            ).copy(dateUpdated = -1, dateCreated = -1)
         }
     }
 
@@ -95,13 +102,20 @@ class BillTests : BaseTest({ token ->
     "verify updating an added item" {
         val updatedName = "cat4"
         val bill = BuiltRequest(engine, Post, path, token).asObject(newItem(4))
-        val updateRequest = BuiltRequest(engine, Put, path, token).send(bill.copy(name = updatedName))
+        val updatedBill =
+            bill.copy(
+                name = updatedName,
+                color = bill.color.copy(green = 150)
+            )
+        val updateRequest = BuiltRequest(engine, Put, path, token).send(updatedBill)
 
         with(updateRequest) {
-            val addedItem = response.content?.fromJson<Bill>()
+            val addedItem = response.content.parse<Bill>()
             response.status() shouldBe HttpStatusCode.OK
-            addedItem?.name shouldBe updatedName
-            addedItem?.history?.get(0)?.field shouldBe "${addedItem!!::class.java.simpleName} ${addedItem.id} name"
+            addedItem.name shouldBe updatedName
+            addedItem.color.green shouldBe 150
+            addedItem.history?.get(0)?.field shouldBe "${addedItem::class.java.simpleName} ${addedItem.id} color"
+            addedItem.history?.get(1)?.field shouldBe "${addedItem::class.java.simpleName} ${addedItem.id} name"
         }
     }
 

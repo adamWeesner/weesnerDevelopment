@@ -178,7 +178,7 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
             var updated = putQualifier(item)
 
             if (oldItem != null && updated != null)
-                updated = putAdditional(oldItem, updated)
+                updated = putAdditional(oldItem, item)
 
             when {
                 updated == null -> call.respond(BadRequest("An error occurred updating $item."))

@@ -32,7 +32,7 @@ class BuiltRequest(
     /**
      * [send] the request returning the response as [T].
      */
-    inline fun <reified T> asObject(body: T? = null) = send<T>(body).response.content.also(::println).parse<T>()
+    inline fun <reified T> asObject(body: T? = null) = send<T>(body).response.content.parse<T>()
 
     /**
      * [send] the request returning the response as [T].
@@ -44,7 +44,7 @@ class BuiltRequest(
      * [send] the request returning the response as [T].
      */
     inline fun <reified T, reified R> asClass(body: T? = null) =
-        send<T>(body).response.content.also(::println).parse<R>()
+        send<T>(body).response.content.parse<R>()
 
     /**
      * [send] the request returning the status of the response.

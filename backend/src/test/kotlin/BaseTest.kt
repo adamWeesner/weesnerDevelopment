@@ -13,7 +13,7 @@ import shared.auth.HashedUser
 import shared.auth.User
 import java.io.File
 
-open class BaseTest(block: AbstractStringSpec.(token: String) -> Unit = {}) : StringSpec() {
+open class BaseTest(block: AbstractStringSpec.(token: String) -> Unit = {}, usesToken: Boolean = true) : StringSpec() {
     private var started = false
 
     companion object {
@@ -23,30 +23,33 @@ open class BaseTest(block: AbstractStringSpec.(token: String) -> Unit = {}) : St
     }
 
     init {
-        var token: String
+        var token = ""
 
         val db = File("server")
         if (db.isDirectory) {
             val children = db.list()
             children?.indices?.forEach { i ->
+                println("Removing old server files...")
                 File(db, children[i]).delete()
             }
         }
 
         engine.start()
-
-        with(engine) {
-            token = BuiltRequest(this, Post, Path.User.base + Path.User.signUp).asClass<User, TokenResponse>(
-                User(
-                    name = "test",
-                    email = "test@email.com",
-                    username = "test",
-                    password = "test"
-                )
-            )?.token
-                ?: BuiltRequest(this, Post, Path.User.base + Path.User.login)
-                    .asClass<HashedUser, TokenResponse>(HashedUser("test", "test"))?.token
-                        ?: throw IllegalArgumentException("Something happened... should have gotten a token")
+        if (usesToken) {
+            with(engine) {
+                token = BuiltRequest(this, Post, Path.User.base + Path.User.signUp).asClass<User, TokenResponse>(
+                    User(
+                        name = "test",
+                        email = "test@email.com",
+                        username = "test",
+                        password = "test"
+                    )
+                ).also { println("created user $it") }?.token
+                    ?: BuiltRequest(this, Post, Path.User.base + Path.User.login)
+                        .asClass<HashedUser, TokenResponse>(HashedUser("test", "test"))
+                        .also { println("logged in as $it") }?.token
+                            ?: throw IllegalArgumentException("Something happened... should have gotten a token")
+            }
         }
 
         block(token)

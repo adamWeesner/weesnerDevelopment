@@ -10,6 +10,7 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
+import parse
 import shared.auth.User
 import shared.billMan.Bill
 import shared.billMan.Category
@@ -20,11 +21,10 @@ class BillTests : BaseTest({ token ->
     val billStart = "randomBill"
     val signedInUser =
         BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
-            ?: throw IllegalArgumentException("Need to have a user signed in...")
 
     val startCategory = BuiltRequest(engine, Post, Path.BillMan.categories, token).asObject(
         Category(name = "randomCategory")
-    ) ?: throw IllegalArgumentException("Could not save category for some reason...")
+    )
 
     fun newItem(
         addition: Int,
@@ -66,11 +66,12 @@ class BillTests : BaseTest({ token ->
 
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2))
-        with(BuiltRequest(engine, Get, "$path/${item?.id}", token).send<Bill>()) {
-            val addedItem = response.content!!.fromJson<Bill>()!!
+        with(BuiltRequest(engine, Get, "$path/${item.id}", token).send<Bill>()) {
+            val addedItem = response.content.parse<Bill>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem::class.java shouldBe Bill::class.java
             addedItem.name shouldBe "${billStart}2"
+            addedItem.color shouldBe Color(red = 255, green = 255, blue = 255, alpha = 255)
         }
     }
 
@@ -88,13 +89,13 @@ class BillTests : BaseTest({ token ->
 
     "verify adding a duplicate item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(8))
-        BuiltRequest(engine, Post, path, token).sendStatus((newItem(9, item?.id))) shouldBe HttpStatusCode.Conflict
+        BuiltRequest(engine, Post, path, token).sendStatus((newItem(9, item.id))) shouldBe HttpStatusCode.Conflict
     }
 
     "verify updating an added item" {
         val updatedName = "cat4"
         val bill = BuiltRequest(engine, Post, path, token).asObject(newItem(4))
-        val updateRequest = BuiltRequest(engine, Put, path, token).send(bill?.copy(name = updatedName))
+        val updateRequest = BuiltRequest(engine, Put, path, token).send(bill.copy(name = updatedName))
 
         with(updateRequest) {
             val addedItem = response.content?.fromJson<Bill>()

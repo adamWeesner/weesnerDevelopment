@@ -4,7 +4,6 @@ import io.ktor.http.HttpMethod
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
-import shared.fromJson
 import shared.toJson
 
 /**
@@ -33,12 +32,19 @@ class BuiltRequest(
     /**
      * [send] the request returning the response as [T].
      */
-    inline fun <reified T> asObject(body: T? = null) = send<T>(body).response.content?.fromJson<T>()
+    inline fun <reified T> asObject(body: T? = null) = send<T>(body).response.content.also(::println).parse<T>()
 
     /**
      * [send] the request returning the response as [T].
      */
-    inline fun <reified T, reified R> asClass(body: T? = null) = send<T>(body).response.content?.fromJson<R>()
+    inline fun <reified T, reified R> asServerError(body: T? = null) =
+        send<T>(body).response.content.parse<ServerError>().message.toJson().parse<R>()
+
+    /**
+     * [send] the request returning the response as [T].
+     */
+    inline fun <reified T, reified R> asClass(body: T? = null) =
+        send<T>(body).response.content.also(::println).parse<R>()
 
     /**
      * [send] the request returning the status of the response.

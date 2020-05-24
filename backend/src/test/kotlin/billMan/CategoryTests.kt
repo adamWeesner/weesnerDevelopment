@@ -10,6 +10,7 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
+import parse
 import shared.billMan.Category
 import shared.fromJson
 
@@ -41,10 +42,10 @@ class CategoryTests : BaseTest({ token ->
 
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2))
-        with(BuiltRequest(engine, Get, "$path/${item?.id}", token).send<Category>()) {
-            val addedItem = response.content?.fromJson<Category>()
+        with(BuiltRequest(engine, Get, "$path/${item.id}", token).send<Category>()) {
+            val addedItem = response.content.parse<Category>()
             response.status() shouldBe HttpStatusCode.OK
-            addedItem?.name shouldBe "${categoryStart}2"
+            addedItem.name shouldBe "${categoryStart}2"
         }
     }
 
@@ -64,7 +65,7 @@ class CategoryTests : BaseTest({ token ->
     "verify updating an added item" {
         val updatedName = "cat4"
         val category = BuiltRequest(engine, Post, path, token).asObject(newItem(4))
-        val updateRequest = BuiltRequest(engine, Put, path, token).send(category?.copy(name = updatedName))
+        val updateRequest = BuiltRequest(engine, Put, path, token).send(category.copy(name = updatedName))
 
         with(updateRequest) {
             val addedItem = response.content?.fromJson<Category>()

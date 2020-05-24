@@ -9,6 +9,7 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
+import parse
 import shared.auth.User
 import shared.base.History
 import shared.fromJson
@@ -43,11 +44,11 @@ class SocialSecurityTests : BaseTest({ token ->
 
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2002))
-        with(BuiltRequest(engine, Get, "$path/${item?.year?.toString()}", token).send<Unit>()) {
-            val addedItem = response.content!!.fromJson<SocialSecurity>()!!
+        with(BuiltRequest(engine, Get, "$path/${item.year}", token).send<Unit>()) {
+            val addedItem = response.content.parse<SocialSecurity>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem shouldBe SocialSecurity(
-                item?.id,
+                item.id,
                 2002,
                 1.45,
                 127200,
@@ -69,7 +70,7 @@ class SocialSecurityTests : BaseTest({ token ->
 
     "verify adding a new item" {
         with(BuiltRequest(engine, Post, path, token).send(newItem(2003))) {
-            val addedItem = response.content!!.fromJson<SocialSecurity>()!!
+            val addedItem = response.content.parse<SocialSecurity>()
             response.status() shouldBe HttpStatusCode.Created
             addedItem shouldBe SocialSecurity(
                 addedItem.id,
@@ -90,10 +91,10 @@ class SocialSecurityTests : BaseTest({ token ->
             BuiltRequest(engine, Put, path, token).send(socialSecurity?.copy(percent = 1.4, limit = 128000))
 
         with(updatedRequest) {
-            val addedItem = response.content?.fromJson<SocialSecurity>()
+            val addedItem = response.content.parse<SocialSecurity>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem shouldBe SocialSecurity(
-                addedItem!!.id,
+                addedItem.id,
                 2004,
                 1.4,
                 128000,
@@ -103,7 +104,7 @@ class SocialSecurityTests : BaseTest({ token ->
                         "${addedItem::class.java.simpleName} ${addedItem.id} limit",
                         "127200",
                         "128000",
-                        userAccount!!,
+                        userAccount,
                         addedItem.history!![0].dateCreated,
                         addedItem.history!![0].dateUpdated
                     ),

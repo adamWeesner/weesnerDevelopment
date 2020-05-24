@@ -7,7 +7,6 @@ import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.request.receive
 import io.ktor.response.header
-import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -15,7 +14,7 @@ import io.ktor.routing.put
 import io.ktor.util.pipeline.PipelineContext
 import loggedUserData
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import parse
+import respond
 import respondErrorAuthorizing
 import shared.auth.HashedUser
 import shared.auth.User
@@ -49,13 +48,13 @@ class UserRouter(
                             val user = usersService.getUserFromHash(HashedUser(username, password))
                                 ?: return@get call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
 
-                            call.respond(Ok(user.redacted().parse()))
+                            call.respond(Ok(user.redacted()))
                         }
                         uuid != null -> {
                             val user = usersService.getUserByUuid(uuid)
                                 ?: return@get call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
 
-                            call.respond(Ok(user.redacted().parse()))
+                            call.respond(Ok(user.redacted()))
                         }
                         else -> call.respondErrorAuthorizing(InvalidUserReason.General)
                     }
@@ -76,8 +75,8 @@ class UserRouter(
 
                 when {
                     updated == null -> call.respond(BadRequest("Error occurred updated user information."))
-                    updated.id != item.id -> call.respond(Created(updated.redacted().parse()))
-                    else -> call.respond(Ok(updated.redacted().parse()))
+                    updated.id != item.id -> call.respond(Created(updated.redacted()))
+                    else -> call.respond(Ok(updated.redacted()))
                 }
             }
         }

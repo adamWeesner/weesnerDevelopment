@@ -10,16 +10,15 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
+import parse
 import shared.auth.User
 import shared.billMan.Color
 import shared.billMan.Income
-import shared.fromJson
 
 class IncomeTests : BaseTest({ token ->
     val billStart = "randomIncome"
     val signedInUser =
         BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
-            ?: throw IllegalArgumentException("Need to have a user signed in...")
 
     fun newItem(
         addition: Int,
@@ -45,7 +44,7 @@ class IncomeTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).send(newItem(0))
         BuiltRequest(engine, Post, path, token).send(newItem(1))
         with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content?.fromJson<IncomeResponse>()?.items
+            val responseItems = response.content.parse<IncomeResponse>().items
             val item1 = responseItems!![responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe HttpStatusCode.OK
@@ -56,8 +55,8 @@ class IncomeTests : BaseTest({ token ->
 
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2))
-        with(BuiltRequest(engine, Get, "$path/${item?.id}", token).send<Income>()) {
-            val addedItem = response.content!!.fromJson<Income>()!!
+        with(BuiltRequest(engine, Get, "$path/${item.id}", token).send<Income>()) {
+            val addedItem = response.content.parse<Income>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem::class.java shouldBe Income::class.java
             addedItem.name shouldBe "${billStart}2"
@@ -70,27 +69,27 @@ class IncomeTests : BaseTest({ token ->
 
     "verify adding a new item" {
         with(BuiltRequest(engine, Post, path, token).send(newItem(3))) {
-            val addedItem = response.content?.fromJson<Income>()
+            val addedItem = response.content.parse<Income>()
             response.status() shouldBe HttpStatusCode.Created
-            addedItem?.name shouldBe "${billStart}3"
+            addedItem.name shouldBe "${billStart}3"
         }
     }
 
     "verify adding a duplicate item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(8))
-        BuiltRequest(engine, Post, path, token).sendStatus((newItem(9, item?.id))) shouldBe HttpStatusCode.Conflict
+        BuiltRequest(engine, Post, path, token).sendStatus((newItem(9, item.id))) shouldBe HttpStatusCode.Conflict
     }
 
     "verify updating an added item" {
         val updatedName = "income4"
         val income = BuiltRequest(engine, Post, path, token).asObject(newItem(4))
-        val updateRequest = BuiltRequest(engine, Put, path, token).send(income?.copy(name = updatedName))
+        val updateRequest = BuiltRequest(engine, Put, path, token).send(income.copy(name = updatedName))
 
         with(updateRequest) {
-            val addedItem = response.content?.fromJson<Income>()
+            val addedItem = response.content.parse<Income>()
             response.status() shouldBe HttpStatusCode.OK
-            addedItem?.name shouldBe updatedName
-            addedItem?.history?.get(0)?.field shouldBe "${addedItem!!::class.java.simpleName} ${addedItem.id} name"
+            addedItem.name shouldBe updatedName
+            addedItem.history?.get(0)?.field shouldBe "${addedItem::class.java.simpleName} ${addedItem.id} name"
         }
     }
 
@@ -103,8 +102,8 @@ class IncomeTests : BaseTest({ token ->
     }
 
     "verify deleting and item that has been added" {
-        val addedItem = BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content?.fromJson<Income>()
-        BuiltRequest(engine, Delete, "$path/${addedItem?.id}", token).sendStatus<Unit>() shouldBe HttpStatusCode.OK
+        val addedItem = BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content.parse<Income>()
+        BuiltRequest(engine, Delete, "$path/${addedItem.id}", token).sendStatus<Unit>() shouldBe HttpStatusCode.OK
     }
 
     "verify deleting item that doesn't exist" {

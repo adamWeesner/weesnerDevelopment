@@ -11,7 +11,6 @@ import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
 import parse
-import shared.fromJson
 import shared.taxFetcher.FederalIncomeTax
 import shared.taxFetcher.MaritalStatus.Single
 import shared.taxFetcher.PayPeriod.Weekly
@@ -38,7 +37,7 @@ class FederalIncomeTaxTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).send(newItem(2000))
         BuiltRequest(engine, Post, path, token).send(newItem(2001))
         with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content?.fromJson<FederalIncomeTaxResponse>()?.items
+            val responseItems = response.content.parse<FederalIncomeTaxResponse>().items
             val item1 = responseItems!![responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe HttpStatusCode.OK

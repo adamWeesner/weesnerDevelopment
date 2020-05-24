@@ -88,7 +88,7 @@ class SocialSecurityTests : BaseTest({ token ->
         val userAccount = BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
         val socialSecurity = BuiltRequest(engine, Post, path, token).asObject(newItem(2004))
         val updatedRequest =
-            BuiltRequest(engine, Put, path, token).send(socialSecurity?.copy(percent = 1.4, limit = 128000))
+            BuiltRequest(engine, Put, path, token).send(socialSecurity.copy(percent = 1.4, limit = 128000))
 
         with(updatedRequest) {
             val addedItem = response.content.parse<SocialSecurity>()

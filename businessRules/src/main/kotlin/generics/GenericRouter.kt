@@ -10,11 +10,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.cio.websocket.DefaultWebSocketSession
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.request.receive
-import io.ktor.response.respond
 import io.ktor.routing.*
 import io.ktor.util.pipeline.PipelineContext
 import loggedUserData
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import respond
 import respondErrorAuthorizing
 import shared.auth.HashedUser
 import shared.base.GenericItem
@@ -88,7 +88,10 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
     open fun Route.getSingle() {
         get("/{item}") {
             val param = call.parameters["item"] ?: return@get call.respond(BadRequest("Invalid param."))
-            call.respond(service.getSingle { singleEq(param) } ?: NotFound("Could not get item for param $param."))
+            when (val retrieved = service.getSingle { singleEq(param) }) {
+                null -> call.respond(NotFound("Could not get item for param $param."))
+                else -> call.respond(Ok(retrieved))
+            }
         }
     }
 

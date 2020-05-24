@@ -125,7 +125,7 @@ class TaxWithholdingTests : BaseTest({ token ->
 
             response.status() shouldBe HttpStatusCode.OK
             addedItem shouldBe TaxWithholding(
-                addedItem!!.id,
+                addedItem.id,
                 2004,
                 General,
                 Biweekly,

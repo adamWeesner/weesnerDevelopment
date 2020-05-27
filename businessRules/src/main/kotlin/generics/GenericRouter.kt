@@ -145,7 +145,7 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
         }
 
         val history = mutableListOf<History>()
-        item.diff(updatedItem, user).forEach {
+        item.diff(updatedItem).updates(user).forEach {
             historyService.add(it)?.let(history::add)
         }
 

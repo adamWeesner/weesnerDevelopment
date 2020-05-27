@@ -105,17 +105,23 @@ class BillTests : BaseTest({ token ->
         val updatedBill =
             bill.copy(
                 name = updatedName,
-                color = bill.color.copy(green = 150)
+                color = bill.color.copy(green = 150),
+                sharedUsers = listOf(signedInUser)
             )
         val updateRequest = BuiltRequest(engine, Put, path, token).send(updatedBill)
 
         with(updateRequest) {
             val addedItem = response.content.parse<Bill>()
+            val id = addedItem.id
+            val className = addedItem::class.java.simpleName
+            val fields = addedItem.history!!.map { it.field }
+
             response.status() shouldBe HttpStatusCode.OK
             addedItem.name shouldBe updatedName
             addedItem.color.green shouldBe 150
-            addedItem.history?.get(0)?.field shouldBe "${addedItem::class.java.simpleName} ${addedItem.id} color"
-            addedItem.history?.get(1)?.field shouldBe "${addedItem::class.java.simpleName} ${addedItem.id} name"
+            fields[0] shouldBe "$className $id name"
+            fields[1] shouldBe "$className $id sharedUser"
+            fields[2] shouldBe "${Color::class.java.simpleName} ${addedItem.color.id} green"
         }
     }
 

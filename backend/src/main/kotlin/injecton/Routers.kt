@@ -46,6 +46,6 @@ val routers = Kodein.Module("routers") {
         IncomeRouter(BillMan.income, instance(), instance(), instance())
     }
     bind<OccurrenceRouter>() with singleton {
-        OccurrenceRouter(BillMan.occurrences, instance(), instance(), instance(), instance())
+        OccurrenceRouter(BillMan.occurrences, instance(), instance(), instance(), instance(), instance())
     }
 }

@@ -17,9 +17,7 @@ class CategoriesService(
     CategoriesTable
 ) {
     override suspend fun delete(id: Int, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
-        historyService.run {
-            getFor(HistoryTypes.Bill.name, id).mapNotNull { it.id }.forEach { delete(it) { table.id eq it } }
-        }
+        historyService.apply { getIdsFor(HistoryTypes.Categories.name, id).forEach { delete(it) { table.id eq it } } }
         return super.delete(id, op)
     }
 

@@ -14,6 +14,7 @@ import income.IncomeTable
 import medicare.MedicareLimitsTable
 import medicare.MedicareTable
 import occurrences.OccurrencesTable
+import occurrencesSharedUsers.OccurrenceSharedUsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -55,7 +56,8 @@ object DatabaseFactory {
                 PaymentsTable,
                 OccurrencesTable,
                 BillCategoriesTable,
-                BillsSharedUsersTable
+                BillsSharedUsersTable,
+                OccurrenceSharedUsersTable
             )
         }
     }

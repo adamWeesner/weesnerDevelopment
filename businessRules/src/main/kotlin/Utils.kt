@@ -57,7 +57,9 @@ fun ApplicationCall.loggedUserData() = authentication.principal<CustomPrincipal>
 enum class HistoryTypes {
     Bill,
     Color,
-    Categories
+    Categories,
+    Occurrence,
+    Payment
 }
 
 inline fun <reified T> String?.parse(): T =

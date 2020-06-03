@@ -12,6 +12,7 @@ import generics.GenericService
 import generics.InvalidAttributeException
 import history.HistoryService
 import model.ChangeType
+import occurrences.OccurrencesService
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
@@ -23,6 +24,7 @@ class BillsService(
     private val sharedUsersService: BillSharedUsersService,
     private val usersService: UsersService,
     private val billCategoriesService: BillCategoriesService,
+    private val occurrencesService: OccurrencesService,
     private val colorsService: ColorsService,
     private val historyService: HistoryService
 ) : GenericService<Bill, BillsTable>(
@@ -54,6 +56,7 @@ class BillsService(
         sharedUsersService.deleteForBill(id)
         billCategoriesService.deleteForBill(id)
         colorsService.deleteForBill(id)
+        occurrencesService.deleteForBill(id)
         historyService.apply { getIdsFor(HistoryTypes.Bill.name, id).forEach { delete(it) { table.id eq it } } }
         return super.delete(id, op)
     }

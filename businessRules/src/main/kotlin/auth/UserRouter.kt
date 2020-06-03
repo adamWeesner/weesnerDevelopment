@@ -48,13 +48,15 @@ class UserRouter(
                             val user = usersService.getUserFromHash(HashedUser(username, password))
                                 ?: return@get call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
 
-                            call.respond(Ok(user.redacted()))
+                            user.redacted()?.let { call.respond(Ok(it)) }
+                                ?: call.respond(NotFound("User could not be found."))
                         }
                         uuid != null -> {
                             val user = usersService.getUserByUuid(uuid)
                                 ?: return@get call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
 
-                            call.respond(Ok(user.redacted()))
+                            user.redacted()?.let { call.respond(Ok(it)) }
+                                ?: call.respond(NotFound("User could not be found."))
                         }
                         else -> call.respondErrorAuthorizing(InvalidUserReason.General)
                     }
@@ -76,7 +78,8 @@ class UserRouter(
                 when {
                     updated == null -> call.respond(BadRequest("Error occurred updated user information."))
                     updated.id != item.id -> call.respond(Created(updated.redacted()))
-                    else -> call.respond(Ok(updated.redacted()))
+                    else -> updated.redacted()?.let { call.respond(Ok(it)) }
+                        ?: call.respond(NotFound("User could not be found."))
                 }
             }
         }

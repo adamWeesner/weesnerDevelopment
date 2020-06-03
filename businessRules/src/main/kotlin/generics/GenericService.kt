@@ -39,7 +39,14 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
     /**
      * Get all of the given [O] in the table.
      */
-    open suspend fun getAll() = dbQuery { table.selectAll().map { to(it) } }
+    open suspend fun getAll() = dbQuery {
+        try {
+            table.selectAll().map { to(it) }
+        } catch (e: Throwable) {
+            println("getting all items threw $e")
+            emptyList<O>()
+        }
+    }
 
     /**
      * Gets the single item, or null, that matches the [op] which is the table qualifier to determine what will be retrieved from
@@ -48,7 +55,14 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
      * `table.id eq [O].id`
      */
     open suspend fun getSingle(op: SqlExpressionBuilder.() -> Op<Boolean>) =
-        dbQuery { table.select { op() }.mapNotNull { to(it) }.singleOrNull() }
+        dbQuery {
+            try {
+                table.select { op() }.mapNotNull { to(it) }.singleOrNull()
+            } catch (e: Throwable) {
+                println("getting single item threw $e")
+                null
+            }
+        }
 
     /**
      * Updates the [item] that matches the [op] which is the table qualifier to determine what will be retrieved from
@@ -65,9 +79,14 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
             add(item)
         } else {
             dbQuery {
-                table.update({ op() }) {
-                    it.assignValues(item)
-                    it[dateUpdated] = System.currentTimeMillis()
+                try {
+                    table.update({ op() }) {
+                        it.assignValues(item)
+                        it[dateUpdated] = System.currentTimeMillis()
+                    }
+                } catch (e: Throwable) {
+                    println("updating item threw $e")
+                    null
                 }
             }
             getSingle { op() }.also {
@@ -83,11 +102,15 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
         var key = 0
 
         dbQuery {
-            key = table.insert {
-                it.assignValues(item)
-                it[dateCreated] = System.currentTimeMillis()
-                it[dateUpdated] = System.currentTimeMillis()
-            } get table.id
+            try {
+                key = table.insert {
+                    it.assignValues(item)
+                    it[dateCreated] = System.currentTimeMillis()
+                    it[dateUpdated] = System.currentTimeMillis()
+                } get table.id
+            } catch (e: Throwable) {
+                println("adding item threw $e")
+            }
         }
         return getSingle { table.id eq key }?.also {
             onChange(ChangeType.Create, key, it)
@@ -101,7 +124,12 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
      * `table.id eq [O].id`
      */
     open suspend fun delete(id: Int, op: SqlExpressionBuilder.() -> Op<Boolean>) = dbQuery {
-        table.deleteWhere { op() } > 0
+        try {
+            table.deleteWhere { op() } > 0
+        } catch (e: Throwable) {
+            println("deleting item threw $e")
+            false
+        }
     }.also {
         if (it) onChange(ChangeType.Delete, id)
     }

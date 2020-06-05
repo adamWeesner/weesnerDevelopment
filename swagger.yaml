@@ -49,9 +49,15 @@ paths:
         "200":
           description: "Successful operation"
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/SocialSecurity"
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: array
+                items:
+                  $ref: "#/definitions/SocialSecurity"
         "404":
           description: "Unable to retrieve Social Security data"
           schema:
@@ -89,7 +95,14 @@ paths:
         "201":
           description: "Successfully added Socials Security data"
           schema:
-            $ref: '#/definitions/SocialSecurity'
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              message:
+                type: object
+                $ref: '#/definitions/SocialSecurity'
         "409":
           description: "Data conflicted with something already in the database"
           schema:
@@ -126,12 +139,55 @@ paths:
         "200":
           description: "Successfully updated Social Security data"
           schema:
-            $ref: '#/definitions/SocialSecurity'
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: object
+                $ref: '#/definitions/SocialSecurity'
         "404":
           description: "Social Security data not found"
           schema:
             $ref: '#/definitions/NotFoundResponse'
   /taxFetcher/socialSecurity/{year}:
+    get:
+      tags:
+        - "Social Security"
+        - "Tax Fetcher"
+      summary: "Get Social Security data for the year"
+      operationId: "getSocialSecurityYear"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: "year"
+          description: "Year of data to get"
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "Successfully retrieved data"
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: object
+                $ref: '#/definitions/SocialSecurity'
+        "400":
+          description: "Invalid data supplied"
+          schema:
+            type: object
+            $ref: '#/definitions/BadRequestResponse'
+        "404":
+          description: "Data not found"
+          schema:
+            type: object
+            $ref: '#/definitions/NotFoundResponse'
     delete:
       tags:
         - "Social Security"
@@ -151,7 +207,12 @@ paths:
           description: "Successfully deleted data"
           schema:
             type: object
-            $ref: '#/definitions/OkResponse'
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
         "400":
           description: "Invalid data supplied"
           schema:
@@ -175,9 +236,15 @@ paths:
         "200":
           description: "Successful operation"
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/Medicare"
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: array
+                items:
+                  $ref: "#/definitions/Medicare"
         "404":
           description: "Unable to retrieve Medicare data"
           schema:
@@ -219,7 +286,14 @@ paths:
         "201":
           description: "Successfully added Medicare data"
           schema:
-            $ref: '#/definitions/Medicare'
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              message:
+                type: object
+                $ref: '#/definitions/Medicare'
         "409":
           description: "Data conflicted with something already in the database"
           schema:
@@ -259,12 +333,55 @@ paths:
         "200":
           description: "Successfully updated Medicare data"
           schema:
-            $ref: '#/definitions/Medicare'
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: object
+                $ref: '#/definitions/Medicare'
         "404":
           description: "Medicare data not found"
           schema:
             $ref: '#/definitions/NotFoundResponse'
   /taxFetcher/medicare/{year}:
+    get:
+      tags:
+        - "Medicare"
+        - "Tax Fetcher"
+      summary: "Get Medicare data for the year"
+      operationId: "getMedicareYear"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: "year"
+          description: "Year of data to get"
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "Successfully retrieved data"
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: object
+                $ref: '#/definitions/Medicare'
+        "400":
+          description: "Invalid data supplied"
+          schema:
+            type: object
+            $ref: '#/definitions/BadRequestResponse'
+        "404":
+          description: "Data not found"
+          schema:
+            type: object
+            $ref: '#/definitions/NotFoundResponse'
     delete:
       tags:
         - "Medicare"
@@ -284,7 +401,12 @@ paths:
           description: "Successfully deleted data"
           schema:
             type: object
-            $ref: '#/definitions/OkResponse'
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
         "400":
           description: "Invalid data supplied"
           schema:
@@ -308,9 +430,15 @@ paths:
         "200":
           description: "Successful operation"
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/TaxWithholding"
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: array
+                items:
+                  $ref: "#/definitions/TaxWithholding"
         "404":
           description: "Unable to retrieve Tax Withholding data"
           schema:
@@ -355,7 +483,14 @@ paths:
         "201":
           description: "Successfully added Tax Withholding data"
           schema:
-            $ref: '#/definitions/TaxWithholding'
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              message:
+                type: object
+                $ref: '#/definitions/TaxWithholding'
         "409":
           description: "Data conflicted with something already in the database"
           schema:
@@ -398,12 +533,55 @@ paths:
         "200":
           description: "Successfully updated Tax Withholding data"
           schema:
-            $ref: '#/definitions/TaxWithholding'
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: object
+                $ref: '#/definitions/TaxWithholding'
         "404":
           description: "Tax Withholding data not found"
           schema:
             $ref: '#/definitions/NotFoundResponse'
   /taxFetcher/taxWithholding/{year}:
+    get:
+      tags:
+        - "Tax Withholding"
+        - "Tax Fetcher"
+      summary: "Get Tax Withholding data for the year"
+      operationId: "getTaxWithholdingYear"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: "year"
+          description: "Year of data to get"
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "Successfully retrieved data"
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: object
+                $ref: '#/definitions/TaxWithholding'
+        "400":
+          description: "Invalid data supplied"
+          schema:
+            type: object
+            $ref: '#/definitions/BadRequestResponse'
+        "404":
+          description: "Data not found"
+          schema:
+            type: object
+            $ref: '#/definitions/NotFoundResponse'
     delete:
       tags:
         - "Tax Withholding"
@@ -424,7 +602,12 @@ paths:
           description: "Successfully deleted data"
           schema:
             type: object
-            $ref: '#/definitions/OkResponse'
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
         "400":
           description: "Invalid data supplied"
           schema:
@@ -448,9 +631,15 @@ paths:
         "200":
           description: "Successful operation"
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/FederalIncomeTax"
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: array
+                items:
+                  $ref: "#/definitions/FederalIncomeTax"
         "404":
           description: "Unable to retrieve Federal Income Tax data"
           schema:
@@ -504,7 +693,14 @@ paths:
         "201":
           description: "Successfully added Federal Income Tax data"
           schema:
-            $ref: '#/definitions/FederalIncomeTax'
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              message:
+                type: object
+                $ref: '#/definitions/FederalIncomeTax'
         "409":
           description: "Data conflicted with something already in the database"
           schema:
@@ -552,12 +748,55 @@ paths:
         "200":
           description: "Successfully updated Federal Income Tax data"
           schema:
-            $ref: '#/definitions/FederalIncomeTax'
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: object
+                $ref: '#/definitions/FederalIncomeTax'
         "404":
           description: "Federal Income Tax data not found"
           schema:
             $ref: '#/definitions/NotFoundResponse'
   /taxFetcher/federalIncomeTax/{year}:
+    get:
+      tags:
+        - "Federal Income Tax"
+        - "Tax Fetcher"
+      summary: "Get Federal Income Tax data for the year"
+      operationId: "getFederalIncomeTaxYear"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: "year"
+          description: "Year of data to get"
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "Successfully retrieved data"
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: object
+                $ref: '#/definitions/FederalIncomeTax'
+        "400":
+          description: "Invalid data supplied"
+          schema:
+            type: object
+            $ref: '#/definitions/BadRequestResponse'
+        "404":
+          description: "Data not found"
+          schema:
+            type: object
+            $ref: '#/definitions/NotFoundResponse'
     delete:
       tags:
         - "Federal Income Tax"
@@ -577,7 +816,12 @@ paths:
           description: "Successfully deleted data"
           schema:
             type: object
-            $ref: '#/definitions/OkResponse'
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
         "400":
           description: "Invalid data supplied"
           schema:

@@ -33,6 +33,10 @@ tags:
     externalDocs:
       description: "Find out more"
       url: "https://www.irs.gov/pub/irs-pdf/p15.pdf"
+  - name: "Bill Man"
+    description: "Everything you need to handle Bill Man data."
+  - name: "Categories"
+    description: "Everything you need to retrieve category data."
 schemes:
   - "https"
 paths:
@@ -832,6 +836,157 @@ paths:
           schema:
             type: object
             $ref: '#/definitions/NotFoundResponse'
+  /billMan/categories:
+    get:
+      tags:
+        - "Categories"
+        - "Bill Man"
+      summary: "Finds all Categories accessible to the user"
+      operationId: "findCategories"
+      parameters:
+        - in: query
+          type: integer
+          name: "category"
+          required: false
+          description: "The category you want to retrieve, not giving a category id will retrieve all categories"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: array
+                items:
+                  $ref: "#/definitions/Category"
+        "404":
+          description: "Unable to retrieve data"
+          schema:
+            type: object
+            $ref: "#/definitions/NotFoundResponse"
+    post:
+      tags:
+        - "Categories"
+        - "Bill Man"
+      summary: "Add new Category data"
+      operationId: "addCategory"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: "body"
+          description: "Category object that needs to be added"
+          required: true
+          schema:
+            type: object
+            properties:
+              owner:
+                type: object
+                $ref: '#/definitions/User'
+              name:
+                type: string
+            required:
+              - name
+              - owner
+      responses:
+        "201":
+          description: "Successfully added Category data"
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              message:
+                type: object
+                $ref: '#/definitions/Category'
+        "409":
+          description: "Data conflicted with something already in the database"
+          schema:
+            $ref: '#/definitions/ConflictResponse'
+    put:
+      tags:
+        - "Categories"
+        - "Bill Man"
+      summary: "Update existing Category data"
+      operationId: "updateCategory"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: "body"
+          description: "Category data that needs to be updated"
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              owner:
+                type: object
+                $ref: '#/definitions/User'
+            required:
+              - id
+      responses:
+        "200":
+          description: "Successfully updated Category data"
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: object
+                $ref: '#/definitions/Category'
+        "404":
+          description: "Medicare data not found"
+          schema:
+            $ref: '#/definitions/NotFoundResponse'
+    delete:
+      tags:
+        - "Categories"
+        - "Bill Man"
+      summary: "Deletes Category data with the id"
+      operationId: "deleteFederalIncomeTax"
+      produces:
+        - "application/json"
+      parameters:
+        - in: query
+          name: "category"
+          description: "Id of the data to delete"
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "Successfully deleted data"
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
+        "400":
+          description: "Invalid data supplied"
+          schema:
+            type: object
+            $ref: '#/definitions/BadRequestResponse'
+        "404":
+          description: "Data not found"
+          schema:
+            type: object
+            $ref: '#/definitions/NotFoundResponse'
 definitions:
   GenericItem:
     type: object
@@ -961,6 +1116,67 @@ definitions:
         type: number
       nonTaxable:
         type: number
+  Bill:
+    allOf:
+      - $ref: '#/definitions/GenericItem'
+      - type: object
+      - $ref: '#/definitions/HistoryItem'
+      - type: object
+    type: object
+    properties:
+      owner:
+        type: object
+        $ref: '#/definitions/User'
+      name:
+        type: string
+      amount:
+        type: string
+      varyingAmount:
+        type: boolean
+      payoffAmount:
+        type: string
+      sharedUsers:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/User'
+      categories:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/Category'
+      color:
+        type: object
+        $ref: '#/definitions/Color'
+  Category:
+    allOf:
+      - $ref: '#/definitions/GenericItem'
+      - type: object
+      - $ref: '#/definitions/HistoryItem'
+      - type: object
+    type: object
+    properties:
+      owner:
+        type: object
+        $ref: '#/definitions/User'
+      name:
+        type: string
+  Color:
+    allOf:
+      - $ref: '#/definitions/GenericItem'
+      - type: object
+      - $ref: '#/definitions/HistoryItem'
+      - type: object
+    type: object
+    properties:
+      red:
+        type: integer
+      green:
+        type: integer
+      blue:
+        type: integer
+      alpha:
+        type: integer
   History:
     allOf:
       - $ref: '#/definitions/GenericItem'

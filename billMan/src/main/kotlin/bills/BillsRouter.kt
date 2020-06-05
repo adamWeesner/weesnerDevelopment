@@ -5,11 +5,20 @@ import billSharedUsers.BillSharedUsers
 import billSharedUsers.BillSharedUsersService
 import colors.ColorsService
 import diff
+import generics.BadRequest
 import generics.GenericRouter
+import generics.NotFound
+import generics.Ok
 import history.HistoryService
 import io.ktor.application.ApplicationCall
+import io.ktor.application.call
+import io.ktor.routing.Route
+import io.ktor.routing.delete
+import io.ktor.routing.get
 import io.ktor.util.pipeline.PipelineContext
 import org.jetbrains.exposed.sql.and
+import respond
+import respondError
 import shared.billMan.Bill
 
 class BillsRouter(
@@ -24,6 +33,40 @@ class BillsRouter(
     billsService,
     BillsResponse()
 ) {
+    override fun Route.getDefault() {
+        get("/") {
+            if (call.request.queryParameters.isEmpty()) {
+                call.respond(Ok(BillsResponse(service.getAll())))
+            } else {
+                val billId =
+                    call.request.queryParameters["bill"]
+                        ?: return@get call.respondError(BadRequest("Invalid bill id."))
+
+                service.getSingle { service.table.id eq billId.toInt() }?.let {
+                    call.respond(Ok(BillsResponse(listOf(it))))
+                } ?: call.respond(NotFound("Could not get bill with $billId"))
+            }
+        }
+    }
+
+    override fun Route.deleteDefault() {
+        delete("/") {
+            if (call.request.queryParameters.isEmpty())
+                return@delete call.respondError(BadRequest("Bill id is required. `?bill={billId}`"))
+
+            val billId =
+                call.request.queryParameters["bill"]
+                    ?: return@delete call.respondError(BadRequest("Invalid bill id."))
+
+            val id = deleteQualifier(billId)?.id
+                ?: return@delete call.respond(NotFound("Bill with an id of $billId was not found."))
+
+            val removed = service.delete(id) { singleEq(billId) }
+
+            call.respond(if (removed) Ok("Successfully removed bill.") else NotFound("Bill with an id of $billId was not found."))
+        }
+    }
+
     override suspend fun PipelineContext<Unit, ApplicationCall>.putAdditional(
         item: Bill,
         updatedItem: Bill

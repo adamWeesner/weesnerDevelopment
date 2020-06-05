@@ -66,16 +66,17 @@ class BillTests : BaseTest({ token ->
 
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2))
-        with(BuiltRequest(engine, Get, "$path/${item.id}", token).send<Bill>()) {
-            val addedItem = response.content.parse<Bill>()
+        with(BuiltRequest(engine, Get, "$path?bill=${item.id}", token).send<Bill>()) {
+            val addedItems = response.content.parse<BillsResponse>().items
             response.status() shouldBe HttpStatusCode.OK
-            addedItem::class.java shouldBe Bill::class.java
-            addedItem.name shouldBe "${billStart}2"
+            addedItems?.size shouldBe 1
+            addedItems?.first()!!::class.java shouldBe Bill::class.java
+            addedItems.first().name shouldBe "${billStart}2"
         }
     }
 
     "verify getting an item that does not exist" {
-        BuiltRequest(engine, Get, "$path/99", token).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
+        BuiltRequest(engine, Get, "$path?bill=99", token).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
     }
 
     "verify adding a new item" {
@@ -135,10 +136,10 @@ class BillTests : BaseTest({ token ->
 
     "verify deleting and item that has been added" {
         val addedItem = BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content?.fromJson<Bill>()
-        BuiltRequest(engine, Delete, "$path/${addedItem?.id}", token).sendStatus<Unit>() shouldBe HttpStatusCode.OK
+        BuiltRequest(engine, Delete, "$path?bill=${addedItem?.id}", token).sendStatus<Unit>() shouldBe HttpStatusCode.OK
     }
 
     "verify deleting item that doesn't exist" {
-        BuiltRequest(engine, Delete, "$path/99", token).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
+        BuiltRequest(engine, Delete, "$path?bill=99", token).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
     }
 })

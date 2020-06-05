@@ -85,16 +85,17 @@ class OccurrenceTests : BaseTest({ token ->
 
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(34.56))
-        with(BuiltRequest(engine, Get, "$path/${item.id}", token).send<Occurrence>()) {
-            val addedItem = response.content.parse<Occurrence>()
+        with(BuiltRequest(engine, Get, "$path?occurrence=${item.id}", token).send<Occurrence>()) {
+            val addedItems = response.content.parse<OccurrencesResponse>().items
             response.status() shouldBe HttpStatusCode.OK
-            addedItem::class.java shouldBe Occurrence::class.java
-            addedItem.amount shouldBe "34.56"
+            addedItems?.size shouldBe 1
+            addedItems?.first()!!::class.java shouldBe Occurrence::class.java
+            addedItems.first().amount shouldBe "34.56"
         }
     }
 
     "verify getting an item that does not exist" {
-        BuiltRequest(engine, Get, "$path/99", token).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
+        BuiltRequest(engine, Get, "$path?occurrence=99", token).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
     }
 
     "verify adding a new item" {
@@ -153,11 +154,16 @@ class OccurrenceTests : BaseTest({ token ->
     "verify deleting and item that has been added" {
         val addedItem =
             BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content?.fromJson<Occurrence>()
-        BuiltRequest(engine, Delete, "$path/${addedItem?.id}", token).sendStatus<Unit>() shouldBe HttpStatusCode.OK
+        BuiltRequest(
+            engine,
+            Delete,
+            "$path?occurrence=${addedItem?.id}",
+            token
+        ).sendStatus<Unit>() shouldBe HttpStatusCode.OK
     }
 
     "verify deleting item that doesn't exist" {
-        BuiltRequest(engine, Delete, "$path/99", token).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
+        BuiltRequest(engine, Delete, "$path?occurrence=99", token).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
     }
 
     "verify cannot add payment more than amount left" {

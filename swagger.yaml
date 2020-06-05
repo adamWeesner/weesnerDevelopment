@@ -39,6 +39,10 @@ tags:
     description: "Everything you need to retrieve category data."
   - name: "Bills"
     description: "Everything you need to retrieve bill data."
+  - name: "Income"
+    description: "Everything you need to retrieve income data."
+  - name: "Occurrences"
+    description: "Everything you need to retrieve occurrence data."
 schemes:
   - "https"
 paths:
@@ -1354,6 +1358,203 @@ paths:
           schema:
             type: object
             $ref: '#/definitions/NotFoundResponse'
+  /billMan/occurrences:
+    get:
+      tags:
+        - "Occurrences"
+        - "Bill Man"
+      summary: "Finds all Occurrences accessible to the user, supply either a bill or occurrence"
+      operationId: "findOccurrences"
+      parameters:
+        - in: query
+          type: integer
+          name: "occurrence"
+          required: false
+          description: "The occurrences you want to retrieve"
+        - in: query
+          type: integer
+          name: "bill"
+          required: false
+          description: "The bill you want to retrieve occurrences for"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: array
+                items:
+                  $ref: "#/definitions/Occurrence"
+        "404":
+          description: "Unable to retrieve data"
+          schema:
+            type: object
+            $ref: "#/definitions/NotFoundResponse"
+    post:
+      tags:
+        - "Occurrences"
+        - "Bill Man"
+      summary: "Add new Occurrence data"
+      operationId: "addOccurrence"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: "body"
+          description: "Occurrence object that needs to be added"
+          required: true
+          schema:
+            type: object
+            properties:
+              owner:
+                type: object
+                $ref: '#/definitions/User'
+              sharedUsers:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/definitions/User'
+              itemId:
+                type: string
+              dueDate:
+                type: integer
+              amountLeft:
+                type: string
+              amount:
+                type: string
+              every:
+                type: string
+              payments:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/definitions/Payment'
+            required:
+              - amount
+              - owner
+              - dueDate
+              - every
+              - itemId
+      responses:
+        "201":
+          description: "Successfully added Occurrence data"
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              message:
+                type: object
+                $ref: '#/definitions/Occurrence'
+        "409":
+          description: "Data conflicted with something already in the database"
+          schema:
+            $ref: '#/definitions/ConflictResponse'
+    put:
+      tags:
+        - "Occurrences"
+        - "Bill Man"
+      summary: "Update existing Occurrence data"
+      operationId: "updateOccurrence"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: "body"
+          description: "Occurrence data that needs to be updated"
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              owner:
+                type: object
+                $ref: '#/definitions/User'
+              sharedUsers:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/definitions/User'
+              itemId:
+                type: string
+              dueDate:
+                type: integer
+              amountLeft:
+                type: string
+              amount:
+                type: string
+              every:
+                type: string
+              payments:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/definitions/Payment'
+            required:
+              - id
+      responses:
+        "200":
+          description: "Successfully updated Occurrence data"
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: object
+                $ref: '#/definitions/Occurrence'
+        "404":
+          description: "Occurrence data not found"
+          schema:
+            $ref: '#/definitions/NotFoundResponse'
+    delete:
+      tags:
+        - "Occurrences"
+        - "Bill Man"
+      summary: "Deletes Occurrence data with the id"
+      operationId: "deleteOccurrence"
+      produces:
+        - "application/json"
+      parameters:
+        - in: query
+          name: "income"
+          description: "Id of the data to delete"
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "Successfully deleted data"
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
+        "400":
+          description: "Invalid data supplied"
+          schema:
+            type: object
+            $ref: '#/definitions/BadRequestResponse'
+        "404":
+          description: "Data not found"
+          schema:
+            type: object
+            $ref: '#/definitions/NotFoundResponse'
 definitions:
   GenericItem:
     type: object
@@ -1548,6 +1749,50 @@ definitions:
       color:
         type: object
         $ref: '#/definitions/Color'
+  Occurrence:
+    allOf:
+      - $ref: '#/definitions/GenericItem'
+      - type: object
+      - $ref: '#/definitions/HistoryItem'
+      - type: object
+    type: object
+    properties:
+      owner:
+        type: object
+        $ref: '#/definitions/User'
+      sharedUsers:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/User'
+      itemId:
+        type: string
+      dueDate:
+        type: integer
+      amountLeft:
+        type: string
+      amount:
+        type: string
+      every:
+        type: string
+      payments:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/Payment'
+  Payment:
+    allOf:
+      - $ref: '#/definitions/GenericItem'
+      - type: object
+      - $ref: '#/definitions/HistoryItem'
+      - type: object
+    type: object
+    properties:
+      owner:
+        type: object
+        $ref: '#/definitions/User'
+      amount:
+        type: string
   Color:
     allOf:
       - $ref: '#/definitions/GenericItem'

@@ -8,6 +8,7 @@ import history.HistoryService
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.routing.Route
+import io.ktor.routing.delete
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.util.pipeline.PipelineContext
@@ -83,12 +84,42 @@ class OccurrenceRouter(
             if (call.request.queryParameters.isEmpty())
                 return@get call.respondError(BadRequest("Bill id is required. `?bill={billId}`"))
 
-            val billId =
-                call.request.queryParameters["bill"] ?: return@get call.respondError(BadRequest("Invalid bill id."))
+            val billId = call.request.queryParameters["bill"]
+            val occurrenceId = call.request.queryParameters["occurrence"]
 
-            val billOccurrences = occurrencesService.getByBill(billId.toInt())
+            if (billId == null && occurrenceId == null)
+                return@get call.respondError(BadRequest("Bill id `?bill={billId}` or occurrence id `?occurrence={occurrenceId}` is required."))
 
-            call.respond(Ok(billOccurrences))
+            if (occurrenceId != null) {
+                val occurrence = service.getSingle { service.table.id eq occurrenceId.toInt() }
+                    ?: return@get call.respond(NotFound("Could not get occurrence with $occurrenceId"))
+
+                return@get call.respond(Ok(OccurrencesResponse(listOf(occurrence))))
+            }
+
+            if (billId != null) {
+                val billOccurrences = occurrencesService.getByBill(billId.toInt())
+
+                call.respond(Ok(billOccurrences))
+            }
+        }
+    }
+
+    override fun Route.deleteDefault() {
+        delete("/") {
+            if (call.request.queryParameters.isEmpty())
+                return@delete call.respondError(BadRequest("Occurrence id is required. `?occurrence={occurrenceId}`"))
+
+            val occurrenceId =
+                call.request.queryParameters["occurrence"]
+                    ?: return@delete call.respondError(BadRequest("Invalid occurrence id."))
+
+            val id = deleteQualifier(occurrenceId)?.id
+                ?: return@delete call.respond(NotFound("Occurrence with an id of $occurrenceId was not found."))
+
+            val removed = service.delete(id) { singleEq(occurrenceId) }
+
+            call.respond(if (removed) Ok("Successfully removed occurrence.") else NotFound("Occurrence with an id of $occurrenceId was not found."))
         }
     }
 

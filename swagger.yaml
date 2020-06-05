@@ -1,0 +1,785 @@
+swagger: "2.0"
+info:
+  description: "This is the api for Weesner Development."
+  version: "1.0.0"
+  title: "Weesner Development"
+  contact:
+    email: "weesnerDevelopment@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "weesnerDevelopment.com"
+basePath: "/"
+tags:
+  - name: "Tax Fetcher"
+    description: "Everything you need to retrieve tax data."
+  - name: "Social Security"
+    description: "Everything you need to retrieve Social Security tax data."
+    externalDocs:
+      description: "Find out more"
+      url: "https://www.irs.gov/taxtopics/tc751"
+  - name: "Medicare"
+    description: "Everything you need to retrieve Medicare tax data."
+    externalDocs:
+      description: "Find out more"
+      url: "https://www.irs.gov/taxtopics/tc751"
+  - name: "Tax Withholding"
+    description: "Everything you need to retrieve Tax Withholding data."
+    externalDocs:
+      description: "Find out more"
+      url: "https://www.irs.gov/pub/irs-pdf/p15.pdf"
+  - name: "Federal Income Tax"
+    description: "Everything you need to retrieve Federal Income Tax data."
+    externalDocs:
+      description: "Find out more"
+      url: "https://www.irs.gov/pub/irs-pdf/p15.pdf"
+schemes:
+  - "https"
+paths:
+  /taxFetcher/socialSecurity:
+    get:
+      tags:
+        - "Social Security"
+        - "Tax Fetcher"
+      summary: "Finds all Social Security"
+      operationId: "findSocialSecurity"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/SocialSecurity"
+        "404":
+          description: "Unable to retrieve Social Security data"
+          schema:
+            type: object
+            $ref: "#/definitions/NotFoundResponse"
+    post:
+      tags:
+        - "Social Security"
+        - "Tax Fetcher"
+      summary: "Add new Social Security data"
+      operationId: "addSocialSecurity"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: "body"
+          description: "Social Security object that needs to be added"
+          required: true
+          schema:
+            type: object
+            properties:
+              year:
+                type: integer
+              percent:
+                type: number
+              limit:
+                type: integer
+            required:
+              - year
+              - percent
+              - limit
+      responses:
+        "201":
+          description: "Successfully added Socials Security data"
+          schema:
+            $ref: '#/definitions/SocialSecurity'
+        "409":
+          description: "Data conflicted with something already in the database"
+          schema:
+            $ref: '#/definitions/ConflictResponse'
+    put:
+      tags:
+        - "Social Security"
+        - "Tax Fetcher"
+      summary: "Update existing Social Security data"
+      operationId: "updateSocialSecurity"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: "body"
+          description: "Social Security data that needs to be updated"
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              year:
+                type: integer
+              percent:
+                type: number
+              limit:
+                type: integer
+            required:
+              - id
+      responses:
+        "200":
+          description: "Successfully updated Social Security data"
+          schema:
+            $ref: '#/definitions/SocialSecurity'
+        "404":
+          description: "Social Security data not found"
+          schema:
+            $ref: '#/definitions/NotFoundResponse'
+  /taxFetcher/socialSecurity/{year}:
+    delete:
+      tags:
+        - "Social Security"
+        - "Tax Fetcher"
+      summary: "Deletes Social Security data for the year"
+      operationId: "deleteSocialSecurity"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: "year"
+          description: "Year of data to delete"
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "Successfully deleted data"
+          schema:
+            type: object
+            $ref: '#/definitions/OkResponse'
+        "400":
+          description: "Invalid data supplied"
+          schema:
+            type: object
+            $ref: '#/definitions/BadRequestResponse'
+        "404":
+          description: "Data not found"
+          schema:
+            type: object
+            $ref: '#/definitions/NotFoundResponse'
+  /taxFetcher/medicare:
+    get:
+      tags:
+        - "Medicare"
+        - "Tax Fetcher"
+      summary: "Finds all Medicare"
+      operationId: "findMedicare"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Medicare"
+        "404":
+          description: "Unable to retrieve Medicare data"
+          schema:
+            type: object
+            $ref: "#/definitions/NotFoundResponse"
+    post:
+      tags:
+        - "Medicare"
+        - "Tax Fetcher"
+      summary: "Add new Medicare data"
+      operationId: "addMedicare"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: "body"
+          description: "Medicare object that needs to be added"
+          required: true
+          schema:
+            type: object
+            properties:
+              year:
+                type: integer
+              percent:
+                type: number
+              additionalPercent:
+                type: number
+              limits:
+                type: array
+                $ref: '#/definitions/MedicareLimit'
+            required:
+              - additionalPercent
+              - limits
+              - percent
+              - year
+      responses:
+        "201":
+          description: "Successfully added Medicare data"
+          schema:
+            $ref: '#/definitions/Medicare'
+        "409":
+          description: "Data conflicted with something already in the database"
+          schema:
+            $ref: '#/definitions/ConflictResponse'
+    put:
+      tags:
+        - "Medicare"
+        - "Tax Fetcher"
+      summary: "Update existing Medicare data"
+      operationId: "updateMedicare"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: "body"
+          description: "Medicare data that needs to be updated"
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              year:
+                type: integer
+              percent:
+                type: number
+              additionalPercent:
+                type: number
+              limits:
+                type: array
+                $ref: '#/definitions/MedicareLimit'
+            required:
+              - id
+      responses:
+        "200":
+          description: "Successfully updated Medicare data"
+          schema:
+            $ref: '#/definitions/Medicare'
+        "404":
+          description: "Medicare data not found"
+          schema:
+            $ref: '#/definitions/NotFoundResponse'
+  /taxFetcher/medicare/{year}:
+    delete:
+      tags:
+        - "Medicare"
+        - "Tax Fetcher"
+      summary: "Deletes Medicare data for the year"
+      operationId: "deleteMedicare"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: "year"
+          description: "Year of data to delete"
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "Successfully deleted data"
+          schema:
+            type: object
+            $ref: '#/definitions/OkResponse'
+        "400":
+          description: "Invalid data supplied"
+          schema:
+            type: object
+            $ref: '#/definitions/BadRequestResponse'
+        "404":
+          description: "Data not found"
+          schema:
+            type: object
+            $ref: '#/definitions/NotFoundResponse'
+  /taxFetcher/taxWithholding:
+    get:
+      tags:
+        - "Tax Withholding"
+        - "Tax Fetcher"
+      summary: "Finds all Tax Withholding"
+      operationId: "findTaxWithholding"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/TaxWithholding"
+        "404":
+          description: "Unable to retrieve Tax Withholding data"
+          schema:
+            type: object
+            $ref: "#/definitions/NotFoundResponse"
+    post:
+      tags:
+        - "Tax Withholding"
+        - "Tax Fetcher"
+      summary: "Add new Tax Withholding data"
+      operationId: "addTaxWithholding"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: "body"
+          description: "Tax Withholding object that needs to be added"
+          required: true
+          schema:
+            type: object
+            properties:
+              year:
+                type: integer
+              type:
+                type: string
+                enum:
+                  - General
+                  - NonResident
+              payPeriod:
+                type: string
+                $ref: '#/definitions/PayPeriod'
+              amount:
+                type: number
+            required:
+              - year
+              - type
+              - amount
+              - payPeriod
+      responses:
+        "201":
+          description: "Successfully added Tax Withholding data"
+          schema:
+            $ref: '#/definitions/TaxWithholding'
+        "409":
+          description: "Data conflicted with something already in the database"
+          schema:
+            $ref: '#/definitions/ConflictResponse'
+    put:
+      tags:
+        - "Tax Withholding"
+        - "Tax Fetcher"
+      summary: "Update existing Tax Withholding data"
+      operationId: "updateTaxWithholding"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: "body"
+          description: "Tax Withholding data that needs to be updated"
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              year:
+                type: integer
+              type:
+                type: string
+                enum:
+                  - General
+                  - NonResident
+              payPeriod:
+                type: string
+                $ref: '#/definitions/PayPeriod'
+              amount:
+                type: number
+            required:
+              - id
+      responses:
+        "200":
+          description: "Successfully updated Tax Withholding data"
+          schema:
+            $ref: '#/definitions/TaxWithholding'
+        "404":
+          description: "Tax Withholding data not found"
+          schema:
+            $ref: '#/definitions/NotFoundResponse'
+  /taxFetcher/taxWithholding/{year}:
+    delete:
+      tags:
+        - "Tax Withholding"
+        - "Tax Fetcher"
+      summary: "Deletes Tax Withholding data for the year"
+      description: ""
+      operationId: "deleteTaxWithholding"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: "year"
+          description: "Year of data to delete"
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "Successfully deleted data"
+          schema:
+            type: object
+            $ref: '#/definitions/OkResponse'
+        "400":
+          description: "Invalid data supplied"
+          schema:
+            type: object
+            $ref: '#/definitions/BadRequestResponse'
+        "404":
+          description: "Data not found"
+          schema:
+            type: object
+            $ref: '#/definitions/NotFoundResponse'
+  /taxFetcher/federalIncomeTax:
+    get:
+      tags:
+        - "Federal Income Tax"
+        - "Tax Fetcher"
+      summary: "Finds all Federal Income Tax"
+      operationId: "findFederalIncomeTax"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/FederalIncomeTax"
+        "404":
+          description: "Unable to retrieve Federal Income Tax data"
+          schema:
+            type: object
+            $ref: "#/definitions/NotFoundResponse"
+    post:
+      tags:
+        - "Federal Income Tax"
+        - "Tax Fetcher"
+      summary: "Add new Federal Income Tax data"
+      operationId: "addFederalIncomeTax"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: "body"
+          description: "Federal Income Tax object that needs to be added"
+          required: true
+          schema:
+            properties:
+              year:
+                type: integer
+              maritalStatus:
+                type: string
+                $ref: '#/definitions/MaritalStatus'
+              payPeriod:
+                type: string
+                $ref: '#/definitions/PayPeriod'
+              over:
+                type: number
+              notOver:
+                type: number
+              plus:
+                type: number
+              percent:
+                type: number
+              nonTaxable:
+                type: number
+            required:
+              - payPeriod
+              - year
+              - percent
+              - maritalStatus
+              - nonTaxable
+              - notOver
+              - over
+              - plus
+      responses:
+        "201":
+          description: "Successfully added Federal Income Tax data"
+          schema:
+            $ref: '#/definitions/FederalIncomeTax'
+        "409":
+          description: "Data conflicted with something already in the database"
+          schema:
+            $ref: '#/definitions/ConflictResponse'
+    put:
+      tags:
+        - "Federal Income Tax"
+        - "Tax Fetcher"
+      summary: "Update existing Federal Income Tax data"
+      operationId: "updateFederalIncomeTax"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: "body"
+          description: "Federal Income Tax data that needs to be updated"
+          required: true
+          schema:
+            properties:
+              id:
+                type: integer
+              year:
+                type: integer
+              maritalStatus:
+                type: string
+                $ref: '#/definitions/MaritalStatus'
+              payPeriod:
+                type: string
+                $ref: '#/definitions/PayPeriod'
+              over:
+                type: number
+              notOver:
+                type: number
+              plus:
+                type: number
+              percent:
+                type: number
+              nonTaxable:
+                type: number
+            required:
+              - id
+      responses:
+        "200":
+          description: "Successfully updated Federal Income Tax data"
+          schema:
+            $ref: '#/definitions/FederalIncomeTax'
+        "404":
+          description: "Federal Income Tax data not found"
+          schema:
+            $ref: '#/definitions/NotFoundResponse'
+  /taxFetcher/federalIncomeTax/{year}:
+    delete:
+      tags:
+        - "Federal Income Tax"
+        - "Tax Fetcher"
+      summary: "Deletes Federal Income Tax data for the year"
+      operationId: "deleteFederalIncomeTax"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: "year"
+          description: "Year of data to delete"
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "Successfully deleted data"
+          schema:
+            type: object
+            $ref: '#/definitions/OkResponse'
+        "400":
+          description: "Invalid data supplied"
+          schema:
+            type: object
+            $ref: '#/definitions/BadRequestResponse'
+        "404":
+          description: "Data not found"
+          schema:
+            type: object
+            $ref: '#/definitions/NotFoundResponse'
+definitions:
+  GenericItem:
+    type: object
+    properties:
+      id:
+        type: integer
+      dateCreated:
+        type: integer
+      dateUpdated:
+        type: integer
+  HistoryItem:
+    properties:
+      history:
+        type: array
+        items:
+          $ref: "#/definitions/History"
+  User:
+    allOf:
+      - $ref: '#/definitions/GenericItem'
+      - type: object
+    type: object
+    properties:
+      uuid:
+        type: string
+      name:
+        type: string
+      email:
+        type: string
+      photoUrl:
+        type: string
+        description: "The is the url of the photo, this is not required"
+      username:
+        type: string
+      password:
+        type: string
+      history:
+        type: array
+        items:
+          $ref: "#/definitions/History"
+  SocialSecurity:
+    allOf:
+      - $ref: '#/definitions/GenericItem'
+      - type: object
+      - $ref: '#/definitions/HistoryItem'
+      - type: object
+    type: object
+    properties:
+      year:
+        type: integer
+      percent:
+        type: number
+      limit:
+        type: integer
+  Medicare:
+    allOf:
+      - $ref: '#/definitions/GenericItem'
+      - type: object
+      - $ref: '#/definitions/HistoryItem'
+      - type: object
+    type: object
+    properties:
+      year:
+        type: integer
+      percent:
+        type: number
+      additionalPercent:
+        type: number
+      limits:
+        type: array
+        $ref: '#/definitions/MedicareLimit'
+  MedicareLimit:
+    allOf:
+      - $ref: '#/definitions/GenericItem'
+      - type: object
+    type: object
+    properties:
+      year:
+        type: integer
+      maritalStatus:
+        type: string
+        $ref: '#/definitions/MaritalStatus'
+      amount:
+        type: integer
+  TaxWithholding:
+    allOf:
+      - $ref: '#/definitions/GenericItem'
+      - type: object
+      - $ref: '#/definitions/HistoryItem'
+      - type: object
+    type: object
+    properties:
+      year:
+        type: integer
+      type:
+        type: string
+        enum:
+          - General
+          - NonResident
+      payPeriod:
+        type: string
+        $ref: '#/definitions/PayPeriod'
+      amount:
+        type: number
+  FederalIncomeTax:
+    allOf:
+      - $ref: '#/definitions/GenericItem'
+      - type: object
+      - $ref: '#/definitions/HistoryItem'
+      - type: object
+    type: object
+    properties:
+      year:
+        type: integer
+      maritalStatus:
+        type: string
+        $ref: '#/definitions/MaritalStatus'
+      payPeriod:
+        type: string
+        $ref: '#/definitions/PayPeriod'
+      over:
+        type: number
+      notOver:
+        type: number
+      plus:
+        type: number
+      percent:
+        type: number
+      nonTaxable:
+        type: number
+  History:
+    allOf:
+      - $ref: '#/definitions/GenericItem'
+      - type: object
+    type: object
+    properties:
+      field:
+        type: string
+      oldValue:
+        type: string
+        description: "Can be any value type"
+      newValue:
+        type: string
+        description: "Can be any value type"
+      updatedBy:
+        type: object
+        $ref: '#/definitions/User'
+  NotFoundResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        example: 404
+      message:
+        type: string
+  OkResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        example: 200
+      message:
+        type: string
+  ConflictResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        example: 409
+      message:
+        type: string
+  BadRequestResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        example: 400
+      message:
+        type: string
+  PayPeriod:
+    type: string
+    enum:
+      - Weekly
+      - Biweekly
+      - Semimonthly
+      - Monthly
+      - Quarterly
+      - Semiannual
+      - Annual
+      - Daily
+  MaritalStatus:
+    type: string
+    enum:
+      - Single
+      - Married
+      - Separate

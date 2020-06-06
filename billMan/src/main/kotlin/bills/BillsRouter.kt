@@ -5,10 +5,7 @@ import billSharedUsers.BillSharedUsers
 import billSharedUsers.BillSharedUsersService
 import colors.ColorsService
 import diff
-import generics.BadRequest
 import generics.GenericRouter
-import generics.NotFound
-import generics.Ok
 import history.HistoryService
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -19,7 +16,11 @@ import io.ktor.util.pipeline.PipelineContext
 import org.jetbrains.exposed.sql.and
 import respond
 import respondError
+import shared.base.BadRequest
+import shared.base.NotFound
+import shared.base.Ok
 import shared.billMan.Bill
+import shared.billMan.responses.BillsResponse
 
 class BillsRouter(
     basePath: String,

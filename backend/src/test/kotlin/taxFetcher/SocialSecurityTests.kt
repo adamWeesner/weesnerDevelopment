@@ -14,7 +14,7 @@ import shared.auth.User
 import shared.base.History
 import shared.fromJson
 import shared.taxFetcher.SocialSecurity
-import socialSecurity.SocialSecurityResponse
+import shared.taxFetcher.responses.SocialSecurityResponse
 
 class SocialSecurityTests : BaseTest({ token ->
     fun newItem(year: Int) = SocialSecurity(

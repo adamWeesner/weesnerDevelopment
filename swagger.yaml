@@ -8,7 +8,7 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "weesnerDevelopment.com"
+host: "192.168.0.30"
 basePath: "/"
 tags:
   - name: "Tax Fetcher"
@@ -45,6 +45,7 @@ tags:
     description: "Everything you need to retrieve occurrence data."
 schemes:
   - "https"
+  - "http"
 paths:
   /taxFetcher/socialSecurity:
     get:
@@ -870,6 +871,11 @@ paths:
                 type: array
                 items:
                   $ref: "#/definitions/Category"
+        "401":
+          description: "Unauthorized to retrieve data"
+          schema:
+            type: object
+            $ref: '#/definitions/UnauthorizedResponse'
         "404":
           description: "Unable to retrieve data"
           schema:
@@ -1850,6 +1856,25 @@ definitions:
         example: 400
       message:
         type: string
+  UnauthorizedResponse:
+    type: object
+    properties:
+      status:
+        type: string
+        example: "Unauthorized"
+      statusCode:
+        type: integer
+        example: 401
+      message:
+        type: object
+        properties:
+          url:
+            type: string
+          statusCode:
+            type: integer
+            example: 401
+          reasonCode:
+            type: integer
   PayPeriod:
     type: string
     enum:

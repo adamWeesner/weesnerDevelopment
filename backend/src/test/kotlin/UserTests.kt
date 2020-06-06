@@ -1,13 +1,9 @@
-import auth.InvalidUserException
-import auth.InvalidUserReason
-import auth.TokenResponse
 import com.weesnerdevelopment.utils.Path
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpStatusCode
-import shared.auth.HashedUser
-import shared.auth.User
+import shared.auth.*
 import java.util.*
 
 class UserTests : BaseTest({

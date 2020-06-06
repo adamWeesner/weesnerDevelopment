@@ -1,4 +1,3 @@
-import auth.TokenResponse
 import com.typesafe.config.ConfigFactory
 import com.weesnerdevelopment.utils.Path
 import io.kotlintest.Spec
@@ -10,6 +9,7 @@ import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.createTestEnvironment
 import shared.auth.HashedUser
+import shared.auth.TokenResponse
 import shared.auth.User
 import java.io.File
 

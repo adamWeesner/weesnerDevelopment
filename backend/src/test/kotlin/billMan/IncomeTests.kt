@@ -3,7 +3,6 @@ package billMan
 import BaseTest
 import BuiltRequest
 import com.weesnerdevelopment.utils.Path
-import income.IncomeResponse
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
@@ -14,6 +13,7 @@ import parse
 import shared.auth.User
 import shared.billMan.Color
 import shared.billMan.Income
+import shared.billMan.responses.IncomeResponse
 
 class IncomeTests : BaseTest({ token ->
     val billStart = "randomIncome"

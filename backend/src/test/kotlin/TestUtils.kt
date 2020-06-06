@@ -4,6 +4,7 @@ import io.ktor.http.HttpMethod
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
+import shared.base.ServerError
 import shared.toJson
 
 /**

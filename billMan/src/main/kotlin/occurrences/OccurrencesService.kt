@@ -4,14 +4,15 @@ import HistoryTypes
 import auth.UsersService
 import dbQuery
 import generics.GenericService
-import generics.InvalidAttributeException
 import history.HistoryService
 import occurrencesSharedUsers.OccurrenceSharedUsersService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import payments.PaymentsService
+import shared.base.InvalidAttributeException
 import shared.billMan.Occurrence
+import shared.billMan.responses.OccurrencesResponse
 
 class OccurrencesService(
     private val usersService: UsersService,

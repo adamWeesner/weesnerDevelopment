@@ -2,7 +2,6 @@ package auth
 
 import dbQuery
 import generics.GenericService
-import generics.InvalidAttributeException
 import io.ktor.http.HttpStatusCode
 import model.ChangeType
 import org.jetbrains.exposed.sql.ResultRow
@@ -12,6 +11,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.auth.HashedUser
 import shared.auth.User
+import shared.base.InvalidAttributeException
 import shared.fromJson
 
 class UsersService : GenericService<User, UsersTable>(

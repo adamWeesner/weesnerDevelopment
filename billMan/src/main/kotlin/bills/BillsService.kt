@@ -9,7 +9,6 @@ import billSharedUsers.BillSharedUsersService
 import colors.ColorsService
 import dbQuery
 import generics.GenericService
-import generics.InvalidAttributeException
 import history.HistoryService
 import model.ChangeType
 import occurrences.OccurrencesService
@@ -18,6 +17,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import shared.base.InvalidAttributeException
 import shared.billMan.Bill
 
 class BillsService(

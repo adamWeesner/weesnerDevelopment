@@ -2,7 +2,6 @@ package billMan
 
 import BaseTest
 import BuiltRequest
-import categories.CategoriesResponse
 import com.weesnerdevelopment.utils.Path
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
@@ -12,6 +11,7 @@ import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
 import parse
 import shared.billMan.Category
+import shared.billMan.responses.CategoriesResponse
 import shared.fromJson
 
 class CategoryTests : BaseTest({ token ->

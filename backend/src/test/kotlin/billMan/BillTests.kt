@@ -2,7 +2,6 @@ package billMan
 
 import BaseTest
 import BuiltRequest
-import bills.BillsResponse
 import com.weesnerdevelopment.utils.Path
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
@@ -15,6 +14,7 @@ import shared.auth.User
 import shared.billMan.Bill
 import shared.billMan.Category
 import shared.billMan.Color
+import shared.billMan.responses.BillsResponse
 import shared.fromJson
 
 class BillTests : BaseTest({ token ->

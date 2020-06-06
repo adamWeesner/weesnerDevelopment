@@ -9,12 +9,12 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import medicare.MedicareResponse
 import parse
 import shared.fromJson
 import shared.taxFetcher.MaritalStatus.Single
 import shared.taxFetcher.Medicare
 import shared.taxFetcher.MedicareLimit
+import shared.taxFetcher.responses.MedicareResponse
 
 class MedicareTests : BaseTest({ token ->
     fun newItem(year: Int) = Medicare(

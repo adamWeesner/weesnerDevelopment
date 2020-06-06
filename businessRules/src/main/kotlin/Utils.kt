@@ -1,15 +1,16 @@
 import auth.CustomPrincipal
-import auth.InvalidUserException
-import auth.InvalidUserReason
-import generics.InternalError
-import generics.Response
-import generics.Unauthorized
 import io.ktor.application.ApplicationCall
 import io.ktor.auth.authentication
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.uri
 import io.ktor.response.respond
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import shared.auth.InvalidUserException
+import shared.auth.InvalidUserReason
+import shared.base.InternalError
+import shared.base.Response
+import shared.base.ServerError
+import shared.base.Unauthorized
 import shared.fromJson
 
 /**
@@ -18,24 +19,21 @@ import shared.fromJson
 suspend fun <T> dbQuery(block: suspend () -> T): T = newSuspendedTransaction { block() }
 
 /**
- * Server Error generating a nice looking json error when there is a server issue.
- */
-data class ServerError(
-    val status: String,
-    val statusCode: Int,
-    val message: Any
-)
-
-/**
  * Helper function to [respond] with a [Response] and body.
  */
-suspend fun ApplicationCall.respond(response: Response) = response.run { respond(status, message) }
+suspend fun ApplicationCall.respond(response: Response) =
+    response.run { respond(HttpStatusCode(status.code, status.description), message) }
 
 /**
  * Helper function to [respond] with a [Response] and error body.
  */
 suspend fun ApplicationCall.respondError(error: Response) =
-    error.run { respond(status, ServerError(status.description, status.value, message)) }
+    error.run {
+        respond(
+            HttpStatusCode(status.code, status.description),
+            ServerError(status.description, status.code, message)
+        )
+    }
 
 /**
  * Helper function to [respond] with a [ServerError].

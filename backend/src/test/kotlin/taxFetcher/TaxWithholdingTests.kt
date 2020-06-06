@@ -17,7 +17,7 @@ import shared.taxFetcher.PayPeriod.Biweekly
 import shared.taxFetcher.PayPeriod.Weekly
 import shared.taxFetcher.TaxWithholding
 import shared.taxFetcher.TaxWithholdingTypes.General
-import taxWithholding.TaxWithholdingResponse
+import shared.taxFetcher.responses.TaxWithholdingResponse
 
 class TaxWithholdingTests : BaseTest({ token ->
     fun newItem(year: Int) = TaxWithholding(

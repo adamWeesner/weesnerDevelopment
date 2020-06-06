@@ -1,10 +1,7 @@
 package categories
 
 import auth.UsersService
-import generics.BadRequest
 import generics.GenericRouter
-import generics.NotFound
-import generics.Ok
 import history.HistoryService
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -15,7 +12,11 @@ import io.ktor.util.pipeline.PipelineContext
 import org.jetbrains.exposed.sql.lowerCase
 import respond
 import respondError
+import shared.base.BadRequest
+import shared.base.NotFound
+import shared.base.Ok
 import shared.billMan.Category
+import shared.billMan.responses.CategoriesResponse
 
 class CategoriesRouter(
     basePath: String,

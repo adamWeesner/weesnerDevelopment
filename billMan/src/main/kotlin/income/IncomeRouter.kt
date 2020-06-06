@@ -1,10 +1,7 @@
 package income
 
 import auth.UsersService
-import generics.BadRequest
 import generics.GenericRouter
-import generics.NotFound
-import generics.Ok
 import history.HistoryService
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -14,7 +11,11 @@ import io.ktor.routing.get
 import io.ktor.util.pipeline.PipelineContext
 import respond
 import respondError
+import shared.base.BadRequest
+import shared.base.NotFound
+import shared.base.Ok
 import shared.billMan.Income
+import shared.billMan.responses.IncomeResponse
 
 class IncomeRouter(
     basePath: String,

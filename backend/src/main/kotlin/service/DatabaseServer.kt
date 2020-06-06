@@ -1,7 +1,6 @@
 package com.weesnerdevelopment.service
 
 import auth.CustomPrincipal
-import auth.InvalidUserReason
 import auth.JwtProvider
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
@@ -30,6 +29,7 @@ import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 import respondErrorAuthorizing
 import respondErrorServer
+import shared.auth.InvalidUserReason
 import java.time.Duration
 
 class DatabaseServer {

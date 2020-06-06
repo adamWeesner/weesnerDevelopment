@@ -9,11 +9,11 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import occurrences.OccurrencesResponse
 import parse
 import shared.auth.User
 import shared.base.History
 import shared.billMan.*
+import shared.billMan.responses.OccurrencesResponse
 import shared.fromJson
 import shared.taxFetcher.PayPeriod
 import java.util.*

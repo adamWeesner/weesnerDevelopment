@@ -3,7 +3,6 @@ package taxFetcher
 import BaseTest
 import BuiltRequest
 import com.weesnerdevelopment.utils.Path
-import federalIncomeTax.FederalIncomeTaxResponse
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
@@ -14,6 +13,7 @@ import parse
 import shared.taxFetcher.FederalIncomeTax
 import shared.taxFetcher.MaritalStatus.Single
 import shared.taxFetcher.PayPeriod.Weekly
+import shared.taxFetcher.responses.FederalIncomeTaxResponse
 
 class FederalIncomeTaxTests : BaseTest({ token ->
     fun newItem(year: Int) = FederalIncomeTax(

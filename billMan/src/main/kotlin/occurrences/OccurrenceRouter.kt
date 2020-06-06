@@ -1,9 +1,8 @@
 package occurrences
 
-import auth.InvalidUserReason
 import auth.UsersService
 import diff
-import generics.*
+import generics.GenericRouter
 import history.HistoryService
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -19,8 +18,11 @@ import payments.PaymentsService
 import respond
 import respondError
 import respondErrorAuthorizing
+import shared.auth.InvalidUserReason
+import shared.base.*
 import shared.billMan.Occurrence
 import shared.billMan.Payment
+import shared.billMan.responses.OccurrencesResponse
 
 class OccurrenceRouter(
     basePath: String,

@@ -7,6 +7,7 @@ import io.ktor.application.ApplicationCall
 import io.ktor.util.pipeline.PipelineContext
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import shared.taxFetcher.FederalIncomeTax
+import shared.taxFetcher.responses.FederalIncomeTaxResponse
 
 class FederalIncomeTaxRouter(
     basePath: String,

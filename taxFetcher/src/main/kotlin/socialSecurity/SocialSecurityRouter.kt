@@ -7,6 +7,7 @@ import io.ktor.application.ApplicationCall
 import io.ktor.util.pipeline.PipelineContext
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import shared.taxFetcher.SocialSecurity
+import shared.taxFetcher.responses.SocialSecurityResponse
 
 class SocialSecurityRouter(
     basePath: String,

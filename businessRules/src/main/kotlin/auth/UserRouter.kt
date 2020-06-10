@@ -73,10 +73,17 @@ class UserRouter(
             put("/") {
                 val authToken = call.loggedUserData()
                 val item = call.receive<User>()
+                val tokenToHash = authToken?.getData()?.let {
+                    if (it.username == null) return@put call.respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
+                    if (it.password == null) return@put call.respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
+                    HashedUser(it.username, it.password)
+                } ?: return@put call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
 
-                if (authToken?.getData()?.uuid != item.uuid) return@put call.respondErrorAuthorizing(InvalidUserReason.WrongUser)
+                val hashedUser = usersService.getUserFromHash(tokenToHash)
 
-                val updated = putQualifier(item)
+                if (hashedUser?.uuid != item.uuid) return@put call.respondErrorAuthorizing(InvalidUserReason.WrongUser)
+
+                val updated = putQualifier(item.copy(id = hashedUser?.id)).also { println("after trying to put $it") }
 
                 when {
                     updated == null -> call.respond(BadRequest("Error occurred updated user information."))

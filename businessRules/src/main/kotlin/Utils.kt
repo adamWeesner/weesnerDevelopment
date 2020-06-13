@@ -7,10 +7,10 @@ import io.ktor.response.respond
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import shared.auth.InvalidUserException
 import shared.auth.InvalidUserReason
-import shared.base.InternalError
 import shared.base.Response
+import shared.base.Response.Companion.InternalError
+import shared.base.Response.Companion.Unauthorized
 import shared.base.ServerError
-import shared.base.Unauthorized
 import shared.fromJson
 
 /**
@@ -22,7 +22,7 @@ suspend fun <T> dbQuery(block: suspend () -> T): T = newSuspendedTransaction { b
  * Helper function to [respond] with a [Response] and body.
  */
 suspend fun ApplicationCall.respond(response: Response) =
-    response.run { respond(HttpStatusCode(status.code, status.description), message) }
+    response.run { respond(HttpStatusCode(status.code, status.description), this) }
 
 /**
  * Helper function to [respond] with a [Response] and error body.

@@ -20,7 +20,11 @@ import shared.auth.HashedUser
 import shared.auth.InvalidUserReason
 import shared.auth.TokenResponse
 import shared.auth.User
-import shared.base.*
+import shared.base.Response.Companion.BadRequest
+import shared.base.Response.Companion.Conflict
+import shared.base.Response.Companion.Created
+import shared.base.Response.Companion.NotFound
+import shared.base.Response.Companion.Ok
 import java.util.*
 
 class UserRouter(
@@ -87,7 +91,10 @@ class UserRouter(
 
                 when {
                     updated == null -> call.respond(BadRequest("Error occurred updated user information."))
-                    updated.id != item.id -> call.respond(Created(updated.redacted()))
+                    updated.id != item.id -> {
+                        updated.redacted()?.let { call.respond(Created(it)) }
+                            ?: call.respond(BadRequest("Error occurred updated user information."))
+                    }
                     else -> updated.redacted()?.let { call.respond(Ok(it)) }
                         ?: call.respond(NotFound("User could not be found."))
                 }

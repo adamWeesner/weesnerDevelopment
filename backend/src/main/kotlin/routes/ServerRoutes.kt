@@ -5,7 +5,7 @@ import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.route
-import shared.base.Ok
+import shared.base.Response.Companion.Ok
 
 fun Routing.serverRoutes() {
     route("/health") {

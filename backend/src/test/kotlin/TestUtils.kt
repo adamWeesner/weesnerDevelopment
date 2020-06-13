@@ -4,6 +4,7 @@ import io.ktor.http.HttpMethod
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
+import shared.base.Response
 import shared.base.ServerError
 import shared.toJson
 
@@ -33,22 +34,28 @@ class BuiltRequest(
     /**
      * [send] the request returning the response as [T].
      */
-    inline fun <reified T> asObject(body: T? = null) = send<T>(body).response.content.parse<T>()
+    inline fun <reified T> asObject(body: T? = null) =
+        send<T>(body).response.content.parse<Response>().message.let {
+            if (it is String) it.parse<T>()
+            else it.toJson().parse<T>()
+        }
 
     /**
      * [send] the request returning the response as [T].
      */
     inline fun <reified T, reified R> asServerError(body: T? = null) =
-        send<T>(body).response.content.parse<ServerError>().message.toJson().parse<R>()
+        send<T>(body).response.content.parseResponse<ServerError>().message.toJson().parse<R>()
 
     /**
      * [send] the request returning the response as [T].
      */
     inline fun <reified T, reified R> asClass(body: T? = null) =
-        send<T>(body).response.content.parse<R>()
+        send<T>(body).response.content.parseResponse<R>()
 
     /**
      * [send] the request returning the status of the response.
      */
     inline fun <reified T> sendStatus(body: T? = null) = send<T>(body).response.status()
 }
+
+inline fun <reified T> String?.parseResponse() = this.parse<Response>().message.toJson().parse<T>()

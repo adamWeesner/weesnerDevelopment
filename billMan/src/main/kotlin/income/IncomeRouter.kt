@@ -11,9 +11,9 @@ import io.ktor.routing.get
 import io.ktor.util.pipeline.PipelineContext
 import respond
 import respondError
-import shared.base.BadRequest
-import shared.base.NotFound
-import shared.base.Ok
+import shared.base.Response.Companion.BadRequest
+import shared.base.Response.Companion.NotFound
+import shared.base.Response.Companion.Ok
 import shared.billMan.Income
 import shared.billMan.responses.IncomeResponse
 

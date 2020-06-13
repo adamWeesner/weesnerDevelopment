@@ -18,6 +18,11 @@ import respondErrorAuthorizing
 import shared.auth.HashedUser
 import shared.auth.InvalidUserReason
 import shared.base.*
+import shared.base.Response.Companion.BadRequest
+import shared.base.Response.Companion.Conflict
+import shared.base.Response.Companion.Created
+import shared.base.Response.Companion.NotFound
+import shared.base.Response.Companion.Ok
 import kotlin.reflect.KType
 
 /**

@@ -12,9 +12,9 @@ import io.ktor.util.pipeline.PipelineContext
 import org.jetbrains.exposed.sql.lowerCase
 import respond
 import respondError
-import shared.base.BadRequest
-import shared.base.NotFound
-import shared.base.Ok
+import shared.base.Response.Companion.BadRequest
+import shared.base.Response.Companion.NotFound
+import shared.base.Response.Companion.Ok
 import shared.billMan.Category
 import shared.billMan.responses.CategoriesResponse
 

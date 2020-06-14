@@ -9,10 +9,9 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import parse
+import parseResponse
 import shared.billMan.Category
 import shared.billMan.responses.CategoriesResponse
-import shared.fromJson
 
 class CategoryTests : BaseTest({ token ->
     val categoryStart = "randomCategory"
@@ -31,7 +30,7 @@ class CategoryTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).send(newItem(0))
         BuiltRequest(engine, Post, path, token).send(newItem(1))
         with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content?.fromJson<CategoriesResponse>()?.items
+            val responseItems = response.content.parseResponse<CategoriesResponse>()?.items
             val item1 = responseItems!![responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe HttpStatusCode.OK
@@ -43,7 +42,7 @@ class CategoryTests : BaseTest({ token ->
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2))
         with(BuiltRequest(engine, Get, "$path?category=${item.id}", token).send<Category>()) {
-            val addedItems = response.content.parse<CategoriesResponse>().items
+            val addedItems = response.content.parseResponse<CategoriesResponse>()?.items
             response.status() shouldBe HttpStatusCode.OK
             addedItems?.size shouldBe 1
             addedItems?.first()?.name shouldBe "${categoryStart}2"
@@ -69,7 +68,7 @@ class CategoryTests : BaseTest({ token ->
         val updateRequest = BuiltRequest(engine, Put, path, token).send(category.copy(name = updatedName))
 
         with(updateRequest) {
-            val addedItem = response.content?.fromJson<Category>()
+            val addedItem = response.content.parseResponse<Category>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem?.name shouldBe updatedName
             addedItem?.history?.get(0)?.field shouldBe "${addedItem!!::class.java.simpleName} ${addedItem.id} name"
@@ -85,7 +84,8 @@ class CategoryTests : BaseTest({ token ->
     }
 
     "verify deleting and item that has been added" {
-        val addedItem = BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content?.fromJson<Category>()
+        val addedItem =
+            BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content.parseResponse<Category>()
         BuiltRequest(
             engine,
             Delete,

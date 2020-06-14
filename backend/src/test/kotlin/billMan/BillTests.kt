@@ -9,13 +9,12 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import parse
+import parseResponse
 import shared.auth.User
 import shared.billMan.Bill
 import shared.billMan.Category
 import shared.billMan.Color
 import shared.billMan.responses.BillsResponse
-import shared.fromJson
 
 class BillTests : BaseTest({ token ->
     val billStart = "randomBill"
@@ -55,7 +54,7 @@ class BillTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).send(newItem(0))
         BuiltRequest(engine, Post, path, token).send(newItem(1))
         with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content?.fromJson<BillsResponse>()?.items
+            val responseItems = response.content.parseResponse<BillsResponse>()?.items
             val item1 = responseItems!![responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe HttpStatusCode.OK
@@ -67,7 +66,7 @@ class BillTests : BaseTest({ token ->
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2))
         with(BuiltRequest(engine, Get, "$path?bill=${item.id}", token).send<Bill>()) {
-            val addedItems = response.content.parse<BillsResponse>().items
+            val addedItems = response.content.parseResponse<BillsResponse>()?.items
             response.status() shouldBe HttpStatusCode.OK
             addedItems?.size shouldBe 1
             addedItems?.first()!!::class.java shouldBe Bill::class.java
@@ -81,11 +80,11 @@ class BillTests : BaseTest({ token ->
 
     "verify adding a new item" {
         with(BuiltRequest(engine, Post, path, token).send(newItem(3))) {
-            val addedItem = response.content.parse<Bill>()
+            val addedItem = response.content.parseResponse<Bill>()
             response.status() shouldBe HttpStatusCode.Created
-            addedItem.name shouldBe "${billStart}3"
-            addedItem.color.copy(dateUpdated = -1, dateCreated = -1) shouldBe Color(
-                addedItem.color.id,
+            addedItem?.name shouldBe "${billStart}3"
+            addedItem?.color?.copy(dateUpdated = -1, dateCreated = -1) shouldBe Color(
+                addedItem?.color?.id,
                 255,
                 255,
                 255,
@@ -112,9 +111,9 @@ class BillTests : BaseTest({ token ->
         val updateRequest = BuiltRequest(engine, Put, path, token).send(updatedBill)
 
         with(updateRequest) {
-            val addedItem = response.content.parse<Bill>()
-            val id = addedItem.id
-            val className = addedItem::class.java.simpleName
+            val addedItem = response.content.parseResponse<Bill>()
+            val id = addedItem?.id
+            val className = addedItem!!::class.java.simpleName
             val fields = addedItem.history!!.map { it.field }
 
             response.status() shouldBe HttpStatusCode.OK
@@ -135,7 +134,7 @@ class BillTests : BaseTest({ token ->
     }
 
     "verify deleting and item that has been added" {
-        val addedItem = BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content?.fromJson<Bill>()
+        val addedItem = BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content.parseResponse<Bill>()
         BuiltRequest(engine, Delete, "$path?bill=${addedItem?.id}", token).sendStatus<Unit>() shouldBe HttpStatusCode.OK
     }
 

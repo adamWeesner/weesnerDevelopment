@@ -9,8 +9,7 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import parse
-import shared.fromJson
+import parseResponse
 import shared.taxFetcher.MaritalStatus.Single
 import shared.taxFetcher.Medicare
 import shared.taxFetcher.MedicareLimit
@@ -40,7 +39,7 @@ class MedicareTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).send(newItem(2000))
         BuiltRequest(engine, Post, path, token).send(newItem(2001))
         with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content?.fromJson<MedicareResponse>()?.items
+            val responseItems = response.content.parseResponse<MedicareResponse>()?.items
             val item1 = responseItems!![responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe HttpStatusCode.OK
@@ -52,17 +51,17 @@ class MedicareTests : BaseTest({ token ->
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2002))
         with(BuiltRequest(engine, Get, "$path/${item.year}", token).send<Unit>()) {
-            val addedItem = response.content.parse<Medicare>()
+            val addedItem = response.content.parseResponse<Medicare>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem shouldBe Medicare(
                 item.id,
                 2002,
                 6.25,
                 0.9,
-                addedItem.limits,
+                addedItem?.limits ?: listOf(),
                 null,
-                addedItem.dateCreated,
-                addedItem.dateUpdated
+                addedItem?.dateCreated ?: 0,
+                addedItem?.dateUpdated ?: 0
             )
         }
     }
@@ -88,19 +87,19 @@ class MedicareTests : BaseTest({ token ->
             BuiltRequest(engine, Put, path, token).send(medicare.copy(percent = 6.0, limits = newLimits))
 
         with(updateRequest) {
-            val addedItem = response.content.parse<Medicare>()
+            val addedItem = response.content.parseResponse<Medicare>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem shouldBe Medicare(
-                addedItem.id,
+                addedItem?.id,
                 2004,
                 6.0,
-                addedItem.additionalPercent,
-                addedItem.limits,
-                addedItem.history,
-                addedItem.dateCreated,
-                addedItem.dateUpdated
+                addedItem?.additionalPercent ?: 0.0,
+                addedItem?.limits ?: listOf(),
+                addedItem?.history,
+                addedItem?.dateCreated ?: 0,
+                addedItem?.dateUpdated ?: 0
             )
-            addedItem.history?.get(0)?.field shouldBe "${addedItem::class.java.simpleName} ${addedItem.id} percent"
+            addedItem?.history?.get(0)?.field shouldBe "${addedItem!!::class.java.simpleName} ${addedItem.id} percent"
             addedItem.history?.get(1)?.field shouldBe "${MedicareLimit::class.java.simpleName} ${addedItem.limits.first().id} amount"
         }
     }

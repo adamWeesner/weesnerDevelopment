@@ -44,9 +44,9 @@ open class BaseTest(block: AbstractStringSpec.(token: String) -> Unit = {}, uses
                         username = "test",
                         password = "test"
                     )
-                ).token
+                )?.token
                     ?: BuiltRequest(this, Post, Path.User.base + Path.User.login)
-                        .asClass<HashedUser, TokenResponse>(HashedUser("test", "test")).token
+                        .asClass<HashedUser, TokenResponse>(HashedUser("test", "test"))?.token
                             ?: throw IllegalArgumentException("Something happened... should have gotten a token")
             }
         }

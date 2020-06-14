@@ -9,12 +9,11 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import parse
+import parseResponse
 import shared.auth.User
 import shared.base.History
 import shared.billMan.*
 import shared.billMan.responses.OccurrencesResponse
-import shared.fromJson
 import shared.taxFetcher.PayPeriod
 import java.util.*
 
@@ -22,7 +21,7 @@ class OccurrenceTests : BaseTest({ token ->
     val signedInUser = BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
 
     val startCategory = BuiltRequest(engine, Post, Path.BillMan.categories, token).asObject(
-        Category(name = "randomCategory")
+        Category(name = "occurenceCategory")
     )
 
     val startBill = BuiltRequest(engine, Post, Path.BillMan.bills, token).asObject(
@@ -73,7 +72,7 @@ class OccurrenceTests : BaseTest({ token ->
         val addedItem = BuiltRequest(engine, Post, path, token).asObject(newItem(12.34))
         BuiltRequest(engine, Post, path, token).send(newItem(23.45))
         with(BuiltRequest(engine, Get, "$path?bill=${addedItem.itemId}", token).send<Unit>()) {
-            val responseItems = response.content?.parse<OccurrencesResponse>()?.items
+            val responseItems = response.content.parseResponse<OccurrencesResponse>()?.items
                 ?: throw IllegalArgumentException("Occurrence response should not be null..")
             val item1 = responseItems[responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
@@ -86,7 +85,7 @@ class OccurrenceTests : BaseTest({ token ->
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(34.56))
         with(BuiltRequest(engine, Get, "$path?occurrence=${item.id}", token).send<Occurrence>()) {
-            val addedItems = response.content.parse<OccurrencesResponse>().items
+            val addedItems = response.content.parseResponse<OccurrencesResponse>()?.items
             response.status() shouldBe HttpStatusCode.OK
             addedItems?.size shouldBe 1
             addedItems?.first()!!::class.java shouldBe Occurrence::class.java
@@ -100,9 +99,9 @@ class OccurrenceTests : BaseTest({ token ->
 
     "verify adding a new item" {
         with(BuiltRequest(engine, Post, path, token).send(newItem(45.67))) {
-            val addedItem = response.content.parse<Occurrence>()
+            val addedItem = response.content.parseResponse<Occurrence>()
             response.status() shouldBe HttpStatusCode.Created
-            addedItem.amount shouldBe "45.67"
+            addedItem?.amount shouldBe "45.67"
         }
     }
 
@@ -127,9 +126,9 @@ class OccurrenceTests : BaseTest({ token ->
         val updateRequest = BuiltRequest(engine, Put, path, token).send(updatedItem)
 
         with(updateRequest) {
-            val addedItem = response.content.parse<Occurrence>()
-            val id = addedItem.id
-            val className = addedItem::class.java.simpleName
+            val addedItem = response.content.parseResponse<Occurrence>()
+            val id = addedItem?.id
+            val className = addedItem!!::class.java.simpleName
             val fields = addedItem.history!!.map { it.field }
 
             response.status() shouldBe HttpStatusCode.OK
@@ -153,7 +152,7 @@ class OccurrenceTests : BaseTest({ token ->
 
     "verify deleting and item that has been added" {
         val addedItem =
-            BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content?.fromJson<Occurrence>()
+            BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content.parseResponse<Occurrence>()
         BuiltRequest(
             engine,
             Delete,

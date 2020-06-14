@@ -9,7 +9,7 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import parse
+import parseResponse
 import shared.auth.User
 import shared.billMan.Color
 import shared.billMan.Income
@@ -44,7 +44,7 @@ class IncomeTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).send(newItem(0))
         BuiltRequest(engine, Post, path, token).send(newItem(1))
         with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content.parse<IncomeResponse>().items
+            val responseItems = response.content.parseResponse<IncomeResponse>()?.items
             val item1 = responseItems!![responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe HttpStatusCode.OK
@@ -56,7 +56,7 @@ class IncomeTests : BaseTest({ token ->
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2))
         with(BuiltRequest(engine, Get, "$path?income=${item.id}", token).send<Income>()) {
-            val addedItems = response.content.parse<IncomeResponse>().items
+            val addedItems = response.content.parseResponse<IncomeResponse>()?.items
             response.status() shouldBe HttpStatusCode.OK
             addedItems?.size shouldBe 1
             addedItems?.first()!!::class.java shouldBe Income::class.java
@@ -70,9 +70,9 @@ class IncomeTests : BaseTest({ token ->
 
     "verify adding a new item" {
         with(BuiltRequest(engine, Post, path, token).send(newItem(3))) {
-            val addedItem = response.content.parse<Income>()
+            val addedItem = response.content.parseResponse<Income>()
             response.status() shouldBe HttpStatusCode.Created
-            addedItem.name shouldBe "${billStart}3"
+            addedItem?.name shouldBe "${billStart}3"
         }
     }
 
@@ -87,10 +87,10 @@ class IncomeTests : BaseTest({ token ->
         val updateRequest = BuiltRequest(engine, Put, path, token).send(income.copy(name = updatedName))
 
         with(updateRequest) {
-            val addedItem = response.content.parse<Income>()
+            val addedItem = response.content.parseResponse<Income>()
             response.status() shouldBe HttpStatusCode.OK
-            addedItem.name shouldBe updatedName
-            addedItem.history?.get(0)?.field shouldBe "${addedItem::class.java.simpleName} ${addedItem.id} name"
+            addedItem?.name shouldBe updatedName
+            addedItem?.history?.get(0)?.field shouldBe "${addedItem!!::class.java.simpleName} ${addedItem.id} name"
         }
     }
 
@@ -103,13 +103,16 @@ class IncomeTests : BaseTest({ token ->
     }
 
     "verify deleting and item that has been added" {
-        val addedItem = BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content.parse<Income>()
+        val addedItem = BuiltRequest(engine, Post, path, token).asObject(newItem(7))
         BuiltRequest(
             engine,
             Delete,
             "$path?income=${addedItem.id}",
             token
-        ).sendStatus<Unit>() shouldBe HttpStatusCode.OK
+        ).send<Unit>().apply {
+            response.status() shouldBe HttpStatusCode.OK
+            response.content.parseResponse<Any>()!!::class.java shouldBe String::class.java
+        }
     }
 
     "verify deleting item that doesn't exist" {

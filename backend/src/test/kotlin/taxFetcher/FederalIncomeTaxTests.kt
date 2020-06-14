@@ -9,7 +9,7 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import parse
+import parseResponse
 import shared.taxFetcher.FederalIncomeTax
 import shared.taxFetcher.MaritalStatus.Single
 import shared.taxFetcher.PayPeriod.Weekly
@@ -37,7 +37,7 @@ class FederalIncomeTaxTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).send(newItem(2000))
         BuiltRequest(engine, Post, path, token).send(newItem(2001))
         with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content.parse<FederalIncomeTaxResponse>().items
+            val responseItems = response.content.parseResponse<FederalIncomeTaxResponse>()?.items
             val item1 = responseItems!![responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe HttpStatusCode.OK
@@ -49,7 +49,7 @@ class FederalIncomeTaxTests : BaseTest({ token ->
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2002))
         with(BuiltRequest(engine, Get, "$path/${item.year}", token).send<Unit>()) {
-            val addedItem = response.content.parse<FederalIncomeTax>()
+            val addedItem = response.content.parseResponse<FederalIncomeTax>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem shouldBe FederalIncomeTax(
                 item.id,
@@ -62,8 +62,8 @@ class FederalIncomeTaxTests : BaseTest({ token ->
                 10.0,
                 0.0,
                 null,
-                addedItem.dateCreated,
-                addedItem.dateUpdated
+                addedItem?.dateCreated ?: 0,
+                addedItem?.dateUpdated ?: 0
             )
         }
     }
@@ -87,10 +87,10 @@ class FederalIncomeTaxTests : BaseTest({ token ->
             BuiltRequest(engine, Put, path, token).send(federalIncomeTax.copy(percent = 1.4, over = 2.5))
 
         with(updateRequest) {
-            val addedItem = response.content.parse<FederalIncomeTax>()
+            val addedItem = response.content.parseResponse<FederalIncomeTax>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem shouldBe FederalIncomeTax(
-                addedItem.id,
+                addedItem?.id,
                 2004,
                 Single,
                 Weekly,
@@ -99,11 +99,11 @@ class FederalIncomeTaxTests : BaseTest({ token ->
                 0.0,
                 1.4,
                 0.0,
-                addedItem.history,
-                addedItem.dateCreated,
-                addedItem.dateUpdated
+                addedItem?.history,
+                addedItem?.dateCreated ?: 0,
+                addedItem?.dateUpdated ?: 0
             )
-            addedItem.history?.get(0)?.field shouldBe "${addedItem::class.java.simpleName} ${addedItem.id} over"
+            addedItem?.history?.get(0)?.field shouldBe "${addedItem!!::class.java.simpleName} ${addedItem.id} over"
             addedItem.history?.get(1)?.field shouldBe "${addedItem::class.java.simpleName} ${addedItem.id} percent"
         }
     }

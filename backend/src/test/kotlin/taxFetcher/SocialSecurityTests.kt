@@ -9,10 +9,9 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import parse
+import parseResponse
 import shared.auth.User
 import shared.base.History
-import shared.fromJson
 import shared.taxFetcher.SocialSecurity
 import shared.taxFetcher.responses.SocialSecurityResponse
 
@@ -33,7 +32,7 @@ class SocialSecurityTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).send(newItem(2000))
         BuiltRequest(engine, Post, path, token).send(newItem(2001))
         with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content?.fromJson<SocialSecurityResponse>()?.items
+            val responseItems = response.content.parseResponse<SocialSecurityResponse>()?.items
             val item1 = responseItems!![responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe HttpStatusCode.OK
@@ -45,7 +44,7 @@ class SocialSecurityTests : BaseTest({ token ->
     "verify getting an added item" {
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2002))
         with(BuiltRequest(engine, Get, "$path/${item.year}", token).send<Unit>()) {
-            val addedItem = response.content.parse<SocialSecurity>()
+            val addedItem = response.content.parseResponse<SocialSecurity>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem shouldBe SocialSecurity(
                 item.id,
@@ -53,8 +52,8 @@ class SocialSecurityTests : BaseTest({ token ->
                 1.45,
                 127200,
                 null,
-                addedItem.dateCreated,
-                addedItem.dateUpdated
+                addedItem?.dateCreated ?: 0,
+                addedItem?.dateUpdated ?: 0
             )
         }
     }
@@ -70,16 +69,16 @@ class SocialSecurityTests : BaseTest({ token ->
 
     "verify adding a new item" {
         with(BuiltRequest(engine, Post, path, token).send(newItem(2003))) {
-            val addedItem = response.content.parse<SocialSecurity>()
+            val addedItem = response.content.parseResponse<SocialSecurity>()
             response.status() shouldBe HttpStatusCode.Created
             addedItem shouldBe SocialSecurity(
-                addedItem.id,
+                addedItem?.id,
                 2003,
                 1.45,
                 127200,
                 null,
-                addedItem.dateCreated,
-                addedItem.dateUpdated
+                addedItem?.dateCreated ?: 0,
+                addedItem?.dateUpdated ?: 0
             )
         }
     }
@@ -91,16 +90,16 @@ class SocialSecurityTests : BaseTest({ token ->
             BuiltRequest(engine, Put, path, token).send(socialSecurity.copy(percent = 1.4, limit = 128000))
 
         with(updatedRequest) {
-            val addedItem = response.content.parse<SocialSecurity>()
+            val addedItem = response.content.parseResponse<SocialSecurity>()
             response.status() shouldBe HttpStatusCode.OK
             addedItem shouldBe SocialSecurity(
-                addedItem.id,
+                addedItem?.id,
                 2004,
                 1.4,
                 128000,
                 listOf(
                     History(
-                        addedItem.history!![0].id,
+                        addedItem?.history!![0].id,
                         "${addedItem::class.java.simpleName} ${addedItem.id} limit",
                         "127200",
                         "128000",

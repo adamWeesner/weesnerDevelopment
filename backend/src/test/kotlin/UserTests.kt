@@ -55,7 +55,7 @@ class UserTests : BaseTest({
     "get account info with created user gives user data" {
         BuiltRequest(engine, Post, path + Path.User.signUp).send(newUserHashed("adam"))
         val authToken = BuiltRequest(engine, Post, path + Path.User.login)
-            .asClass<HashedUser, TokenResponse>(newUserHashed("adam").asHashed()).token
+            .asClass<HashedUser, TokenResponse>(newUserHashed("adam").asHashed())?.token
 
         BuiltRequest(engine, Get, path + Path.User.account, authToken)
             .asObject<User>().copy(uuid = null, dateCreated = -1, dateUpdated = -1) shouldBe newUserHashed("adam").copy(

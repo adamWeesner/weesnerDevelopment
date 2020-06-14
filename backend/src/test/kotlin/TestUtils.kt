@@ -44,13 +44,13 @@ class BuiltRequest(
      * [send] the request returning the response as [T].
      */
     inline fun <reified T, reified R> asServerError(body: T? = null) =
-        send<T>(body).response.content.parseResponse<ServerError>().message.toJson().parse<R>()
+        send<T>(body).response.content.parse<ServerError>().message.toJson().parse<R>()
 
     /**
      * [send] the request returning the response as [T].
      */
     inline fun <reified T, reified R> asClass(body: T? = null) =
-        send<T>(body).response.content.parseResponse<R>()
+        send<T>(body).response.content.also { println("content $it") }.parseResponse<R>()
 
     /**
      * [send] the request returning the status of the response.
@@ -58,4 +58,7 @@ class BuiltRequest(
     inline fun <reified T> sendStatus(body: T? = null) = send<T>(body).response.status()
 }
 
-inline fun <reified T> String?.parseResponse() = this.parse<Response>().message.toJson().parse<T>()
+inline fun <reified T> String?.parseResponse() = this.parse<Response>().let {
+    if (it.status.code.toString().startsWith("4")) null
+    else it.message.toJson().parse<T>()
+}

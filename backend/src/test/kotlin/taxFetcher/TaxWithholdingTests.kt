@@ -9,10 +9,9 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
-import parse
+import parseResponse
 import shared.auth.User
 import shared.base.History
-import shared.fromJson
 import shared.taxFetcher.PayPeriod.Biweekly
 import shared.taxFetcher.PayPeriod.Weekly
 import shared.taxFetcher.TaxWithholding
@@ -38,7 +37,7 @@ class TaxWithholdingTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).send(newItem(2001))
 
         with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content?.fromJson<TaxWithholdingResponse>()?.items
+            val responseItems = response.content.parseResponse<TaxWithholdingResponse>()?.items
             val item1 = responseItems!![responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
 
@@ -71,7 +70,7 @@ class TaxWithholdingTests : BaseTest({ token ->
         val item = BuiltRequest(engine, Post, path, token).asObject(newItem(2002))
 
         with(BuiltRequest(engine, Get, "$path/${item.year}", token).send<Unit>()) {
-            val addedItem = response.content.parse<TaxWithholding>()
+            val addedItem = response.content.parseResponse<TaxWithholding>()
 
             response.status() shouldBe HttpStatusCode.OK
             addedItem shouldBe TaxWithholding(
@@ -81,8 +80,8 @@ class TaxWithholdingTests : BaseTest({ token ->
                 Weekly,
                 1.23,
                 null,
-                addedItem.dateCreated,
-                addedItem.dateUpdated
+                addedItem?.dateCreated ?: 0,
+                addedItem?.dateUpdated ?: 0
             )
         }
     }
@@ -98,18 +97,18 @@ class TaxWithholdingTests : BaseTest({ token ->
 
     "verify adding a new item" {
         with(BuiltRequest(engine, Post, path, token).send(newItem(2003))) {
-            val addedItem = response.content.parse<TaxWithholding>()
+            val addedItem = response.content.parseResponse<TaxWithholding>()
 
             response.status() shouldBe HttpStatusCode.Created
             addedItem shouldBe TaxWithholding(
-                addedItem.id,
+                addedItem?.id,
                 2003,
                 General,
                 Weekly,
                 1.23,
                 null,
-                addedItem.dateCreated,
-                addedItem.dateUpdated
+                addedItem?.dateCreated ?: 0,
+                addedItem?.dateUpdated ?: 0
             )
         }
     }
@@ -121,18 +120,18 @@ class TaxWithholdingTests : BaseTest({ token ->
             BuiltRequest(engine, Put, path, token).send(taxWithholding.copy(amount = 1.4, payPeriod = Biweekly))
 
         with(updateRequest) {
-            val addedItem = response.content.parse<TaxWithholding>()
+            val addedItem = response.content.parseResponse<TaxWithholding>()
 
             response.status() shouldBe HttpStatusCode.OK
             addedItem shouldBe TaxWithholding(
-                addedItem.id,
+                addedItem?.id,
                 2004,
                 General,
                 Biweekly,
                 1.4,
                 listOf(
                     History(
-                        addedItem.history!![0].id,
+                        addedItem?.history!![0].id,
                         "${addedItem::class.java.simpleName} ${addedItem.id} amount",
                         "1.23",
                         "1.4",

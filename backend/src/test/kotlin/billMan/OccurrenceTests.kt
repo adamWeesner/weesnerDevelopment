@@ -177,4 +177,13 @@ class OccurrenceTests : BaseTest({ token ->
         )
         BuiltRequest(engine, Put, path, token).sendStatus(updatedItem) shouldBe HttpStatusCode.BadRequest
     }
+
+    "verify can pay for occurrence" {
+        val item = BuiltRequest(engine, Post, path, token).asObject(newItem(45.67))
+
+        BuiltRequest(engine, Post, "$path/${item.id}?pay=1.0", token).asObject<Occurrence>().apply {
+            amountLeft.toDouble() shouldBe 44.67
+            payments?.size shouldBe 1
+        }
+    }
 })

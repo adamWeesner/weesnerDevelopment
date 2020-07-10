@@ -22,7 +22,6 @@ import shared.auth.InvalidUserReason
 import shared.base.EarlyResponseException
 import shared.base.Response.Companion.BadRequest
 import shared.base.Response.Companion.Conflict
-import shared.base.Response.Companion.Created
 import shared.base.Response.Companion.NotFound
 import shared.base.Response.Companion.Ok
 import shared.billMan.Occurrence
@@ -131,14 +130,14 @@ class OccurrenceRouter(
     }
 
     fun Route.pay() {
-        post("{occurrenceId}?pay={amount}") {
+        post("/{occurrenceId}") {
             val user = tokenAsUser(usersService)
             user ?: call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
 
             val occurrenceId = call.parameters["occurrenceId"]
                 ?: return@post call.respondError(BadRequest("Invalid occurrence id."))
 
-            val payment = call.parameters["amount"]?.toDoubleOrNull()
+            val payment = call.request.queryParameters["pay"]?.toDoubleOrNull()
                 ?: return@post call.respondError(BadRequest("Invalid amount."))
 
             val occurrence = service.getSingle { service.table.id eq occurrenceId.toInt() }
@@ -150,17 +149,16 @@ class OccurrenceRouter(
             val added = paymentsService.addForOccurrence(
                 occurrenceId.toInt(),
                 Payment(owner = user!!, amount = payment.toString())
+            ) ?: return@post call.respondError(Conflict("An error occurred adding the payment."))
+
+            val updatedOccurrence = occurrence.copy(
+                amountLeft = occurrence.amountLeft.toDouble().minus(payment).toString(),
+                payments = (occurrence.payments ?: listOf()).plus(added)
             )
-                ?: return@post call.respondError(Conflict("An error occurred adding the payment."))
 
-            service.update(
-                occurrence.copy(
-                    amountLeft = (occurrence.amountLeft.toDouble() - payment).toString(),
-                    payments = (occurrence.payments ?: listOf()).plus(added)
-                )
-            ) { service.table.id eq occurrenceId.toInt() }
+            service.update(updatedOccurrence) { service.table.id eq occurrenceId.toInt() }
 
-            call.respond(Created(added))
+            call.respond(Ok(updatedOccurrence))
         }
     }
 }

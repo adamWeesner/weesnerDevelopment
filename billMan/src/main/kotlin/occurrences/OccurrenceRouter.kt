@@ -89,7 +89,7 @@ class OccurrenceRouter(
 
     override fun Route.getDefault() {
         get("/") {
-            val uuid = call.loggedUserData()?.getData()?.uuid
+            val username = call.loggedUserData()?.getData()?.username
 
             if (call.request.queryParameters.isEmpty())
                 return@get call.respondError(BadRequest("Bill id is required. `?bill={billId}`"))
@@ -104,7 +104,7 @@ class OccurrenceRouter(
                 val occurrence = service.getSingle { service.table.id eq occurrenceId.toInt() }
                     ?: return@get call.respond(NotFound("Could not get occurrence with $occurrenceId"))
 
-                return@get call.respond(Ok(OccurrencesResponse(listOf(occurrence).forOwner(uuid))))
+                return@get call.respond(Ok(OccurrencesResponse(listOf(occurrence).forOwner(username))))
             }
 
             if (billId != null) {

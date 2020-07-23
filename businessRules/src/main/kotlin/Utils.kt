@@ -7,6 +7,7 @@ import io.ktor.response.respond
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import shared.auth.InvalidUserException
 import shared.auth.InvalidUserReason
+import shared.base.OwnedItem
 import shared.base.Response
 import shared.base.Response.Companion.InternalError
 import shared.base.Response.Companion.Unauthorized
@@ -62,3 +63,6 @@ enum class HistoryTypes {
 
 inline fun <reified T> String?.parse(): T =
     this?.fromJson<T>() ?: throw Throwable("failed to parse $this to ${T::class}.")
+
+fun <T : OwnedItem> List<T>.forOwner(username: String?) =
+    filter { it.owner.username == username }

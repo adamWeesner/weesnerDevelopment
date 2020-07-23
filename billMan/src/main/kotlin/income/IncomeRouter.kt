@@ -31,17 +31,17 @@ class IncomeRouter(
 ) {
     override fun Route.getDefault() {
         get("/") {
-            val uuid = call.loggedUserData()?.getData()?.uuid
+            val username = call.loggedUserData()?.getData()?.username
 
             if (call.request.queryParameters.isEmpty()) {
-                call.respond(Ok(IncomeResponse(service.getAll().forOwner(uuid))))
+                call.respond(Ok(IncomeResponse(service.getAll().forOwner(username))))
             } else {
                 val incomeId =
                     call.request.queryParameters["income"]
                         ?: return@get call.respondError(BadRequest("Invalid income id."))
 
                 service.getSingle { service.table.id eq incomeId.toInt() }?.let {
-                    call.respond(Ok(IncomeResponse(listOf(it).forOwner(uuid))))
+                    call.respond(Ok(IncomeResponse(listOf(it).forOwner(username))))
                 } ?: call.respond(NotFound("Could not get income with $incomeId"))
             }
         }

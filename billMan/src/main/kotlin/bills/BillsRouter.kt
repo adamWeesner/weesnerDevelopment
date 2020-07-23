@@ -38,17 +38,17 @@ class BillsRouter(
 ) {
     override fun Route.getDefault() {
         get("/") {
-            val uuid = call.loggedUserData()?.getData()?.uuid
+            val username = call.loggedUserData()?.getData()?.username
 
             if (call.request.queryParameters.isEmpty()) {
-                call.respond(Ok(BillsResponse(service.getAll().forOwner(uuid))))
+                call.respond(Ok(BillsResponse(service.getAll().forOwner(username))))
             } else {
                 val billId =
                     call.request.queryParameters["bill"]
                         ?: return@get call.respondError(BadRequest("Invalid bill id."))
 
                 service.getSingle { service.table.id eq billId.toInt() }?.let {
-                    call.respond(Ok(BillsResponse(listOf(it).forOwner(uuid))))
+                    call.respond(Ok(BillsResponse(listOf(it).forOwner(username))))
                 } ?: call.respond(NotFound("Could not get bill with $billId"))
             }
         }

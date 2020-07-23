@@ -2,6 +2,7 @@ package occurrences
 
 import auth.UsersService
 import diff
+import forOwner
 import generics.GenericRouter
 import history.HistoryService
 import io.ktor.application.ApplicationCall
@@ -11,6 +12,7 @@ import io.ktor.routing.delete
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.util.pipeline.PipelineContext
+import loggedUserData
 import occurrencesSharedUsers.OccurrenceSharedUsers
 import occurrencesSharedUsers.OccurrenceSharedUsersService
 import org.jetbrains.exposed.sql.and
@@ -87,6 +89,8 @@ class OccurrenceRouter(
 
     override fun Route.getDefault() {
         get("/") {
+            val uuid = call.loggedUserData()?.getData()?.uuid
+
             if (call.request.queryParameters.isEmpty())
                 return@get call.respondError(BadRequest("Bill id is required. `?bill={billId}`"))
 
@@ -100,7 +104,7 @@ class OccurrenceRouter(
                 val occurrence = service.getSingle { service.table.id eq occurrenceId.toInt() }
                     ?: return@get call.respond(NotFound("Could not get occurrence with $occurrenceId"))
 
-                return@get call.respond(Ok(OccurrencesResponse(listOf(occurrence))))
+                return@get call.respond(Ok(OccurrencesResponse(listOf(occurrence).forOwner(uuid))))
             }
 
             if (billId != null) {

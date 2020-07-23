@@ -5,6 +5,7 @@ import billSharedUsers.BillSharedUsers
 import billSharedUsers.BillSharedUsersService
 import colors.ColorsService
 import diff
+import forOwner
 import generics.GenericRouter
 import history.HistoryService
 import io.ktor.application.ApplicationCall
@@ -13,6 +14,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.delete
 import io.ktor.routing.get
 import io.ktor.util.pipeline.PipelineContext
+import loggedUserData
 import org.jetbrains.exposed.sql.and
 import respond
 import respondError
@@ -36,15 +38,17 @@ class BillsRouter(
 ) {
     override fun Route.getDefault() {
         get("/") {
+            val uuid = call.loggedUserData()?.getData()?.uuid
+
             if (call.request.queryParameters.isEmpty()) {
-                call.respond(Ok(BillsResponse(service.getAll())))
+                call.respond(Ok(BillsResponse(service.getAll().forOwner(uuid))))
             } else {
                 val billId =
                     call.request.queryParameters["bill"]
                         ?: return@get call.respondError(BadRequest("Invalid bill id."))
 
                 service.getSingle { service.table.id eq billId.toInt() }?.let {
-                    call.respond(Ok(BillsResponse(listOf(it))))
+                    call.respond(Ok(BillsResponse(listOf(it).forOwner(uuid))))
                 } ?: call.respond(NotFound("Could not get bill with $billId"))
             }
         }

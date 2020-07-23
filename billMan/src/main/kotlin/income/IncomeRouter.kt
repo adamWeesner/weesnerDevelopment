@@ -1,6 +1,7 @@
 package income
 
 import auth.UsersService
+import forOwner
 import generics.GenericRouter
 import history.HistoryService
 import io.ktor.application.ApplicationCall
@@ -9,6 +10,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.delete
 import io.ktor.routing.get
 import io.ktor.util.pipeline.PipelineContext
+import loggedUserData
 import respond
 import respondError
 import shared.base.Response.Companion.BadRequest
@@ -29,15 +31,17 @@ class IncomeRouter(
 ) {
     override fun Route.getDefault() {
         get("/") {
+            val uuid = call.loggedUserData()?.getData()?.uuid
+
             if (call.request.queryParameters.isEmpty()) {
-                call.respond(Ok(IncomeResponse(service.getAll())))
+                call.respond(Ok(IncomeResponse(service.getAll().forOwner(uuid))))
             } else {
                 val incomeId =
                     call.request.queryParameters["income"]
                         ?: return@get call.respondError(BadRequest("Invalid income id."))
 
                 service.getSingle { service.table.id eq incomeId.toInt() }?.let {
-                    call.respond(Ok(IncomeResponse(listOf(it))))
+                    call.respond(Ok(IncomeResponse(listOf(it).forOwner(uuid))))
                 } ?: call.respond(NotFound("Could not get income with $incomeId"))
             }
         }

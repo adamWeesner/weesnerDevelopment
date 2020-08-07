@@ -11,9 +11,10 @@ import com.zaxxer.hikari.HikariDataSource
 import federalIncomeTax.FederalIncomeTaxesTable
 import history.HistoryTable
 import income.IncomeTable
+import incomeOccurrences.IncomeOccurrencesTable
 import medicare.MedicareLimitsTable
 import medicare.MedicareTable
-import occurrences.OccurrencesTable
+import occurrences.BillOccurrencesTable
 import occurrencesSharedUsers.OccurrenceSharedUsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
@@ -54,10 +55,11 @@ object DatabaseFactory {
                 CategoriesTable,
                 ColorsTable,
                 PaymentsTable,
-                OccurrencesTable,
+                BillOccurrencesTable,
                 BillCategoriesTable,
                 BillsSharedUsersTable,
-                OccurrenceSharedUsersTable
+                OccurrenceSharedUsersTable,
+                IncomeOccurrencesTable
             )
         }
     }

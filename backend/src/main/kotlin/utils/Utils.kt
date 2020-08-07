@@ -38,5 +38,6 @@ sealed class Path {
         val categories = "${basePath}categories"
         val income = "${basePath}income"
         val occurrences = "${basePath}occurrences"
+        val incomeOccurrences = "${income}/occurrences"
     }
 }

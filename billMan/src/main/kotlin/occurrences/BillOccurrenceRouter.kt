@@ -30,14 +30,14 @@ import shared.billMan.Occurrence
 import shared.billMan.Payment
 import shared.billMan.responses.OccurrencesResponse
 
-class OccurrenceRouter(
+class BillOccurrenceRouter(
     basePath: String,
-    private val occurrencesService: OccurrencesService,
+    private val occurrencesService: BillOccurrencesService,
     private val paymentsService: PaymentsService,
     private val usersService: UsersService,
     private val historyService: HistoryService,
     private val sharedUsersService: OccurrenceSharedUsersService
-) : GenericRouter<Occurrence, OccurrencesTable>(
+) : GenericRouter<Occurrence, BillOccurrencesTable>(
     basePath,
     occurrencesService,
     OccurrencesResponse()

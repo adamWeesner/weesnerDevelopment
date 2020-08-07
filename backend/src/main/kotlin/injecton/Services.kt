@@ -9,9 +9,10 @@ import colors.ColorsService
 import federalIncomeTax.FederalIncomeTaxService
 import history.HistoryService
 import income.IncomeService
+import incomeOccurrences.IncomeOccurrencesService
 import medicare.MedicareLimitsService
 import medicare.MedicareService
-import occurrences.OccurrencesService
+import occurrences.BillOccurrencesService
 import occurrencesSharedUsers.OccurrenceSharedUsersService
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
@@ -47,8 +48,16 @@ val services = Kodein.Module("services") {
             instance()
         )
     }
-    bind<IncomeService>() with singleton { IncomeService(instance(), instance(), instance()) }
+    bind<IncomeService>() with singleton { IncomeService(instance(), instance(), instance(), instance()) }
     bind<PaymentsService>() with singleton { PaymentsService(instance(), instance()) }
     bind<OccurrenceSharedUsersService>() with singleton { OccurrenceSharedUsersService(instance()) }
-    bind<OccurrencesService>() with singleton { OccurrencesService(instance(), instance(), instance(), instance()) }
+    bind<BillOccurrencesService>() with singleton {
+        BillOccurrencesService(
+            instance(),
+            instance(),
+            instance(),
+            instance()
+        )
+    }
+    bind<IncomeOccurrencesService>() with singleton { IncomeOccurrencesService(instance(), instance()) }
 }

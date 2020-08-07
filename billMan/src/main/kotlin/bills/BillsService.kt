@@ -11,7 +11,7 @@ import dbQuery
 import generics.GenericService
 import history.HistoryService
 import model.ChangeType
-import occurrences.OccurrencesService
+import occurrences.BillOccurrencesService
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
@@ -24,7 +24,7 @@ class BillsService(
     private val sharedUsersService: BillSharedUsersService,
     private val usersService: UsersService,
     private val billCategoriesService: BillCategoriesService,
-    private val occurrencesService: OccurrencesService,
+    private val occurrencesService: BillOccurrencesService,
     private val colorsService: ColorsService,
     private val historyService: HistoryService
 ) : GenericService<Bill, BillsTable>(

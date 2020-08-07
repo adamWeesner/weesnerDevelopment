@@ -5,6 +5,7 @@ import auth.UsersService
 import colors.ColorsService
 import generics.GenericService
 import history.HistoryService
+import incomeOccurrences.IncomeOccurrencesService
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
@@ -15,11 +16,13 @@ import shared.billMan.Income
 class IncomeService(
     private val usersService: UsersService,
     private val colorsService: ColorsService,
+    private val occurrencesService: IncomeOccurrencesService,
     private val historyService: HistoryService
 ) : GenericService<Income, IncomeTable>(
     IncomeTable
 ) {
     override suspend fun delete(id: Int, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
+        occurrencesService.deleteForIncome(id)
         historyService.run {
             getFor(HistoryTypes.Bill.name, id).mapNotNull { it.id }.forEach { delete(it) { table.id eq it } }
         }

@@ -29,12 +29,7 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
             val body = call.receive<I>(kType)
 
             val response =
-                when (val addedItem = service.add(body)?.let {
-                    if (it != -1)
-                        addExtras(it, body)
-                    else
-                        it
-                }) {
+                when (val addedItem = service.add(body)) {
                     null -> BadRequest("Failed to add $body.")
                     -1 -> Response.Conflict("Item with name $body already in database.")
                     else -> Response.Created("Added item to database with id $addedItem.")
@@ -75,11 +70,6 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
                 } else {
                     when (val updatedItem = service.update(body) {
                         service.table.id eq body.id!!
-                    }?.let {
-                        if (it != -1)
-                            updateExtras(it, body)
-                        else
-                            it
                     }) {
                         null -> BadRequest("Failed to update $body.")
                         else -> Ok("Updated item to database with id $updatedItem")
@@ -109,7 +99,4 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
             call.respond(response)
         }
     }
-
-    open suspend fun addExtras(id: Int, item: I, block: () -> Int? = { 0 }): Int? = 0
-    open suspend fun updateExtras(id: Int, item: I, block: () -> Int? = { 0 }): Int? = 0
 }

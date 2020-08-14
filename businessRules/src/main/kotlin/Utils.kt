@@ -53,17 +53,13 @@ suspend fun ApplicationCall.respondErrorAuthorizing(reason: InvalidUserReason) =
  */
 fun ApplicationCall.loggedUserData() = authentication.principal<CustomPrincipal>()
 
-enum class HistoryTypes {
-    Bill,
-    Color,
-    Categories,
-    Occurrence,
-    Payment,
-    ComplexValidator
-}
-
 inline fun <reified T> String?.parse(): T =
     this?.fromJson<T>() ?: throw Throwable("failed to parse $this to ${T::class}.")
 
 fun <T : OwnedItem> List<T>.forOwner(username: String?) =
     filter { it.owner.username == username }
+
+/**
+ * Checks whether the Int is a valid successful id, added to the database.
+ */
+val Int?.isNotValidId get() = this == null || this == -1

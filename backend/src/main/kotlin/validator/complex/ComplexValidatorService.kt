@@ -7,7 +7,6 @@ import diff
 import history.HistoryService
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import parse
 import shared.base.History
 import shared.base.InvalidAttributeException
 import shared.billMan.Category
@@ -21,9 +20,15 @@ class ComplexValidatorService(
     table
 ) {
     private val ComplexValidatorTable.connections
-        get() = this
-            .innerJoin(categoriesService.table, { categoriesService.table.id }, { categoryId })
-            .innerJoin(usersService.table, { usersService.table.uuid }, { ownerId })
+        get() = this.innerJoin(categoriesService.table, {
+            categoriesService.table.id
+        }, {
+            categoryId
+        }).innerJoin(usersService.table, {
+            usersService.table.uuid
+        }, {
+            ownerId
+        })
 
     override suspend fun getAll() = tryCall {
         table.connections.selectAll().mapNotNull {
@@ -87,26 +92,21 @@ class ComplexValidatorService(
         return super.delete(item, op)
     }
 
-    override suspend fun toItem(row: ResultRow) =
-        ComplexValidatorItem(
-            id = row[table.id],
-            owner = usersService.toItem(row).redacted().parse(),
-            name = row[ComplexValidatorTable.name],
-            amount = row[ComplexValidatorTable.amount],
-            category = categoriesService.toItem(row),
-            history = historyService.getFor(
-                ComplexValidatorItem::class.simpleName,
-                row[table.id],
-                usersService.toItem(row).redacted().parse()
-            ),
-            dateCreated = row[table.dateCreated],
-            dateUpdated = row[table.dateUpdated]
-        )
+    override suspend fun toItem(row: ResultRow) = ComplexValidatorItem(
+        id = row[table.id],
+        owner = usersService.toItemRedacted(row),
+        name = row[table.name],
+        amount = row[table.amount],
+        category = categoriesService.toItem(row),
+        history = historyService.getFor<ComplexValidatorItem>(row[table.id], usersService.toItemRedacted(row)),
+        dateCreated = row[table.dateCreated],
+        dateUpdated = row[table.dateUpdated]
+    )
 
     override fun UpdateBuilder<Int>.toRow(item: ComplexValidatorItem) {
-        this[ComplexValidatorTable.ownerId] = item.owner.uuid ?: throw InvalidAttributeException("Uuid")
-        this[ComplexValidatorTable.name] = item.name
-        this[ComplexValidatorTable.amount] = item.amount
-        this[ComplexValidatorTable.categoryId] = item.category.id ?: throw InvalidAttributeException("Category id")
+        this[table.ownerId] = item.owner.uuid ?: throw InvalidAttributeException("Uuid")
+        this[table.name] = item.name
+        this[table.amount] = item.amount
+        this[table.categoryId] = item.category.id ?: throw InvalidAttributeException("Category id")
     }
 }

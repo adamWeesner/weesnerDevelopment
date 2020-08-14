@@ -1,49 +1,46 @@
 package history
 
 import BaseService
-import auth.UsersService
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.auth.User
+import shared.base.GenericItem
 import shared.base.History
+import shared.base.InvalidAttributeException
 
-class HistoryService(
-    private val usersService: UsersService
-) : BaseService<HistoryTable, History>(
+class HistoryService : BaseService<HistoryTable, History>(
     HistoryTable
 ) {
     private var retrievedUser: User? = null
 
-    suspend fun getFor(type: String?, typeId: Int, user: User? = null) = tryCall {
+    suspend inline fun <reified T : GenericItem> getFor(typeId: Int?, user: User?) = tryCall {
+        if (typeId == null)
+            throw InvalidAttributeException("typeId")
+
+        if (user?.uuid == null)
+            throw InvalidAttributeException("user or uuid")
+
         table.select {
-            table.field regexp "$type $typeId .*"
+            (table.field regexp "${T::class.simpleName} $typeId .*") and (table.updatedBy eq user.uuid!!)
         }.mapNotNull {
-            retrievedUser = user
+            `access$retrievedUser` = user
             toItem(it).also {
-                retrievedUser = null
+                `access$retrievedUser` = null
             }
         }
     }
 
-    suspend fun getIdsFor(type: String, typeId: Int) = tryCall {
-        table.select {
-            table.field regexp "$type $typeId .*"
-        }.mapNotNull {
-            toItem(it).id
-        }
-    }
+    suspend inline fun <reified T : GenericItem> getIdsFor(typeId: Int?, user: User?) =
+        getFor<T>(typeId, user)?.map { it.id!! }
 
     override suspend fun toItem(row: ResultRow) = History(
         id = row[table.id],
         field = row[table.field],
         oldValue = row[table.oldValue],
         newValue = row[table.newValue],
-        updatedBy = (if (row[table.updatedBy] == retrievedUser?.uuid)
-            retrievedUser
-        else
-            usersService.getUserByUuidRedacted(row[table.updatedBy]))
-            ?: throw IllegalArgumentException("No user found for history.."),
+        updatedBy = retrievedUser ?: throw InvalidAttributeException("User"),
         dateCreated = row[table.dateCreated],
         dateUpdated = row[table.dateUpdated]
     )
@@ -54,4 +51,11 @@ class HistoryService(
         this[table.newValue] = item.newValue.toString()
         this[table.updatedBy] = item.updatedBy.uuid!!
     }
+
+    @PublishedApi
+    internal var `access$retrievedUser`: User?
+        get() = retrievedUser
+        set(value) {
+            retrievedUser = value
+        }
 }

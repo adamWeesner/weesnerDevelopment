@@ -1,7 +1,6 @@
 package auth
 
 import BaseRouter
-import history.HistoryService
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
@@ -26,7 +25,6 @@ import kotlin.reflect.full.createType
 class UserRouter(
     override val basePath: String,
     override val service: UsersService,
-    private val historyService: HistoryService,
     private val jwtProvider: JwtProvider,
     private val accountUrl: String,
     private val loginUrl: String,
@@ -52,14 +50,16 @@ class UserRouter(
                     ?: return@get call.respondErrorAuthorizing(InvalidUserReason.General)
 
                 val user = when {
-                    auth.username != null && auth.password != null -> service.getUserFromHash(
-                        HashedUser(auth.username, auth.password)
-                    )
-                    auth.uuid != null -> service.getUserByUuid(auth.uuid)
+                    auth.username != null && auth.password != null ->
+                        service.getUserFromHash(HashedUser(auth.username, auth.password))
+                    auth.uuid != null ->
+                        service.getUserByUuid(auth.uuid)
                     else -> null
                 }
 
-                user?.redacted()?.let { call.respond(Ok(it)) }
+                user?.redacted()?.let {
+                    call.respond(Ok(it))
+                }
                     ?: return@get call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
             }
         }
@@ -73,8 +73,12 @@ class UserRouter(
                 val item = call.receive<User>()
 
                 val tokenToHash = authToken?.let {
-                    if (it.username == null) return@put call.respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
-                    if (it.password == null) return@put call.respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
+                    if (it.username == null)
+                        return@put call.respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
+
+                    if (it.password == null)
+                        return@put call.respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
+
                     HashedUser(it.username, it.password)
                 } ?: return@put call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
 
@@ -83,7 +87,9 @@ class UserRouter(
                 if (hashedUser?.uuid != item.uuid)
                     return@put call.respondErrorAuthorizing(InvalidUserReason.WrongUser)
 
-                val updated = service.update(item.copy(id = hashedUser?.id)) { service.table.id eq hashedUser?.id!! }
+                val updated = service.update(item.copy(id = hashedUser?.id)) {
+                    service.table.id eq hashedUser?.id!!
+                }
 
                 val response = when {
                     updated == null -> BadRequest("Error occurred updated user information.")

@@ -1,18 +1,19 @@
 package auth
 
 import BaseService
+import diff
+import history.HistoryService
 import io.ktor.http.HttpStatusCode
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import parse
 import shared.auth.HashedUser
 import shared.auth.User
 import shared.base.InvalidAttributeException
 
-class UsersService : BaseService<UsersTable, User>(
+class UsersService(
+    private val historyService: HistoryService
+) : BaseService<UsersTable, User>(
     UsersTable
 ) {
     suspend fun getUserFromHash(hashedUser: HashedUser) = tryCall {
@@ -23,7 +24,10 @@ class UsersService : BaseService<UsersTable, User>(
         }
     }
 
-    suspend fun getUserByUuid(uuid: String) = tryCall {
+    suspend fun getUserByUuid(uuid: String?) = tryCall {
+        if (uuid == null)
+            throw InvalidAttributeException("Uuid")
+
         table.select {
             table.uuid eq uuid
         }.limit(1).firstOrNull()?.let {
@@ -31,33 +35,40 @@ class UsersService : BaseService<UsersTable, User>(
         }
     }
 
-    suspend fun getUserByUuidRedacted(uuid: String) =
-        getUserByUuid(uuid)?.redacted()?.parse<User>()
+    suspend fun getUserByUuidRedacted(uuid: String) = getUserByUuid(uuid = uuid)?.redacted()?.parse<User>()
 
     suspend fun addUser(item: User): User? {
-        val savedUser = item.asHashed()?.let { getUserFromHash(it) } ?: item.uuid?.let { getUserByUuid(it) }
-
-        if (savedUser != null) return null
-
-        tryCall {
+        val uuid = tryCall {
             table.insert {
                 it.toRow(item)
                 it[dateCreated] = System.currentTimeMillis()
                 it[dateUpdated] = System.currentTimeMillis()
-            } get table.id
+            } get table.uuid
         }
 
         return when {
-            item.username != null && item.password != null -> item.asHashed()?.let { getUserFromHash(it) }
-            item.uuid != null -> getUserByUuid(item.uuid!!)
+            uuid != null -> getUserByUuid(uuid)
             else -> throw Throwable(HttpStatusCode.NotFound.description)
         }
+    }
+
+    override suspend fun update(item: User, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
+        val oldUserInfo = getUserByUuid(item.uuid)
+
+        oldUserInfo?.diff(item)?.updates(item)?.forEach {
+            val addedHistory = historyService.add(it)
+
+            if (addedHistory == -1 || addedHistory == null)
+                return addedHistory
+        }
+
+        return super.update(item, op)
     }
 
     @Deprecated("", ReplaceWith("addUser(user: User): User?", "user"))
     override suspend fun add(item: User): Int? = throw IllegalArgumentException("Should be using `add(User): User?`")
 
-    override suspend fun toItem(row: ResultRow) = User(
+    override suspend fun toItem(row: ResultRow): User = User(
         id = row[table.id],
         uuid = row[table.uuid],
         name = row[table.name],
@@ -67,14 +78,18 @@ class UsersService : BaseService<UsersTable, User>(
         password = row[table.password],
         dateCreated = row[table.dateCreated],
         dateUpdated = row[table.dateUpdated]
-    )
+    ).let {
+        it.copy(history = historyService.getFor<User>(row[table.id], it))
+    }
+
+    suspend fun toItemRedacted(row: ResultRow) = toItem(row).redacted().parse<User>()
 
     override fun UpdateBuilder<Int>.toRow(item: User) {
-        item.uuid?.let { this[table.uuid] = it }
+        this[table.uuid] = item.uuid ?: throw InvalidAttributeException("uuid")
         this[table.name] = item.name ?: throw InvalidAttributeException("name")
         this[table.email] = item.email ?: throw InvalidAttributeException("email")
-        item.photoUrl?.let { this[table.photoUrl] = it }
-        item.username?.let { this[table.username] = it }
-        item.password?.let { this[table.password] = it }
+        this[table.photoUrl] = item.photoUrl
+        this[table.username] = item.username ?: throw InvalidAttributeException("username")
+        this[table.password] = item.password ?: throw InvalidAttributeException("password")
     }
 }

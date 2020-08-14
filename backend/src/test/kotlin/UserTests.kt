@@ -5,15 +5,17 @@ import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpStatusCode
 import shared.auth.*
 import java.util.*
+import kotlin.random.Random
 
-class UserTests : BaseTest({
-    val newUser = User(
+val newUser
+    get() = User(
         name = "Adam",
-        email = "randomemail@email.com",
-        username = "adam.weesner",
+        email = "randomemail${Random.nextInt(999)}@email.com",
+        username = "adam.weesner.${Random.nextInt(999)}",
         password = "password"
     )
 
+class UserTests : BaseTest({
     fun newUserHashed(name: String) = newUser.copy(
         username = Base64.getEncoder().encodeToString(name.toByteArray()),
         password = Base64.getEncoder().encodeToString(newUser.password?.toByteArray())
@@ -47,18 +49,19 @@ class UserTests : BaseTest({
     }
 
     "login with created user gives OK" {
-        BuiltRequest(engine, Post, path + Path.User.signUp).send(newUserHashed("catto"))
-        BuiltRequest(engine, Post, path + Path.User.login)
-            .sendStatus(newUserHashed("catto").asHashed()) shouldBe HttpStatusCode.OK
+        val signedUp = newUserHashed("catto")
+        BuiltRequest(engine, Post, path + Path.User.signUp).send(signedUp)
+        BuiltRequest(engine, Post, path + Path.User.login).sendStatus(signedUp.asHashed()) shouldBe HttpStatusCode.OK
     }
 
     "get account info with created user gives user data" {
-        BuiltRequest(engine, Post, path + Path.User.signUp).send(newUserHashed("adam"))
+        val signedUp = newUserHashed("adam")
+        BuiltRequest(engine, Post, path + Path.User.signUp).send(signedUp)
         val authToken = BuiltRequest(engine, Post, path + Path.User.login)
-            .asClass<HashedUser, TokenResponse>(newUserHashed("adam").asHashed())?.token
+            .asClass<HashedUser, TokenResponse>(signedUp.asHashed())?.token
 
         BuiltRequest(engine, Get, path + Path.User.account, authToken)
-            .asObject<User>().copy(uuid = null, dateCreated = -1, dateUpdated = -1) shouldBe newUserHashed("adam").copy(
+            .asObject<User>().copy(uuid = null, dateCreated = -1, dateUpdated = -1) shouldBe signedUp.copy(
             password = null,
             dateCreated = -1,
             dateUpdated = -1

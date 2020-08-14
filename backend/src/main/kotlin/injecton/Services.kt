@@ -34,7 +34,7 @@ val services = Kodein.Module("services") {
         )
     }
     // user
-    bind<UsersService>() with singleton { UsersService() }
+    bind<UsersService>() with singleton { UsersService(instance()) }
     // history
     bind<HistoryService>() with singleton { HistoryService(instance()) }
     // taxFetcher

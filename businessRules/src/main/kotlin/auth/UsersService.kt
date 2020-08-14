@@ -37,6 +37,9 @@ class UsersService(
 
     suspend fun getUserByUuidRedacted(uuid: String) = getUserByUuid(uuid = uuid)?.redacted()?.parse<User>()
 
+    @Deprecated("", ReplaceWith("addUser(user: User): User?", "user"))
+    override suspend fun add(item: User): Int? = throw IllegalArgumentException("Should be using `add(User): User?`")
+
     suspend fun addUser(item: User): User? {
         val uuid = tryCall {
             table.insert {
@@ -65,8 +68,16 @@ class UsersService(
         return super.update(item, op)
     }
 
-    @Deprecated("", ReplaceWith("addUser(user: User): User?", "user"))
-    override suspend fun add(item: User): Int? = throw IllegalArgumentException("Should be using `add(User): User?`")
+    override suspend fun delete(item: User, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
+        item.history?.forEach {
+            historyService.delete(it) {
+                historyService.table.id eq it.id!!
+            }
+        }
+
+        return super.delete(item, op)
+    }
+
 
     override suspend fun toItem(row: ResultRow): User = User(
         id = row[table.id],
@@ -79,7 +90,9 @@ class UsersService(
         dateCreated = row[table.dateCreated],
         dateUpdated = row[table.dateUpdated]
     ).let {
-        it.copy(history = historyService.getFor<User>(row[table.id], it))
+        row[table.history]?.let { _ ->
+            it.copy(history = historyService.getFor<User>(row[table.id], it))
+        } ?: it
     }
 
     suspend fun toItemRedacted(row: ResultRow) = toItem(row).redacted().parse<User>()

@@ -22,6 +22,7 @@ fun Routing.billManRoutes() {
         route(billsRouter)
         route(categoriesRouter)
         route(incomeRouter)
+        categoriesRouter.apply { setupRoutes() }
         route(occurrencesRouter) { router ->
             (router as BillOccurrenceRouter).apply {
                 pay()

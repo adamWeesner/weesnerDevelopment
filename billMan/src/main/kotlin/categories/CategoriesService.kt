@@ -1,37 +1,87 @@
 package categories
 
-import HistoryTypes
+import BaseService
 import auth.UsersService
-import generics.GenericService
+import diff
 import history.HistoryService
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.billMan.Category
 
 class CategoriesService(
     private val usersService: UsersService,
     private val historyService: HistoryService
-) : GenericService<Category, CategoriesTable>(
+) : BaseService<CategoriesTable, Category>(
     CategoriesTable
 ) {
-    override suspend fun delete(id: Int, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
-        historyService.apply { getIdsFor(HistoryTypes.Categories.name, id).forEach { delete(it) { table.id eq it } } }
-        return super.delete(id, op)
+    private val CategoriesTable.connections
+        get() = this.leftJoin(usersService.table, {
+            ownerId
+        }, {
+            uuid
+        })
+
+    override suspend fun getAll() = tryCall {
+        table.connections.selectAll().mapNotNull {
+            toItem(it)
+        }
     }
 
-    override suspend fun to(row: ResultRow) = Category(
-        id = row[CategoriesTable.id],
-        owner = row[CategoriesTable.ownerId]?.let { usersService.getUserByUuidRedacted(it) },
-        name = row[CategoriesTable.name],
-        history = historyService.getFor(HistoryTypes.Categories.name, row[CategoriesTable.id]),
-        dateCreated = row[CategoriesTable.dateCreated],
-        dateUpdated = row[CategoriesTable.dateUpdated]
-    )
+    override suspend fun get(op: SqlExpressionBuilder.() -> Op<Boolean>) = tryCall {
+        table.connections.select {
+            op()
+        }.limit(1).firstOrNull()?.let {
+            toItem(it)
+        }
+    }
 
-    override fun UpdateBuilder<Int>.assignValues(item: Category) {
-        this[CategoriesTable.ownerId] = item.owner?.uuid
-        this[CategoriesTable.name] = item.name
+    override suspend fun update(item: Category, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
+        val oldItem = get {
+            table.id eq item.id!!
+        } ?: return null
+
+        if (item.owner == null)
+            return null
+
+        oldItem.diff(item).updates(item.owner!!).forEach {
+            historyService.add(it)
+        }
+
+        return super.update(item, op)
+    }
+
+    override suspend fun delete(item: Category, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
+        item.history?.forEach {
+            historyService.delete(it) {
+                historyService.table.id eq it.id!!
+            }
+        }
+
+        return super.delete(item, op)
+    }
+
+    override suspend fun toItem(row: ResultRow) = Category(
+        id = row[table.id],
+        owner = row[table.ownerId]?.let {
+            usersService.toItemRedacted(row)
+        },
+        name = row[table.name],
+        dateCreated = row[table.dateCreated],
+        dateUpdated = row[table.dateUpdated]
+    ).let {
+        if (it.owner == null)
+            return@let it
+
+        val history = historyService.getFor<Category>(it.id, it.owner)
+
+        return@let if (history == null)
+            it
+        else
+            it.copy(history = history)
+    }
+
+    override fun UpdateBuilder<Int>.toRow(item: Category) {
+        this[table.ownerId] = item.owner?.uuid
+        this[table.name] = item.name
     }
 }

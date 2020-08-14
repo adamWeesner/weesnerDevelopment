@@ -21,13 +21,13 @@ class ComplexValidatorService(
 ) {
     private val ComplexValidatorTable.connections
         get() = this.innerJoin(categoriesService.table, {
-            categoriesService.table.id
-        }, {
             categoryId
-        }).innerJoin(usersService.table, {
-            usersService.table.uuid
         }, {
+            id
+        }).innerJoin(usersService.table, {
             ownerId
+        }, {
+            uuid
         })
 
     override suspend fun getAll() = tryCall {

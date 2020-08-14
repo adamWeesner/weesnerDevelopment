@@ -11,6 +11,7 @@ sealed class Path {
     object Server : Path() {
         val health = "health"
         val validation = "validation"
+        val complexValidation = "complexValidation"
     }
 
     /**

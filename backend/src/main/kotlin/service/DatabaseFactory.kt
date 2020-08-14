@@ -40,7 +40,7 @@ object DatabaseFactory {
             addLogger(StdOutSqlLogger)
 
             // validator tables
-            create(ValidatorTable)
+            create(ValidatorTable, ComplexValidatorTable)
             // base tables
             create(UsersTable)
             create(HistoryTable)

@@ -58,7 +58,8 @@ enum class HistoryTypes {
     Color,
     Categories,
     Occurrence,
-    Payment
+    Payment,
+    ComplexValidator
 }
 
 inline fun <reified T> String?.parse(): T =

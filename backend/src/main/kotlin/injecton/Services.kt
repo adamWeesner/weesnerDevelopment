@@ -26,6 +26,13 @@ import taxWithholding.TaxWithholdingService
 
 val services = Kodein.Module("services") {
     bind<ValidatorService>() with singleton { ValidatorService() }
+    bind<ComplexValidatorService>() with singleton {
+        ComplexValidatorService(
+            instance(),
+            instance(),
+            instance()
+        )
+    }
     // user
     bind<UsersService>() with singleton { UsersService() }
     // history

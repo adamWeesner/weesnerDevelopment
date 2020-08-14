@@ -20,6 +20,12 @@ import taxWithholding.TaxWithholdingRouter
 
 val routers = Kodein.Module("routers") {
     bind<ValidatorRouter>() with singleton { ValidatorRouter(Server.validation, instance()) }
+    bind<ComplexValidatorRouter>() with singleton {
+        ComplexValidatorRouter(
+            Server.complexValidation,
+            instance()
+        )
+    }
     // user
     bind<UserRouter>() with singleton {
         UserRouter(User.base, instance(), instance(), instance(), User.account)

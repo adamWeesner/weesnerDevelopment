@@ -14,6 +14,7 @@ import shared.base.Response.Companion.Ok
 
 fun Routing.serverRoutes() {
     val validatorRouter by kodein().instance<ValidatorRouter>()
+    val complexValidatorRouter by kodein().instance<ComplexValidatorRouter>()
 
     route("/$health") {
         get("/") {
@@ -22,4 +23,5 @@ fun Routing.serverRoutes() {
     }
 
     validatorRouter.apply { setupRoutes() }
+    complexValidatorRouter.apply { setupRoutes() }
 }

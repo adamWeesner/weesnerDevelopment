@@ -1,19 +1,15 @@
 package auth
 
-import generics.GenericRouter
+import BaseRouter
 import history.HistoryService
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.request.receive
 import io.ktor.response.header
-import io.ktor.routing.Route
-import io.ktor.routing.get
-import io.ktor.routing.post
-import io.ktor.routing.put
+import io.ktor.routing.*
 import io.ktor.util.pipeline.PipelineContext
 import loggedUserData
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import respond
 import respondErrorAuthorizing
 import shared.auth.HashedUser
@@ -23,94 +19,84 @@ import shared.auth.User
 import shared.base.Response.Companion.BadRequest
 import shared.base.Response.Companion.Conflict
 import shared.base.Response.Companion.Created
-import shared.base.Response.Companion.NotFound
 import shared.base.Response.Companion.Ok
 import java.util.*
+import kotlin.reflect.full.createType
 
 class UserRouter(
-    basePath: String,
-    private val usersService: UsersService,
+    override val basePath: String,
+    override val service: UsersService,
     private val historyService: HistoryService,
     private val jwtProvider: JwtProvider,
-    private val accountUrl: String
-) : GenericRouter<User, UsersTable>(
-    basePath,
-    usersService,
-    UsersResponse()
+    private val accountUrl: String,
+    private val loginUrl: String,
+    private val signUpUrl: String
+) : BaseRouter<User, UsersService>(
+    UsersResponse(),
+    service,
+    User::class.createType()
 ) {
-    override suspend fun postQualifier(receivedItem: User) =
-        service.getSingle { service.table.uuid eq receivedItem.uuid!! }
+    override fun Route.setupRoutes() {
+        route(basePath) {
+            getRequest()
+            updateRequest()
+            login(loginUrl)
+            signUp(signUpUrl)
+        }
+    }
 
-    override fun singleEq(param: String) = service.table.uuid eq param
-
-    override suspend fun putQualifier(receivedItem: User) =
-        service.update(receivedItem) { service.table.uuid eq receivedItem.uuid!! }
-
-    override fun Route.getSingle() {
+    override fun Route.getRequest() {
         authenticate {
             get("/$accountUrl") {
-                call.loggedUserData()?.getData()?.apply {
-                    when {
-                        username != null && password != null -> {
-                            val user = usersService.getUserFromHash(HashedUser(username, password))
-                                ?: return@get call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+                val auth = call.loggedUserData()?.getData()
+                    ?: return@get call.respondErrorAuthorizing(InvalidUserReason.General)
 
-                            user.redacted()?.let { call.respond(Ok(it)) }
-                                ?: call.respond(NotFound("User could not be found."))
-                        }
-                        uuid != null -> {
-                            val user = usersService.getUserByUuid(uuid)
-                                ?: return@get call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
-
-                            user.redacted()?.let { call.respond(Ok(it)) }
-                                ?: call.respond(NotFound("User could not be found."))
-                        }
-                        else -> call.respondErrorAuthorizing(InvalidUserReason.General)
-                    }
+                val user = when {
+                    auth.username != null && auth.password != null -> service.getUserFromHash(
+                        HashedUser(auth.username, auth.password)
+                    )
+                    auth.uuid != null -> service.getUserByUuid(auth.uuid)
+                    else -> null
                 }
+
+                user?.redacted()?.let { call.respond(Ok(it)) }
+                    ?: return@get call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
             }
         }
     }
 
-    override fun Route.putDefault() {
+    override fun Route.updateRequest() {
         authenticate {
             put("/") {
-                val authToken = call.loggedUserData()
+                val authToken = call.loggedUserData()?.getData()
+
                 val item = call.receive<User>()
-                val tokenToHash = authToken?.getData()?.let {
+
+                val tokenToHash = authToken?.let {
                     if (it.username == null) return@put call.respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
                     if (it.password == null) return@put call.respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
                     HashedUser(it.username, it.password)
                 } ?: return@put call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
 
-                val hashedUser = usersService.getUserFromHash(tokenToHash)
+                val hashedUser = service.getUserFromHash(tokenToHash)
 
-                if (hashedUser?.uuid != item.uuid) return@put call.respondErrorAuthorizing(InvalidUserReason.WrongUser)
+                if (hashedUser?.uuid != item.uuid)
+                    return@put call.respondErrorAuthorizing(InvalidUserReason.WrongUser)
 
-                val updated = putQualifier(item.copy(id = hashedUser?.id)).also { println("after trying to put $it") }
+                val updated = service.update(item.copy(id = hashedUser?.id)) { service.table.id eq hashedUser?.id!! }
 
-                when {
-                    updated == null -> call.respond(BadRequest("Error occurred updated user information."))
-                    updated.id != item.id -> {
-                        updated.redacted()?.let { call.respond(Created(it)) }
-                            ?: call.respond(BadRequest("Error occurred updated user information."))
-                    }
-                    else -> updated.redacted()?.let { call.respond(Ok(it)) }
-                        ?: call.respond(NotFound("User could not be found."))
+                val response = when {
+                    updated == null -> BadRequest("Error occurred updated user information.")
+                    updated != item.id -> Created(it)
+                    else -> Ok(it)
                 }
+
+                call.respond(response)
             }
         }
     }
 
-    override suspend fun PipelineContext<Unit, ApplicationCall>.putAdditional(
-        item: User,
-        updatedItem: User
-    ): User? {
-        val history = handleHistory(item, updatedItem, usersService, historyService)
-        return updatedItem.copy(history = history)
-    }
-
-    fun Route.login(pathParam: String) {
+    private fun Route.login(pathParam: String) {
         post(pathParam) {
             val credentials = call.receive<HashedUser>()
 
@@ -125,7 +111,7 @@ class UserRouter(
         }
     }
 
-    fun Route.signUp(pathParam: String) {
+    private fun Route.signUp(pathParam: String) {
         post(pathParam) {
             val credentials = call.receive<User>()
 
@@ -142,10 +128,12 @@ class UserRouter(
                     password = credentials.password
                 )
 
-                when (val added = service.add(newUser)) {
-                    null -> call.respond(Conflict("Unable to save user credentials."))
-                    else -> call.respond(Created(TokenResponse(added.asHashed()?.asToken(jwtProvider))))
+                val response = when (val added = service.addUser(newUser)) {
+                    null -> Conflict("Unable to save user credentials.")
+                    else -> Created(TokenResponse(added.asHashed()?.asToken(jwtProvider)))
                 }
+
+                call.respond(response)
             }
         }
     }
@@ -159,7 +147,7 @@ class UserRouter(
         tryBlock: suspend (hashedUser: User?) -> Unit
     ) {
         if (username == null || password == null) {
-            call.respond(BadRequest("Username and password must be provided"))
+            call.respond(BadRequest("Username and password must be provided."))
             return
         }
 
@@ -171,11 +159,11 @@ class UserRouter(
         }
 
         try {
-            val response = (service as UsersService).getUserFromHash(hashedUser)
+            val response = service.getUserFromHash(hashedUser)
 
             tryBlock(response)
         } catch (e: Exception) {
-            call.respond(BadRequest(e.message ?: "Unknown reason for request failure"))
+            call.respond(BadRequest(e.message ?: "Unknown reason for request failure."))
         }
     }
 }

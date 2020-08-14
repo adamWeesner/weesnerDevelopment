@@ -17,5 +17,4 @@ data class ComplexValidatorItem(
     override var history: List<History>? = null,
     override val dateCreated: Long = currentTimeMillis(),
     override val dateUpdated: Long = currentTimeMillis()
-) : GenericItem, HistoryItem,
-    OwnedItem
+) : GenericItem, HistoryItem, OwnedItem

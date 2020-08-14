@@ -40,7 +40,9 @@ class ComplexValidatorService(
     }
 
     override suspend fun update(item: ComplexValidatorItem, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
-        val oldItem = get { table.id eq item.id!! } ?: return null
+        val oldItem = get {
+            table.id eq item.id!!
+        } ?: return null
 
         oldItem.diff(item).updates(item.owner).apply {
             val addingHistory = filter {
@@ -49,7 +51,10 @@ class ComplexValidatorService(
                 historyService.add(it)
             }
 
-            addingHistory.forEach { if (it == null || it == -1) return it }
+            addingHistory.forEach {
+                if (it == null || it == -1)
+                    return it
+            }
 
             val categoryHistory = filter {
                 it.field.matches(Regex("${Category::class.simpleName} [0-9]+ id"))
@@ -64,7 +69,9 @@ class ComplexValidatorService(
                 )
             }
 
-            categoryHistory.forEach { if (it == null || it == -1) return it }
+            categoryHistory.forEach {
+                if (it == null || it == -1) return it
+            }
         }
 
         return super.update(item, op)
@@ -97,13 +104,9 @@ class ComplexValidatorService(
         )
 
     override fun UpdateBuilder<Int>.toRow(item: ComplexValidatorItem) {
-        this[ComplexValidatorTable.ownerId] = item.owner.uuid ?: throw InvalidAttributeException(
-            "Uuid"
-        )
+        this[ComplexValidatorTable.ownerId] = item.owner.uuid ?: throw InvalidAttributeException("Uuid")
         this[ComplexValidatorTable.name] = item.name
         this[ComplexValidatorTable.amount] = item.amount
-        this[ComplexValidatorTable.categoryId] = item.category.id ?: throw InvalidAttributeException(
-            "Category id"
-        )
+        this[ComplexValidatorTable.categoryId] = item.category.id ?: throw InvalidAttributeException("Category id")
     }
 }

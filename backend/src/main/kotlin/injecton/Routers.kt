@@ -19,12 +19,11 @@ import socialSecurity.SocialSecurityRouter
 import taxWithholding.TaxWithholdingRouter
 
 val routers = Kodein.Module("routers") {
-    bind<ValidatorRouter>() with singleton { ValidatorRouter(Server.validation, instance()) }
+    bind<ValidatorRouter>() with singleton {
+        ValidatorRouter(Server.validation, instance())
+    }
     bind<ComplexValidatorRouter>() with singleton {
-        ComplexValidatorRouter(
-            Server.complexValidation,
-            instance()
-        )
+        ComplexValidatorRouter(Server.complexValidation, instance())
     }
     // user
     bind<UserRouter>() with singleton {
@@ -47,7 +46,7 @@ val routers = Kodein.Module("routers") {
 
     // billMan
     bind<BillsRouter>() with singleton {
-        BillsRouter(BillMan.bills, instance(), instance(), instance(), instance(), instance())
+        BillsRouter(BillMan.bills, instance(), instance(), instance(), instance())
     }
     bind<CategoriesRouter>() with singleton {
         CategoriesRouter(BillMan.categories, instance(), instance(), instance())

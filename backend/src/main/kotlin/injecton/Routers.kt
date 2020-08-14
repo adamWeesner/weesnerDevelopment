@@ -4,6 +4,8 @@ import auth.UserRouter
 import bills.BillsRouter
 import categories.CategoriesRouter
 import com.weesnerdevelopment.utils.Path.*
+import com.weesnerdevelopment.validator.ValidatorRouter
+import com.weesnerdevelopment.validator.complex.ComplexValidatorRouter
 import federalIncomeTax.FederalIncomeTaxRouter
 import income.IncomeRouter
 import incomeOccurrences.IncomeOccurrenceRouter
@@ -17,6 +19,7 @@ import socialSecurity.SocialSecurityRouter
 import taxWithholding.TaxWithholdingRouter
 
 val routers = Kodein.Module("routers") {
+    bind<ValidatorRouter>() with singleton { ValidatorRouter(Server.validation, instance()) }
     // user
     bind<UserRouter>() with singleton {
         UserRouter(User.base, instance(), instance(), instance(), User.account)

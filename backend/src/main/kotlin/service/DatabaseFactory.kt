@@ -6,6 +6,8 @@ import billSharedUsers.BillsSharedUsersTable
 import bills.BillsTable
 import categories.CategoriesTable
 import colors.ColorsTable
+import com.weesnerdevelopment.validator.ValidatorTable
+import com.weesnerdevelopment.validator.complex.ComplexValidatorTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import federalIncomeTax.FederalIncomeTaxesTable
@@ -37,6 +39,8 @@ object DatabaseFactory {
         transaction {
             addLogger(StdOutSqlLogger)
 
+            // validator tables
+            create(ValidatorTable)
             // base tables
             create(UsersTable)
             create(HistoryTable)

@@ -6,6 +6,8 @@ import billSharedUsers.BillSharedUsersService
 import bills.BillsService
 import categories.CategoriesService
 import colors.ColorsService
+import com.weesnerdevelopment.validator.ValidatorService
+import com.weesnerdevelopment.validator.complex.ComplexValidatorService
 import federalIncomeTax.FederalIncomeTaxService
 import history.HistoryService
 import income.IncomeService
@@ -23,6 +25,7 @@ import socialSecurity.SocialSecurityService
 import taxWithholding.TaxWithholdingService
 
 val services = Kodein.Module("services") {
+    bind<ValidatorService>() with singleton { ValidatorService() }
     // user
     bind<UsersService>() with singleton { UsersService() }
     // history

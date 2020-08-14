@@ -12,18 +12,17 @@ abstract class BaseService<T : IdTable, I : GenericItem>(
         null
     }
 
-    override suspend fun add(item: I) =
-        tryCall {
-            try {
-                table.insert {
-                    it.toRow(item)
-                    it[dateCreated] = System.currentTimeMillis()
-                    it[dateUpdated] = System.currentTimeMillis()
-                } get table.id
-            } catch (e: ExposedSQLException) {
-                -1
-            }
+    override suspend fun add(item: I) = tryCall {
+        try {
+            table.insert {
+                it.toRow(item)
+                it[dateCreated] = System.currentTimeMillis()
+                it[dateUpdated] = System.currentTimeMillis()
+            } get table.id
+        } catch (e: ExposedSQLException) {
+            -1
         }
+    }
 
     override suspend fun getAll() = tryCall {
         table.selectAll().mapNotNull {

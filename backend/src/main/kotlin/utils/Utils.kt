@@ -8,6 +8,11 @@ import com.weesnerdevelopment.utils.Path.User.base
  * The available paths at /[Path].
  */
 sealed class Path {
+    object Server : Path() {
+        val health = "health"
+        val validation = "validation"
+    }
+
     /**
      * The available paths at [basePath]/value.
      */
@@ -33,7 +38,7 @@ sealed class Path {
      * The available paths at [basePath]/value.
      */
     object BillMan : Path() {
-        private val basePath = "billMan/"
+        val basePath = "billMan/"
         val bills = "${basePath}bills"
         val categories = "${basePath}categories"
         val income = "${basePath}income"

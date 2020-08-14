@@ -5,7 +5,7 @@ import generics.IdTable
 import history.HistoryTable
 
 object UsersTable : IdTable(), HistoricTable {
-    val uuid = varchar("uuid", 225)
+    val uuid = varchar("uuid", 225).uniqueIndex()
     val name = varchar("name", 255)
     val email = varchar("email", 255)
     val photoUrl = varchar("photoUrl", 255).nullable()

@@ -28,7 +28,7 @@ val routers = Kodein.Module("routers") {
     }
     // user
     bind<UserRouter>() with singleton {
-        UserRouter(User.base, instance(), instance(), instance(), User.account)
+        UserRouter(User.base, instance(), instance(), instance(), User.account, User.login, User.signUp)
     }
 
     // taxFetcher

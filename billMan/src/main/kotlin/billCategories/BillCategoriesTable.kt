@@ -3,8 +3,9 @@ package billCategories
 import bills.BillsTable
 import categories.CategoriesTable
 import generics.IdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 
 object BillCategoriesTable : IdTable() {
-    val categoryId = integer("categoryId") references CategoriesTable.id
-    val billId = integer("billId") references BillsTable.id
+    val categoryId = reference("categoryId", CategoriesTable.id, ReferenceOption.CASCADE)
+    val billId = reference("billId", BillsTable.id, ReferenceOption.CASCADE)
 }

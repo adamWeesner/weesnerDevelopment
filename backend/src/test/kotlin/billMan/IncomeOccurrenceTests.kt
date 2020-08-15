@@ -8,21 +8,27 @@ import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.HttpStatusCode.Companion.BadRequest
+import io.ktor.http.HttpStatusCode.Companion.Created
+import io.ktor.http.HttpStatusCode.Companion.NoContent
+import io.ktor.http.HttpStatusCode.Companion.NotFound
+import io.ktor.http.HttpStatusCode.Companion.OK
 import parseResponse
 import shared.auth.User
 import shared.base.History
 import shared.billMan.Color
 import shared.billMan.Income
 import shared.billMan.Occurrence
+import shared.billMan.responses.IncomeResponse
 import shared.billMan.responses.OccurrencesResponse
 import shared.taxFetcher.PayPeriod
 import java.util.*
 
 class IncomeOccurrenceTests : BaseTest({ token ->
-    val signedInUser = BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
+    val signedInUser =
+        BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
 
-    val startIncome = BuiltRequest(engine, Post, Path.BillMan.income, token).asObject(
+    BuiltRequest(engine, Post, Path.BillMan.income, token).send(
         Income(
             owner = signedInUser,
             name = "billStart",
@@ -30,6 +36,8 @@ class IncomeOccurrenceTests : BaseTest({ token ->
             color = Color(red = 255, green = 255, blue = 255, alpha = 255)
         )
     )
+    val startIncome =
+        BuiltRequest(engine, Get, Path.BillMan.income, token).asObject<IncomeResponse>().items?.first()!!
 
     fun newItem(
         amount: Number,
@@ -54,33 +62,30 @@ class IncomeOccurrenceTests : BaseTest({ token ->
 
     val path = Path.BillMan.incomeOccurrences
 
-    "verify getting base url returns null without bill id" {
-        BuiltRequest(engine, Get, path, token).sendStatus<Unit>() shouldBe HttpStatusCode.BadRequest
-    }
-
-    "verify getting base url returns ok" {
-        BuiltRequest(engine, Get, "$path?income=0", token).sendStatus<Unit>() shouldBe HttpStatusCode.OK
+    "verify getting base url" {
+        BuiltRequest(engine, Get, path, token).sendStatus<Unit>() shouldBe NoContent
     }
 
     "verify getting base url returns all items in table" {
-        val addedItem = BuiltRequest(engine, Post, path, token).asObject(newItem(12.34))
-        BuiltRequest(engine, Post, path, token).send(newItem(23.45))
-        with(BuiltRequest(engine, Get, "$path?income=${addedItem.itemId}", token).send<Unit>()) {
-            val responseItems = response.content.parseResponse<OccurrencesResponse>()?.items
-                ?: throw IllegalArgumentException("Occurrence response should not be null..")
+        BuiltRequest(engine, Post, path, token).sendStatus(newItem(12.34)) shouldBe Created
+        BuiltRequest(engine, Post, path, token).sendStatus(newItem(23.45)) shouldBe Created
+
+        with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
+            val responseItems = response.content.parseResponse<OccurrencesResponse>()?.items!!
             val item1 = responseItems[responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
-            response.status() shouldBe HttpStatusCode.OK
+            response.status() shouldBe OK
             item1.amount shouldBe "12.34"
             item2.amount shouldBe "23.45"
         }
     }
 
     "verify getting an added item" {
-        val item = BuiltRequest(engine, Post, path, token).asObject(newItem(34.56))
-        with(BuiltRequest(engine, Get, "$path?occurrence=${item.id}", token).send<Occurrence>()) {
+        BuiltRequest(engine, Post, path, token).sendStatus(newItem(34.56)) shouldBe Created
+
+        with(BuiltRequest(engine, Get, "$path?id=3", token).send<Unit>()) {
             val addedItems = response.content.parseResponse<OccurrencesResponse>()?.items
-            response.status() shouldBe HttpStatusCode.OK
+            response.status() shouldBe OK
             addedItems?.size shouldBe 1
             addedItems?.first()!!::class.java shouldBe Occurrence::class.java
             addedItems.first().amount shouldBe "34.56"
@@ -88,61 +93,50 @@ class IncomeOccurrenceTests : BaseTest({ token ->
     }
 
     "verify getting an item that does not exist" {
-        BuiltRequest(engine, Get, "$path?occurrence=99", token).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
+        BuiltRequest(engine, Get, "$path?id=99", token).sendStatus<Unit>() shouldBe NoContent
     }
 
     "verify adding a new item" {
-        with(BuiltRequest(engine, Post, path, token).send(newItem(45.67))) {
-            val addedItem = response.content.parseResponse<Occurrence>()
-            response.status() shouldBe HttpStatusCode.Created
-            addedItem?.amount shouldBe "45.67"
+        BuiltRequest(engine, Post, path, token).sendStatus(newItem(45.67)) shouldBe Created
+
+        with(BuiltRequest(engine, Get, "$path?id=4", token).send<Unit>()) {
+            val addedItem = response.content.parseResponse<OccurrencesResponse>()?.items?.first()!!
+            response.status() shouldBe OK
+            addedItem.amount shouldBe "45.67"
         }
     }
 
-    "verify adding a duplicate item" {
-        val item = BuiltRequest(engine, Post, path, token).asObject(newItem(8))
-        BuiltRequest(engine, Post, path, token).sendStatus((newItem(9, id = item.id))) shouldBe HttpStatusCode.Conflict
-    }
-
     "verify updating an added item" {
-        val item = BuiltRequest(engine, Post, path, token).asObject(newItem(34.56))
-        val updatedItem = item.copy(
-            amount = "77.77"
-        )
-        val updateRequest = BuiltRequest(engine, Put, path, token).send(updatedItem)
+        BuiltRequest(engine, Post, path, token).sendStatus(newItem(34.56)) shouldBe Created
 
-        with(updateRequest) {
-            val addedItem = response.content.parseResponse<Occurrence>()
-            val id = addedItem?.id
-            val className = addedItem!!::class.java.simpleName
+        val item =
+            BuiltRequest(engine, Get, "$path?id=5", token).asObject<OccurrencesResponse>().items?.first()!!
+        val updatedItem = item.copy(amount = "77.77")
+
+        BuiltRequest(engine, Put, path, token).sendStatus(updatedItem) shouldBe OK
+
+        with(BuiltRequest(engine, Get, "$path?id=5", token).send<Unit>()) {
+            val addedItem = response.content.parseResponse<OccurrencesResponse>()?.items?.first()!!
+            val id = addedItem.id
+            val className = addedItem::class.java.simpleName
             val fields = addedItem.history!!.map { it.field }
 
-            response.status() shouldBe HttpStatusCode.OK
+            response.status() shouldBe OK
             addedItem.amount shouldBe "77.77"
             fields[0] shouldBe "$className $id amount"
         }
     }
 
     "verify updating a non existent item" {
-        BuiltRequest(engine, Put, path, token).sendStatus(newItem(5, 99)) shouldBe HttpStatusCode.BadRequest
-    }
-
-    "verify updating without an id adds a new item" {
-        BuiltRequest(engine, Put, path, token).sendStatus(newItem(6)) shouldBe HttpStatusCode.Created
+        BuiltRequest(engine, Put, path, token).sendStatus(newItem(5, 99)) shouldBe BadRequest
     }
 
     "verify deleting and item that has been added" {
-        val addedItem =
-            BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content.parseResponse<Occurrence>()
-        BuiltRequest(
-            engine,
-            Delete,
-            "$path?occurrence=${addedItem?.id}",
-            token
-        ).sendStatus<Unit>() shouldBe HttpStatusCode.OK
+        BuiltRequest(engine, Post, path, token).sendStatus(newItem(7)) shouldBe Created
+        BuiltRequest(engine, Delete, "$path?id=6", token).sendStatus<Unit>() shouldBe OK
     }
 
     "verify deleting item that doesn't exist" {
-        BuiltRequest(engine, Delete, "$path?occurrence=99", token).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
+        BuiltRequest(engine, Delete, "$path?id=99", token).sendStatus<Unit>() shouldBe NotFound
     }
 })

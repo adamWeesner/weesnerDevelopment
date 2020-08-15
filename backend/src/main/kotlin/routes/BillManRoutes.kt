@@ -2,7 +2,6 @@ package com.weesnerdevelopment.routes
 
 import bills.BillsRouter
 import categories.CategoriesRouter
-import generics.route
 import income.IncomeRouter
 import incomeOccurrences.IncomeOccurrenceRouter
 import io.ktor.auth.authenticate
@@ -39,6 +38,10 @@ fun Routing.billManRoutes() {
                 setupRoutes()
             }
         }
-        route(incomeOccurrencesRouter)
+        incomeOccurrencesRouter.apply {
+            authenticate {
+                setupRoutes()
+            }
+        }
     }
 }

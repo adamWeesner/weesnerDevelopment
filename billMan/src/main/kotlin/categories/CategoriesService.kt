@@ -50,16 +50,6 @@ class CategoriesService(
         return super.update(item, op)
     }
 
-    override suspend fun delete(item: Category, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
-        item.history?.forEach {
-            historyService.delete(it) {
-                historyService.table.id eq it.id!!
-            }
-        }
-
-        return super.delete(item, op)
-    }
-
     override suspend fun toItem(row: ResultRow) = Category(
         id = row[table.id],
         owner = row[table.ownerId]?.let {

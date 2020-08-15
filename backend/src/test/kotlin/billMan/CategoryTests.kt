@@ -31,7 +31,11 @@ class CategoryTests : BaseTest({ token ->
 
     val path = Path.BillMan.categories
 
-    "verify getting base url returns ok" {
+    BuiltRequest(engine, Get, path, token).asObject<CategoriesResponse>().items?.forEach {
+        BuiltRequest(engine, Delete, "$path?id=${it.id}", token).sendStatus<Unit>() shouldBe OK
+    }
+
+    "verify getting base url" {
         BuiltRequest(engine, Get, path, token).sendStatus<Unit>() shouldBe NoContent
     }
 
@@ -52,11 +56,10 @@ class CategoryTests : BaseTest({ token ->
     "verify getting an added item" {
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(2)) shouldBe Created
 
-        with(BuiltRequest(engine, Get, "$path?id=3", token).send<Category>()) {
-            val addedItems = response.content.parseResponse<CategoriesResponse>()?.items
+        with(BuiltRequest(engine, Get, path, token).send<Category>()) {
+            val addedItems = response.content.parseResponse<CategoriesResponse>()?.items?.last()
             response.status() shouldBe OK
-            addedItems?.size shouldBe 1
-            addedItems?.first()?.name shouldBe "${categoryStart}2"
+            addedItems?.name shouldBe "${categoryStart}2"
         }
     }
 

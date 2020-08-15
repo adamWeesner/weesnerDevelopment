@@ -1,53 +1,77 @@
 package incomeOccurrences
 
-import HistoryTypes
+import BaseService
 import auth.UsersService
-import dbQuery
-import generics.GenericService
+import diff
 import history.HistoryService
-import incomeOccurrences.IncomeOccurrencesTable.itemId
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.base.InvalidAttributeException
 import shared.billMan.Occurrence
-import shared.billMan.responses.OccurrencesResponse
 
 class IncomeOccurrencesService(
     private val usersService: UsersService,
     private val historyService: HistoryService
-) : GenericService<Occurrence, IncomeOccurrencesTable>(
+) : BaseService<IncomeOccurrencesTable, Occurrence>(
     IncomeOccurrencesTable
 ) {
-    suspend fun getByIncome(incomeId: Int) =
-        dbQuery { table.select { (itemId eq incomeId) }.mapNotNull { to(it) } }.run(::OccurrencesResponse)
+    private val IncomeOccurrencesTable.connections
+        get() = this.innerJoin(usersService.table, {
+            ownerId
+        }, {
+            uuid
+        })
 
-    suspend fun deleteForIncome(incomeId: Int) = dbQuery {
-        table.select { (itemId eq incomeId) }.mapNotNull { to(it).id }
-    }.forEach {
-        historyService.apply { getIdsFor(HistoryTypes.Occurrence.name, it).forEach { delete(it) { table.id eq it } } }
-        delete(it) { table.id eq it }
+    override suspend fun getAll() = tryCall {
+        table.connections.selectAll().mapNotNull {
+            toItem(it)
+        }
     }
 
-    override suspend fun to(row: ResultRow) = Occurrence(
-        id = row[IncomeOccurrencesTable.id],
-        owner = usersService.getUserByUuidRedacted(row[IncomeOccurrencesTable.ownerId])
-            ?: throw IllegalArgumentException("No user found for occurrence."),
-        amount = row[IncomeOccurrencesTable.amount],
-        itemId = row[IncomeOccurrencesTable.itemId].toString(),
-        dueDate = row[IncomeOccurrencesTable.dueDate],
-        every = row[IncomeOccurrencesTable.every],
-        history = historyService.getFor(HistoryTypes.Color.name, row[IncomeOccurrencesTable.id]),
-        dateCreated = row[IncomeOccurrencesTable.dateCreated],
-        dateUpdated = row[IncomeOccurrencesTable.dateUpdated],
-        amountLeft = "0"
-    )
+    override suspend fun get(op: SqlExpressionBuilder.() -> Op<Boolean>) = tryCall {
+        table.connections.select {
+            op()
+        }.limit(1).firstOrNull()?.let {
+            toItem(it)
+        }
+    }
 
-    override fun UpdateBuilder<Int>.assignValues(item: Occurrence) {
-        this[IncomeOccurrencesTable.ownerId] = item.owner.uuid ?: throw InvalidAttributeException("Uuid")
-        this[IncomeOccurrencesTable.amount] = item.amount
-        this[IncomeOccurrencesTable.itemId] = item.itemId.toInt()
-        this[IncomeOccurrencesTable.dueDate] = item.dueDate
-        this[IncomeOccurrencesTable.every] = item.every
+    override suspend fun update(item: Occurrence, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
+        val oldItem = get {
+            table.id eq item.id!!
+        } ?: return null
+
+        oldItem.diff(item).updates(item.owner).forEach {
+            historyService.add(it)
+        }
+
+        return super.update(item, op)
+    }
+
+    override suspend fun toItem(row: ResultRow) = Occurrence(
+        id = row[table.id],
+        owner = usersService.toItemRedacted(row),
+        amount = row[table.amount],
+        itemId = row[table.itemId].toString(),
+        dueDate = row[table.dueDate],
+        every = row[table.every],
+        dateCreated = row[table.dateCreated],
+        dateUpdated = row[table.dateUpdated],
+        amountLeft = "0"
+    ).let {
+        val history = historyService.getFor<Occurrence>(it.id, it.owner)
+
+        return@let if (history == null)
+            it
+        else
+            it.copy(history = history)
+    }
+
+    override fun UpdateBuilder<Int>.toRow(item: Occurrence) {
+        this[table.ownerId] = item.owner.uuid ?: throw InvalidAttributeException("Uuid")
+        this[table.amount] = item.amount
+        this[table.itemId] = item.itemId.toInt()
+        this[table.dueDate] = item.dueDate
+        this[table.every] = item.every
     }
 }

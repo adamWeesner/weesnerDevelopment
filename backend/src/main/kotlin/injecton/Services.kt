@@ -26,13 +26,7 @@ import taxWithholding.TaxWithholdingService
 
 val services = Kodein.Module("services") {
     bind<ValidatorService>() with singleton { ValidatorService() }
-    bind<ComplexValidatorService>() with singleton {
-        ComplexValidatorService(
-            instance(),
-            instance(),
-            instance()
-        )
-    }
+    bind<ComplexValidatorService>() with singleton { ComplexValidatorService(instance(), instance(), instance()) }
     // user
     bind<UsersService>() with singleton { UsersService(instance()) }
     // history
@@ -47,17 +41,8 @@ val services = Kodein.Module("services") {
     bind<BillSharedUsersService>() with singleton { BillSharedUsersService(instance()) }
     bind<BillCategoriesService>() with singleton { BillCategoriesService(instance()) }
     bind<CategoriesService>() with singleton { CategoriesService(instance(), instance()) }
-    bind<ColorsService>() with singleton { ColorsService(instance()) }
-    bind<BillsService>() with singleton {
-        BillsService(
-            instance(),
-            instance(),
-            instance(),
-            instance(),
-            instance(),
-            instance()
-        )
-    }
+    bind<ColorsService>() with singleton { ColorsService() }
+    bind<BillsService>() with singleton { BillsService(instance(), instance(), instance(), instance(), instance()) }
     bind<IncomeService>() with singleton { IncomeService(instance(), instance(), instance(), instance()) }
     bind<PaymentsService>() with singleton { PaymentsService(instance(), instance()) }
     bind<OccurrenceSharedUsersService>() with singleton { OccurrenceSharedUsersService(instance()) }

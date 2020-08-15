@@ -19,10 +19,9 @@ fun Routing.billManRoutes() {
     val incomeOccurrencesRouter by kodein().instance<IncomeOccurrenceRouter>()
 
     authenticate {
-        route(billsRouter)
-        route(categoriesRouter)
-        route(incomeRouter)
+        billsRouter.apply { setupRoutes() }
         categoriesRouter.apply { setupRoutes() }
+        route(incomeRouter)
         route(occurrencesRouter) { router ->
             (router as BillOccurrenceRouter).apply {
                 pay()

@@ -47,12 +47,7 @@ val services = Kodein.Module("services") {
     bind<PaymentsService>() with singleton { PaymentsService(instance(), instance()) }
     bind<OccurrenceSharedUsersService>() with singleton { OccurrenceSharedUsersService(instance()) }
     bind<BillOccurrencesService>() with singleton {
-        BillOccurrencesService(
-            instance(),
-            instance(),
-            instance(),
-            instance()
-        )
+        BillOccurrencesService(instance(), instance(), instance(), instance())
     }
     bind<IncomeOccurrencesService>() with singleton { IncomeOccurrencesService(instance(), instance()) }
 }

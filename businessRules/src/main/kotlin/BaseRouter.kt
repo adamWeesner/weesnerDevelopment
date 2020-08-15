@@ -1,6 +1,11 @@
+import auth.UsersService
+import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.request.receive
 import io.ktor.routing.*
+import io.ktor.util.pipeline.PipelineContext
+import shared.auth.HashedUser
+import shared.auth.InvalidUserReason
 import shared.base.GenericItem
 import shared.base.GenericResponse
 import shared.base.Response
@@ -100,3 +105,13 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
         }
     }
 }
+
+suspend fun PipelineContext<Unit, ApplicationCall>.tokenAsUser(usersService: UsersService) =
+    call.loggedUserData()?.getData()?.let {
+        if (it.username == null || it.password == null) {
+            call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+            return null
+        } else {
+            usersService.getUserFromHash(HashedUser(it.username, it.password))
+        }
+    }

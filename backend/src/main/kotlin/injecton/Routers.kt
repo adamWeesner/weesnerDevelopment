@@ -52,7 +52,7 @@ val routers = Kodein.Module("routers") {
         CategoriesRouter(BillMan.categories, instance())
     }
     bind<IncomeRouter>() with singleton {
-        IncomeRouter(BillMan.income, instance(), instance(), instance())
+        IncomeRouter(BillMan.income, instance())
     }
     bind<BillOccurrenceRouter>() with singleton {
         BillOccurrenceRouter(BillMan.occurrences, instance(), instance(), instance(), instance(), instance())

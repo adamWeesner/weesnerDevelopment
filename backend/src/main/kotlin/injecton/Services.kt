@@ -43,7 +43,7 @@ val services = Kodein.Module("services") {
     bind<CategoriesService>() with singleton { CategoriesService(instance(), instance()) }
     bind<ColorsService>() with singleton { ColorsService() }
     bind<BillsService>() with singleton { BillsService(instance(), instance(), instance(), instance(), instance()) }
-    bind<IncomeService>() with singleton { IncomeService(instance(), instance(), instance(), instance()) }
+    bind<IncomeService>() with singleton { IncomeService(instance(), instance(), instance()) }
     bind<PaymentsService>() with singleton { PaymentsService(instance(), instance()) }
     bind<OccurrenceSharedUsersService>() with singleton { OccurrenceSharedUsersService(instance()) }
     bind<BillOccurrencesService>() with singleton {

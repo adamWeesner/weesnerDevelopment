@@ -5,6 +5,7 @@ import auth.UsersService
 import colors.ColorsService
 import diff
 import history.HistoryService
+import isNotValidId
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.base.InvalidAttributeException
@@ -18,7 +19,7 @@ class IncomeService(
 ) : BaseService<IncomeTable, Income>(
     IncomeTable
 ) {
-    private val IncomeTable.connections
+    override val IncomeTable.connections
         get() = this.innerJoin(usersService.table, {
             ownerId
         }, {
@@ -29,27 +30,16 @@ class IncomeService(
             billId
         })
 
-    override suspend fun getAll() = tryCall {
-        table.connections.selectAll().mapNotNull {
-            toItem(it)
-        }
-    }
-
-    override suspend fun get(op: SqlExpressionBuilder.() -> Op<Boolean>) = tryCall {
-        table.connections.select {
-            op()
-        }.limit(1).firstOrNull()?.let {
-            toItem(it)
-        }
-    }
-
     override suspend fun update(item: Income, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
         val oldItem = get {
             table.id eq item.id!!
         } ?: return null
 
         oldItem.diff(item).updates(item.owner).forEach {
-            historyService.add(it)
+            val history = historyService.add(it)
+
+            if (history.isNotValidId)
+                return history
         }
 
         return super.update(item, op)

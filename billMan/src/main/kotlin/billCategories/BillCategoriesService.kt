@@ -4,7 +4,6 @@ import BaseService
 import categories.CategoriesService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.innerJoin
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.base.InvalidAttributeException
 
@@ -13,20 +12,19 @@ class BillCategoriesService(
 ) : BaseService<BillCategoriesTable, BillCategory>(
     BillCategoriesTable
 ) {
-    private val BillCategoriesTable.connections
+    override val BillCategoriesTable.connections
         get() = this.innerJoin(categoriesService.table, {
             categoryId
         }, {
             id
         })
 
-    suspend fun getByBill(id: Int) = tryCall {
-        table.connections.select {
-            table.billId eq id
-        }.mapNotNull {
-            categoriesService.toItem(it)
-        }
+    suspend fun getByBill(id: Int) = getAll {
+        table.billId eq id
+    }?.mapNotNull {
+        categoriesService.toItem(it)
     } ?: throw InvalidAttributeException("Bill categories")
+
 
     override suspend fun toItem(row: ResultRow) = BillCategory(
         id = row[table.id],

@@ -11,21 +11,17 @@ class OccurrenceSharedUsersService(
 ) : BaseService<OccurrenceSharedUsersTable, OccurrenceSharedUsers>(
     OccurrenceSharedUsersTable
 ) {
-    private val OccurrenceSharedUsersTable.connections
+    override val OccurrenceSharedUsersTable.connections
         get() = this.innerJoin(usersService.table, {
             userId
         }, {
             uuid
         })
 
-    suspend fun getByOccurrence(id: Int) = tryCall {
-        table.connections.select {
-            table.occurrenceId eq id
-        }.mapNotNull {
-            toItem(it)
-        }
+    suspend fun getByOccurrence(id: Int) = getAll {
+        table.occurrenceId eq id
     }?.mapNotNull {
-        usersService.getUserByUuidRedacted(it.userId)
+        usersService.getUserByUuidRedacted(it[table.userId])
     }
 
     suspend fun deleteForOccurrence(occurrenceId: Int) = tryCall {

@@ -10,18 +10,19 @@ class BillSharedUsersService(
 ) : BaseService<BillsSharedUsersTable, BillSharedUsers>(
     BillsSharedUsersTable
 ) {
-    suspend fun getByBill(id: Int) = tryCall {
-        table.select {
-            (table.billId eq id)
-        }.mapNotNull {
-            toItem(it)
-        }
+    override val BillsSharedUsersTable.connections: Join?
+        get() = null
+
+    suspend fun getByBill(id: Int) = getAll {
+        table.billId eq id
     }?.mapNotNull {
-        usersService.getUserByUuidRedacted(it.userId)
+        usersService.getUserByUuidRedacted(it[table.userId])
     }
 
     suspend fun deleteForBill(billId: Int) = tryCall {
-        table.deleteWhere { table.billId eq billId }
+        table.deleteWhere {
+            table.billId eq billId
+        }
     }
 
     @Deprecated(

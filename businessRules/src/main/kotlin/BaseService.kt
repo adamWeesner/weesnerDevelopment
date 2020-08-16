@@ -6,6 +6,8 @@ import shared.base.GenericItem
 abstract class BaseService<T : IdTable, I : GenericItem>(
     override val table: T
 ) : Service<I> {
+    abstract val T.connections: Join?
+
     suspend fun <T : Any> tryCall(block: suspend () -> T?) = try {
         dbQuery(block)
     } catch (e: Exception) {
@@ -25,13 +27,19 @@ abstract class BaseService<T : IdTable, I : GenericItem>(
     }
 
     override suspend fun getAll() = tryCall {
-        table.selectAll().mapNotNull {
+        (table.connections ?: table).selectAll().mapNotNull {
             toItem(it)
         }
     }
 
+    override suspend fun getAll(op: SqlExpressionBuilder.() -> Op<Boolean>) = tryCall {
+        (table.connections ?: table).select {
+            op()
+        }
+    }
+
     override suspend fun get(op: SqlExpressionBuilder.() -> Op<Boolean>) = tryCall {
-        table.select {
+        (table.connections ?: table).select {
             op()
         }.limit(1).firstOrNull()?.let {
             toItem(it)

@@ -4,7 +4,11 @@ import BaseService
 import auth.UsersService
 import diff
 import history.HistoryService
-import org.jetbrains.exposed.sql.*
+import isNotValidId
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.base.InvalidAttributeException
 import shared.billMan.Occurrence
@@ -15,26 +19,12 @@ class IncomeOccurrencesService(
 ) : BaseService<IncomeOccurrencesTable, Occurrence>(
     IncomeOccurrencesTable
 ) {
-    private val IncomeOccurrencesTable.connections
+    override val IncomeOccurrencesTable.connections
         get() = this.innerJoin(usersService.table, {
             ownerId
         }, {
             uuid
         })
-
-    override suspend fun getAll() = tryCall {
-        table.connections.selectAll().mapNotNull {
-            toItem(it)
-        }
-    }
-
-    override suspend fun get(op: SqlExpressionBuilder.() -> Op<Boolean>) = tryCall {
-        table.connections.select {
-            op()
-        }.limit(1).firstOrNull()?.let {
-            toItem(it)
-        }
-    }
 
     override suspend fun update(item: Occurrence, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
         val oldItem = get {
@@ -42,7 +32,10 @@ class IncomeOccurrencesService(
         } ?: return null
 
         oldItem.diff(item).updates(item.owner).forEach {
-            historyService.add(it)
+            val history = historyService.add(it)
+
+            if (history.isNotValidId)
+                return history
         }
 
         return super.update(item, op)

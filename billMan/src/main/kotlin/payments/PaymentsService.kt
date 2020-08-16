@@ -3,7 +3,9 @@ package payments
 import BaseService
 import auth.UsersService
 import history.HistoryService
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.innerJoin
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.base.InvalidAttributeException
 import shared.billMan.Payment
@@ -14,33 +16,17 @@ class PaymentsService(
 ) : BaseService<PaymentsTable, Payment>(
     PaymentsTable
 ) {
-    private val PaymentsTable.connections
+    override val PaymentsTable.connections
         get() = this.innerJoin(usersService.table, {
             ownerId
         }, {
             uuid
         })
 
-    override suspend fun getAll() = tryCall {
-        table.connections.selectAll().mapNotNull {
-            toItem(it)
-        }
-    }
-
-    override suspend fun get(op: SqlExpressionBuilder.() -> Op<Boolean>) = tryCall {
-        table.connections.select {
-            op()
-        }.limit(1).firstOrNull()?.let {
-            toItem(it)
-        }
-    }
-
-    suspend fun getForOccurrence(id: Int) = tryCall {
-        table.connections.select {
-            table.occurrenceId eq id
-        }.mapNotNull {
-            toItem(it)
-        }
+    suspend fun getForOccurrence(id: Int) = getAll {
+        table.occurrenceId eq id
+    }?.mapNotNull {
+        toItem(it)
     }
 
     @Deprecated(

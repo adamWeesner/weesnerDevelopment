@@ -10,7 +10,10 @@ import colors.ColorsService
 import diff
 import history.HistoryService
 import isNotValidId
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.base.History
 import shared.base.InvalidAttributeException
@@ -27,7 +30,7 @@ class BillsService(
 ) : BaseService<BillsTable, Bill>(
     BillsTable
 ) {
-    private val BillsTable.connections
+    override val BillsTable.connections
         get() = this.innerJoin(usersService.table, {
             ownerId
         }, {
@@ -59,20 +62,6 @@ class BillsService(
         }
 
         return colorsService.add(addedBillId, item.color)
-    }
-
-    override suspend fun getAll() = tryCall {
-        table.connections.selectAll().mapNotNull {
-            toItem(it)
-        }
-    }
-
-    override suspend fun get(op: SqlExpressionBuilder.() -> Op<Boolean>) = tryCall {
-        table.connections.select {
-            op()
-        }.limit(1).firstOrNull()?.let {
-            toItem(it)
-        }
     }
 
     override suspend fun update(item: Bill, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {

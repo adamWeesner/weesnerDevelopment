@@ -18,9 +18,9 @@ import shared.auth.User
 import shared.base.History
 import shared.billMan.Color
 import shared.billMan.Income
-import shared.billMan.Occurrence
+import shared.billMan.IncomeOccurrence
+import shared.billMan.responses.IncomeOccurrencesResponse
 import shared.billMan.responses.IncomeResponse
-import shared.billMan.responses.OccurrencesResponse
 import shared.taxFetcher.PayPeriod
 import java.util.*
 
@@ -47,7 +47,7 @@ class IncomeOccurrenceTests : BaseTest({ token ->
         every: String = PayPeriod.Weekly.name,
         history: List<History>? = null,
         owner: User = signedInUser
-    ) = Occurrence(
+    ) = IncomeOccurrence(
         id = id,
         owner = owner,
         sharedUsers = null,
@@ -71,7 +71,7 @@ class IncomeOccurrenceTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(23.45)) shouldBe Created
 
         with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content.parseResponse<OccurrencesResponse>()?.items!!
+            val responseItems = response.content.parseResponse<IncomeOccurrencesResponse>()?.items!!
             val item1 = responseItems[responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe OK
@@ -84,10 +84,10 @@ class IncomeOccurrenceTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(34.56)) shouldBe Created
 
         with(BuiltRequest(engine, Get, "$path?id=3", token).send<Unit>()) {
-            val addedItems = response.content.parseResponse<OccurrencesResponse>()?.items
+            val addedItems = response.content.parseResponse<IncomeOccurrencesResponse>()?.items
             response.status() shouldBe OK
             addedItems?.size shouldBe 1
-            addedItems?.first()!!::class.java shouldBe Occurrence::class.java
+            addedItems?.first()!!::class.java shouldBe IncomeOccurrence::class.java
             addedItems.first().amount shouldBe "34.56"
         }
     }
@@ -100,7 +100,7 @@ class IncomeOccurrenceTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(45.67)) shouldBe Created
 
         with(BuiltRequest(engine, Get, "$path?id=4", token).send<Unit>()) {
-            val addedItem = response.content.parseResponse<OccurrencesResponse>()?.items?.first()!!
+            val addedItem = response.content.parseResponse<IncomeOccurrencesResponse>()?.items?.first()!!
             response.status() shouldBe OK
             addedItem.amount shouldBe "45.67"
         }
@@ -110,13 +110,13 @@ class IncomeOccurrenceTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(34.56)) shouldBe Created
 
         val item =
-            BuiltRequest(engine, Get, "$path?id=5", token).asObject<OccurrencesResponse>().items?.first()!!
+            BuiltRequest(engine, Get, "$path?id=5", token).asObject<IncomeOccurrencesResponse>().items?.first()!!
         val updatedItem = item.copy(amount = "77.77")
 
         BuiltRequest(engine, Put, path, token).sendStatus(updatedItem) shouldBe OK
 
         with(BuiltRequest(engine, Get, "$path?id=5", token).send<Unit>()) {
-            val addedItem = response.content.parseResponse<OccurrencesResponse>()?.items?.first()!!
+            val addedItem = response.content.parseResponse<IncomeOccurrencesResponse>()?.items?.first()!!
             val id = addedItem.id
             val className = addedItem::class.java.simpleName
             val fields = addedItem.history!!.map { it.field }

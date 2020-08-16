@@ -1,6 +1,7 @@
 package history
 
 import BaseService
+import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
@@ -13,7 +14,10 @@ import shared.base.InvalidAttributeException
 class HistoryService : BaseService<HistoryTable, History>(
     HistoryTable
 ) {
-    private var retrievedUser: User? = null
+    override val HistoryTable.connections: Join?
+        get() = null
+
+    var retrievedUser: User? = null
 
     suspend inline fun <reified T : GenericItem> getFor(typeId: Int?, user: User?) = tryCall {
         if (typeId == null)
@@ -25,9 +29,9 @@ class HistoryService : BaseService<HistoryTable, History>(
         table.select {
             (table.field regexp "${T::class.simpleName} $typeId .*") and (table.updatedBy eq user.uuid!!)
         }.mapNotNull {
-            `access$retrievedUser` = user
+            retrievedUser = user
             toItem(it).also {
-                `access$retrievedUser` = null
+                retrievedUser = null
             }
         }
     }
@@ -51,11 +55,4 @@ class HistoryService : BaseService<HistoryTable, History>(
         this[table.newValue] = item.newValue.toString()
         this[table.updatedBy] = item.updatedBy.uuid!!
     }
-
-    @PublishedApi
-    internal var `access$retrievedUser`: User?
-        get() = retrievedUser
-        set(value) {
-            retrievedUser = value
-        }
 }

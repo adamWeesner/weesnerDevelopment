@@ -1,15 +1,15 @@
 package incomeOccurrences
 
 import BaseRouter
-import shared.billMan.Occurrence
-import shared.billMan.responses.OccurrencesResponse
+import shared.billMan.IncomeOccurrence
+import shared.billMan.responses.IncomeOccurrencesResponse
 import kotlin.reflect.full.createType
 
 class IncomeOccurrenceRouter(
     override val basePath: String,
     service: IncomeOccurrencesService
-) : BaseRouter<Occurrence, IncomeOccurrencesService>(
-    OccurrencesResponse(),
+) : BaseRouter<IncomeOccurrence, IncomeOccurrencesService>(
+    IncomeOccurrencesResponse(),
     service,
-    Occurrence::class.createType()
+    IncomeOccurrence::class.createType()
 )

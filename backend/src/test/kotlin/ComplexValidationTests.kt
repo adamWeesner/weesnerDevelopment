@@ -1,8 +1,11 @@
+import billCategories.BillCategoriesTable
+import categories.CategoriesTable
 import com.weesnerdevelopment.utils.Path
 import com.weesnerdevelopment.utils.Path.BillMan
 import com.weesnerdevelopment.utils.Path.Server
 import com.weesnerdevelopment.validator.complex.ComplexValidatorItem
 import com.weesnerdevelopment.validator.complex.ComplexValidatorResponse
+import com.weesnerdevelopment.validator.complex.ComplexValidatorTable
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
@@ -14,17 +17,26 @@ import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.NoContent
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.OK
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.transaction
 import shared.auth.User
 import shared.base.History
 import shared.billMan.Category
 import shared.billMan.responses.CategoriesResponse
 
 class ComplexValidationTests : BaseTest({ token ->
+    transaction {
+        SchemaUtils.drop(CategoriesTable, BillCategoriesTable, ComplexValidatorTable)
+        SchemaUtils.create(CategoriesTable, BillCategoriesTable, ComplexValidatorTable)
+    }
+
     val path = Server.complexValidation
     var counter = 1
 
     val user = BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
-    BuiltRequest(engine, Post, BillMan.categories, token).send(Category(owner = user, name = "category"))
+
+    BuiltRequest(engine, Post, BillMan.categories, token).sendStatus(Category(owner = user, name = "category"))
+
     val category = BuiltRequest(engine, Get, "${BillMan.categories}?id=1", token)
         .asObject<CategoriesResponse>().items?.first() ?: throw IllegalArgumentException("Somehow category was null")
 
@@ -42,7 +54,7 @@ class ComplexValidationTests : BaseTest({ token ->
     }
 
     "verify getting url with an id and with no items in database" {
-        BuiltRequest(engine, Get, "$path?id=0", token).sendStatus<Unit>() shouldBe NoContent
+        BuiltRequest(engine, Get, "$path?id=1", token).sendStatus<Unit>() shouldBe NoContent
     }
 
     "verify adding an item to the database" {

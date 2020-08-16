@@ -1,6 +1,7 @@
 package com.weesnerdevelopment.validator
 
 import BaseService
+import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 
@@ -9,6 +10,9 @@ class ValidatorService(
 ) : BaseService<ValidatorTable, ValidatorItem>(
     table
 ) {
+    override val ValidatorTable.connections: Join?
+        get() = null
+
     override suspend fun toItem(row: ResultRow) = ValidatorItem(
         id = row[table.id],
         name = row[table.name],

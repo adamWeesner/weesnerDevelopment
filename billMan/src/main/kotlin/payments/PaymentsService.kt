@@ -3,9 +3,7 @@ package payments
 import BaseService
 import auth.UsersService
 import history.HistoryService
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.innerJoin
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.base.InvalidAttributeException
 import shared.billMan.Payment
@@ -36,15 +34,21 @@ class PaymentsService(
     )
     override suspend fun add(item: Payment) = null
 
-    suspend fun addForOccurrence(occurrenceId: Int, item: Payment) = tryCall {
+    suspend fun addForOccurrence(occurrence: Int, item: Payment) = tryCall {
         table.insert {
             it.toRow(item)
-            it[table.occurrenceId] = occurrenceId
+            it[occurrenceId] = occurrence
             it[dateCreated] = System.currentTimeMillis()
             it[dateUpdated] = System.currentTimeMillis()
-        } get table.id
+        } get table.occurrenceId
     }?.let {
-        getForOccurrence(occurrenceId)
+        tryCall {
+            table.connections.select {
+                table.occurrenceId eq it and (table.ownerId eq item.owner.uuid!!)
+            }.mapNotNull {
+                toItem(it)
+            }
+        }
     }
 
     override suspend fun toItem(row: ResultRow) = Payment(

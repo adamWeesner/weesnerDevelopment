@@ -16,6 +16,9 @@ class UsersService(
 ) : BaseService<UsersTable, User>(
     UsersTable
 ) {
+    override val UsersTable.connections: Join?
+        get() = null
+
     suspend fun getUserFromHash(hashedUser: HashedUser) = tryCall {
         table.select {
             (table.username eq hashedUser.username) and (table.password eq hashedUser.password)

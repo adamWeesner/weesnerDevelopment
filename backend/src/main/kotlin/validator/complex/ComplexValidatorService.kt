@@ -5,7 +5,10 @@ import auth.UsersService
 import categories.CategoriesService
 import diff
 import history.HistoryService
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.base.History
 import shared.base.InvalidAttributeException
@@ -19,7 +22,7 @@ class ComplexValidatorService(
 ) : BaseService<ComplexValidatorTable, ComplexValidatorItem>(
     table
 ) {
-    private val ComplexValidatorTable.connections
+    override val ComplexValidatorTable.connections
         get() = this.innerJoin(categoriesService.table, {
             categoryId
         }, {
@@ -29,20 +32,6 @@ class ComplexValidatorService(
         }, {
             uuid
         })
-
-    override suspend fun getAll() = tryCall {
-        table.connections.selectAll().mapNotNull {
-            toItem(it)
-        }
-    }
-
-    override suspend fun get(op: SqlExpressionBuilder.() -> Op<Boolean>) = tryCall {
-        table.connections.select {
-            op()
-        }.limit(1).firstOrNull()?.let {
-            toItem(it)
-        }
-    }
 
     override suspend fun update(item: ComplexValidatorItem, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
         val oldItem = get {

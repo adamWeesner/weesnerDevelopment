@@ -4,7 +4,10 @@ import BaseService
 import auth.UsersService
 import diff
 import history.HistoryService
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.leftJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.billMan.Category
 
@@ -14,26 +17,12 @@ class CategoriesService(
 ) : BaseService<CategoriesTable, Category>(
     CategoriesTable
 ) {
-    private val CategoriesTable.connections
+    override val CategoriesTable.connections
         get() = this.leftJoin(usersService.table, {
             ownerId
         }, {
             uuid
         })
-
-    override suspend fun getAll() = tryCall {
-        table.connections.selectAll().mapNotNull {
-            toItem(it)
-        }
-    }
-
-    override suspend fun get(op: SqlExpressionBuilder.() -> Op<Boolean>) = tryCall {
-        table.connections.select {
-            op()
-        }.limit(1).firstOrNull()?.let {
-            toItem(it)
-        }
-    }
 
     override suspend fun update(item: Category, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
         val oldItem = get {

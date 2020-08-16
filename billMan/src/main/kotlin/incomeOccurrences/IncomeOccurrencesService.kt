@@ -11,12 +11,12 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.base.InvalidAttributeException
-import shared.billMan.Occurrence
+import shared.billMan.IncomeOccurrence
 
 class IncomeOccurrencesService(
     private val usersService: UsersService,
     private val historyService: HistoryService
-) : BaseService<IncomeOccurrencesTable, Occurrence>(
+) : BaseService<IncomeOccurrencesTable, IncomeOccurrence>(
     IncomeOccurrencesTable
 ) {
     override val IncomeOccurrencesTable.connections
@@ -26,7 +26,7 @@ class IncomeOccurrencesService(
             uuid
         })
 
-    override suspend fun update(item: Occurrence, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
+    override suspend fun update(item: IncomeOccurrence, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
         val oldItem = get {
             table.id eq item.id!!
         } ?: return null
@@ -41,7 +41,7 @@ class IncomeOccurrencesService(
         return super.update(item, op)
     }
 
-    override suspend fun toItem(row: ResultRow) = Occurrence(
+    override suspend fun toItem(row: ResultRow) = IncomeOccurrence(
         id = row[table.id],
         owner = usersService.toItemRedacted(row),
         amount = row[table.amount],
@@ -52,7 +52,7 @@ class IncomeOccurrencesService(
         dateUpdated = row[table.dateUpdated],
         amountLeft = "0"
     ).let {
-        val history = historyService.getFor<Occurrence>(it.id, it.owner)
+        val history = historyService.getFor<IncomeOccurrence>(it.id, it.owner)
 
         return@let if (history == null)
             it
@@ -60,7 +60,7 @@ class IncomeOccurrencesService(
             it.copy(history = history)
     }
 
-    override fun UpdateBuilder<Int>.toRow(item: Occurrence) {
+    override fun UpdateBuilder<Int>.toRow(item: IncomeOccurrence) {
         this[table.ownerId] = item.owner.uuid ?: throw InvalidAttributeException("Uuid")
         this[table.amount] = item.amount
         this[table.itemId] = item.itemId.toInt()

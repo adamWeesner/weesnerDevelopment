@@ -46,7 +46,7 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
 
     override fun Route.getRequest() {
         get {
-            val itemId = call.parameters["id"]
+            val itemId = call.request.queryParameters["id"]
 
             val items =
                 (if (itemId == null) service.getAll()
@@ -87,7 +87,7 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
 
     override fun Route.deleteRequest() {
         delete {
-            val itemId = call.parameters["id"]
+            val itemId = call.request.queryParameters["id"]
                 ?: return@delete call.respond(BadRequest("?id=(itemId) is needed."))
 
             val item = service.get { service.table.id eq itemId.toInt() }

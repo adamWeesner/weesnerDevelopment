@@ -14,23 +14,23 @@ import shared.auth.User
 import shared.base.Response.Companion.BadRequest
 import shared.base.Response.Companion.NotFound
 import shared.base.Response.Companion.Ok
-import shared.billMan.Occurrence
-import shared.billMan.responses.OccurrencesResponse
+import shared.billMan.BillOccurrence
+import shared.billMan.responses.BillOccurrencesResponse
 import tokenAsUser
 import kotlin.reflect.full.createType
 
 class BillOccurrenceRouter(
     override val basePath: String,
     service: BillOccurrencesService
-) : BaseRouter<Occurrence, BillOccurrencesService>(
-    OccurrencesResponse(),
+) : BaseRouter<BillOccurrence, BillOccurrencesService>(
+    BillOccurrencesResponse(),
     service,
-    Occurrence::class.createType()
+    BillOccurrence::class.createType()
 ) {
     override fun Route.updateRequest() {
         put {
             val body = runCatching {
-                call.receiveOrNull<Occurrence>(kType)
+                call.receiveOrNull<BillOccurrence>(kType)
             }.getOrNull()
 
             if (body != null) {

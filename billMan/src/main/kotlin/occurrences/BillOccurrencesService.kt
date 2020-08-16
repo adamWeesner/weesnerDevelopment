@@ -16,7 +16,7 @@ import payments.PaymentsService
 import shared.auth.User
 import shared.base.History
 import shared.base.InvalidAttributeException
-import shared.billMan.Occurrence
+import shared.billMan.BillOccurrence
 import shared.billMan.Payment
 
 class BillOccurrencesService(
@@ -24,7 +24,7 @@ class BillOccurrencesService(
     private val paymentsService: PaymentsService,
     private val sharedUsersService: OccurrenceSharedUsersService,
     private val historyService: HistoryService
-) : BaseService<BillOccurrencesTable, Occurrence>(
+) : BaseService<BillOccurrencesTable, BillOccurrence>(
     BillOccurrencesTable
 ) {
     override val BillOccurrencesTable.connections
@@ -34,7 +34,7 @@ class BillOccurrencesService(
             uuid
         })
 
-    override suspend fun update(item: Occurrence, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
+    override suspend fun update(item: BillOccurrence, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
         val oldItem = get {
             op()
         } ?: return null
@@ -85,7 +85,7 @@ class BillOccurrencesService(
         Payment(owner = user, amount = payment.toString())
     )
 
-    override suspend fun toItem(row: ResultRow) = Occurrence(
+    override suspend fun toItem(row: ResultRow) = BillOccurrence(
         id = row[table.id],
         owner = usersService.toItemRedacted(row),
         amount = row[table.amount],
@@ -98,7 +98,7 @@ class BillOccurrencesService(
         dateCreated = row[table.dateCreated],
         dateUpdated = row[table.dateUpdated]
     ).let {
-        val history = historyService.getFor<Occurrence>(it.id, it.owner)
+        val history = historyService.getFor<BillOccurrence>(it.id, it.owner)
 
         return@let if (history == null)
             it
@@ -106,7 +106,7 @@ class BillOccurrencesService(
             it.copy(history = history)
     }
 
-    override fun UpdateBuilder<Int>.toRow(item: Occurrence) {
+    override fun UpdateBuilder<Int>.toRow(item: BillOccurrence) {
         this[table.ownerId] = item.owner.uuid ?: throw InvalidAttributeException("Uuid")
         this[table.amount] = item.amount
         this[table.itemId] = item.itemId.toInt()

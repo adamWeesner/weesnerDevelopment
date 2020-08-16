@@ -29,7 +29,7 @@ open class BaseTest(block: AbstractStringSpec.(token: String) -> Unit = {}, uses
         if (db.isDirectory) {
             val children = db.list()
             children?.indices?.forEach { i ->
-                println("Removing old server files...")
+                println("Removing old server files... ${children[i]}")
                 File(db, children[i]).delete()
             }
         }

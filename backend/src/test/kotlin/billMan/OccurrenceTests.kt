@@ -3,6 +3,7 @@ package billMan
 import BaseTest
 import BuiltRequest
 import com.weesnerdevelopment.utils.Path
+import com.weesnerdevelopment.utils.Path.BillMan
 import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
@@ -17,20 +18,26 @@ import parseResponse
 import shared.auth.User
 import shared.base.History
 import shared.billMan.*
+import shared.billMan.responses.BillOccurrencesResponse
 import shared.billMan.responses.BillsResponse
 import shared.billMan.responses.CategoriesResponse
-import shared.billMan.responses.OccurrencesResponse
 import shared.taxFetcher.PayPeriod
 import java.util.*
 
 class OccurrenceTests : BaseTest({ token ->
     val signedInUser = BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
 
-    BuiltRequest(engine, Post, Path.BillMan.categories, token).send(Category(name = "occurenceCategory"))
-    val startCategory =
-        BuiltRequest(engine, Get, Path.BillMan.categories, token).asObject<CategoriesResponse>().items?.first()!!
+    BuiltRequest(engine, Get, BillMan.categories, token).asObject<CategoriesResponse>().items?.forEach {
+        BuiltRequest(engine, Delete, "${BillMan.categories}?id=${it.id}", token).sendStatus<Unit>() shouldBe OK
+    }
 
-    BuiltRequest(engine, Post, Path.BillMan.bills, token).send(
+    BuiltRequest(engine, Post, BillMan.categories, token).send(Category(name = "occurenceCategory"))
+
+    val startCategory = BuiltRequest(engine, Get, "${BillMan.categories}?id=1", token)
+        .asObject<CategoriesResponse>().items?.first() ?: throw IllegalArgumentException("Somehow category was null")
+
+
+    BuiltRequest(engine, Post, BillMan.bills, token).send(
         Bill(
             owner = signedInUser,
             name = "billStart",
@@ -39,7 +46,7 @@ class OccurrenceTests : BaseTest({ token ->
             color = Color(red = 255, green = 255, blue = 255, alpha = 255)
         )
     )
-    val startBill = BuiltRequest(engine, Get, Path.BillMan.bills, token).asObject<BillsResponse>().items?.first()!!
+    val startBill = BuiltRequest(engine, Get, BillMan.bills, token).asObject<BillsResponse>().items?.first()!!
 
     fun newItem(
         amount: Number,
@@ -52,7 +59,7 @@ class OccurrenceTests : BaseTest({ token ->
         payments: List<Payment>? = null,
         history: List<History>? = null,
         owner: User = signedInUser
-    ) = Occurrence(
+    ) = BillOccurrence(
         id = id,
         owner = owner,
         sharedUsers = sharedUsers,
@@ -65,7 +72,7 @@ class OccurrenceTests : BaseTest({ token ->
         history = history
     )
 
-    val path = Path.BillMan.occurrences
+    val path = BillMan.occurrences
 
     "verify getting base url returns null without bill id" {
         BuiltRequest(engine, Get, path, token).sendStatus<Unit>() shouldBe NoContent
@@ -80,7 +87,7 @@ class OccurrenceTests : BaseTest({ token ->
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(23.45)) shouldBe Created
 
         with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content.parseResponse<OccurrencesResponse>()?.items!!
+            val responseItems = response.content.parseResponse<BillOccurrencesResponse>()?.items!!
             val item1 = responseItems[responseItems.lastIndex - 1]
             val item2 = responseItems[responseItems.lastIndex]
             response.status() shouldBe OK
@@ -92,11 +99,11 @@ class OccurrenceTests : BaseTest({ token ->
     "verify getting an added item" {
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(34.56)) shouldBe Created
 
-        with(BuiltRequest(engine, Get, "$path?id=3", token).send<Occurrence>()) {
-            val addedItems = response.content.parseResponse<OccurrencesResponse>()?.items!!
+        with(BuiltRequest(engine, Get, "$path?id=3", token).send<BillOccurrence>()) {
+            val addedItems = response.content.parseResponse<BillOccurrencesResponse>()?.items!!
             response.status() shouldBe OK
             addedItems.size shouldBe 1
-            addedItems.first()::class.java shouldBe Occurrence::class.java
+            addedItems.first()::class.java shouldBe BillOccurrence::class.java
             addedItems.first().amount shouldBe "34.56"
         }
     }
@@ -108,8 +115,8 @@ class OccurrenceTests : BaseTest({ token ->
     "verify adding a new item" {
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(45.67)) shouldBe Created
 
-        with(BuiltRequest(engine, Get, "$path?id=4", token).send<Occurrence>()) {
-            val addedItem = response.content.parseResponse<OccurrencesResponse>()?.items?.first()!!
+        with(BuiltRequest(engine, Get, "$path?id=4", token).send<BillOccurrence>()) {
+            val addedItem = response.content.parseResponse<BillOccurrencesResponse>()?.items?.first()!!
             response.status() shouldBe OK
             addedItem.amount shouldBe "45.67"
         }
@@ -118,7 +125,7 @@ class OccurrenceTests : BaseTest({ token ->
     "verify updating an added item" {
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(34.56)) shouldBe Created
 
-        val item = BuiltRequest(engine, Get, "$path?id=5", token).asObject<OccurrencesResponse>().items?.first()!!
+        val item = BuiltRequest(engine, Get, "$path?id=5", token).asObject<BillOccurrencesResponse>().items?.first()!!
         val updatedItem = item.copy(
             amount = "77.77",
             amountLeft = "77.77",
@@ -127,10 +134,10 @@ class OccurrenceTests : BaseTest({ token ->
         BuiltRequest(engine, Put, path, token).sendStatus(updatedItem) shouldBe OK
 
         with(BuiltRequest(engine, Get, "$path?id=5", token).send<Unit>()) {
-            val addedItem = response.content.parseResponse<OccurrencesResponse>()?.items?.first()!!
-            val id = addedItem?.id
+            val addedItem = response.content.parseResponse<BillOccurrencesResponse>()?.items?.first()!!
+            val id = addedItem.id
             val className = addedItem::class.java.simpleName
-            val fields = addedItem.history!!.map { it.field }
+            val fields = addedItem.history!!.map { it.field }.also { println("fields $it") }
 
             response.status() shouldBe OK
             addedItem.amount shouldBe "77.77"
@@ -161,7 +168,7 @@ class OccurrenceTests : BaseTest({ token ->
     "verify cannot add payment more than amount left" {
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(45.67)) shouldBe Created
 
-        val item = BuiltRequest(engine, Get, "$path?id=7", token).asObject<OccurrencesResponse>().items?.first()!!
+        val item = BuiltRequest(engine, Get, "$path?id=7", token).asObject<BillOccurrencesResponse>().items?.first()!!
         val updatedItem = item.copy(
             payments = listOf(
                 Payment(
@@ -176,7 +183,7 @@ class OccurrenceTests : BaseTest({ token ->
     "verify can pay for occurrence" {
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(45.67)) shouldBe Created
         BuiltRequest(engine, Put, "$path?id=8&pay=1.0", token).sendStatus<Unit>() shouldBe OK
-        BuiltRequest(engine, Get, "$path?id=8", token).asObject<OccurrencesResponse>().items?.first()?.apply {
+        BuiltRequest(engine, Get, "$path?id=8", token).asObject<BillOccurrencesResponse>().items?.first()?.apply {
             amountLeft.toDouble() shouldBe 44.67
             payments?.size shouldBe 1
         }

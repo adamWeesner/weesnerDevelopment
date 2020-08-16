@@ -133,8 +133,8 @@ class TaxWithholdingTests : BaseTest({ token ->
                     History(
                         addedItem?.history!![0].id,
                         "${addedItem::class.java.simpleName} ${addedItem.id} amount",
-                        "1.23",
-                        "1.4",
+                        1.23,
+                        1.4,
                         userAccount,
                         addedItem.history!![0].dateCreated,
                         addedItem.history!![0].dateUpdated

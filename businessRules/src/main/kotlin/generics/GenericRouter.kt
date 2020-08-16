@@ -13,10 +13,12 @@ import io.ktor.routing.*
 import io.ktor.util.pipeline.PipelineContext
 import loggedUserData
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import parse
 import respond
 import respondErrorAuthorizing
 import shared.auth.HashedUser
 import shared.auth.InvalidUserReason
+import shared.auth.User
 import shared.base.*
 import shared.base.Response.Companion.BadRequest
 import shared.base.Response.Companion.Conflict
@@ -161,7 +163,7 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
                 call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
                 return null
             } else {
-                usersService.getUserFromHash(HashedUser(it.username, it.password))
+                usersService.getUserFromHash(HashedUser(it.username, it.password))?.redacted()?.parse<User>()
             }
         }
 

@@ -101,8 +101,8 @@ class SocialSecurityTests : BaseTest({ token ->
                     History(
                         addedItem?.history!![0].id,
                         "${addedItem::class.java.simpleName} ${addedItem.id} limit",
-                        "127200",
-                        "128000",
+                        127200.0,
+                        128000.0,
                         userAccount,
                         addedItem.history!![0].dateCreated,
                         addedItem.history!![0].dateUpdated
@@ -110,8 +110,8 @@ class SocialSecurityTests : BaseTest({ token ->
                     History(
                         addedItem.history!![1].id,
                         "${addedItem::class.java.simpleName} ${addedItem.id} percent",
-                        "1.45",
-                        "1.4",
+                        1.45,
+                        1.4,
                         userAccount,
                         addedItem.history!![1].dateCreated,
                         addedItem.history!![1].dateUpdated

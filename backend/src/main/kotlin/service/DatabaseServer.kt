@@ -42,7 +42,8 @@ class DatabaseServer {
         DatabaseFactory.init()
 
         install(DefaultHeaders)
-        install(CallLogging)
+        if (appConfig.isDevelopment)
+            install(CallLogging)
         install(WebSockets)
         install(CORS) {
             method(HttpMethod.Options)

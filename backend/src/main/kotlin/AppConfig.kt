@@ -1,6 +1,7 @@
 package com.weesnerdevelopment
 
 import io.ktor.config.ApplicationConfig
+import kimchi.Kimchi
 import java.net.InetAddress
 
 class AppConfig(
@@ -25,8 +26,8 @@ class AppConfig(
     private fun getJwt(item: String) = config.property("$jwt.$item").getString()
 
     private fun getLocalIp(): String = InetAddress.getLocalHost().run {
-        println("Host Address - $hostAddress")
-        println("Host Name - $hostName")
+        Kimchi.debug("Host Address - $hostAddress")
+        Kimchi.debug("Host Name - $hostName")
         hostAddress
     }
 }

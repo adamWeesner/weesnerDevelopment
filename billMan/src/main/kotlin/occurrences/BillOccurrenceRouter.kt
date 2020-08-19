@@ -45,21 +45,21 @@ class BillOccurrenceRouter(
                     }
                 }
 
-                return@put call.respond(response)
+                return@put respond(response)
             }
 
             val user = tokenAsUser(service.usersService)?.redacted()?.parse<User>()
-                ?: return@put call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+                ?: return@put respondErrorAuthorizing(InvalidUserReason.NoUserFound)
 
             val occurrenceId = call.request.queryParameters["id"]
-                ?: return@put call.respondError(BadRequest("Invalid occurrence id."))
+                ?: return@put respondError(BadRequest("Invalid occurrence id."))
 
             val payment = call.request.queryParameters["pay"]?.toDoubleOrNull()
-                ?: return@put call.respondError(BadRequest("Invalid amount."))
+                ?: return@put respondError(BadRequest("Invalid amount."))
 
             val occurrence = service.get {
                 service.table.id eq occurrenceId.toInt()
-            } ?: return@put call.respondError(NotFound("No occurrence found for id $occurrenceId."))
+            } ?: return@put respondError(NotFound("No occurrence found for id $occurrenceId."))
 
             val newPayments = service.run {
                 occurrenceId.toInt().payFor(payment, user)
@@ -78,7 +78,7 @@ class BillOccurrenceRouter(
                     else -> Ok("Updated item to database with id $updated")
                 }
 
-            call.respond(response)
+            respond(response)
         }
     }
 }

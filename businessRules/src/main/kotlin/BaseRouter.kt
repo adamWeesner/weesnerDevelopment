@@ -32,6 +32,7 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
     override fun Route.addRequest() {
         post {
             val body = call.receive<I>(kType)
+            logRequest(body)
 
             val response =
                 when (val addedItem = service.add(body)) {
@@ -40,12 +41,14 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
                     else -> Response.Created("Added item to database with id $addedItem.")
                 }
 
-            call.respond(response)
+            respond(response)
         }
     }
 
     override fun Route.getRequest() {
         get {
+            logRequest<I>()
+
             val itemId = call.request.queryParameters["id"]
 
             val items =
@@ -61,13 +64,14 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
                     it
                 })
 
-            call.respond(response)
+            respond(response)
         }
     }
 
     override fun Route.updateRequest() {
         put {
             val body = call.receive<I>(kType)
+            logRequest(body)
 
             val response =
                 if (body.id == null) {
@@ -81,17 +85,19 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
                     }
                 }
 
-            call.respond(response)
+            respond(response)
         }
     }
 
     override fun Route.deleteRequest() {
         delete {
+            logRequest<I>()
+
             val itemId = call.request.queryParameters["id"]
-                ?: return@delete call.respond(BadRequest("?id=(itemId) is needed."))
+                ?: return@delete respond(BadRequest("?id=(itemId) is needed."))
 
             val item = service.get { service.table.id eq itemId.toInt() }
-                ?: return@delete call.respond(NotFound("Could not delete item with id $itemId"))
+                ?: return@delete respond(NotFound("Could not delete item with id $itemId"))
 
             val delete = service.delete(item) {
                 service.table.id eq itemId.toInt()
@@ -101,7 +107,7 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
                 if (delete) Ok("Successfully removed item with id $itemId.")
                 else NotFound("Could not delete item with id $itemId")
 
-            call.respond(response)
+            respond(response)
         }
     }
 }
@@ -109,7 +115,7 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
 suspend fun PipelineContext<Unit, ApplicationCall>.tokenAsUser(usersService: UsersService) =
     call.loggedUserData()?.getData()?.let {
         if (it.username == null || it.password == null) {
-            call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+            respondErrorAuthorizing(InvalidUserReason.NoUserFound)
             return null
         } else {
             usersService.getUserFromHash(HashedUser(it.username, it.password))

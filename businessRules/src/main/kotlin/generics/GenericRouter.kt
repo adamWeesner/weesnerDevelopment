@@ -80,8 +80,8 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
         get("/") {
             response?.let {
                 it.items = service.getAll()
-                call.respond(Ok(response))
-            } ?: call.respond(NotFound("Could not get items."))
+                respond(Ok(response))
+            } ?: respond(NotFound("Could not get items."))
         }
     }
 
@@ -92,10 +92,10 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
      */
     open fun Route.getSingle() {
         get("/{item}") {
-            val param = call.parameters["item"] ?: return@get call.respond(BadRequest("Invalid param."))
+            val param = call.parameters["item"] ?: return@get respond(BadRequest("Invalid param."))
             when (val retrieved = service.getSingle { singleEq(param) }) {
-                null -> call.respond(NotFound("Could not get item for param $param."))
-                else -> call.respond(Ok(retrieved))
+                null -> respond(NotFound("Could not get item for param $param."))
+                else -> respond(Ok(retrieved))
             }
         }
     }
@@ -121,11 +121,11 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
         post("/") {
             val item = call.receive<O>(itemType)
 
-            if (postQualifier(item) != null) return@post call.respond(Conflict("Item matching $item already in db."))
+            if (postQualifier(item) != null) return@post respond(Conflict("Item matching $item already in db."))
 
             when (val added = service.add(item)) {
-                null -> call.respond(Conflict("An error occurred add item $item."))
-                else -> call.respond(Created(added))
+                null -> respond(Conflict("An error occurred add item $item."))
+                else -> respond(Created(added))
             }
         }
     }
@@ -145,7 +145,7 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
         val user = tokenAsUser(usersService)
 
         if (user == null) {
-            call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+            respondErrorAuthorizing(InvalidUserReason.NoUserFound)
             return null
         }
 
@@ -160,7 +160,7 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
     suspend fun PipelineContext<Unit, ApplicationCall>.tokenAsUser(usersService: UsersService) =
         call.loggedUserData()?.getData()?.let {
             if (it.username == null || it.password == null) {
-                call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+                respondErrorAuthorizing(InvalidUserReason.NoUserFound)
                 return null
             } else {
                 usersService.getUserFromHash(HashedUser(it.username, it.password))?.redacted()?.parse<User>()
@@ -186,15 +186,15 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
                 try {
                     updated = putAdditional(oldItem, item)
                 } catch (e: EarlyResponseException) {
-                    return@put call.respond(e.response)
+                    return@put respond(e.response)
                 }
             }
 
 
             when {
-                updated == null -> call.respond(BadRequest("An error occurred updating $item."))
-                updated.id != item.id -> call.respond(Created(updated))
-                else -> call.respond(Ok(updated))
+                updated == null -> respond(BadRequest("An error occurred updating $item."))
+                updated.id != item.id -> respond(Created(updated))
+                else -> respond(Ok(updated))
             }
         }
     }
@@ -208,14 +208,14 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
      */
     open fun Route.deleteDefault() {
         delete("/{item}") {
-            val param = call.parameters["item"] ?: return@delete call.respond(BadRequest("Invalid param."))
+            val param = call.parameters["item"] ?: return@delete respond(BadRequest("Invalid param."))
 
             val id = deleteQualifier(param)?.id
-                ?: return@delete call.respond(NotFound("Item matching $param was not found."))
+                ?: return@delete respond(NotFound("Item matching $param was not found."))
 
             val removed = service.delete(id) { singleEq(param) }
 
-            call.respond(if (removed) Ok("Successfully removed item.") else NotFound("Item matching $param was not found."))
+            respond(if (removed) Ok("Successfully removed item.") else NotFound("Item matching $param was not found."))
         }
     }
 

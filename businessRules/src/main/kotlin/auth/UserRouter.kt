@@ -8,6 +8,7 @@ import io.ktor.request.receive
 import io.ktor.response.header
 import io.ktor.routing.*
 import io.ktor.util.pipeline.PipelineContext
+import logRequest
 import loggedUserData
 import respond
 import respondErrorAuthorizing
@@ -46,8 +47,10 @@ class UserRouter(
     override fun Route.getRequest() {
         authenticate {
             get("/$accountUrl") {
+                logRequest<User>()
+
                 val auth = call.loggedUserData()?.getData()
-                    ?: return@get call.respondErrorAuthorizing(InvalidUserReason.General)
+                    ?: return@get respondErrorAuthorizing(InvalidUserReason.General)
 
                 val user = when {
                     auth.username != null && auth.password != null ->
@@ -58,9 +61,8 @@ class UserRouter(
                 }
 
                 user?.redacted()?.let {
-                    call.respond(Ok(it))
-                }
-                    ?: return@get call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+                    respond(Ok(it))
+                } ?: return@get respondErrorAuthorizing(InvalidUserReason.NoUserFound)
             }
         }
     }
@@ -71,21 +73,22 @@ class UserRouter(
                 val authToken = call.loggedUserData()?.getData()
 
                 val item = call.receive<User>()
+                logRequest(item)
 
                 val tokenToHash = authToken?.let {
                     if (it.username == null)
-                        return@put call.respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
+                        return@put respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
 
                     if (it.password == null)
-                        return@put call.respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
+                        return@put respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
 
                     HashedUser(it.username, it.password)
-                } ?: return@put call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+                } ?: return@put respondErrorAuthorizing(InvalidUserReason.NoUserFound)
 
                 val hashedUser = service.getUserFromHash(tokenToHash)
 
                 if (hashedUser?.uuid != item.uuid)
-                    return@put call.respondErrorAuthorizing(InvalidUserReason.WrongUser)
+                    return@put respondErrorAuthorizing(InvalidUserReason.WrongUser)
 
                 val updated = service.update(item.copy(id = hashedUser?.id)) {
                     service.table.id eq hashedUser?.id!!
@@ -97,7 +100,7 @@ class UserRouter(
                     else -> Ok(it)
                 }
 
-                call.respond(response)
+                respond(response)
             }
         }
     }
@@ -105,14 +108,15 @@ class UserRouter(
     private fun Route.login(pathParam: String) {
         post(pathParam) {
             val credentials = call.receive<HashedUser>()
+            logRequest<User>()
 
             hashedUser(credentials.username, credentials.password) {
                 it?.run {
                     val generatedToken = asHashed()?.asToken(jwtProvider) ?: throw Exception("Generate token was null")
 
                     call.response.header("x-auth-token", generatedToken)
-                    call.respond(Ok(TokenResponse(generatedToken)))
-                } ?: call.respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+                    respond(Ok(TokenResponse(generatedToken)))
+                } ?: respondErrorAuthorizing(InvalidUserReason.NoUserFound)
             }
         }
     }
@@ -120,9 +124,10 @@ class UserRouter(
     private fun Route.signUp(pathParam: String) {
         post(pathParam) {
             val credentials = call.receive<User>()
+            logRequest(credentials)
 
             hashedUser(credentials.username, credentials.password) {
-                if (it != null) return@hashedUser call.respond(Conflict("Invalid user credentials."))
+                if (it != null) return@hashedUser respond(Conflict("Invalid user credentials."))
 
                 val newUser = User(
                     uuid = UUID.nameUUIDFromBytes("${credentials.username}${credentials.password}".toByteArray())
@@ -139,7 +144,7 @@ class UserRouter(
                     else -> Created(TokenResponse(added.asHashed()?.asToken(jwtProvider)))
                 }
 
-                call.respond(response)
+                respond(response)
             }
         }
     }
@@ -153,14 +158,14 @@ class UserRouter(
         tryBlock: suspend (hashedUser: User?) -> Unit
     ) {
         if (username == null || password == null) {
-            call.respond(BadRequest("Username and password must be provided."))
+            respond(BadRequest("Username and password must be provided."))
             return
         }
 
         val hashedUser = HashedUser(username, password)
 
         if (hashedUser.checkValidity() != null) {
-            call.respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
+            respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
             return
         }
 
@@ -169,7 +174,7 @@ class UserRouter(
 
             tryBlock(response)
         } catch (e: Exception) {
-            call.respond(BadRequest(e.message ?: "Unknown reason for request failure."))
+            respond(BadRequest(e.message ?: "Unknown reason for request failure."))
         }
     }
 }

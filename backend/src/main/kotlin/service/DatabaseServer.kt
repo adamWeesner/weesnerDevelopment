@@ -40,9 +40,12 @@ object DatabaseServer {
     fun Application.main() {
         kodeinSetup()
 
+        val loggingService by kodein().instance<LoggingService>()
+        Kimchi.addLog(DbLogger.apply { service = loggingService })
+        Kimchi.addLog(StdOutLogger)
+
         val appConfig by kodein().instance<AppConfig>()
         val jwtProvider by kodein().instance<JwtProvider>()
-        Kimchi.addLog(StdOutLogger)
 
         DatabaseFactory.init()
 

@@ -14,14 +14,13 @@ import federalIncomeTax.FederalIncomeTaxesTable
 import history.HistoryTable
 import income.IncomeTable
 import incomeOccurrences.IncomeOccurrencesTable
+import logging.LoggingTable
 import medicare.MedicareLimitsTable
 import medicare.MedicareTable
 import occurrences.BillOccurrencesTable
 import occurrencesSharedUsers.OccurrenceSharedUsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import payments.PaymentsTable
 import socialSecurity.SocialSecurityTable
@@ -37,10 +36,10 @@ object DatabaseFactory {
     fun init() {
         Database.connect(hikari())
         transaction {
-            addLogger(StdOutSqlLogger)
-
             // validator tables
             create(ValidatorTable, ComplexValidatorTable)
+            // logging
+            create(LoggingTable)
             // base tables
             create(UsersTable)
             create(HistoryTable)

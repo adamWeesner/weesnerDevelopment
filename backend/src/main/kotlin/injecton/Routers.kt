@@ -9,6 +9,7 @@ import com.weesnerdevelopment.validator.complex.ComplexValidatorRouter
 import federalIncomeTax.FederalIncomeTaxRouter
 import income.IncomeRouter
 import incomeOccurrences.IncomeOccurrenceRouter
+import logging.LoggingRouter
 import medicare.MedicareRouter
 import occurrences.BillOccurrenceRouter
 import org.kodein.di.Kodein
@@ -46,4 +47,5 @@ val routers = Kodein.Module("routers") {
     bind<IncomeRouter>() with singleton { IncomeRouter(BillMan.income, instance()) }
     bind<BillOccurrenceRouter>() with singleton { BillOccurrenceRouter(BillMan.occurrences, instance()) }
     bind<IncomeOccurrenceRouter>() with singleton { IncomeOccurrenceRouter(BillMan.incomeOccurrences, instance()) }
+    bind<LoggingRouter>() with singleton { LoggingRouter(BillMan.logging, instance()) }
 }

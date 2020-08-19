@@ -12,6 +12,7 @@ import federalIncomeTax.FederalIncomeTaxService
 import history.HistoryService
 import income.IncomeService
 import incomeOccurrences.IncomeOccurrencesService
+import logging.LoggingService
 import medicare.MedicareLimitsService
 import medicare.MedicareService
 import occurrences.BillOccurrencesService
@@ -50,4 +51,5 @@ val services = Kodein.Module("services") {
         BillOccurrencesService(instance(), instance(), instance(), instance())
     }
     bind<IncomeOccurrencesService>() with singleton { IncomeOccurrencesService(instance(), instance()) }
+    bind<LoggingService>() with singleton { LoggingService() }
 }

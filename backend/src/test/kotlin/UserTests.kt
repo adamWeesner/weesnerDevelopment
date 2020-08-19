@@ -1,60 +1,77 @@
 import com.weesnerdevelopment.utils.Path
-import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpStatusCode
+import org.junit.jupiter.api.Order
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import shared.auth.*
 import java.util.*
 import kotlin.random.Random
 
-val newUser
-    get() = User(
-        name = "Adam",
-        email = "randomemail${Random.nextInt(999)}@email.com",
-        username = "adam.weesner.${Random.nextInt(999)}",
-        password = "password"
-    )
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class UserTests : BaseTest() {
+    val newUser
+        get() = User(
+            name = "Adam",
+            email = "randomemail${Random.nextInt(999)}@email.com",
+            username = "adam.weesner.${Random.nextInt(999)}",
+            password = "password"
+        )
 
-class UserTests : BaseTest({
-    fun newUserHashed(name: String) = newUser.copy(
+    private fun newUserHashed(name: String) = newUser.copy(
         username = Base64.getEncoder().encodeToString(name.toByteArray()),
         password = Base64.getEncoder().encodeToString(newUser.password?.toByteArray())
     )
 
     val path = Path.User.base
 
-    "access account without login gives InvalidJwt" {
+    @Test
+    @Order(1)
+    fun `access account without login gives InvalidJwt`() {
         BuiltRequest(engine, Get, path + Path.User.account)
             .asServerError<Unit, InvalidUserException>().reasonCode shouldBe InvalidUserReason.InvalidJwt.code
     }
 
-    "login with non-encrypted data gives InvalidUserInfo" {
+    @Test
+    @Order(2)
+    fun `login with non-encrypted data gives InvalidUserInfo`() {
         BuiltRequest(engine, Post, path + Path.User.login)
             .asServerError<HashedUser, InvalidUserException>(newUser.asHashed()).reasonCode shouldBe InvalidUserReason.InvalidUserInfo.code
     }
 
-    "sign up with non-encrypted data gives InvalidUserInfo" {
+    @Test
+    @Order(3)
+    fun `sign up with non-encrypted data gives InvalidUserInfo`() {
         BuiltRequest(engine, Post, path + Path.User.signUp)
             .asServerError<User, InvalidUserException>(newUser).reasonCode shouldBe InvalidUserReason.InvalidUserInfo.code
     }
 
-    "login with user data that does not exist gives NoUserFound" {
+    @Test
+    @Order(4)
+    fun `login with user data that does not exist gives NoUserFound`() {
         BuiltRequest(engine, Post, path + Path.User.login)
             .asServerError<HashedUser, InvalidUserException>(newUserHashed("doggo").asHashed()).reasonCode shouldBe InvalidUserReason.NoUserFound.code
     }
 
-    "sign up gives Created" {
+    @Test
+    @Order(5)
+    fun `sign up gives Created`() {
         BuiltRequest(engine, Post, path + Path.User.signUp)
             .sendStatus(newUserHashed("bob")) shouldBe HttpStatusCode.Created
     }
 
-    "login with created user gives OK" {
+    @Test
+    @Order(6)
+    fun `login with created user gives OK`() {
         val signedUp = newUserHashed("catto")
         BuiltRequest(engine, Post, path + Path.User.signUp).send(signedUp)
         BuiltRequest(engine, Post, path + Path.User.login).sendStatus(signedUp.asHashed()) shouldBe HttpStatusCode.OK
     }
 
-    "get account info with created user gives user data" {
+    @Test
+    @Order(7)
+    fun `get account info with created user gives user data`() {
         val signedUp = newUserHashed("adam")
         BuiltRequest(engine, Post, path + Path.User.signUp).send(signedUp)
         val authToken = BuiltRequest(engine, Post, path + Path.User.login)
@@ -67,4 +84,4 @@ class UserTests : BaseTest({
             dateUpdated = -1
         )
     }
-}, false)
+}

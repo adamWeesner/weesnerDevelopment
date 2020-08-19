@@ -3,7 +3,6 @@ package billMan
 import BaseTest
 import BuiltRequest
 import com.weesnerdevelopment.utils.Path
-import io.kotlintest.shouldBe
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
@@ -13,6 +12,9 @@ import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.NoContent
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.OK
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Order
+import org.junit.jupiter.api.Test
 import parseResponse
 import shared.auth.User
 import shared.base.History
@@ -22,22 +24,24 @@ import shared.billMan.IncomeOccurrence
 import shared.billMan.responses.IncomeOccurrencesResponse
 import shared.billMan.responses.IncomeResponse
 import shared.taxFetcher.PayPeriod
+import shouldBe
 import java.util.*
 
-class IncomeOccurrenceTests : BaseTest({ token ->
-    val signedInUser =
-        BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
+class IncomeOccurrenceTests : BaseTest() {
+    lateinit var startIncome: Income
 
-    BuiltRequest(engine, Post, Path.BillMan.income, token).send(
-        Income(
-            owner = signedInUser,
-            name = "billStart",
-            amount = "1.23",
-            color = Color(red = 255, green = 255, blue = 255, alpha = 255)
+    @BeforeAll
+    fun start() {
+        BuiltRequest(engine, Post, Path.BillMan.income, token).send(
+            Income(
+                owner = signedInUser,
+                name = "billStart",
+                amount = "1.23",
+                color = Color(red = 255, green = 255, blue = 255, alpha = 255)
+            )
         )
-    )
-    val startIncome =
-        BuiltRequest(engine, Get, Path.BillMan.income, token).asObject<IncomeResponse>().items?.first()!!
+        startIncome = BuiltRequest(engine, Get, Path.BillMan.income, token).asObject<IncomeResponse>().items?.first()!!
+    }
 
     fun newItem(
         amount: Number,
@@ -62,11 +66,15 @@ class IncomeOccurrenceTests : BaseTest({ token ->
 
     val path = Path.BillMan.incomeOccurrences
 
-    "verify getting base url" {
+    @Test
+    @Order(1)
+    fun `verify getting base url`() {
         BuiltRequest(engine, Get, path, token).sendStatus<Unit>() shouldBe NoContent
     }
 
-    "verify getting base url returns all items in table" {
+    @Test
+    @Order(2)
+    fun `verify getting base url returns all items in table`() {
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(12.34)) shouldBe Created
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(23.45)) shouldBe Created
 
@@ -80,7 +88,9 @@ class IncomeOccurrenceTests : BaseTest({ token ->
         }
     }
 
-    "verify getting an added item" {
+    @Test
+    @Order(3)
+    fun `verify getting an added item`() {
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(34.56)) shouldBe Created
 
         with(BuiltRequest(engine, Get, "$path?id=3", token).send<Unit>()) {
@@ -92,11 +102,15 @@ class IncomeOccurrenceTests : BaseTest({ token ->
         }
     }
 
-    "verify getting an item that does not exist" {
+    @Test
+    @Order(4)
+    fun `verify getting an item that does not exist`() {
         BuiltRequest(engine, Get, "$path?id=99", token).sendStatus<Unit>() shouldBe NoContent
     }
 
-    "verify adding a new item" {
+    @Test
+    @Order(5)
+    fun `verify adding a new item`() {
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(45.67)) shouldBe Created
 
         with(BuiltRequest(engine, Get, "$path?id=4", token).send<Unit>()) {
@@ -106,7 +120,9 @@ class IncomeOccurrenceTests : BaseTest({ token ->
         }
     }
 
-    "verify updating an added item" {
+    @Test
+    @Order(6)
+    fun `verify updating an added item`() {
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(34.56)) shouldBe Created
 
         val item =
@@ -127,16 +143,22 @@ class IncomeOccurrenceTests : BaseTest({ token ->
         }
     }
 
-    "verify updating a non existent item" {
+    @Test
+    @Order(7)
+    fun `verify updating a non existent item`() {
         BuiltRequest(engine, Put, path, token).sendStatus(newItem(5, 99)) shouldBe BadRequest
     }
 
-    "verify deleting and item that has been added" {
+    @Test
+    @Order(8)
+    fun `verify deleting and item that has been added`() {
         BuiltRequest(engine, Post, path, token).sendStatus(newItem(7)) shouldBe Created
         BuiltRequest(engine, Delete, "$path?id=6", token).sendStatus<Unit>() shouldBe OK
     }
 
-    "verify deleting item that doesn't exist" {
+    @Test
+    @Order(9)
+    fun `verify deleting item that doesn't exist`() {
         BuiltRequest(engine, Delete, "$path?id=99", token).sendStatus<Unit>() shouldBe NotFound
     }
-})
+}

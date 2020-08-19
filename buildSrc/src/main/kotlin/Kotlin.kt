@@ -10,8 +10,7 @@ object Kotlin {
     const val reflect = "$base:kotlin-reflect:$version"
 
     object Test {
-        private const val testVersion = "3.4.2"
-
-        const val runner = "io.kotlintest:kotlintest-runner-junit5:$testVersion"
+        const val core = "$base:kotlin-test:$version"
+        const val junit5 = "$base:kotlin-test-junit5:$version"
     }
 }

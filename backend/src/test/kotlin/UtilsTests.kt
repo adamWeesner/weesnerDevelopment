@@ -1,5 +1,4 @@
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import org.junit.jupiter.api.Test
 import shared.auth.User
 import shared.base.GenericItem
 import shared.base.History
@@ -11,7 +10,7 @@ import shared.taxFetcher.Medicare
 import shared.taxFetcher.MedicareLimit
 import shared.taxFetcher.SocialSecurity
 
-open class UtilsTests : StringSpec({
+open class UtilsTests {
     val fakeUser =
         User(id = 1, uuid = "randomuuid", name = "test", email = "test@email.com", dateUpdated = 1, dateCreated = 1)
 
@@ -23,7 +22,8 @@ open class UtilsTests : StringSpec({
         override val dateUpdated: Long = 1
     ) : GenericItem
 
-    "verify diffing Social Security item" {
+    @Test
+    fun `verify diffing Social Security item`() {
         val firstItem = SocialSecurity(1, 2020, 3.4, 128000, null, 1, 1)
         val secondItem = SocialSecurity(1, 2020, 3.6, 127500, null, 1, 1)
 
@@ -43,7 +43,8 @@ open class UtilsTests : StringSpec({
         }
     }
 
-    "verify diffing Social Security item with history" {
+    @Test
+    fun `verify diffing Social Security item with history`() {
         val firstItem = SocialSecurity(1, 2020, 3.4, 128000, listOf(History(1, "", "", "", fakeUser)), 1, 1)
         val secondItem = SocialSecurity(1, 2020, 3.6, 127500, null, 1, 1)
 
@@ -63,7 +64,8 @@ open class UtilsTests : StringSpec({
         }
     }
 
-    "verify diffing Medicare item" {
+    @Test
+    fun `verify diffing Medicare item`() {
         val firstItem = Medicare(
             1,
             2020,
@@ -104,7 +106,8 @@ open class UtilsTests : StringSpec({
         }
     }
 
-    "verify diffing Bill item" {
+    @Test
+    fun `verify diffing Bill item`() {
         val firstItem = Bill(
             id = 1,
             owner = fakeUser,
@@ -172,7 +175,8 @@ open class UtilsTests : StringSpec({
         }
     }
 
-    "verify diffing Bill with added and removed sharedUsers" {
+    @Test
+    fun `verify diffing Bill with added and removed sharedUsers`() {
         val firstItem = Bill(
             id = 1,
             owner = fakeUser,
@@ -246,7 +250,8 @@ open class UtilsTests : StringSpec({
         }
     }
 
-    "verify diffing Bill with added multiple sharedUsers" {
+    @Test
+    fun `verify diffing Bill with added multiple sharedUsers`() {
         val firstItem = Bill(
             id = 1,
             owner = fakeUser,
@@ -328,7 +333,8 @@ open class UtilsTests : StringSpec({
         }
     }
 
-    "verify diffing Bill with removing multiple sharedUsers" {
+    @Test
+    fun `verify diffing Bill with removing multiple sharedUsers`() {
         val firstItem = Bill(
             id = 1,
             owner = fakeUser,
@@ -410,7 +416,8 @@ open class UtilsTests : StringSpec({
         }
     }
 
-    "verify diffing list of Generic item" {
+    @Test
+    fun `verify diffing list of Generic item`() {
         val firstList = listOf(
             Random(1, "1"),
             Random(2, "2"),
@@ -430,7 +437,8 @@ open class UtilsTests : StringSpec({
         }
     }
 
-    "verify diffing list of Generic item with different sizes" {
+    @Test
+    fun `verify diffing list of Generic item with different sizes`() {
         val firstList = listOf(
             Random(1, "1"),
             Random(2, "2"),
@@ -456,7 +464,8 @@ open class UtilsTests : StringSpec({
         }
     }
 
-    "verify diffing list of Generic item removing all" {
+    @Test
+    fun `verify diffing list of Generic item removing all`() {
         val firstList = listOf(
             Random(1, "1"),
             Random(2, "2"),
@@ -475,4 +484,4 @@ open class UtilsTests : StringSpec({
             this.updated shouldBe emptyList()
         }
     }
-})
+}

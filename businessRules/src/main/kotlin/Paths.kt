@@ -1,8 +1,6 @@
-package com.weesnerdevelopment.utils
-
-import com.weesnerdevelopment.utils.Path.BillMan.basePath
-import com.weesnerdevelopment.utils.Path.TaxFetcher.basePath
-import com.weesnerdevelopment.utils.Path.User.base
+import Path.BillMan.basePath
+import Path.TaxFetcher.basePath
+import Path.User.base
 
 /**
  * The available paths at /[Path].

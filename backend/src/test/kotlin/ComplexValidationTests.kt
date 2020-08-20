@@ -1,7 +1,7 @@
+import Path.BillMan
+import Path.Server
 import billCategories.BillCategoriesTable
 import categories.CategoriesTable
-import com.weesnerdevelopment.utils.Path.BillMan
-import com.weesnerdevelopment.utils.Path.Server
 import com.weesnerdevelopment.validator.complex.ComplexValidatorItem
 import com.weesnerdevelopment.validator.complex.ComplexValidatorResponse
 import com.weesnerdevelopment.validator.complex.ComplexValidatorTable

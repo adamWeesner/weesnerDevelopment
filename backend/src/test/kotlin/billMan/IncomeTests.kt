@@ -2,7 +2,7 @@ package billMan
 
 import BaseTest
 import BuiltRequest
-import com.weesnerdevelopment.utils.Path.BillMan
+import Path.BillMan
 import income.IncomeTable
 import incomeOccurrences.IncomeOccurrencesTable
 import io.ktor.http.HttpMethod.Companion.Delete

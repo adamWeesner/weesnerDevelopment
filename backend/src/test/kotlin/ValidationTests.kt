@@ -1,4 +1,4 @@
-import com.weesnerdevelopment.utils.Path.Server
+import Path.Server
 import com.weesnerdevelopment.validator.ValidatorItem
 import com.weesnerdevelopment.validator.ValidatorResponse
 import io.ktor.http.HttpMethod.Companion.Delete

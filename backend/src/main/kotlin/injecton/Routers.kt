@@ -1,9 +1,9 @@
 package com.weesnerdevelopment.injecton
 
+import Path.*
 import auth.UserRouter
 import bills.BillsRouter
 import categories.CategoriesRouter
-import com.weesnerdevelopment.utils.Path.*
 import com.weesnerdevelopment.validator.ValidatorRouter
 import com.weesnerdevelopment.validator.complex.ComplexValidatorRouter
 import federalIncomeTax.FederalIncomeTaxRouter

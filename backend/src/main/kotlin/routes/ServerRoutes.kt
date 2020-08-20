@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.routes
 
-import com.weesnerdevelopment.utils.Path.Server.health
+import Path.Server.health
 import com.weesnerdevelopment.validator.ValidatorRouter
 import com.weesnerdevelopment.validator.complex.ComplexValidatorRouter
 import io.ktor.routing.Routing

@@ -1,5 +1,4 @@
 import com.typesafe.config.ConfigFactory
-import com.weesnerdevelopment.utils.Path
 import io.ktor.config.HoconApplicationConfig
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpMethod.Companion.Post

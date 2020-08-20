@@ -3,6 +3,7 @@ import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authentication
 import io.ktor.features.origin
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.authorization
 import io.ktor.request.httpMethod
@@ -36,7 +37,9 @@ data class HttpLog(
     val method: String,
     val url: String,
     val statusCode: Int
-)
+) {
+    constructor(method: HttpMethod, url: String, statusCode: HttpStatusCode) : this(method.value, url, statusCode.value)
+}
 
 val callItems = mutableListOf<CallItem>()
 
@@ -61,7 +64,8 @@ fun <I : GenericItem> PipelineContext<*, ApplicationCall>.logRequest(body: I? = 
  * Helper function to [respond] with a [Response] and body.
  */
 suspend fun PipelineContext<*, ApplicationCall>.respond(response: Response) = response.run {
-    Kimchi.info("${HttpLog(call.request.httpMethod.value, call.request.origin.uri, status.code)}")
+    if (call.request.origin.uri != Path.BillMan.logging)
+        Kimchi.info("${HttpLog(call.request.httpMethod.value, call.request.origin.uri, status.code)}")
 
     call.respond(HttpStatusCode(status.code, status.description), this).also {
         val callItem = callItems.firstOrNull { it.instance == this@respond.toString() }
@@ -79,6 +83,9 @@ suspend fun PipelineContext<*, ApplicationCall>.respond(response: Response) = re
  * Helper function to [respond] with a [Response] and error body.
  */
 suspend fun PipelineContext<*, ApplicationCall>.respondError(error: Response) = error.run {
+    if (call.request.origin.uri != Path.BillMan.logging)
+        Kimchi.info("${HttpLog(call.request.httpMethod.value, call.request.origin.uri, status.code)}")
+
     call.respond(
         HttpStatusCode(status.code, status.description),
         ServerError(status.description, status.code, message)

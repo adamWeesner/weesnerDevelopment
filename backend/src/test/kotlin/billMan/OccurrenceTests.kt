@@ -2,7 +2,7 @@ package billMan
 
 import BaseTest
 import BuiltRequest
-import com.weesnerdevelopment.utils.Path.BillMan
+import Path.BillMan
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post

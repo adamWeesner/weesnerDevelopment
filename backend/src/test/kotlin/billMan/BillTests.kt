@@ -2,11 +2,11 @@ package billMan
 
 import BaseTest
 import BuiltRequest
+import Path
 import billCategories.BillCategoriesTable
 import billSharedUsers.BillsSharedUsersTable
 import bills.BillsTable
 import colors.ColorsTable
-import com.weesnerdevelopment.utils.Path
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post

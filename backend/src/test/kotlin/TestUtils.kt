@@ -67,3 +67,5 @@ inline fun <reified T> String?.parseResponse() = this.parse<Response>().let {
 
 infix fun <A> A.shouldBe(expected: A) = assertEquals(expected, this)
 infix fun <A> A.shouldNotBe(expected: A) = assertNotEquals(expected, this)
+infix fun Int.shouldBeAtLeast(expected: Int) = assert(this >= expected)
+infix fun Int.shouldBeAtMost(expected: Int) = assert(this <= expected)

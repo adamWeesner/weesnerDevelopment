@@ -1,4 +1,3 @@
-import com.weesnerdevelopment.utils.Path
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpStatusCode

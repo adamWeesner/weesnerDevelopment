@@ -2,7 +2,7 @@ package billMan
 
 import BaseTest
 import BuiltRequest
-import com.weesnerdevelopment.utils.Path
+import Path
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
@@ -13,6 +13,7 @@ import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.NoContent
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.OK
+import io.ktor.util.KtorExperimentalAPI
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import parseResponse
@@ -21,8 +22,9 @@ import shared.billMan.responses.CategoriesResponse
 import shouldBe
 import shouldNotBe
 
+@KtorExperimentalAPI
 class CategoryTests : BaseTest() {
-    val categoryStart = "randomCategory"
+    private val categoryStart = "randomCategory"
     fun newItem(addition: Int, id: Int? = null) = Category(id = id, name = "$categoryStart$addition")
 
     val path = Path.BillMan.categories

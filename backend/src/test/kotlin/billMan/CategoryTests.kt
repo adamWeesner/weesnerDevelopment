@@ -1,12 +1,7 @@
 package billMan
 
 import BaseTest
-import BuiltRequest
 import Path
-import io.ktor.http.HttpMethod.Companion.Delete
-import io.ktor.http.HttpMethod.Companion.Get
-import io.ktor.http.HttpMethod.Companion.Post
-import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.Created
@@ -32,107 +27,98 @@ class CategoryTests : BaseTest() {
     @Test
     @Order(1)
     fun `verify getting base url`() {
-        BuiltRequest(engine, Get, path, token).sendStatus<Unit>() shouldBe NoContent
+        get(path).sendStatus<Unit>() shouldBe NoContent
     }
 
     @Test
     @Order(2)
     fun `verify getting base url returns all items in table`() {
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem(0)) shouldBe Created
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem(1)) shouldBe Created
+        post(path).sendStatus(newItem(0)) shouldBe Created
+        post(path).sendStatus(newItem(1)) shouldBe Created
 
-        with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content.parseResponse<CategoriesResponse>()?.items
-            val item1 = responseItems!![responseItems.lastIndex - 1]
-            val item2 = responseItems[responseItems.lastIndex]
-            response.status() shouldBe OK
-            item1.name shouldBe "${categoryStart}0"
-            item2.name shouldBe "${categoryStart}1"
-        }
+        val request = get(path).send<Unit>()
+        val responseItems = request.response.content.parseResponse<CategoriesResponse>()?.items
+
+        val item1 = responseItems!![responseItems.lastIndex - 1]
+        val item2 = responseItems[responseItems.lastIndex]
+        request.response.status() shouldBe OK
+        item1.name shouldBe "${categoryStart}0"
+        item2.name shouldBe "${categoryStart}1"
     }
 
     @Test
     @Order(3)
     fun `verify getting an added item`() {
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem(2)) shouldBe Created
+        post(path).sendStatus(newItem(2)) shouldBe Created
 
-        with(BuiltRequest(engine, Get, path, token).send<Category>()) {
-            val addedItems = response.content.parseResponse<CategoriesResponse>()?.items?.last()
-            response.status() shouldBe OK
-            addedItems?.name shouldBe "${categoryStart}2"
-        }
+        val request = get(path).send<Category>()
+        val addedItems = request.response.content.parseResponse<CategoriesResponse>()?.items?.last()
+
+        request.response.status() shouldBe OK
+        addedItems?.name shouldBe "${categoryStart}2"
     }
 
     @Test
     @Order(4)
     fun `verify getting an item that does not exist`() {
-        BuiltRequest(engine, Get, "$path?id=99", token).sendStatus<Unit>() shouldBe NoContent
+        get(path, 99).sendStatus<Unit>() shouldBe NoContent
     }
 
     @Test
     @Order(5)
     fun `verify adding a new item`() {
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem(3)) shouldBe Created
+        post(path).sendStatus(newItem(3)) shouldBe Created
     }
 
     @Test
     @Order(6)
     fun `verify adding a duplicate item`() {
-        BuiltRequest(engine, Post, path, token).send(newItem(8))
-        BuiltRequest(engine, Post, path, token).sendStatus((newItem(8))) shouldBe Conflict
+        post(path).send(newItem(8))
+        post(path).sendStatus((newItem(8))) shouldBe Conflict
     }
 
     @Test
     @Order(7)
     fun `verify updating an added item`() {
         val updatedName = "cat4"
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem(4)) shouldBe Created
+        post(path).sendStatus(newItem(4)) shouldBe Created
 
-        val category = BuiltRequest(engine, Get, path, token)
-            .asObject<CategoriesResponse>().items?.last()
+        val category = get(path).asObject<CategoriesResponse>().items?.last()
 
-        BuiltRequest(engine, Put, path, token).sendStatus(
-            category?.copy(
-                name = updatedName,
-                owner = signedInUser
-            )
-        ) shouldBe OK
+        put(path).sendStatus(category?.copy(name = updatedName, owner = signedInUser)) shouldBe OK
 
-        val updatedCategory = BuiltRequest(engine, Get, "$path?id=${category?.id}", token)
-            .asObject<CategoriesResponse>().items?.first()
+        val updatedCategory = get(path, category?.id).asObject<CategoriesResponse>().items?.first()
 
-        with(updatedCategory) {
-            updatedCategory shouldNotBe null
-            this!!.name shouldBe updatedName
-            this.history?.get(0)?.field shouldBe "${this::class.java.simpleName} ${this.id} name"
-        }
+        updatedCategory shouldNotBe null
+        updatedCategory!!.name shouldBe updatedName
+        updatedCategory.history?.get(0)?.field shouldBe "${updatedCategory::class.java.simpleName} ${updatedCategory.id} name"
     }
 
     @Test
     @Order(8)
     fun `verify updating a non existent item`() {
-        BuiltRequest(engine, Put, path, token).sendStatus(newItem(5, 99)) shouldBe BadRequest
+        put(path).sendStatus(newItem(5, 99)) shouldBe BadRequest
     }
 
     @Test
     @Order(9)
     fun `verify updating without an id`() {
-        BuiltRequest(engine, Put, path, token).sendStatus(newItem(6)) shouldBe BadRequest
+        put(path).sendStatus(newItem(6)) shouldBe BadRequest
     }
 
     @Test
     @Order(10)
     fun `verify deleting and item that has been added`() {
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem(7)) shouldBe Created
+        post(path).sendStatus(newItem(7)) shouldBe Created
 
-        val addedItem = BuiltRequest(engine, Get, path, token).asObject<CategoriesResponse>().items?.last()
+        val addedItem = get(path).asObject<CategoriesResponse>().items?.last()
 
-        BuiltRequest(engine, Delete, "$path?id=${addedItem?.id}", token).sendStatus<Unit>() shouldBe OK
+        delete(path, addedItem?.id).sendStatus<Unit>() shouldBe OK
     }
 
     @Test
     @Order(11)
     fun `verify deleting item that doesn't exist`() {
-        BuiltRequest(engine, Delete, "$path?id=99", token).sendStatus<Unit>() shouldBe NotFound
+        delete(path, 99).sendStatus<Unit>() shouldBe NotFound
     }
 }

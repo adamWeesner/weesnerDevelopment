@@ -1,5 +1,3 @@
-import io.ktor.http.HttpMethod.Companion.Get
-import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpStatusCode
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
@@ -28,35 +26,35 @@ class UserTests : BaseTest() {
     @Test
     @Order(1)
     fun `access account without login gives InvalidJwt`() {
-        BuiltRequest(engine, Get, path + Path.User.account)
+        get(path + Path.User.account, usingToken = null)
             .asServerError<Unit, InvalidUserException>().reasonCode shouldBe InvalidUserReason.InvalidJwt.code
     }
 
     @Test
     @Order(2)
     fun `login with non-encrypted data gives InvalidUserInfo`() {
-        BuiltRequest(engine, Post, path + Path.User.login)
+        post(path + Path.User.login, usingToken = null)
             .asServerError<HashedUser, InvalidUserException>(newUser.asHashed()).reasonCode shouldBe InvalidUserReason.InvalidUserInfo.code
     }
 
     @Test
     @Order(3)
     fun `sign up with non-encrypted data gives InvalidUserInfo`() {
-        BuiltRequest(engine, Post, path + Path.User.signUp)
+        post(path + Path.User.signUp, usingToken = null)
             .asServerError<User, InvalidUserException>(newUser).reasonCode shouldBe InvalidUserReason.InvalidUserInfo.code
     }
 
     @Test
     @Order(4)
     fun `login with user data that does not exist gives NoUserFound`() {
-        BuiltRequest(engine, Post, path + Path.User.login)
+        post(path + Path.User.login, usingToken = null)
             .asServerError<HashedUser, InvalidUserException>(newUserHashed("doggo").asHashed()).reasonCode shouldBe InvalidUserReason.NoUserFound.code
     }
 
     @Test
     @Order(5)
     fun `sign up gives Created`() {
-        BuiltRequest(engine, Post, path + Path.User.signUp)
+        post(path + Path.User.signUp, usingToken = null)
             .sendStatus(newUserHashed("bob")) shouldBe HttpStatusCode.Created
     }
 
@@ -64,20 +62,20 @@ class UserTests : BaseTest() {
     @Order(6)
     fun `login with created user gives OK`() {
         val signedUp = newUserHashed("catto")
-        BuiltRequest(engine, Post, path + Path.User.signUp).send(signedUp)
-        BuiltRequest(engine, Post, path + Path.User.login).sendStatus(signedUp.asHashed()) shouldBe HttpStatusCode.OK
+        post(path + Path.User.signUp, usingToken = null).send(signedUp)
+        post(path + Path.User.login, usingToken = null).sendStatus(signedUp.asHashed()) shouldBe HttpStatusCode.OK
     }
 
     @Test
     @Order(7)
     fun `get account info with created user gives user data`() {
         val signedUp = newUserHashed("adam")
-        BuiltRequest(engine, Post, path + Path.User.signUp).send(signedUp)
-        val authToken = BuiltRequest(engine, Post, path + Path.User.login)
+        post(path + Path.User.signUp, usingToken = null).send(signedUp)
+        val authToken = post(path + Path.User.login, usingToken = null)
             .asClass<HashedUser, TokenResponse>(signedUp.asHashed())?.token
 
-        BuiltRequest(engine, Get, path + Path.User.account, authToken)
-            .asObject<User>().copy(uuid = null, dateCreated = -1, dateUpdated = -1) shouldBe signedUp.copy(
+        get(path + Path.User.account, usingToken = authToken).asObject<User>()
+            .copy(uuid = null, dateCreated = -1, dateUpdated = -1) shouldBe signedUp.copy(
             password = null,
             dateCreated = -1,
             dateUpdated = -1

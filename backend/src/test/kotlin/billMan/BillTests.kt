@@ -1,16 +1,11 @@
 package billMan
 
 import BaseTest
-import BuiltRequest
 import Path
 import billCategories.BillCategoriesTable
 import billSharedUsers.BillsSharedUsersTable
 import bills.BillsTable
 import colors.ColorsTable
-import io.ktor.http.HttpMethod.Companion.Delete
-import io.ktor.http.HttpMethod.Companion.Get
-import io.ktor.http.HttpMethod.Companion.Post
-import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Created
@@ -83,76 +78,78 @@ class BillTests : BaseTest() {
 
         createUser()
 
-        BuiltRequest(engine, Post, Path.BillMan.categories, token).send(Category(name = "randomCategory"))
-        startCategory =
-            BuiltRequest(engine, Get, Path.BillMan.categories, token).asObject<CategoriesResponse>().items?.last()!!
+        post(Path.BillMan.categories).send(Category(name = "randomCategory"))
+        startCategory = get(Path.BillMan.categories).asObject<CategoriesResponse>().items?.last()!!
     }
 
     @Test
     @Order(1)
     fun `verify getting base url returns ok`() {
-        BuiltRequest(engine, Get, path, token).sendStatus<Unit>() shouldBe NoContent
+        get(path).sendStatus<Unit>() shouldBe NoContent
     }
 
     @Test
     @Order(2)
     fun `verify getting base url returns all items in table`() {
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem(0)) shouldBe Created
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem(1)) shouldBe Created
+        post(path).sendStatus(newItem(0)) shouldBe Created
+        post(path).sendStatus(newItem(1)) shouldBe Created
 
-        with(BuiltRequest(engine, Get, path, token).send<Unit>()) {
-            val responseItems = response.content.parseResponse<BillsResponse>()?.items
-            val item1 = responseItems!![responseItems.lastIndex - 1]
-            val item2 = responseItems[responseItems.lastIndex]
-            response.status() shouldBe OK
-            item1.name shouldBe "${billStart}0"
-            item2.name shouldBe "${billStart}1"
-        }
+        val request = get(path).send<Unit>()
+        val responseItems = request.response.content.parseResponse<BillsResponse>()?.items
+
+        val item1 = responseItems!![responseItems.lastIndex - 1]
+        val item2 = responseItems[responseItems.lastIndex]
+        request.response.status() shouldBe OK
+        item1.name shouldBe "${billStart}0"
+        item2.name shouldBe "${billStart}1"
     }
 
     @Test
     @Order(3)
     fun `verify getting an added item`() {
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem(2)) shouldBe Created
-        with(BuiltRequest(engine, Get, "$path?id=3", token).send<Bill>()) {
-            val addedItems = response.content.parseResponse<BillsResponse>()?.items
-            response.status() shouldBe OK
-            addedItems?.size shouldBe 1
-            addedItems?.first()!!::class.java shouldBe Bill::class.java
-            addedItems.first().name shouldBe "${billStart}2"
-        }
+        post(path).sendStatus(newItem(2)) shouldBe Created
+
+        val request = get(path, 3).send<Bill>()
+        val addedItems = request.response.content.parseResponse<BillsResponse>()?.items
+
+        request.response.status() shouldBe OK
+        addedItems?.size shouldBe 1
+        addedItems?.first()!!::class.java shouldBe Bill::class.java
+        addedItems.first().name shouldBe "${billStart}2"
     }
 
     @Test
     @Order(4)
     fun `verify getting an item that does not exist`() {
-        BuiltRequest(engine, Get, "$path?id=99", token).sendStatus<Unit>() shouldBe NoContent
+        get(path, 99).sendStatus<Unit>() shouldBe NoContent
     }
 
     @Test
     @Order(5)
     fun `verify adding a new item`() {
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem(3)) shouldBe Created
-        with(BuiltRequest(engine, Get, "$path?id=4", token).send<Bill>()) {
-            val addedItem = response.content.parseResponse<BillsResponse>()?.items?.first()
-            response.status() shouldBe OK
-            addedItem?.name shouldBe "${billStart}3"
-            addedItem?.color?.copy(dateUpdated = -1, dateCreated = -1) shouldBe Color(
-                addedItem?.color?.id,
-                255,
-                255,
-                255,
-                255,
-                null
-            ).copy(dateUpdated = -1, dateCreated = -1)
-        }
+        post(path).sendStatus(newItem(3)) shouldBe Created
+
+        val request = get(path, 4).send<Bill>()
+        val addedItem = request.response.content.parseResponse<BillsResponse>()?.items?.first()
+
+        request.response.status() shouldBe OK
+        addedItem?.name shouldBe "${billStart}3"
+        addedItem?.color?.copy(dateUpdated = -1, dateCreated = -1) shouldBe Color(
+            addedItem?.color?.id,
+            255,
+            255,
+            255,
+            255,
+            null
+        ).copy(dateUpdated = -1, dateCreated = -1)
     }
 
     @Test
     @Order(6)
     fun `verify updating an added item`() {
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem(4)) shouldBe Created
-        val bill = BuiltRequest(engine, Get, "$path?id=5", token).asObject<BillsResponse>().items?.first()
+        post(path).sendStatus(newItem(4)) shouldBe Created
+
+        val bill = get(path, 5).asObject<BillsResponse>().items?.first()
         val updatedName = "cat4"
         val updatedBill = bill?.copy(
             name = updatedName,
@@ -160,44 +157,44 @@ class BillTests : BaseTest() {
             sharedUsers = listOf(signedInUser)
         )
 
-        BuiltRequest(engine, Put, path, token).send(updatedBill)
+        put(path).send(updatedBill)
 
-        with(BuiltRequest(engine, Get, "$path?id=5", token).send<BillsResponse>()) {
-            val addedItem = response.content.parseResponse<BillsResponse>()?.items?.first()
-            val id = addedItem?.id
-            val className = addedItem!!::class.java.simpleName
-            val fields = addedItem.history!!.map { it.field }
+        val request = get(path, 5).send<BillsResponse>()
+        val addedItem = request.response.content.parseResponse<BillsResponse>()?.items?.first()
 
-            response.status() shouldBe OK
-            addedItem.name shouldBe updatedName
-            addedItem.color.green shouldBe 150
-            fields[0] shouldBe "$className $id name"
-            fields[1] shouldBe "$className $id sharedUser"
-        }
+        val id = addedItem?.id
+        val className = addedItem!!::class.java.simpleName
+        val fields = addedItem.history!!.map { it.field }
+
+        request.response.status() shouldBe OK
+        addedItem.name shouldBe updatedName
+        addedItem.color.green shouldBe 150
+        fields[0] shouldBe "$className $id name"
+        fields[1] shouldBe "$className $id sharedUser"
     }
 
     @Test
     @Order(7)
     fun `verify updating a non existent item`() {
-        BuiltRequest(engine, Put, path, token).sendStatus(newItem(5, 99)) shouldBe HttpStatusCode.BadRequest
+        put(path).sendStatus(newItem(5, 99)) shouldBe HttpStatusCode.BadRequest
     }
 
     @Test
     @Order(8)
     fun `verify updating without an id`() {
-        BuiltRequest(engine, Put, path, token).sendStatus(newItem(6)) shouldBe BadRequest
+        put(path).sendStatus(newItem(6)) shouldBe BadRequest
     }
 
     @Test
     @Order(9)
     fun `verify deleting and item that has been added`() {
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem(7)) shouldBe Created
-        BuiltRequest(engine, Delete, "$path?id=6", token).sendStatus<Unit>() shouldBe OK
+        post(path).sendStatus(newItem(7)) shouldBe Created
+        delete(path, 6).sendStatus<Unit>() shouldBe OK
     }
 
     @Test
     @Order(10)
     fun `verify deleting item that doesn't exist`() {
-        BuiltRequest(engine, Delete, "$path?id=99", token).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
+        delete(path, 99).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
     }
 }

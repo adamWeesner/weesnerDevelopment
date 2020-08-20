@@ -5,10 +5,6 @@ import categories.CategoriesTable
 import com.weesnerdevelopment.validator.complex.ComplexValidatorItem
 import com.weesnerdevelopment.validator.complex.ComplexValidatorResponse
 import com.weesnerdevelopment.validator.complex.ComplexValidatorTable
-import io.ktor.http.HttpMethod.Companion.Delete
-import io.ktor.http.HttpMethod.Companion.Get
-import io.ktor.http.HttpMethod.Companion.Post
-import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.Created
@@ -45,33 +41,28 @@ class ComplexValidationTests : BaseTest() {
             SchemaUtils.create(CategoriesTable, BillCategoriesTable, ComplexValidatorTable)
         }
 
-        BuiltRequest(engine, Post, BillMan.categories, token).sendStatus(
-            Category(
-                owner = signedInUser, name = "category"
-            )
-        )
-        category = BuiltRequest(engine, Get, "${BillMan.categories}?id=1", token)
-            .asObject<CategoriesResponse>().items?.first()!!
+        post(BillMan.categories).sendStatus(Category(owner = signedInUser, name = "category"))
+        category = get(BillMan.categories, 1).asObject<CategoriesResponse>().items?.first()!!
     }
 
     @Test
     @Order(1)
     fun `verify getting base url with no item in the database`() {
-        BuiltRequest(engine, Get, path, token).sendStatus<Unit>() shouldBe NoContent
+        get(path).sendStatus<Unit>() shouldBe NoContent
     }
 
     @Test
     @Order(2)
     fun `verify getting url with an id and with no items in database`() {
-        BuiltRequest(engine, Get, "$path?id=1", token).sendStatus<Unit>() shouldBe NoContent
+        get(path, 1).sendStatus<Unit>() shouldBe NoContent
     }
 
     @Test
     @Order(3)
     fun `verify adding an item to the database`() {
-        BuiltRequest(engine, Post, path, token).sendStatus(item()) shouldBe Created
+        post(path).sendStatus(item()) shouldBe Created
 
-        val getItem = BuiltRequest(engine, Get, "$path?id=1", token).asObject<ComplexValidatorResponse>()
+        val getItem = get(path, 1).asObject<ComplexValidatorResponse>()
         val firstItem = getItem.items?.first()!!
 
         getItem.items?.size shouldBe 1
@@ -91,21 +82,21 @@ class ComplexValidationTests : BaseTest() {
     @Order(4)
     fun `verify adding an item that already exists to the database`() {
         val newItem = item()
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem) shouldBe Created
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem) shouldBe Conflict
+        post(path).sendStatus(newItem) shouldBe Created
+        post(path).sendStatus(newItem) shouldBe Conflict
     }
 
     @Test
     @Order(5)
     fun `verify adding an item with an id to the database`() {
         val newItem = item()
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem.copy(id = 1)) shouldBe Created
+        post(path).sendStatus(newItem.copy(id = 1)) shouldBe Created
     }
 
     @Test
     @Order(6)
     fun `verify getting base url with items in the database`() {
-        val response = BuiltRequest(engine, Get, path, token).asObject<ComplexValidatorResponse>()
+        val response = get(path).asObject<ComplexValidatorResponse>()
         response.items?.size shouldBe 3
     }
 
@@ -115,22 +106,15 @@ class ComplexValidationTests : BaseTest() {
         val savedId = 5
         val newItem = item()
 
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem) shouldBe Created
-        BuiltRequest(engine, Post, BillMan.categories, token).send(Category(owner = signedInUser, name = "categoryTwo"))
+        post(path).sendStatus(newItem) shouldBe Created
+        post(BillMan.categories).send(Category(owner = signedInUser, name = "categoryTwo"))
 
-        val category = BuiltRequest(engine, Get, "${BillMan.categories}?id=2", token)
-            .asObject<CategoriesResponse>().items?.first()
+        val category = get(BillMan.categories, 2).asObject<CategoriesResponse>().items?.first()
             ?: throw IllegalArgumentException("Somehow category was null")
 
-        BuiltRequest(engine, Put, path, token).sendStatus(
-            newItem.copy(
-                id = savedId,
-                amount = 99.99,
-                category = category
-            )
-        ) shouldBe OK
+        put(path).sendStatus(newItem.copy(id = savedId, amount = 99.99, category = category)) shouldBe OK
 
-        val getItem = BuiltRequest(engine, Get, "$path?id=$savedId", token).asObject<ComplexValidatorResponse>()
+        val getItem = get(path, savedId).asObject<ComplexValidatorResponse>()
         val firstItem = getItem.items?.first()!!
         val history = firstItem.history!!
 
@@ -172,10 +156,10 @@ class ComplexValidationTests : BaseTest() {
         val savedId = 6
         val newItem = item()
 
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem) shouldBe Created
-        BuiltRequest(engine, Put, path, token).sendStatus(newItem.copy(id = savedId)) shouldBe OK
+        post(path).sendStatus(newItem) shouldBe Created
+        put(path).sendStatus(newItem.copy(id = savedId)) shouldBe OK
 
-        val getItem = BuiltRequest(engine, Get, "$path?id=$savedId", token).asObject<ComplexValidatorResponse>()
+        val getItem = get(path, savedId).asObject<ComplexValidatorResponse>()
         val firstItem = getItem.items?.first()!!
 
         getItem.items?.size shouldBe 1
@@ -195,29 +179,29 @@ class ComplexValidationTests : BaseTest() {
     @Order(9)
     fun `verify update an item in the database with no id`() {
         val newItem = item()
-        BuiltRequest(engine, Post, path, token).sendStatus(newItem) shouldBe Created
-        BuiltRequest(engine, Put, path, token).sendStatus(newItem) shouldBe BadRequest
+        post(path).sendStatus(newItem) shouldBe Created
+        put(path).sendStatus(newItem) shouldBe BadRequest
     }
 
     @Test
     @Order(10)
     fun `verify deleting item in the database`() {
-        BuiltRequest(engine, Post, path, token).sendStatus(item()) shouldBe Created
-        BuiltRequest(engine, Delete, "$path?id=7", token).sendStatus<Unit>() shouldBe OK
+        post(path).sendStatus(item()) shouldBe Created
+        delete(path, 7).sendStatus<Unit>() shouldBe OK
 
-        val getItem = BuiltRequest(engine, Get, path, token).asObject<ComplexValidatorResponse>()
+        val getItem = get(path).asObject<ComplexValidatorResponse>()
         getItem.items?.firstOrNull { it.id == 7 } shouldBe null
     }
 
     @Test
     @Order(11)
     fun `verify deleting item that is not in the database`() {
-        BuiltRequest(engine, Delete, "$path?id=99", token).sendStatus<Unit>() shouldBe NotFound
+        delete(path, 99).sendStatus<Unit>() shouldBe NotFound
     }
 
     @Test
     @Order(12)
     fun `verify deleting without giving an id`() {
-        BuiltRequest(engine, Delete, path, token).sendStatus<Unit>() shouldBe BadRequest
+        delete(path).sendStatus<Unit>() shouldBe BadRequest
     }
 }

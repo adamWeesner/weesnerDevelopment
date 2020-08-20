@@ -5,10 +5,11 @@ import generics.HistoricTable
 import generics.IdTable
 import history.HistoryTable
 import occurrences.BillOccurrencesTable
+import org.jetbrains.exposed.sql.ReferenceOption
 
 object PaymentsTable : IdTable(), HistoricTable {
-    val ownerId = varchar("ownerId", 255) references UsersTable.uuid
-    val occurrenceId = integer("occurrenceId") references BillOccurrencesTable.id
+    val ownerId = reference("ownerId", UsersTable.uuid, ReferenceOption.CASCADE)
+    val occurrenceId = reference("occurrenceId", BillOccurrencesTable.id, ReferenceOption.CASCADE)
     val amount = varchar("amount", 255)
-    override val history = (integer("historyId") references HistoryTable.id).nullable()
+    override val history = reference("historyId", HistoryTable.id, ReferenceOption.CASCADE).nullable()
 }

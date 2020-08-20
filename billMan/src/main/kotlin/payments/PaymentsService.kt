@@ -1,31 +1,30 @@
 package payments
 
-import HistoryTypes
+import BaseService
 import auth.UsersService
-import dbQuery
-import generics.GenericService
 import history.HistoryService
-import model.ChangeType
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import shared.base.InvalidAttributeException
 import shared.billMan.Payment
 
 class PaymentsService(
     private val usersService: UsersService,
     private val historyService: HistoryService
-) : GenericService<Payment, PaymentsTable>(
+) : BaseService<PaymentsTable, Payment>(
     PaymentsTable
 ) {
-    suspend fun getForOccurrence(id: Int) =
-        dbQuery { table.select { (PaymentsTable.occurrenceId eq id) }.mapNotNull { to(it) } }
+    override val PaymentsTable.connections
+        get() = this.innerJoin(usersService.table, {
+            ownerId
+        }, {
+            uuid
+        })
 
-    suspend fun deleteForOccurrence(billId: Int) = dbQuery {
-        table.select { (table.occurrenceId eq billId) }.mapNotNull { to(it).id }
-    }.forEach {
-        historyService.apply { getIdsFor(HistoryTypes.Payment.name, it).forEach { delete(it) { table.id eq it } } }
-        delete(it) { table.id eq it }
+    suspend fun getForOccurrence(id: Int) = getAll {
+        table.occurrenceId eq id
+    }?.mapNotNull {
+        toItem(it)
     }
 
     @Deprecated(
@@ -35,38 +34,40 @@ class PaymentsService(
     )
     override suspend fun add(item: Payment) = null
 
-    suspend fun addForOccurrence(occurrenceId: Int, item: Payment): Payment? {
-        var key = 0
-
-        dbQuery {
-            try {
-                key = table.insert {
-                    it.assignValues(item)
-                    it[PaymentsTable.occurrenceId] = occurrenceId
-                    it[dateCreated] = System.currentTimeMillis()
-                    it[dateUpdated] = System.currentTimeMillis()
-                } get table.id
-            } catch (e: Throwable) {
-                println("adding item threw $e")
+    suspend fun addForOccurrence(occurrence: Int, item: Payment) = tryCall {
+        table.insert {
+            it.toRow(item)
+            it[occurrenceId] = occurrence
+            it[dateCreated] = System.currentTimeMillis()
+            it[dateUpdated] = System.currentTimeMillis()
+        } get table.occurrenceId
+    }?.let {
+        tryCall {
+            table.connections.select {
+                table.occurrenceId eq it and (table.ownerId eq item.owner.uuid!!)
+            }.mapNotNull {
+                toItem(it)
             }
-        }
-        return getSingle { table.id eq key }?.also {
-            onChange(ChangeType.Create, key, it)
         }
     }
 
-    override suspend fun to(row: ResultRow) = Payment(
-        id = row[PaymentsTable.id],
-        owner = usersService.getUserByUuidRedacted(row[PaymentsTable.ownerId])
-            ?: throw IllegalArgumentException("No user found for payment."),
-        amount = row[PaymentsTable.amount],
-        history = historyService.getFor(HistoryTypes.Color.name, row[PaymentsTable.id]),
-        dateCreated = row[PaymentsTable.dateCreated],
-        dateUpdated = row[PaymentsTable.dateUpdated]
-    )
+    override suspend fun toItem(row: ResultRow) = Payment(
+        id = row[table.id],
+        owner = usersService.toItemRedacted(row),
+        amount = row[table.amount],
+        dateCreated = row[table.dateCreated],
+        dateUpdated = row[table.dateUpdated]
+    ).let {
+        val history = historyService.getFor<Payment>(it.id, it.owner)
 
-    override fun UpdateBuilder<Int>.assignValues(item: Payment) {
-        this[PaymentsTable.ownerId] = item.owner.uuid!!
-        this[PaymentsTable.amount] = item.amount
+        return@let if (history == null)
+            it
+        else
+            it.copy(history = history)
+    }
+
+    override fun UpdateBuilder<Int>.toRow(item: Payment) {
+        this[table.ownerId] = item.owner.uuid ?: throw InvalidAttributeException("Uuid")
+        this[table.amount] = item.amount
     }
 }

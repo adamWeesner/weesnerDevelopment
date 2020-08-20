@@ -1,12 +1,15 @@
 package com.weesnerdevelopment.injecton
 
+import Path.*
 import auth.UserRouter
 import bills.BillsRouter
 import categories.CategoriesRouter
-import com.weesnerdevelopment.utils.Path.*
+import com.weesnerdevelopment.validator.ValidatorRouter
+import com.weesnerdevelopment.validator.complex.ComplexValidatorRouter
 import federalIncomeTax.FederalIncomeTaxRouter
 import income.IncomeRouter
 import incomeOccurrences.IncomeOccurrenceRouter
+import logging.LoggingRouter
 import medicare.MedicareRouter
 import occurrences.BillOccurrenceRouter
 import org.kodein.di.Kodein
@@ -17,9 +20,11 @@ import socialSecurity.SocialSecurityRouter
 import taxWithholding.TaxWithholdingRouter
 
 val routers = Kodein.Module("routers") {
+    bind<ValidatorRouter>() with singleton { ValidatorRouter(Server.validation, instance()) }
+    bind<ComplexValidatorRouter>() with singleton { ComplexValidatorRouter(Server.complexValidation, instance()) }
     // user
     bind<UserRouter>() with singleton {
-        UserRouter(User.base, instance(), instance(), instance(), User.account)
+        UserRouter(User.base, instance(), instance(), User.account, User.login, User.signUp)
     }
 
     // taxFetcher
@@ -37,19 +42,10 @@ val routers = Kodein.Module("routers") {
     }
 
     // billMan
-    bind<BillsRouter>() with singleton {
-        BillsRouter(BillMan.bills, instance(), instance(), instance(), instance(), instance())
-    }
-    bind<CategoriesRouter>() with singleton {
-        CategoriesRouter(BillMan.categories, instance(), instance(), instance())
-    }
-    bind<IncomeRouter>() with singleton {
-        IncomeRouter(BillMan.income, instance(), instance(), instance())
-    }
-    bind<BillOccurrenceRouter>() with singleton {
-        BillOccurrenceRouter(BillMan.occurrences, instance(), instance(), instance(), instance(), instance())
-    }
-    bind<IncomeOccurrenceRouter>() with singleton {
-        IncomeOccurrenceRouter(BillMan.incomeOccurrences, instance(), instance(), instance())
-    }
+    bind<BillsRouter>() with singleton { BillsRouter(BillMan.bills, instance()) }
+    bind<CategoriesRouter>() with singleton { CategoriesRouter(BillMan.categories, instance()) }
+    bind<IncomeRouter>() with singleton { IncomeRouter(BillMan.income, instance()) }
+    bind<BillOccurrenceRouter>() with singleton { BillOccurrenceRouter(BillMan.occurrences, instance()) }
+    bind<IncomeOccurrenceRouter>() with singleton { IncomeOccurrenceRouter(BillMan.incomeOccurrences, instance()) }
+    bind<LoggingRouter>() with singleton { LoggingRouter(BillMan.logging, instance()) }
 }

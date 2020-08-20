@@ -1,38 +1,48 @@
 package billMan
 
 import BaseTest
-import BuiltRequest
-import com.weesnerdevelopment.utils.Path
-import io.kotlintest.shouldBe
-import io.ktor.http.HttpMethod.Companion.Delete
-import io.ktor.http.HttpMethod.Companion.Get
-import io.ktor.http.HttpMethod.Companion.Post
-import io.ktor.http.HttpMethod.Companion.Put
-import io.ktor.http.HttpStatusCode
+import Path.BillMan
+import io.ktor.http.HttpStatusCode.Companion.BadRequest
+import io.ktor.http.HttpStatusCode.Companion.Created
+import io.ktor.http.HttpStatusCode.Companion.NoContent
+import io.ktor.http.HttpStatusCode.Companion.NotFound
+import io.ktor.http.HttpStatusCode.Companion.OK
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Order
+import org.junit.jupiter.api.Test
 import parseResponse
 import shared.auth.User
 import shared.base.History
 import shared.billMan.*
-import shared.billMan.responses.OccurrencesResponse
+import shared.billMan.responses.BillOccurrencesResponse
+import shared.billMan.responses.BillsResponse
+import shared.billMan.responses.CategoriesResponse
 import shared.taxFetcher.PayPeriod
+import shouldBe
 import java.util.*
 
-class OccurrenceTests : BaseTest({ token ->
-    val signedInUser = BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
+class OccurrenceTests : BaseTest() {
+    lateinit var startBill: Bill
 
-    val startCategory = BuiltRequest(engine, Post, Path.BillMan.categories, token).asObject(
-        Category(name = "occurenceCategory")
-    )
+    @BeforeAll
+    fun start() {
+        post(BillMan.categories).send(Category(name = "occurenceCategory"))
 
-    val startBill = BuiltRequest(engine, Post, Path.BillMan.bills, token).asObject(
-        Bill(
-            owner = signedInUser,
-            name = "billStart",
-            amount = "1.23",
-            categories = listOf(startCategory),
-            color = Color(red = 255, green = 255, blue = 255, alpha = 255)
+        val startCategory = get(BillMan.categories, 1).asObject<CategoriesResponse>().items?.first()
+            ?: throw IllegalArgumentException("Somehow category was null")
+
+
+        post(BillMan.bills).send(
+            Bill(
+                owner = signedInUser,
+                name = "billStart",
+                amount = "1.23",
+                categories = listOf(startCategory),
+                color = Color(red = 255, green = 255, blue = 255, alpha = 255)
+            )
         )
-    )
+        startBill = get(BillMan.bills).asObject<BillsResponse>().items?.first()!!
+    }
 
     fun newItem(
         amount: Number,
@@ -45,7 +55,7 @@ class OccurrenceTests : BaseTest({ token ->
         payments: List<Payment>? = null,
         history: List<History>? = null,
         owner: User = signedInUser
-    ) = Occurrence(
+    ) = BillOccurrence(
         id = id,
         owner = owner,
         sharedUsers = sharedUsers,
@@ -58,115 +68,127 @@ class OccurrenceTests : BaseTest({ token ->
         history = history
     )
 
-    val path = Path.BillMan.occurrences
+    val path = BillMan.occurrences
 
-    "verify getting base url returns null without bill id" {
-        BuiltRequest(engine, Get, path, token).sendStatus<Unit>() shouldBe HttpStatusCode.BadRequest
+    @Test
+    @Order(1)
+    fun `verify getting base url returns null without bill id`() {
+        get(path).sendStatus<Unit>() shouldBe NoContent
     }
 
-    "verify getting base url returns ok" {
-        BuiltRequest(engine, Get, "$path?bill=0", token).sendStatus<Unit>() shouldBe HttpStatusCode.OK
+    @Test
+    @Order(2)
+    fun `verify getting base url returns ok`() {
+        get("$path?bill=0").sendStatus<Unit>() shouldBe NoContent
     }
 
-    "verify getting base url returns all items in table" {
-        val addedItem = BuiltRequest(engine, Post, path, token).asObject(newItem(12.34))
-        BuiltRequest(engine, Post, path, token).send(newItem(23.45))
-        with(BuiltRequest(engine, Get, "$path?bill=${addedItem.itemId}", token).send<Unit>()) {
-            val responseItems = response.content.parseResponse<OccurrencesResponse>()?.items
-                ?: throw IllegalArgumentException("Occurrence response should not be null..")
-            val item1 = responseItems[responseItems.lastIndex - 1]
-            val item2 = responseItems[responseItems.lastIndex]
-            response.status() shouldBe HttpStatusCode.OK
-            item1.amount shouldBe "12.34"
-            item2.amount shouldBe "23.45"
-        }
+    @Test
+    @Order(3)
+    fun `verify getting base url returns all items in table`() {
+        post(path).sendStatus(newItem(12.34)) shouldBe Created
+        post(path).sendStatus(newItem(23.45)) shouldBe Created
+
+        val request = get(path).send<Unit>()
+        val responseItems = request.response.content.parseResponse<BillOccurrencesResponse>()?.items!!
+
+        val item1 = responseItems[responseItems.lastIndex - 1]
+        val item2 = responseItems[responseItems.lastIndex]
+        request.response.status() shouldBe OK
+        item1.amount shouldBe "12.34"
+        item2.amount shouldBe "23.45"
     }
 
-    "verify getting an added item" {
-        val item = BuiltRequest(engine, Post, path, token).asObject(newItem(34.56))
-        with(BuiltRequest(engine, Get, "$path?occurrence=${item.id}", token).send<Occurrence>()) {
-            val addedItems = response.content.parseResponse<OccurrencesResponse>()?.items
-            response.status() shouldBe HttpStatusCode.OK
-            addedItems?.size shouldBe 1
-            addedItems?.first()!!::class.java shouldBe Occurrence::class.java
-            addedItems.first().amount shouldBe "34.56"
-        }
+    @Test
+    @Order(4)
+    fun `verify getting an added item`() {
+        post(path).sendStatus(newItem(34.56)) shouldBe Created
+
+        val request = get(path, 3).send<BillOccurrence>()
+        val addedItems = request.response.content.parseResponse<BillOccurrencesResponse>()?.items!!
+
+        request.response.status() shouldBe OK
+        addedItems.size shouldBe 1
+        addedItems.first()::class.java shouldBe BillOccurrence::class.java
+        addedItems.first().amount shouldBe "34.56"
     }
 
-    "verify getting an item that does not exist" {
-        BuiltRequest(engine, Get, "$path?occurrence=99", token).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
+    @Test
+    @Order(5)
+    fun `verify getting an item that does not exist`() {
+        get(path, 99).sendStatus<Unit>() shouldBe NoContent
     }
 
-    "verify adding a new item" {
-        with(BuiltRequest(engine, Post, path, token).send(newItem(45.67))) {
-            val addedItem = response.content.parseResponse<Occurrence>()
-            response.status() shouldBe HttpStatusCode.Created
-            addedItem?.amount shouldBe "45.67"
-        }
+    @Test
+    @Order(6)
+    fun `verify adding a new item`() {
+        post(path).sendStatus(newItem(45.67)) shouldBe Created
+
+        val request = get(path, 4).send<BillOccurrence>()
+        val addedItem = request.response.content.parseResponse<BillOccurrencesResponse>()?.items?.first()!!
+
+        request.response.status() shouldBe OK
+        addedItem.amount shouldBe "45.67"
     }
 
-    "verify adding a duplicate item" {
-        val item = BuiltRequest(engine, Post, path, token).asObject(newItem(8))
-        BuiltRequest(engine, Post, path, token).sendStatus((newItem(9, id = item.id))) shouldBe HttpStatusCode.Conflict
-    }
+    @Test
+    @Order(7)
+    fun `verify updating an added item`() {
+        post(path).sendStatus(newItem(34.56)) shouldBe Created
 
-    "verify updating an added item" {
-        val item = BuiltRequest(engine, Post, path, token).asObject(newItem(34.56))
+        val item = get(path, 5).asObject<BillOccurrencesResponse>().items?.first()!!
         val updatedItem = item.copy(
             amount = "77.77",
             amountLeft = "77.77",
-            sharedUsers = listOf(signedInUser),
-            payments = listOf(
-                Payment(
-                    owner = signedInUser,
-                    amount = "66.66"
-                )
-            )
+            sharedUsers = listOf(signedInUser)
         )
-        val updateRequest = BuiltRequest(engine, Put, path, token).send(updatedItem)
+        put(path).sendStatus(updatedItem) shouldBe OK
 
-        with(updateRequest) {
-            val addedItem = response.content.parseResponse<Occurrence>()
-            val id = addedItem?.id
-            val className = addedItem!!::class.java.simpleName
-            val fields = addedItem.history!!.map { it.field }
+        val request = get(path, 5).send<Unit>()
+        val addedItem = request.response.content.parseResponse<BillOccurrencesResponse>()?.items?.first()!!
 
-            response.status() shouldBe HttpStatusCode.OK
-            addedItem.amount shouldBe "77.77"
-            addedItem.amountLeft shouldBe "11.11"
-            addedItem.payments?.size shouldBe 1
-            fields[0] shouldBe "$className $id amount"
-            fields[1] shouldBe "$className $id amountLeft"
-            fields[2] shouldBe "$className $id sharedUser"
-            fields[3] shouldBe "${Payment::class.java.simpleName} ${addedItem.payments?.first()?.id} amount"
-        }
+        val id = addedItem.id
+        val className = addedItem::class.java.simpleName
+        val fields = addedItem.history!!.map { it.field }
+
+        request.response.status() shouldBe OK
+        addedItem.amount shouldBe "77.77"
+        addedItem.amountLeft shouldBe "77.77"
+        fields[0] shouldBe "$className $id amount"
+        fields[1] shouldBe "$className $id amountLeft"
+        fields[2] shouldBe "$className $id sharedUser"
     }
 
-    "verify updating a non existent item" {
-        BuiltRequest(engine, Put, path, token).sendStatus(newItem(5, 99)) shouldBe HttpStatusCode.BadRequest
+    @Test
+    @Order(8)
+    fun `verify updating a non existent item`() {
+        put(path).sendStatus(newItem(5, 99)) shouldBe BadRequest
     }
 
-    "verify updating without an id adds a new item" {
-        BuiltRequest(engine, Put, path, token).sendStatus(newItem(6)) shouldBe HttpStatusCode.Created
+    @Test
+    @Order(9)
+    fun `verify updating without an id`() {
+        put(path).sendStatus(newItem(6)) shouldBe BadRequest
     }
 
-    "verify deleting and item that has been added" {
-        val addedItem =
-            BuiltRequest(engine, Post, path, token).send(newItem(7)).response.content.parseResponse<Occurrence>()
-        BuiltRequest(
-            engine,
-            Delete,
-            "$path?occurrence=${addedItem?.id}",
-            token
-        ).sendStatus<Unit>() shouldBe HttpStatusCode.OK
+    @Test
+    @Order(10)
+    fun `verify deleting and item that has been added`() {
+        post(path).sendStatus(newItem(7)) shouldBe Created
+        delete(path, 6).sendStatus<Unit>() shouldBe OK
     }
 
-    "verify deleting item that doesn't exist" {
-        BuiltRequest(engine, Delete, "$path?occurrence=99", token).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
+    @Test
+    @Order(11)
+    fun `verify deleting item that doesn't exist`() {
+        delete(path, 99).sendStatus<Unit>() shouldBe NotFound
     }
 
-    "verify cannot add payment more than amount left" {
-        val item = BuiltRequest(engine, Post, path, token).asObject(newItem(45.67))
+    @Test
+    @Order(12)
+    fun `verify cannot add payment more than amount left`() {
+        post(path).sendStatus(newItem(45.67)) shouldBe Created
+
+        val item = get(path, 7).asObject<BillOccurrencesResponse>().items?.first()!!
         val updatedItem = item.copy(
             payments = listOf(
                 Payment(
@@ -175,15 +197,17 @@ class OccurrenceTests : BaseTest({ token ->
                 )
             )
         )
-        BuiltRequest(engine, Put, path, token).sendStatus(updatedItem) shouldBe HttpStatusCode.BadRequest
+        put(path).sendStatus(updatedItem) shouldBe BadRequest
     }
 
-    "verify can pay for occurrence" {
-        val item = BuiltRequest(engine, Post, path, token).asObject(newItem(45.67))
-
-        BuiltRequest(engine, Post, "$path/${item.id}?pay=1.0", token).asObject<Occurrence>().apply {
+    @Test
+    @Order(13)
+    fun `verify can pay for occurrence`() {
+        post(path).sendStatus(newItem(45.67)) shouldBe Created
+        put(path, 8, "&pay=1.0").sendStatus<Unit>() shouldBe OK
+        get(path, 8).asObject<BillOccurrencesResponse>().items?.first()?.apply {
             amountLeft.toDouble() shouldBe 44.67
             payments?.size shouldBe 1
         }
     }
-})
+}

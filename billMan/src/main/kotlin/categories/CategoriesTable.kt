@@ -4,9 +4,10 @@ import auth.UsersTable
 import generics.HistoricTable
 import generics.IdTable
 import history.HistoryTable
+import org.jetbrains.exposed.sql.ReferenceOption
 
 object CategoriesTable : IdTable(), HistoricTable {
-    val name = varchar("name", 255).primaryKey()
-    val ownerId = (varchar("ownerId", 255) references UsersTable.uuid).nullable()
-    override val history = (integer("historyId") references HistoryTable.id).nullable()
+    val name = varchar("name", 255).uniqueIndex()
+    val ownerId = reference("ownerId", UsersTable.uuid, ReferenceOption.CASCADE).nullable()
+    override val history = reference("historyId", HistoryTable.id, ReferenceOption.CASCADE).nullable()
 }

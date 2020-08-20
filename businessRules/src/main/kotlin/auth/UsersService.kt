@@ -1,82 +1,111 @@
 package auth
 
-import dbQuery
-import generics.GenericService
+import BaseService
+import diff
+import history.HistoryService
 import io.ktor.http.HttpStatusCode
-import model.ChangeType
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import parse
 import shared.auth.HashedUser
 import shared.auth.User
 import shared.base.InvalidAttributeException
-import shared.fromJson
 
-class UsersService : GenericService<User, UsersTable>(
+class UsersService(
+    private val historyService: HistoryService
+) : BaseService<UsersTable, User>(
     UsersTable
 ) {
-    suspend fun getUserFromHash(hashedUser: HashedUser) = dbQuery {
+    override val UsersTable.connections: Join?
+        get() = null
+
+    suspend fun getUserFromHash(hashedUser: HashedUser) = tryCall {
         table.select {
             (table.username eq hashedUser.username) and (table.password eq hashedUser.password)
-        }.mapNotNull { to(it) }.singleOrNull()
+        }.limit(1).firstOrNull()?.let {
+            toItem(it)
+        }
     }
 
-    suspend fun getUserByUuid(uuid: String) =
-        dbQuery { table.select { (table.uuid eq uuid) }.mapNotNull { to(it) }.singleOrNull() }
+    suspend fun getUserByUuid(uuid: String?) = tryCall {
+        if (uuid == null)
+            throw InvalidAttributeException("Uuid")
 
-    suspend fun getUserByUuidRedacted(uuid: String) = getUserByUuid(uuid)?.redacted()?.fromJson<User>()
-
-    override suspend fun add(item: User): User? {
-        var key = 0
-
-        val savedUser = item.asHashed()?.let { getUserFromHash(it) } ?: item.uuid?.let { getUserByUuid(it) }
-
-        if (savedUser != null) {
-            onChange(ChangeType.Error, key)
-            return null
+        table.select {
+            table.uuid eq uuid
+        }.limit(1).firstOrNull()?.let {
+            toItem(it)
         }
+    }
 
-        dbQuery {
-            key = (table.insert {
-                it.assignValues(item)
+    suspend fun getUserByUuidRedacted(uuid: String) = getUserByUuid(uuid = uuid)?.redacted()?.parse<User>()
+
+    @Deprecated("", ReplaceWith("addUser(user: User): User?", "user"))
+    override suspend fun add(item: User): Int? = throw IllegalArgumentException("Should be using `add(User): User?`")
+
+    suspend fun addUser(item: User): User? {
+        val uuid = tryCall {
+            table.insert {
+                it.toRow(item)
                 it[dateCreated] = System.currentTimeMillis()
                 it[dateUpdated] = System.currentTimeMillis()
-            } get table.id)
+            } get table.uuid
         }
 
         return when {
-            item.username != null && item.password != null -> item.asHashed()?.let { getUserFromHash(it) }.also {
-                if (it == null) onChange(ChangeType.Error, key)
-                else onChange(ChangeType.Create, key, it)
-            }
-            item.uuid != null -> getUserByUuid(item.uuid!!).also {
-                if (it == null) onChange(ChangeType.Error, key)
-                else onChange(ChangeType.Create, key, it)
-            }
+            uuid != null -> getUserByUuid(uuid)
             else -> throw Throwable(HttpStatusCode.NotFound.description)
         }
     }
 
-    override suspend fun to(row: ResultRow) = User(
-        id = row[UsersTable.id],
-        uuid = row[UsersTable.uuid],
-        name = row[UsersTable.name],
-        email = row[UsersTable.email],
-        photoUrl = row[UsersTable.photoUrl],
-        username = row[UsersTable.username],
-        password = row[UsersTable.password],
-        dateCreated = row[UsersTable.dateCreated],
-        dateUpdated = row[UsersTable.dateUpdated]
-    )
+    override suspend fun update(item: User, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
+        val oldUserInfo = getUserByUuid(item.uuid)
 
-    override fun UpdateBuilder<Int>.assignValues(item: User) {
-        item.uuid?.let { this[UsersTable.uuid] = it }
-        this[UsersTable.name] = item.name ?: throw InvalidAttributeException("name")
-        this[UsersTable.email] = item.email ?: throw InvalidAttributeException("email")
-        item.photoUrl?.let { this[UsersTable.photoUrl] = it }
-        item.username?.let { this[UsersTable.username] = it }
-        item.password?.let { this[UsersTable.password] = it }
+        oldUserInfo?.diff(item)?.updates(item)?.forEach {
+            val addedHistory = historyService.add(it)
+
+            if (addedHistory == -1 || addedHistory == null)
+                return addedHistory
+        }
+
+        return super.update(item, op)
+    }
+
+    override suspend fun delete(item: User, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
+        item.history?.forEach {
+            historyService.delete(it) {
+                historyService.table.id eq it.id!!
+            }
+        }
+
+        return super.delete(item, op)
+    }
+
+
+    override suspend fun toItem(row: ResultRow): User = User(
+        id = row[table.id],
+        uuid = row[table.uuid],
+        name = row[table.name],
+        email = row[table.email],
+        photoUrl = row[table.photoUrl],
+        username = row[table.username],
+        password = row[table.password],
+        dateCreated = row[table.dateCreated],
+        dateUpdated = row[table.dateUpdated]
+    ).let {
+        row[table.history]?.let { _ ->
+            it.copy(history = historyService.getFor<User>(row[table.id], it))
+        } ?: it
+    }
+
+    suspend fun toItemRedacted(row: ResultRow) = toItem(row).redacted().parse<User>()
+
+    override fun UpdateBuilder<Int>.toRow(item: User) {
+        this[table.uuid] = item.uuid ?: throw InvalidAttributeException("uuid")
+        this[table.name] = item.name ?: throw InvalidAttributeException("name")
+        this[table.email] = item.email ?: throw InvalidAttributeException("email")
+        this[table.photoUrl] = item.photoUrl
+        this[table.username] = item.username ?: throw InvalidAttributeException("username")
+        this[table.password] = item.password ?: throw InvalidAttributeException("password")
     }
 }

@@ -7,6 +7,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException
 import com.ryanharter.ktor.moshi.moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.weesnerdevelopment.AppConfig
+import com.weesnerdevelopment.DbLogger
 import com.weesnerdevelopment.injecton.kodeinSetup
 import com.weesnerdevelopment.routes.billManRoutes
 import com.weesnerdevelopment.routes.serverRoutes
@@ -25,6 +26,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.routing.Routing
 import io.ktor.websocket.WebSockets
+import kimchi.Kimchi
+import logging.LoggingService
+import logging.StdOutLogger
 import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 import respondErrorAuthorizing
@@ -32,9 +36,13 @@ import respondErrorServer
 import shared.auth.InvalidUserReason
 import java.time.Duration
 
-class DatabaseServer {
+object DatabaseServer {
     fun Application.main() {
         kodeinSetup()
+
+        val loggingService by kodein().instance<LoggingService>()
+        Kimchi.addLog(DbLogger.apply { service = loggingService })
+        Kimchi.addLog(StdOutLogger)
 
         val appConfig by kodein().instance<AppConfig>()
         val jwtProvider by kodein().instance<JwtProvider>()
@@ -42,7 +50,8 @@ class DatabaseServer {
         DatabaseFactory.init()
 
         install(DefaultHeaders)
-        install(CallLogging)
+        if (appConfig.isDevelopment)
+            install(CallLogging)
         install(WebSockets)
         install(CORS) {
             method(HttpMethod.Options)
@@ -61,9 +70,9 @@ class DatabaseServer {
         install(StatusPages) {
             exception<Throwable> { e ->
                 when (e) {
-                    is TokenExpiredException -> call.respondErrorAuthorizing(InvalidUserReason.Expired)
-                    is JWTVerificationException -> call.respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
-                    else -> call.respondErrorServer(e)
+                    is TokenExpiredException -> respondErrorAuthorizing(InvalidUserReason.Expired)
+                    is JWTVerificationException -> respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
+                    else -> respondErrorServer(e)
                 }
             }
             status(HttpStatusCode.Unauthorized) {
@@ -72,14 +81,14 @@ class DatabaseServer {
                 } catch (e: Exception) {
                     return@status when (e) {
                         // usually happens when no token was passed...
-                        is ClassCastException -> call.respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
-                        is TokenExpiredException -> call.respondErrorAuthorizing(InvalidUserReason.Expired)
-                        is JWTVerificationException -> call.respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
-                        else -> call.respondErrorServer(Throwable(e))
+                        is ClassCastException -> respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
+                        is TokenExpiredException -> respondErrorAuthorizing(InvalidUserReason.Expired)
+                        is JWTVerificationException -> respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
+                        else -> respondErrorServer(Throwable(e))
                     }
                 }
 
-                call.respondErrorAuthorizing(InvalidUserReason.General)
+                respondErrorAuthorizing(InvalidUserReason.General)
             }
         }
         install(Authentication) {

@@ -1,6 +1,7 @@
 package generics
 
 import dbQuery
+import kimchi.Kimchi
 import model.ChangeType
 import model.Notification
 import org.jetbrains.exposed.sql.*
@@ -43,7 +44,7 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
         try {
             table.selectAll().map { to(it) }
         } catch (e: Throwable) {
-            println("getting all items threw $e")
+            Kimchi.debug("getting all items threw $e")
             emptyList<O>()
         }
     }
@@ -59,7 +60,7 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
             try {
                 table.select { op() }.mapNotNull { to(it) }.singleOrNull()
             } catch (e: Throwable) {
-                println("getting single item threw $e")
+                Kimchi.debug("getting single item threw $e")
                 null
             }
         }
@@ -85,7 +86,7 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
                         it[dateUpdated] = System.currentTimeMillis()
                     }
                 } catch (e: Throwable) {
-                    println("updating item threw $e")
+                    Kimchi.debug("updating item threw $e")
                     null
                 }
             }
@@ -109,7 +110,7 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
                     it[dateUpdated] = System.currentTimeMillis()
                 } get table.id
             } catch (e: Throwable) {
-                println("adding item threw $e")
+                Kimchi.debug("adding item threw $e")
             }
         }
         return getSingle { table.id eq key }?.also {
@@ -127,7 +128,7 @@ abstract class GenericService<O : GenericItem, T : IdTable>(open val table: T) {
         try {
             table.deleteWhere { op() } > 0
         } catch (e: Throwable) {
-            println("deleting item threw $e")
+            Kimchi.debug("deleting item threw $e")
             false
         }
     }.also {

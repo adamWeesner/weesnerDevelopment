@@ -1,50 +1,52 @@
 package occurrencesSharedUsers
 
+import BaseService
 import auth.UsersService
-import dbQuery
-import generics.GenericService
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.SqlExpressionBuilder
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import shared.base.InvalidAttributeException
 
 class OccurrenceSharedUsersService(
     private val usersService: UsersService
-) : GenericService<OccurrenceSharedUsers, OccurrenceSharedUsersTable>(
+) : BaseService<OccurrenceSharedUsersTable, OccurrenceSharedUsers>(
     OccurrenceSharedUsersTable
 ) {
-    suspend fun getByOccurrence(id: Int) =
-        dbQuery { table.select { (OccurrenceSharedUsersTable.occurrenceId eq id) }.mapNotNull { to(it) } }.mapNotNull {
-            usersService.getUserByUuidRedacted(it.userId)
-        }
+    override val OccurrenceSharedUsersTable.connections
+        get() = this.innerJoin(usersService.table, {
+            userId
+        }, {
+            uuid
+        })
 
-    suspend fun deleteForOccurrence(billId: Int) = dbQuery {
-        table.select { (table.occurrenceId eq billId) }.mapNotNull { to(it).id }
-    }.forEach { delete(it) { table.id eq it } }
+    suspend fun getByOccurrence(id: Int) = getAll {
+        table.occurrenceId eq id
+    }?.mapNotNull {
+        usersService.getUserByUuidRedacted(it[table.userId])
+    }
+
+    suspend fun deleteForOccurrence(occurrenceId: Int) = tryCall {
+        table.deleteWhere {
+            table.occurrenceId eq occurrenceId
+        }
+    }
 
     @Deprecated(
         "You should not be able to update a shared user. Deleting and Adding are the only things that make sense.",
         ReplaceWith("Nothing"),
         DeprecationLevel.ERROR
     )
-    override suspend fun update(
-        item: OccurrenceSharedUsers,
-        op: SqlExpressionBuilder.() -> Op<Boolean>
-    ): OccurrenceSharedUsers? {
-        return null
-    }
+    override suspend fun update(item: OccurrenceSharedUsers, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? = null
 
-    override suspend fun to(row: ResultRow) = OccurrenceSharedUsers(
-        id = row[OccurrenceSharedUsersTable.id],
-        occurrenceId = row[OccurrenceSharedUsersTable.occurrenceId],
-        userId = row[OccurrenceSharedUsersTable.userId],
-        dateCreated = row[OccurrenceSharedUsersTable.dateCreated],
-        dateUpdated = row[OccurrenceSharedUsersTable.dateUpdated]
+    override suspend fun toItem(row: ResultRow) = OccurrenceSharedUsers(
+        id = row[table.id],
+        occurrenceId = row[table.occurrenceId],
+        userId = usersService.toItemRedacted(row).uuid ?: throw InvalidAttributeException("Uuid"),
+        dateCreated = row[table.dateCreated],
+        dateUpdated = row[table.dateUpdated]
     )
 
-    override fun UpdateBuilder<Int>.assignValues(item: OccurrenceSharedUsers) {
-        this[OccurrenceSharedUsersTable.occurrenceId] = item.occurrenceId
-        this[OccurrenceSharedUsersTable.userId] = item.userId
+    override fun UpdateBuilder<Int>.toRow(item: OccurrenceSharedUsers) {
+        this[table.occurrenceId] = item.occurrenceId
+        this[table.userId] = item.userId
     }
 }

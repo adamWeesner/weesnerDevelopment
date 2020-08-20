@@ -1,68 +1,44 @@
 package colors
 
-import HistoryTypes
-import dbQuery
-import generics.GenericService
-import history.HistoryService
-import model.ChangeType
-import org.jetbrains.exposed.sql.*
+import BaseService
+import org.jetbrains.exposed.sql.Join
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.billMan.Color
 
-class ColorsService(
-    private val historyService: HistoryService
-) : GenericService<Color, ColorsTable>(
+class ColorsService : BaseService<ColorsTable, Color>(
     ColorsTable
 ) {
-    suspend fun getByBill(id: Int) =
-        dbQuery { table.select { (table.billId eq id) }.mapNotNull { to(it) } }.firstOrNull()
-            ?: throw IllegalArgumentException("No color found for bill..")
-
-    suspend fun deleteForBill(billId: Int) = dbQuery {
-        table.select { (table.billId eq billId) }.mapNotNull { to(it).id }
-    }.forEach { delete(it) { table.id eq it } }
+    override val ColorsTable.connections: Join?
+        get() = null
 
     @Deprecated("Use add(billId, color) instead", ReplaceWith("add(bill.id, color)"), DeprecationLevel.ERROR)
-    override suspend fun add(item: Color): Color? = null
+    override suspend fun add(item: Color): Int? = null
 
-    suspend fun add(bill: Int, item: Color): Color? {
-        var key = 0
-
-        dbQuery {
-            key = table.insert {
-                it[billId] = bill
-                it.assignValues(item)
-                it[dateCreated] = System.currentTimeMillis()
-                it[dateUpdated] = System.currentTimeMillis()
-            } get table.id
-        }
-        return getSingle { table.id eq key }?.also {
-            onChange(ChangeType.Create, key, it)
-        }
+    suspend fun add(bill: Int, item: Color) = tryCall {
+        table.insert {
+            it[billId] = bill
+            it.toRow(item)
+            it[dateCreated] = System.currentTimeMillis()
+            it[dateUpdated] = System.currentTimeMillis()
+        } get table.id
     }
 
-    override suspend fun delete(id: Int, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
-        historyService.run {
-            getFor(HistoryTypes.Bill.name, id).mapNotNull { it.id }.forEach { delete(it) { table.id eq it } }
-        }
-        return super.delete(id, op)
-    }
-
-    override suspend fun to(row: ResultRow) = Color(
-        id = row[ColorsTable.id],
-        red = row[ColorsTable.red],
-        green = row[ColorsTable.green],
-        blue = row[ColorsTable.blue],
-        alpha = row[ColorsTable.alpha],
-        history = historyService.getFor(HistoryTypes.Color.name, row[ColorsTable.id]),
-        dateCreated = row[ColorsTable.dateCreated],
-        dateUpdated = row[ColorsTable.dateUpdated]
+    override suspend fun toItem(row: ResultRow) = Color(
+        id = row[table.id],
+        red = row[table.red],
+        green = row[table.green],
+        blue = row[table.blue],
+        alpha = row[table.alpha],
+        dateCreated = row[table.dateCreated],
+        dateUpdated = row[table.dateUpdated]
     )
 
-    override fun UpdateBuilder<Int>.assignValues(item: Color) {
-        this[ColorsTable.red] = item.red
-        this[ColorsTable.green] = item.green
-        this[ColorsTable.blue] = item.blue
-        this[ColorsTable.alpha] = item.alpha
+    override fun UpdateBuilder<Int>.toRow(item: Color) {
+        this[table.red] = item.red
+        this[table.green] = item.green
+        this[table.blue] = item.blue
+        this[table.alpha] = item.alpha
     }
 }

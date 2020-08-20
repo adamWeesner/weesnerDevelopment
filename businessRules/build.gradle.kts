@@ -24,4 +24,5 @@ dependencies {
     implementation(Ktor.Client.okHttp)
     implementation(Moshi.core)
     implementation(Exposed.core)
+    implementation(Kimchi.core)
 }

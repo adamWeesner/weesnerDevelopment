@@ -1,86 +1,164 @@
 package bills
 
-import HistoryTypes
+import BaseService
 import auth.UsersService
 import billCategories.BillCategoriesService
 import billCategories.BillCategory
 import billSharedUsers.BillSharedUsers
 import billSharedUsers.BillSharedUsersService
 import colors.ColorsService
-import dbQuery
-import generics.GenericService
+import diff
 import history.HistoryService
-import model.ChangeType
-import occurrences.BillOccurrencesService
+import isNotValidId
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import shared.base.History
 import shared.base.InvalidAttributeException
 import shared.billMan.Bill
+import shared.billMan.Category
+import shared.billMan.Color
 
 class BillsService(
     private val sharedUsersService: BillSharedUsersService,
     private val usersService: UsersService,
-    private val billCategoriesService: BillCategoriesService,
-    private val occurrencesService: BillOccurrencesService,
+    private val categoriesService: BillCategoriesService,
     private val colorsService: ColorsService,
     private val historyService: HistoryService
-) : GenericService<Bill, BillsTable>(
+) : BaseService<BillsTable, Bill>(
     BillsTable
 ) {
-    override suspend fun add(item: Bill): Bill? {
-        val key = dbQuery {
-            table.insert {
-                it.assignValues(item)
-                it[dateCreated] = System.currentTimeMillis()
-                it[dateUpdated] = System.currentTimeMillis()
-            } get table.id
-        }
+    override val BillsTable.connections
+        get() = this.innerJoin(usersService.table, {
+            ownerId
+        }, {
+            uuid
+        }).innerJoin(colorsService.table, {
+            id
+        }, {
+            billId
+        })
+
+    override suspend fun add(item: Bill): Int? {
+        var updatedSuccessful = super.add(item)
+
+        if (updatedSuccessful.isNotValidId)
+            return updatedSuccessful
+
+        val addedBillId = updatedSuccessful!!
 
         item.sharedUsers?.forEach {
-            sharedUsersService.add(BillSharedUsers(billId = key, userId = it.uuid!!))
+            updatedSuccessful = sharedUsersService.add(BillSharedUsers(billId = addedBillId, userId = it.uuid!!))
+
+            if (updatedSuccessful.isNotValidId)
+                return updatedSuccessful
         }
         item.categories.forEach {
-            billCategoriesService.add(BillCategory(billId = key, categoryId = it.id!!))
+            updatedSuccessful = categoriesService.add(BillCategory(billId = addedBillId, categoryId = it.id!!))
+            if (updatedSuccessful.isNotValidId)
+                return updatedSuccessful
         }
-        colorsService.add(key, item.color)
 
-        return getSingle { table.id eq key }?.also {
-            onChange(ChangeType.Create, key, it)
-        }
+        return colorsService.add(addedBillId, item.color)
     }
 
-    override suspend fun delete(id: Int, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
-        sharedUsersService.deleteForBill(id)
-        billCategoriesService.deleteForBill(id)
-        colorsService.deleteForBill(id)
-        occurrencesService.deleteForBill(id)
-        historyService.apply { getIdsFor(HistoryTypes.Bill.name, id).forEach { delete(it) { table.id eq it } } }
-        return super.delete(id, op)
+    override suspend fun update(item: Bill, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
+        val oldItem = get {
+            table.id eq item.id!!
+        } ?: return null
+
+        val historyDiff = oldItem.diff(item)
+        val history = historyDiff.updates(item.owner)
+
+        // filter out categories since they get messy..
+        history.filter { !it.field.startsWith(Category::class.simpleName!!) }.forEach {
+            val addedHistory = historyService.add(it)
+            if (addedHistory.isNotValidId) return addedHistory
+        }
+
+        // add category id update to history
+        history.filter {
+            it.field.matches(Regex("${Category::class.simpleName} [0-9]+ id"))
+        }.forEach {
+            val updatedHistory = historyService.add(
+                History(
+                    field = "${Bill::class.simpleName} ${item.id} ${Category::class.simpleName}",
+                    oldValue = it.oldValue,
+                    newValue = it.newValue,
+                    updatedBy = it.updatedBy
+                )
+            )
+
+            if (updatedHistory.isNotValidId)
+                return updatedHistory
+        }
+
+        if (history.any { it.field.contains(Color::class.simpleName!!.toRegex()) }) {
+            val updatedColor = colorsService.update(item.color) { colorsService.table.id eq item.color.id!! }
+
+            if (updatedColor.isNotValidId)
+                return updatedColor
+        }
+
+        if (history.any { it.field.contains("sharedUser".toRegex()) }) {
+            val deleted = sharedUsersService.deleteForBill(item.id!!)
+            if (deleted.isNotValidId)
+                return deleted
+
+            item.sharedUsers?.forEach {
+                val addedSharedUser = sharedUsersService.add(
+                    BillSharedUsers(
+                        billId = item.id!!,
+                        userId = it.uuid!!
+                    )
+                )
+
+                if (addedSharedUser.isNotValidId)
+                    return addedSharedUser
+            }
+        }
+
+        return super.update(item, op)
     }
 
-    override suspend fun to(row: ResultRow) = Bill(
-        id = row[BillsTable.id],
-        owner = usersService.getUserByUuidRedacted(row[BillsTable.ownerId]) ?: throw InvalidAttributeException("User"),
-        name = row[BillsTable.name],
-        amount = row[BillsTable.amount],
-        varyingAmount = row[BillsTable.varyingAmount],
-        payoffAmount = row[BillsTable.payoffAmount],
-        sharedUsers = sharedUsersService.getByBill(row[BillsTable.id]),
-        categories = billCategoriesService.getByBill(row[BillsTable.id]),
-        color = colorsService.getByBill(row[BillsTable.id]),
-        history = historyService.getFor(HistoryTypes.Bill.name, row[BillsTable.id]),
-        dateCreated = row[BillsTable.dateCreated],
-        dateUpdated = row[BillsTable.dateUpdated]
-    )
+    override suspend fun delete(item: Bill, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
+        item.history?.forEach {
+            historyService.delete(it) {
+                historyService.table.id eq it.id!!
+            }
+        }
 
-    override fun UpdateBuilder<Int>.assignValues(item: Bill) {
-        this[BillsTable.ownerId] = item.owner.uuid ?: throw InvalidAttributeException("Uuid")
-        this[BillsTable.name] = item.name
-        this[BillsTable.amount] = item.amount
-        this[BillsTable.varyingAmount] = item.varyingAmount
-        this[BillsTable.payoffAmount] = item.payoffAmount
+        return super.delete(item, op)
+    }
+
+    override suspend fun toItem(row: ResultRow) = Bill(
+        id = row[table.id],
+        owner = usersService.toItemRedacted(row),
+        name = row[table.name],
+        amount = row[table.amount],
+        varyingAmount = row[table.varyingAmount],
+        payoffAmount = row[table.payoffAmount],
+        sharedUsers = sharedUsersService.getByBill(row[table.id]),
+        categories = categoriesService.getByBill(row[table.id]),
+        color = colorsService.toItem(row),
+        dateCreated = row[table.dateCreated],
+        dateUpdated = row[table.dateUpdated]
+    ).let {
+        val history = historyService.getFor<Bill>(it.id, it.owner)
+
+        return@let if (history == null)
+            it
+        else
+            it.copy(history = history)
+    }
+
+    override fun UpdateBuilder<Int>.toRow(item: Bill) {
+        this[table.ownerId] = item.owner.uuid ?: throw InvalidAttributeException("Uuid")
+        this[table.name] = item.name
+        this[table.amount] = item.amount
+        this[table.varyingAmount] = item.varyingAmount
+        this[table.payoffAmount] = item.payoffAmount
     }
 }

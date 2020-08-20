@@ -7,6 +7,8 @@ import io.ktor.server.testing.setBody
 import shared.base.Response
 import shared.base.ServerError
 import shared.toJson
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 /**
  * Build a request to be sent to the backend.
@@ -35,7 +37,7 @@ class BuiltRequest(
      * [send] the request returning the response as [T].
      */
     inline fun <reified T> asObject(body: T? = null) =
-        send<T>(body).response.content.parse<Response>().message.let {
+        send(body).response.content.parse<Response>().message.let {
             if (it is String) it.parse<T>()
             else it.toJson().parse<T>()
         }
@@ -44,21 +46,26 @@ class BuiltRequest(
      * [send] the request returning the response as [T].
      */
     inline fun <reified T, reified R> asServerError(body: T? = null) =
-        send<T>(body).response.content.parse<ServerError>().message.toJson().parse<R>()
+        send(body).response.content.parse<ServerError>().message.toJson().parse<R>()
 
     /**
      * [send] the request returning the response as [T].
      */
     inline fun <reified T, reified R> asClass(body: T? = null) =
-        send<T>(body).response.content.also { println("content $it") }.parseResponse<R>()
+        send(body).response.content.parseResponse<R>()
 
     /**
      * [send] the request returning the status of the response.
      */
-    inline fun <reified T> sendStatus(body: T? = null) = send<T>(body).response.status()
+    inline fun <reified T> sendStatus(body: T? = null) = send(body).response.status()
 }
 
 inline fun <reified T> String?.parseResponse() = this.parse<Response>().let {
     if (it.status.code.toString().startsWith("4")) null
     else it.message.toJson().parse<T>()
 }
+
+infix fun <A> A.shouldBe(expected: A) = assertEquals(expected, this)
+infix fun <A> A.shouldNotBe(expected: A) = assertNotEquals(expected, this)
+infix fun Int.shouldBeAtLeast(expected: Int) = assert(this >= expected)
+infix fun Int.shouldBeAtMost(expected: Int) = assert(this <= expected)

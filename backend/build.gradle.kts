@@ -42,7 +42,10 @@ dependencies {
     implementation(H2.database)
     implementation(Hikari.core)
     implementation(Logback.core)
+    implementation(Kimchi.core)
 
     testImplementation(Ktor.serverTest)
-    testImplementation(Kotlin.Test.runner)
+    testImplementation(Kotlin.Test.core)
+    testImplementation(Kotlin.Test.junit5)
+    testImplementation(Junit.core)
 }

@@ -1,51 +1,82 @@
 package income
 
-import HistoryTypes
+import BaseService
 import auth.UsersService
 import colors.ColorsService
-import generics.GenericService
+import diff
 import history.HistoryService
-import incomeOccurrences.IncomeOccurrencesService
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import isNotValidId
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import shared.base.InvalidAttributeException
 import shared.billMan.Color
 import shared.billMan.Income
 
 class IncomeService(
     private val usersService: UsersService,
     private val colorsService: ColorsService,
-    private val occurrencesService: IncomeOccurrencesService,
     private val historyService: HistoryService
-) : GenericService<Income, IncomeTable>(
+) : BaseService<IncomeTable, Income>(
     IncomeTable
 ) {
-    override suspend fun delete(id: Int, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
-        occurrencesService.deleteForIncome(id)
-        historyService.run {
-            getFor(HistoryTypes.Bill.name, id).mapNotNull { it.id }.forEach { delete(it) { table.id eq it } }
+    override val IncomeTable.connections
+        get() = this.innerJoin(usersService.table, {
+            ownerId
+        }, {
+            uuid
+        }).leftJoin(colorsService.table, {
+            id
+        }, {
+            billId
+        })
+
+    override suspend fun update(item: Income, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {
+        val oldItem = get {
+            table.id eq item.id!!
+        } ?: return null
+
+        oldItem.diff(item).updates(item.owner).forEach {
+            val history = historyService.add(it)
+
+            if (history.isNotValidId)
+                return history
         }
-        return super.delete(id, op)
+
+        return super.update(item, op)
     }
 
-    override suspend fun to(row: ResultRow) = Income(
-        id = row[IncomeTable.id],
-        owner = usersService.getUserByUuidRedacted(row[IncomeTable.ownerId])
-            ?: throw IllegalArgumentException("No user found for income."),
-        name = row[IncomeTable.name],
-        amount = row[IncomeTable.amount],
-        varyingAmount = row[IncomeTable.varyingAmount],
-        color = Color(red = 255, green = 255, blue = 255, alpha = 0, dateCreated = 0, dateUpdated = 0),
-        history = historyService.getFor(HistoryTypes.Bill.name, row[IncomeTable.id]),
-        dateCreated = row[IncomeTable.dateCreated],
-        dateUpdated = row[IncomeTable.dateUpdated]
-    )
+    override suspend fun delete(item: Income, op: SqlExpressionBuilder.() -> Op<Boolean>): Boolean {
+        item.history?.forEach {
+            historyService.delete(it) {
+                historyService.table.id eq it.id!!
+            }
+        }
 
-    override fun UpdateBuilder<Int>.assignValues(item: Income) {
-        this[IncomeTable.ownerId] = item.owner.uuid!!
-        this[IncomeTable.name] = item.name
-        this[IncomeTable.amount] = item.amount
-        this[IncomeTable.varyingAmount] = item.varyingAmount
+        return super.delete(item, op)
+    }
+
+    override suspend fun toItem(row: ResultRow) = Income(
+        id = row[table.id],
+        owner = usersService.toItemRedacted(row),
+        name = row[table.name],
+        amount = row[table.amount],
+        varyingAmount = row[table.varyingAmount],
+        color = Color(red = 255, green = 255, blue = 255, alpha = 0, dateCreated = 0, dateUpdated = 0),
+        dateCreated = row[table.dateCreated],
+        dateUpdated = row[table.dateUpdated]
+    ).let {
+        val history = historyService.getFor<Income>(it.id, it.owner)
+
+        return@let if (history == null)
+            it
+        else
+            it.copy(history = history)
+    }
+
+    override fun UpdateBuilder<Int>.toRow(item: Income) {
+        this[table.ownerId] = item.owner.uuid ?: throw InvalidAttributeException("Uuid")
+        this[table.name] = item.name
+        this[table.amount] = item.amount
+        this[table.varyingAmount] = item.varyingAmount
     }
 }

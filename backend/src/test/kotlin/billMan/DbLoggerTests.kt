@@ -15,6 +15,7 @@ import shared.billMan.Category
 import shared.billMan.responses.CategoriesResponse
 import shouldBe
 import shouldBeAtLeast
+import shouldBeAtMost
 
 @KtorExperimentalAPI
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
@@ -60,5 +61,17 @@ class DbLoggerTests : BaseTest() {
         loggingItems.last {
             it.log.contains(BillMan.categories) && it.log.contains(Delete.value)
         }.log shouldBe HttpLog(Delete, "${BillMan.categories}?id=${category.id}", OK).toString()
+    }
+
+    @Test
+    @Order(4)
+    fun `verify hitting logging endpoint does not add logs to db`() {
+        get(BillMan.logging).sendStatus<Unit>() shouldBe OK
+        get(BillMan.logging).sendStatus<Unit>() shouldBe OK
+        val loggingItems = get(BillMan.logging).asObject<LoggingResponse>().items!!
+
+        loggingItems.filter {
+            it.log.contains(BillMan.logging)
+        }.also { println("logs $it") }.size shouldBeAtMost 0
     }
 }

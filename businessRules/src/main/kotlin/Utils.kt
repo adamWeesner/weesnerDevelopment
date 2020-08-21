@@ -64,7 +64,7 @@ fun <I : GenericItem> PipelineContext<*, ApplicationCall>.logRequest(body: I? = 
  * Helper function to [respond] with a [Response] and body.
  */
 suspend fun PipelineContext<*, ApplicationCall>.respond(response: Response) = response.run {
-    if (call.request.origin.uri != Path.BillMan.logging)
+    if (!call.request.origin.uri.contains(Path.BillMan.logging))
         Kimchi.info("${HttpLog(call.request.httpMethod.value, call.request.origin.uri, status.code)}")
 
     call.respond(HttpStatusCode(status.code, status.description), this).also {
@@ -83,7 +83,7 @@ suspend fun PipelineContext<*, ApplicationCall>.respond(response: Response) = re
  * Helper function to [respond] with a [Response] and error body.
  */
 suspend fun PipelineContext<*, ApplicationCall>.respondError(error: Response) = error.run {
-    if (call.request.origin.uri != Path.BillMan.logging)
+    if (!call.request.origin.uri.contains(Path.BillMan.logging))
         Kimchi.info("${HttpLog(call.request.httpMethod.value, call.request.origin.uri, status.code)}")
 
     call.respond(

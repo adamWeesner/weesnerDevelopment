@@ -61,7 +61,12 @@ class BillsService(
                 return updatedSuccessful
         }
 
-        return colorsService.add(addedBillId, item.color)
+        updatedSuccessful = colorsService.add(addedBillId, item.color)
+
+        if (updatedSuccessful.isNotValidId)
+            return updatedSuccessful
+
+        return addedBillId
     }
 
     override suspend fun update(item: Bill, op: SqlExpressionBuilder.() -> Op<Boolean>): Int? {

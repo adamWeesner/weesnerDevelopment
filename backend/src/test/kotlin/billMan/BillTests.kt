@@ -18,10 +18,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import parse
 import parseResponse
 import payments.PaymentsTable
 import shared.auth.User
 import shared.billMan.Bill
+import shared.billMan.BillOccurrence
 import shared.billMan.Category
 import shared.billMan.Color
 import shared.billMan.responses.BillsResponse
@@ -196,5 +198,33 @@ class BillTests : BaseTest() {
     @Order(10)
     fun `verify deleting item that doesn't exist`() {
         delete(path, 99).sendStatus<Unit>() shouldBe HttpStatusCode.NotFound
+    }
+
+    @Test
+    @Order(11)
+    fun `verify getting complex added item`() {
+        post(Path.BillMan.categories).send(Category(name = "randomCategory"))
+        val newCategory = get(Path.BillMan.categories).asObject<CategoriesResponse>().items?.last()!!
+
+        post(path).sendStatus(newItem(8).copy(categories = listOf(newCategory))) shouldBe Created
+
+        val addedId = get(path).asObject<BillsResponse>().items?.last()?.id!!
+
+        post(Path.BillMan.occurrences).sendStatus(
+            BillOccurrence(
+                owner = signedInUser,
+                itemId = addedId.toString(),
+                amount = newItem(8).amount,
+                amountLeft = newItem(8).amount,
+                dueDate = System.currentTimeMillis(),
+                every = "1 Month"
+            )
+        ) shouldBe Created
+
+        val response = get(path, addedId).asObject<BillsResponse>().items
+
+        response?.size shouldBe 1
+        response?.first()?.owner shouldBe signedInUser.redacted().parse()
+
     }
 }

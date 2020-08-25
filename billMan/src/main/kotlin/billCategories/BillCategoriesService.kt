@@ -22,7 +22,7 @@ class BillCategoriesService(
     suspend fun getByBill(id: Int) = getAll {
         table.billId eq id
     }?.mapNotNull {
-        categoriesService.toItem(it)
+        categoriesService.get { categoriesService.table.id eq it[table.categoryId] }
     } ?: throw InvalidAttributeException("Bill categories")
 
 

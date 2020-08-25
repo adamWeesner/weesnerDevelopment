@@ -38,8 +38,10 @@ class BuiltRequest(
      */
     inline fun <reified T> asObject(body: T? = null) =
         send(body).response.content.parse<Response>().message.let {
-            if (it is String) it.parse<T>()
-            else it.toJson().parse<T>()
+            when (it) {
+                is String -> it.parse<T>()
+                else -> it.toJson().parse<T>()
+            }
         }
 
     /**
@@ -62,7 +64,12 @@ class BuiltRequest(
 
 inline fun <reified T> String?.parseResponse() = this.parse<Response>().let {
     if (it.status.code.toString().startsWith("4")) null
-    else it.message.toJson().parse<T>()
+    else {
+        when (val message = it.message) {
+            is String -> message.parse<T>()
+            else -> message.toJson().parse<T>()
+        }
+    }
 }
 
 infix fun <A> A.shouldBe(expected: A) = assertEquals(expected, this)

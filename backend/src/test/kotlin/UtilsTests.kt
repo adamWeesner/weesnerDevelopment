@@ -317,8 +317,8 @@ open class UtilsTests {
                     null,
                     User(3, "randomuuid2", "random", "random@email.com", null, null, null, null, 1, 1),
                     fakeUser,
-                    this[1].dateCreated,
-                    this[1].dateUpdated
+                    this[0].dateCreated,
+                    this[0].dateUpdated
                 ),
                 History(
                     null,
@@ -326,8 +326,8 @@ open class UtilsTests {
                     null,
                     User(2, "randomuuid1", "random", "random@email.com", null, null, null, null, 1, 1),
                     fakeUser,
-                    this[0].dateCreated,
-                    this[0].dateUpdated
+                    this[1].dateCreated,
+                    this[1].dateUpdated
                 )
             )
         }

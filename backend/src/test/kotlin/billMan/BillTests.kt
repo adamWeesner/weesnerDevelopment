@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test
 import parse
 import parseResponse
 import payments.PaymentsTable
+import shared.auth.TokenResponse
 import shared.auth.User
 import shared.billMan.Bill
 import shared.billMan.BillOccurrence
@@ -225,6 +226,28 @@ class BillTests : BaseTest() {
 
         response?.size shouldBe 1
         response?.first()?.owner shouldBe signedInUser.redacted().parse()
+    }
 
+    @Test
+    @Order(12)
+    fun `verify only getting your bills`() {
+        post(path).sendStatus(newItem(8)) shouldBe Created
+
+        val newUserToken = post(Path.User.base + Path.User.signUp, usingToken = null).asClass<User, TokenResponse>(
+            User(
+                name = "test2",
+                email = "test2@email.com",
+                username = "test2",
+                password = "test"
+            )
+        )?.token
+
+        val newUser = get(Path.User.base + Path.User.account, usingToken = newUserToken).asObject<User>()
+        post(path, usingToken = newUserToken).sendStatus(newItem(8, owner = newUser)) shouldBe Created
+
+        val response = get(path, usingToken = newUserToken).asObject<BillsResponse>().items
+
+        response?.size shouldBe 1
+        response?.first()?.owner shouldBe newUser.redacted().parse()
     }
 }

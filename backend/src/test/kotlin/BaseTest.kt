@@ -25,7 +25,7 @@ open class BaseTest {
     var token: String = ""
     lateinit var signedInUser: User
 
-    fun deleteDb() {
+    private fun deleteDb() {
         val db = File("server")
         if (db.isDirectory) {
             val children = db.list()
@@ -37,17 +37,16 @@ open class BaseTest {
     }
 
     fun createUser() {
-        token =
-            post(Path.User.base + Path.User.signUp, usingToken = null).asClass<User, TokenResponse>(
-                User(
-                    name = "test",
-                    email = "test@email.com",
-                    username = "test",
-                    password = "test"
-                )
-            )?.token ?: post(Path.User.base + Path.User.login, usingToken = null)
-                .asClass<HashedUser, TokenResponse>(HashedUser("test", "test"))?.token
-                    ?: throw IllegalArgumentException("Something happened... should have gotten a token")
+        token = post(Path.User.base + Path.User.signUp, usingToken = null).asClass<User, TokenResponse>(
+            User(
+                name = "test",
+                email = "test@email.com",
+                username = "test",
+                password = "test"
+            )
+        )?.token ?: post(Path.User.base + Path.User.login, usingToken = null)
+            .asClass<HashedUser, TokenResponse>(HashedUser("test", "test"))?.token
+                ?: throw IllegalArgumentException("Something happened... should have gotten a token")
 
 
         signedInUser = get(Path.User.base + Path.User.account).asObject()

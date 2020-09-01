@@ -42,7 +42,7 @@ class ComplexValidationTests : BaseTest() {
         }
 
         post(BillMan.categories).sendStatus(Category(owner = signedInUser, name = "category"))
-        category = get(BillMan.categories, 1).asObject<CategoriesResponse>().items?.first()!!
+        category = get(BillMan.categories, 1).asObject<CategoriesResponse>().items?.last()!!
     }
 
     @Test

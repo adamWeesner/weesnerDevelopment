@@ -7,9 +7,9 @@ import kotlin.reflect.full.createType
 
 class BillsRouter(
     override val basePath: String,
-    billsService: BillsService
+    override val service: BillsService
 ) : BaseRouter<Bill, BillsService>(
     BillsResponse(),
-    billsService,
+    service,
     Bill::class.createType()
 )

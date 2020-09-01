@@ -3,6 +3,7 @@ package com.weesnerdevelopment.routes
 import Path.Server.health
 import com.weesnerdevelopment.validator.ValidatorRouter
 import com.weesnerdevelopment.validator.complex.ComplexValidatorRouter
+import io.ktor.auth.authenticate
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.route
@@ -22,5 +23,7 @@ fun Routing.serverRoutes() {
     }
 
     validatorRouter.apply { setupRoutes() }
-    complexValidatorRouter.apply { setupRoutes() }
+    authenticate {
+        complexValidatorRouter.apply { setupRoutes() }
+    }
 }

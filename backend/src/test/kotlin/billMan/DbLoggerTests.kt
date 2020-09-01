@@ -72,6 +72,6 @@ class DbLoggerTests : BaseTest() {
 
         loggingItems.filter {
             it.log.contains(BillMan.logging)
-        }.also { println("logs $it") }.size shouldBeAtMost 0
+        }.size shouldBeAtMost 0
     }
 }

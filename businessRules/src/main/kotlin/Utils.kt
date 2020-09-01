@@ -16,7 +16,6 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import shared.auth.InvalidUserException
 import shared.auth.InvalidUserReason
 import shared.base.GenericItem
-import shared.base.OwnedItem
 import shared.base.Response
 import shared.base.Response.Companion.InternalError
 import shared.base.Response.Companion.Unauthorized
@@ -120,9 +119,6 @@ fun ApplicationCall.loggedUserData() = authentication.principal<CustomPrincipal>
 
 inline fun <reified T> String?.parse(): T =
     this?.fromJson<T>() ?: throw Throwable("failed to parse $this to ${T::class}.")
-
-fun <T : OwnedItem> List<T>.forOwner(username: String?) =
-    filter { it.owner.username == username }
 
 /**
  * Checks whether the Int is a valid successful id, added to the database.

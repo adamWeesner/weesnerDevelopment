@@ -1,3 +1,3 @@
 object Backend {
-    const val version = "1.5.2"
+    const val version = "1.5.3"
 }

@@ -9,23 +9,15 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.weesnerdevelopment.AppConfig
 import com.weesnerdevelopment.DbLogger
 import com.weesnerdevelopment.injecton.kodeinSetup
-import com.weesnerdevelopment.routes.billManRoutes
-import com.weesnerdevelopment.routes.serverRoutes
-import com.weesnerdevelopment.routes.taxFetcherRoutes
-import com.weesnerdevelopment.routes.userRoutes
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.auth.Authentication
-import io.ktor.auth.jwt.jwt
-import io.ktor.auth.parseAuthorizationHeader
+import com.weesnerdevelopment.routes.*
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.auth.jwt.*
 import io.ktor.features.*
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.auth.HttpAuthHeader
-import io.ktor.routing.Routing
-import io.ktor.websocket.WebSockets
+import io.ktor.http.*
+import io.ktor.http.auth.*
+import io.ktor.routing.*
+import io.ktor.websocket.*
 import kimchi.Kimchi
 import logging.LoggingService
 import logging.StdOutLogger
@@ -106,6 +98,7 @@ object DatabaseServer {
             userRoutes()
             taxFetcherRoutes()
             billManRoutes()
+            breathOfTheWildRoutes()
         }
     }
 }

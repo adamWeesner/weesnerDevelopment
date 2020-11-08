@@ -3,6 +3,7 @@ package com.weesnerdevelopment.injecton
 import Path.*
 import auth.UserRouter
 import bills.BillsRouter
+import breathOfTheWild.CrittersRouter
 import categories.CategoriesRouter
 import com.weesnerdevelopment.validator.ValidatorRouter
 import com.weesnerdevelopment.validator.complex.ComplexValidatorRouter
@@ -48,4 +49,7 @@ val routers = Kodein.Module("routers") {
     bind<BillOccurrenceRouter>() with singleton { BillOccurrenceRouter(BillMan.occurrences, instance()) }
     bind<IncomeOccurrenceRouter>() with singleton { IncomeOccurrenceRouter(BillMan.incomeOccurrences, instance()) }
     bind<LoggingRouter>() with singleton { LoggingRouter(BillMan.logging, instance()) }
+
+    // breathOfTheWild
+    bind<CrittersRouter>() with singleton { CrittersRouter(BreathOfTheWild.critters, instance()) }
 }

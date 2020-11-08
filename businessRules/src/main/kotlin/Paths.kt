@@ -1,4 +1,5 @@
 import Path.BillMan.basePath
+import Path.BreathOfTheWild.basePath
 import Path.TaxFetcher.basePath
 import Path.User.base
 
@@ -44,5 +45,14 @@ sealed class Path {
         val occurrences = "$bills/occurrences"
         val incomeOccurrences = "$income/occurrences"
         val logging = "${basePath}logging"
+    }
+
+    /**
+     * The available paths at [basePath]/value.
+     */
+    object BreathOfTheWild : Path() {
+        val basePath = "breathOfTheWild/"
+        val all = "${basePath}all"
+        val critters = "${basePath}critters"
     }
 }

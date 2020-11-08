@@ -4,6 +4,7 @@ import auth.UsersTable
 import billCategories.BillCategoriesTable
 import billSharedUsers.BillsSharedUsersTable
 import bills.BillsTable
+import breathOfTheWild.CrittersTable
 import categories.CategoriesTable
 import colors.ColorsTable
 import com.weesnerdevelopment.validator.ValidatorTable
@@ -63,6 +64,10 @@ object DatabaseFactory {
                 BillsSharedUsersTable,
                 OccurrenceSharedUsersTable,
                 IncomeOccurrencesTable
+            )
+            // breath of the wild
+            create(
+                CrittersTable
             )
         }
     }

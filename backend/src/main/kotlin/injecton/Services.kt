@@ -4,6 +4,7 @@ import auth.UsersService
 import billCategories.BillCategoriesService
 import billSharedUsers.BillSharedUsersService
 import bills.BillsService
+import breathOfTheWild.CrittersService
 import categories.CategoriesService
 import colors.ColorsService
 import com.weesnerdevelopment.validator.ValidatorService
@@ -52,4 +53,6 @@ val services = Kodein.Module("services") {
     }
     bind<IncomeOccurrencesService>() with singleton { IncomeOccurrencesService(instance(), instance()) }
     bind<LoggingService>() with singleton { LoggingService() }
+    // breathOfTheWild
+    bind<CrittersService>() with singleton { CrittersService() }
 }

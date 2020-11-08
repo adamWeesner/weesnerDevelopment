@@ -24,6 +24,7 @@ dependencies {
     implementation(project(BusinessRules.project))
     implementation(project(TaxFetcher.project))
     implementation(project(BillMan.project))
+    implementation(project(BreathOfTheWild.project))
     implementation(Kotlin.stdLib)
     implementation(Kotlin.reflect)
     implementation(Ktor.authJwt)

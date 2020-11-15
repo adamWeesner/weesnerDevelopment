@@ -1,23 +1,10 @@
-package breathOfTheWild
+package breathOfTheWild.critter
 
-import BaseRouter
 import BaseService
-import generics.IdTable
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.zelda.Critter
-import shared.zelda.responses.CrittersResponse
-import kotlin.reflect.full.createType
-
-data class CrittersRouter(
-    override val basePath: String,
-    override val service: CrittersService
-) : BaseRouter<Critter, CrittersService>(
-    CrittersResponse(),
-    service,
-    Critter::class.createType()
-)
 
 class CrittersService : BaseService<CrittersTable, Critter>(
     CrittersTable
@@ -31,8 +18,8 @@ class CrittersService : BaseService<CrittersTable, Critter>(
         row[table.effectClass],
         row[table.boostEffect],
         row[table.durationIncrease],
-        dateCreated = row[table.dateCreated],
-        dateUpdated = row[table.dateUpdated]
+        row[table.dateCreated],
+        row[table.dateUpdated]
     )
 
     override fun UpdateBuilder<Int>.toRow(item: Critter) {
@@ -41,11 +28,4 @@ class CrittersService : BaseService<CrittersTable, Critter>(
         this[table.boostEffect] = item.boostEffect
         this[table.durationIncrease] = item.durationIncrease
     }
-}
-
-object CrittersTable : IdTable() {
-    val critter = varchar("critter", 255)
-    val effectClass = varchar("effectClass", 255).nullable()
-    val boostEffect = varchar("boostEffect", 255).nullable()
-    val durationIncrease = varchar("durationIncrease", 255).nullable()
 }

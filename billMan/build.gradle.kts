@@ -13,9 +13,7 @@ java { javaSource() }
 tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
 
 dependencies {
-    implementation(fileTree(Base.jars))
     implementation(project(BusinessRules.project))
-    implementation(Kotlin.stdLib)
     implementation(Moshi.core)
     implementation(Ktor.authJwt)
     implementation(Ktor.Server.core)

@@ -14,9 +14,7 @@ java { javaSource() }
 tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
 
 dependencies {
-    implementation(fileTree(Base.jars))
     implementation(project(BusinessRules.project))
-    implementation(Kotlin.stdLib)
     implementation(Ktor.Server.core)
     implementation(Moshi.core)
     implementation(Exposed.core)

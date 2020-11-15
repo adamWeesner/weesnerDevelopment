@@ -20,12 +20,10 @@ tasks.withType<Jar> { manifest { attributes(mapOf("Main-Class" to application.ma
 task("stage").dependsOn("installDist")
 
 dependencies {
-    implementation(fileTree(Base.jars))
     implementation(project(BusinessRules.project))
     implementation(project(TaxFetcher.project))
     implementation(project(BillMan.project))
     implementation(project(BreathOfTheWild.project))
-    implementation(Kotlin.stdLib)
     implementation(Kotlin.reflect)
     implementation(Ktor.authJwt)
     implementation(Ktor.webSockets)

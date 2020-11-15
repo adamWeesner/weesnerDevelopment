@@ -1,10 +1,19 @@
-package com.weesnerdevelopment.injecton
+package com.weesnerdevelopment.injection
 
 import auth.UsersService
 import billCategories.BillCategoriesService
 import billSharedUsers.BillSharedUsersService
 import bills.BillsService
-import breathOfTheWild.CrittersService
+import breathOfTheWild.cookingPotFood.CookingPotFoodsService
+import breathOfTheWild.cookingPotIngredients.CookingPotIngredientsService
+import breathOfTheWild.critter.CrittersService
+import breathOfTheWild.elixirIngredients.ElixirIngredientsService
+import breathOfTheWild.elixirs.ElixirsService
+import breathOfTheWild.images.ImagesService
+import breathOfTheWild.ingredients.IngredientsService
+import breathOfTheWild.ingredientsBonusAddOns.BonusAddOnsService
+import breathOfTheWild.ingredientsDuration.IngredientDurationsService
+import breathOfTheWild.ingredientsHearts.IngredientHeartsService
 import categories.CategoriesService
 import colors.ColorsService
 import com.weesnerdevelopment.validator.ValidatorService
@@ -54,5 +63,14 @@ val services = Kodein.Module("services") {
     bind<IncomeOccurrencesService>() with singleton { IncomeOccurrencesService(instance(), instance()) }
     bind<LoggingService>() with singleton { LoggingService() }
     // breathOfTheWild
+    bind<ImagesService>() with singleton { ImagesService() }
     bind<CrittersService>() with singleton { CrittersService() }
+    bind<CookingPotIngredientsService>() with singleton { CookingPotIngredientsService() }
+    bind<CookingPotFoodsService>() with singleton { CookingPotFoodsService(instance(), instance()) }
+    bind<IngredientHeartsService>() with singleton { IngredientHeartsService(instance()) }
+    bind<BonusAddOnsService>() with singleton { BonusAddOnsService(instance()) }
+    bind<IngredientDurationsService>() with singleton { IngredientDurationsService() }
+    bind<IngredientsService>() with singleton { IngredientsService(instance(), instance(), instance(), instance()) }
+    bind<ElixirIngredientsService>() with singleton { ElixirIngredientsService() }
+    bind<ElixirsService>() with singleton { ElixirsService(instance(), instance()) }
 }

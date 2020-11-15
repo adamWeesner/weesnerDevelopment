@@ -1,9 +1,12 @@
-package com.weesnerdevelopment.injecton
+package com.weesnerdevelopment.injection
 
 import Path.*
 import auth.UserRouter
 import bills.BillsRouter
-import breathOfTheWild.CrittersRouter
+import breathOfTheWild.cookingPotFood.CookingPotFoodsRouter
+import breathOfTheWild.critter.CrittersRouter
+import breathOfTheWild.elixirs.ElixirsRouter
+import breathOfTheWild.ingredients.IngredientsRouter
 import categories.CategoriesRouter
 import com.weesnerdevelopment.validator.ValidatorRouter
 import com.weesnerdevelopment.validator.complex.ComplexValidatorRouter
@@ -52,4 +55,7 @@ val routers = Kodein.Module("routers") {
 
     // breathOfTheWild
     bind<CrittersRouter>() with singleton { CrittersRouter(BreathOfTheWild.critters, instance()) }
+    bind<CookingPotFoodsRouter>() with singleton { CookingPotFoodsRouter(BreathOfTheWild.cookingPotFoods, instance()) }
+    bind<IngredientsRouter>() with singleton { IngredientsRouter(BreathOfTheWild.ingredients, instance()) }
+    bind<ElixirsRouter>() with singleton { ElixirsRouter(BreathOfTheWild.elixirs, instance()) }
 }

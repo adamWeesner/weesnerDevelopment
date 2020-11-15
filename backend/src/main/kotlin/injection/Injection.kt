@@ -1,9 +1,9 @@
-package com.weesnerdevelopment.injecton
+package com.weesnerdevelopment.injection
 
 import auth.Cipher
 import auth.JwtProvider
 import com.weesnerdevelopment.AppConfig
-import io.ktor.application.Application
+import io.ktor.application.*
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton

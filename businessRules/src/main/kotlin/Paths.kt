@@ -54,5 +54,8 @@ sealed class Path {
         val basePath = "breathOfTheWild/"
         val all = "${basePath}all"
         val critters = "${basePath}critters"
+        val cookingPotFoods = "${basePath}cookingPotFoods"
+        val ingredients = "${basePath}ingredients"
+        val elixirs = "${basePath}elixirs"
     }
 }

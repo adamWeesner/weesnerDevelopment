@@ -8,7 +8,7 @@ import com.ryanharter.ktor.moshi.moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.weesnerdevelopment.AppConfig
 import com.weesnerdevelopment.DbLogger
-import com.weesnerdevelopment.injecton.kodeinSetup
+import com.weesnerdevelopment.injection.kodeinSetup
 import com.weesnerdevelopment.routes.*
 import io.ktor.application.*
 import io.ktor.auth.*

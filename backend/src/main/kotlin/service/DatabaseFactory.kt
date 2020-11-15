@@ -4,7 +4,16 @@ import auth.UsersTable
 import billCategories.BillCategoriesTable
 import billSharedUsers.BillsSharedUsersTable
 import bills.BillsTable
-import breathOfTheWild.CrittersTable
+import breathOfTheWild.cookingPotFood.CookingPotFoodsTable
+import breathOfTheWild.cookingPotIngredients.CookingPotIngredientsTable
+import breathOfTheWild.critter.CrittersTable
+import breathOfTheWild.elixirIngredients.ElixirIngredientsTable
+import breathOfTheWild.elixirs.ElixirsTable
+import breathOfTheWild.images.ImagesTable
+import breathOfTheWild.ingredients.IngredientsTable
+import breathOfTheWild.ingredientsBonusAddOns.BonusAddOnsTable
+import breathOfTheWild.ingredientsDuration.IngredientDurationsTable
+import breathOfTheWild.ingredientsHearts.IngredientHeartsTable
 import categories.CategoriesTable
 import colors.ColorsTable
 import com.weesnerdevelopment.validator.ValidatorTable
@@ -67,7 +76,16 @@ object DatabaseFactory {
             )
             // breath of the wild
             create(
-                CrittersTable
+                CookingPotFoodsTable,
+                CookingPotIngredientsTable,
+                CrittersTable,
+                ImagesTable,
+                IngredientsTable,
+                BonusAddOnsTable,
+                IngredientDurationsTable,
+                IngredientHeartsTable,
+                ElixirsTable,
+                ElixirIngredientsTable
             )
         }
     }

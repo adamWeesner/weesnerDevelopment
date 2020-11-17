@@ -2,32 +2,32 @@ package com.weesnerdevelopment.routes
 
 import breathOfTheWild.cookingPotFood.CookingPotFoodsRouter
 import breathOfTheWild.critter.CrittersRouter
-import breathOfTheWild.elixirs.ElixirsRouter
-import breathOfTheWild.ingredients.IngredientsRouter
+import breathOfTheWild.effect.EffectsRouter
+import breathOfTheWild.elixir.ElixirsRouter
+import breathOfTheWild.frozenFood.FrozenFoodsRouter
+import breathOfTheWild.image.ImagesRouter
+import breathOfTheWild.ingredient.IngredientsRouter
+import breathOfTheWild.monsterPart.MonsterPartsRouter
+import breathOfTheWild.otherFood.OtherFoodsRouter
+import breathOfTheWild.roastedFood.RoastedFoodsRouter
 import io.ktor.auth.*
 import io.ktor.routing.*
 import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 
 fun Routing.breathOfTheWildRoutes() {
-    val crittersRouter by kodein().instance<CrittersRouter>()
     val cookingPotFoodsRouter by kodein().instance<CookingPotFoodsRouter>()
-    val ingredientsRouter by kodein().instance<IngredientsRouter>()
     val elixirsRouter by kodein().instance<ElixirsRouter>()
-
-    crittersRouter.apply {
-        authenticate {
-            setupRoutes()
-        }
-    }
+    val frozenFoodsRouter by kodein().instance<FrozenFoodsRouter>()
+    val crittersRouter by kodein().instance<CrittersRouter>()
+    val otherFoodsRouter by kodein().instance<OtherFoodsRouter>()
+    val effectsRouter by kodein().instance<EffectsRouter>()
+    val monsterPartsRouter by kodein().instance<MonsterPartsRouter>()
+    val imagesRouter by kodein().instance<ImagesRouter>()
+    val roastedFoodsRouter by kodein().instance<RoastedFoodsRouter>()
+    val ingredientsRouter by kodein().instance<IngredientsRouter>()
 
     cookingPotFoodsRouter.apply {
-        authenticate {
-            setupRoutes()
-        }
-    }
-
-    ingredientsRouter.apply {
         authenticate {
             setupRoutes()
         }
@@ -38,4 +38,53 @@ fun Routing.breathOfTheWildRoutes() {
             setupRoutes()
         }
     }
+
+    frozenFoodsRouter.apply {
+        authenticate {
+            setupRoutes()
+        }
+    }
+
+    crittersRouter.apply {
+        authenticate {
+            setupRoutes()
+        }
+    }
+
+    otherFoodsRouter.apply {
+        authenticate {
+            setupRoutes()
+        }
+    }
+
+    effectsRouter.apply {
+        authenticate {
+            setupRoutes()
+        }
+    }
+
+    monsterPartsRouter.apply {
+        authenticate {
+            setupRoutes()
+        }
+    }
+
+    imagesRouter.apply {
+        authenticate {
+            setupRoutes()
+        }
+    }
+
+    roastedFoodsRouter.apply {
+        authenticate {
+            setupRoutes()
+        }
+    }
+
+    ingredientsRouter.apply {
+        authenticate {
+            setupRoutes()
+        }
+    }
 }
+        

@@ -1,4 +1,4 @@
-package breathOfTheWild.images
+package breathOfTheWild.image
 
 import BaseService
 import org.jetbrains.exposed.sql.Join
@@ -14,18 +14,18 @@ class ImagesService : BaseService<ImagesTable, Image>(
 
     override suspend fun toItem(row: ResultRow) = Image(
         row[table.id],
-        row[ImagesTable.description],
-        row[ImagesTable.src],
-        row[ImagesTable.width],
-        row[ImagesTable.height],
-        dateCreated = row[table.dateCreated],
-        dateUpdated = row[table.dateUpdated]
+        row[table.description],
+        row[table.src],
+        row[table.width],
+        row[table.height],
+        row[table.dateCreated],
+        row[table.dateUpdated]
     )
 
     override fun UpdateBuilder<Int>.toRow(item: Image) {
-        this[ImagesTable.description] = item.description
-        this[ImagesTable.src] = item.src
-        this[ImagesTable.width] = item.width
-        this[ImagesTable.height] = item.height
+        this[table.description] = item.description
+        this[table.src] = item.src
+        this[table.width] = item.width
+        this[table.height] = item.height
     }
 }

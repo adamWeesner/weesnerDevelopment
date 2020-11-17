@@ -1,9 +1,9 @@
-package breathOfTheWild.elixirIngredients
+package breathOfTheWild.cookingPotFoodIngredients
 
 import shared.base.GenericItem
 import shared.currentTimeMillis
 
-data class ElixirIngredient(
+data class CookingPotFoodIngredient(
     override val id: Int?,
     val ingredient: String,
     val itemId: Int,

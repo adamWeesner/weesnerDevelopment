@@ -1,4 +1,4 @@
-package breathOfTheWild.elixirs
+package breathOfTheWild.elixir
 
 import BaseRouter
 import shared.zelda.Elixir

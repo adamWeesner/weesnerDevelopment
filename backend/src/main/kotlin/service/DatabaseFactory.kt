@@ -5,15 +5,26 @@ import billCategories.BillCategoriesTable
 import billSharedUsers.BillsSharedUsersTable
 import bills.BillsTable
 import breathOfTheWild.cookingPotFood.CookingPotFoodsTable
-import breathOfTheWild.cookingPotIngredients.CookingPotIngredientsTable
+import breathOfTheWild.cookingPotFoodIngredients.CookingPotFoodIngredientsTable
 import breathOfTheWild.critter.CrittersTable
+import breathOfTheWild.effect.EffectsTable
+import breathOfTheWild.elixir.ElixirsTable
 import breathOfTheWild.elixirIngredients.ElixirIngredientsTable
-import breathOfTheWild.elixirs.ElixirsTable
-import breathOfTheWild.images.ImagesTable
-import breathOfTheWild.ingredients.IngredientsTable
-import breathOfTheWild.ingredientsBonusAddOns.BonusAddOnsTable
-import breathOfTheWild.ingredientsDuration.IngredientDurationsTable
-import breathOfTheWild.ingredientsHearts.IngredientHeartsTable
+import breathOfTheWild.frozenFood.FrozenFoodsTable
+import breathOfTheWild.frozenFoodEffect.FrozenFoodEffectTable
+import breathOfTheWild.frozenFoodIngredients.FrozenFoodIngredientsTable
+import breathOfTheWild.image.ImagesTable
+import breathOfTheWild.ingredient.IngredientsTable
+import breathOfTheWild.ingredientBonusAddOns.IngredientBonusAddOnsTable
+import breathOfTheWild.ingredientDuration.IngredientDurationTable
+import breathOfTheWild.ingredientHearts.IngredientHeartsTable
+import breathOfTheWild.monsterPart.MonsterPartsTable
+import breathOfTheWild.otherFood.OtherFoodsTable
+import breathOfTheWild.otherFoodEffect.OtherFoodEffectTable
+import breathOfTheWild.otherFoodIngredients.OtherFoodIngredientsTable
+import breathOfTheWild.roastedFood.RoastedFoodsTable
+import breathOfTheWild.roastedFoodEffect.RoastedFoodEffectTable
+import breathOfTheWild.roastedFoodIngredients.RoastedFoodIngredientsTable
 import categories.CategoriesTable
 import colors.ColorsTable
 import com.weesnerdevelopment.validator.ValidatorTable
@@ -76,16 +87,27 @@ object DatabaseFactory {
             )
             // breath of the wild
             create(
-                CookingPotFoodsTable,
-                CookingPotIngredientsTable,
-                CrittersTable,
-                ImagesTable,
-                IngredientsTable,
-                BonusAddOnsTable,
-                IngredientDurationsTable,
+                FrozenFoodEffectTable,
                 IngredientHeartsTable,
+                CookingPotFoodIngredientsTable,
+                CookingPotFoodsTable,
+                OtherFoodEffectTable,
                 ElixirsTable,
-                ElixirIngredientsTable
+                FrozenFoodsTable,
+                CrittersTable,
+                FrozenFoodIngredientsTable,
+                OtherFoodsTable,
+                EffectsTable,
+                MonsterPartsTable,
+                RoastedFoodIngredientsTable,
+                OtherFoodIngredientsTable,
+                ImagesTable,
+                IngredientBonusAddOnsTable,
+                IngredientDurationTable,
+                ElixirIngredientsTable,
+                RoastedFoodsTable,
+                IngredientsTable,
+                RoastedFoodEffectTable
             )
         }
     }

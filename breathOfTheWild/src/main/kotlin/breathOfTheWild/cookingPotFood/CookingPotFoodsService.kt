@@ -1,8 +1,8 @@
 package breathOfTheWild.cookingPotFood
 
 import BaseService
-import breathOfTheWild.cookingPotIngredients.CookingPotIngredientsService
-import breathOfTheWild.images.ImagesService
+import breathOfTheWild.cookingPotFoodIngredients.CookingPotFoodIngredientsService
+import breathOfTheWild.image.ImagesService
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
@@ -10,7 +10,7 @@ import shared.zelda.CookingPotFood
 
 class CookingPotFoodsService(
     private val imagesService: ImagesService,
-    private val cookingPotIngredientsService: CookingPotIngredientsService
+    private val cookingPotFoodIngredientsService: CookingPotFoodIngredientsService
 ) : BaseService<CookingPotFoodsTable, CookingPotFood>(
     CookingPotFoodsTable
 ) {
@@ -19,17 +19,17 @@ class CookingPotFoodsService(
 
     override suspend fun toItem(row: ResultRow) = CookingPotFood(
         row[table.id],
-        row[CookingPotFoodsTable.name],
+        row[table.name],
         imagesService.toItem(row),
-        row[CookingPotFoodsTable.description],
-        cookingPotIngredientsService.getForFood(row[table.id]),
-        dateCreated = row[table.dateCreated],
-        dateUpdated = row[table.dateUpdated]
+        row[table.description],
+        cookingPotFoodIngredientsService.getFor(row[table.id]),
+        row[table.dateCreated],
+        row[table.dateUpdated]
     )
 
     override fun UpdateBuilder<Int>.toRow(item: CookingPotFood) {
-        this[CookingPotFoodsTable.name] = item.name
-        this[CookingPotFoodsTable.imageId] = item.image.id!!
-        this[CookingPotFoodsTable.description] = item.description
+        this[table.name] = item.name
+        this[table.image] = item.image.id!!
+        this[table.description] = item.description
     }
 }

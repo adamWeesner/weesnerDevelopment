@@ -5,8 +5,14 @@ import auth.UserRouter
 import bills.BillsRouter
 import breathOfTheWild.cookingPotFood.CookingPotFoodsRouter
 import breathOfTheWild.critter.CrittersRouter
-import breathOfTheWild.elixirs.ElixirsRouter
-import breathOfTheWild.ingredients.IngredientsRouter
+import breathOfTheWild.effect.EffectsRouter
+import breathOfTheWild.elixir.ElixirsRouter
+import breathOfTheWild.frozenFood.FrozenFoodsRouter
+import breathOfTheWild.image.ImagesRouter
+import breathOfTheWild.ingredient.IngredientsRouter
+import breathOfTheWild.monsterPart.MonsterPartsRouter
+import breathOfTheWild.otherFood.OtherFoodsRouter
+import breathOfTheWild.roastedFood.RoastedFoodsRouter
 import categories.CategoriesRouter
 import com.weesnerdevelopment.validator.ValidatorRouter
 import com.weesnerdevelopment.validator.complex.ComplexValidatorRouter
@@ -54,8 +60,14 @@ val routers = Kodein.Module("routers") {
     bind<LoggingRouter>() with singleton { LoggingRouter(BillMan.logging, instance()) }
 
     // breathOfTheWild
-    bind<CrittersRouter>() with singleton { CrittersRouter(BreathOfTheWild.critters, instance()) }
     bind<CookingPotFoodsRouter>() with singleton { CookingPotFoodsRouter(BreathOfTheWild.cookingPotFoods, instance()) }
-    bind<IngredientsRouter>() with singleton { IngredientsRouter(BreathOfTheWild.ingredients, instance()) }
     bind<ElixirsRouter>() with singleton { ElixirsRouter(BreathOfTheWild.elixirs, instance()) }
+    bind<FrozenFoodsRouter>() with singleton { FrozenFoodsRouter(BreathOfTheWild.frozenFoods, instance()) }
+    bind<CrittersRouter>() with singleton { CrittersRouter(BreathOfTheWild.critters, instance()) }
+    bind<OtherFoodsRouter>() with singleton { OtherFoodsRouter(BreathOfTheWild.otherFoods, instance()) }
+    bind<EffectsRouter>() with singleton { EffectsRouter(BreathOfTheWild.effects, instance()) }
+    bind<MonsterPartsRouter>() with singleton { MonsterPartsRouter(BreathOfTheWild.monsterParts, instance()) }
+    bind<ImagesRouter>() with singleton { ImagesRouter(BreathOfTheWild.images, instance()) }
+    bind<RoastedFoodsRouter>() with singleton { RoastedFoodsRouter(BreathOfTheWild.roastedFoods, instance()) }
+    bind<IngredientsRouter>() with singleton { IngredientsRouter(BreathOfTheWild.ingredients, instance()) }
 }

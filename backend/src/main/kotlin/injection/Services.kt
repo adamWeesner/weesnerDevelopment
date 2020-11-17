@@ -5,15 +5,26 @@ import billCategories.BillCategoriesService
 import billSharedUsers.BillSharedUsersService
 import bills.BillsService
 import breathOfTheWild.cookingPotFood.CookingPotFoodsService
-import breathOfTheWild.cookingPotIngredients.CookingPotIngredientsService
+import breathOfTheWild.cookingPotFoodIngredients.CookingPotFoodIngredientsService
 import breathOfTheWild.critter.CrittersService
+import breathOfTheWild.effect.EffectsService
+import breathOfTheWild.elixir.ElixirsService
 import breathOfTheWild.elixirIngredients.ElixirIngredientsService
-import breathOfTheWild.elixirs.ElixirsService
-import breathOfTheWild.images.ImagesService
-import breathOfTheWild.ingredients.IngredientsService
-import breathOfTheWild.ingredientsBonusAddOns.BonusAddOnsService
-import breathOfTheWild.ingredientsDuration.IngredientDurationsService
-import breathOfTheWild.ingredientsHearts.IngredientHeartsService
+import breathOfTheWild.frozenFood.FrozenFoodsService
+import breathOfTheWild.frozenFoodEffect.FrozenFoodEffectService
+import breathOfTheWild.frozenFoodIngredients.FrozenFoodIngredientsService
+import breathOfTheWild.image.ImagesService
+import breathOfTheWild.ingredient.IngredientsService
+import breathOfTheWild.ingredientBonusAddOns.IngredientBonusAddOnsService
+import breathOfTheWild.ingredientDuration.IngredientDurationService
+import breathOfTheWild.ingredientHearts.IngredientHeartsService
+import breathOfTheWild.monsterPart.MonsterPartsService
+import breathOfTheWild.otherFood.OtherFoodsService
+import breathOfTheWild.otherFoodEffect.OtherFoodEffectService
+import breathOfTheWild.otherFoodIngredients.OtherFoodIngredientsService
+import breathOfTheWild.roastedFood.RoastedFoodsService
+import breathOfTheWild.roastedFoodEffect.RoastedFoodEffectService
+import breathOfTheWild.roastedFoodIngredients.RoastedFoodIngredientsService
 import categories.CategoriesService
 import colors.ColorsService
 import com.weesnerdevelopment.validator.ValidatorService
@@ -63,14 +74,25 @@ val services = Kodein.Module("services") {
     bind<IncomeOccurrencesService>() with singleton { IncomeOccurrencesService(instance(), instance()) }
     bind<LoggingService>() with singleton { LoggingService() }
     // breathOfTheWild
-    bind<ImagesService>() with singleton { ImagesService() }
+    bind<FrozenFoodEffectService>() with singleton { FrozenFoodEffectService() }
+    bind<IngredientHeartsService>() with singleton { IngredientHeartsService() }
+    bind<CookingPotFoodIngredientsService>() with singleton { CookingPotFoodIngredientsService() }
+    bind<CookingPotFoodsService>() with singleton { CookingPotFoodsService() }
+    bind<OtherFoodEffectService>() with singleton { OtherFoodEffectService() }
+    bind<ElixirsService>() with singleton { ElixirsService() }
+    bind<FrozenFoodsService>() with singleton { FrozenFoodsService() }
     bind<CrittersService>() with singleton { CrittersService() }
-    bind<CookingPotIngredientsService>() with singleton { CookingPotIngredientsService() }
-    bind<CookingPotFoodsService>() with singleton { CookingPotFoodsService(instance(), instance()) }
-    bind<IngredientHeartsService>() with singleton { IngredientHeartsService(instance()) }
-    bind<BonusAddOnsService>() with singleton { BonusAddOnsService(instance()) }
-    bind<IngredientDurationsService>() with singleton { IngredientDurationsService() }
-    bind<IngredientsService>() with singleton { IngredientsService(instance(), instance(), instance(), instance()) }
+    bind<FrozenFoodIngredientsService>() with singleton { FrozenFoodIngredientsService() }
+    bind<OtherFoodsService>() with singleton { OtherFoodsService() }
+    bind<EffectsService>() with singleton { EffectsService() }
+    bind<MonsterPartsService>() with singleton { MonsterPartsService() }
+    bind<RoastedFoodIngredientsService>() with singleton { RoastedFoodIngredientsService() }
+    bind<OtherFoodIngredientsService>() with singleton { OtherFoodIngredientsService() }
+    bind<ImagesService>() with singleton { ImagesService() }
+    bind<IngredientBonusAddOnsService>() with singleton { IngredientBonusAddOnsService() }
+    bind<IngredientDurationService>() with singleton { IngredientDurationService() }
     bind<ElixirIngredientsService>() with singleton { ElixirIngredientsService() }
-    bind<ElixirsService>() with singleton { ElixirsService(instance(), instance()) }
+    bind<RoastedFoodsService>() with singleton { RoastedFoodsService() }
+    bind<IngredientsService>() with singleton { IngredientsService() }
+    bind<RoastedFoodEffectService>() with singleton { RoastedFoodEffectService() }
 }

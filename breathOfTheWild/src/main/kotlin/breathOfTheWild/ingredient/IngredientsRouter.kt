@@ -1,4 +1,4 @@
-package breathOfTheWild.ingredients
+package breathOfTheWild.ingredient
 
 import BaseRouter
 import shared.zelda.Ingredient

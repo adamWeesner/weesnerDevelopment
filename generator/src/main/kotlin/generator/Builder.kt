@@ -28,11 +28,11 @@ data class Builder(
             generateService()
             generateRouter()
         }
-        generateRoutes(titleTrimmedCap, entryInfo)
-        updateSettingsGradle(titleTrimmed)
-        updateBackendGradle(titleTrimmed)
-        updateBuildSrc(titleTrimmed)
-        updateDatabaseServer(titleTrimmed)
+        //generateRoutes(titleTrimmedCap, entryInfo)
+        //updateSettingsGradle(titleTrimmed)
+        //updateBackendGradle(titleTrimmed)
+        //updateBuildSrc(titleTrimmed)
+        //updateDatabaseServer(titleTrimmed)
     }
 
     private fun String.buildFile(fileData: () -> String) {
@@ -274,7 +274,7 @@ data class Builder(
                 override val dateUpdated: Long = currentTimeMillis()
             ) : GenericItem
             
-            """
+            """.trimIndent()
         }
     }
 
@@ -338,7 +338,9 @@ data class Builder(
             import BaseService
             import org.jetbrains.exposed.sql.Join
             import org.jetbrains.exposed.sql.ResultRow
-            import org.jetbrains.exposed.sql.statements.UpdateBuilder
+            import org.jetbrains.exposed.sql.statements.UpdateBuilder${
+                if (!nullable) "\n            import shared.base.InvalidAttributeException" else ""
+            }
             
             class ${entryInfo.className}Service : BaseService<${entryInfo.className}Table, $trimmedName>(
                 ${entryInfo.className}Table
@@ -348,7 +350,7 @@ data class Builder(
                     
                 suspend fun getFor(id: Int) = getAll {
                     ${entryInfo.className}Table.itemId eq id
-                }?.map { toItem(it) }${if (nullable) "?: throw InvalidAttributeException(\"${entryInfo.className}\")" else "!!"}
+                }?.map { toItem(it) }${if (nullable) "" else "?: throw InvalidAttributeException(\"${entryInfo.className}\")"}
             
                 override suspend fun toItem(row: ResultRow) = $trimmedName(
                     row[table.id],

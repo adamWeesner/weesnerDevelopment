@@ -28,11 +28,11 @@ data class Builder(
             generateService()
             generateRouter()
         }
-        //generateRoutes(titleTrimmedCap, entryInfo)
-        //updateSettingsGradle(titleTrimmed)
-        //updateBackendGradle(titleTrimmed)
-        //updateBuildSrc(titleTrimmed)
-        //updateDatabaseServer(titleTrimmed)
+        generateRoutes(titleTrimmedCap, entryInfo)
+        updateSettingsGradle(titleTrimmed)
+        updateBackendGradle(titleTrimmed)
+        updateBuildSrc(titleTrimmed)
+        updateDatabaseServer(titleTrimmed)
     }
 
     private fun String.buildFile(fileData: () -> String) {

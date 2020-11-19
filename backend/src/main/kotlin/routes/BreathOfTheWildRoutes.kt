@@ -5,7 +5,6 @@ import breathOfTheWild.critter.CrittersRouter
 import breathOfTheWild.effect.EffectsRouter
 import breathOfTheWild.elixir.ElixirsRouter
 import breathOfTheWild.frozenFood.FrozenFoodsRouter
-import breathOfTheWild.image.ImagesRouter
 import breathOfTheWild.ingredient.IngredientsRouter
 import breathOfTheWild.monsterPart.MonsterPartsRouter
 import breathOfTheWild.otherFood.OtherFoodsRouter
@@ -23,7 +22,6 @@ fun Routing.breathOfTheWildRoutes() {
     val otherFoodsRouter by kodein().instance<OtherFoodsRouter>()
     val effectsRouter by kodein().instance<EffectsRouter>()
     val monsterPartsRouter by kodein().instance<MonsterPartsRouter>()
-    val imagesRouter by kodein().instance<ImagesRouter>()
     val roastedFoodsRouter by kodein().instance<RoastedFoodsRouter>()
     val ingredientsRouter by kodein().instance<IngredientsRouter>()
 
@@ -64,12 +62,6 @@ fun Routing.breathOfTheWildRoutes() {
     }
 
     monsterPartsRouter.apply {
-        authenticate {
-            setupRoutes()
-        }
-    }
-
-    imagesRouter.apply {
         authenticate {
             setupRoutes()
         }

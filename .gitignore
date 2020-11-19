@@ -1,2 +1,7 @@
 /backend/server/database.mv.db
 /server/weesnerDevelopment.*
+/server
+/**/build
+/**/out
+/**/.gradle
+/.gradle

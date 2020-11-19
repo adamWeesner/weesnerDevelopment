@@ -409,6 +409,7 @@ data class Builder(
         updateInjectionServices(titleTrimmed, services)
         updatePaths(titleTrimmed, routers)
         updateDatabaseFactory(tables)
+        createTests(routers)
     }
 
     private fun updateInjectionRouters(baseDir: String, routers: List<File>) {
@@ -597,5 +598,145 @@ data class Builder(
 
         file.writeText(updatedFileData.toString())
         echo("updated ${file.path}")
+    }
+
+    private fun createTests(routers: List<File>) {
+        val dir = File("./backend/src/test/kotlin/$titleTrimmed")
+        dir.mkdirs()
+
+        val routes = routers.map {
+            it.path.slimmed().replace("Router", "").split(".")[1]
+        }
+
+        routes.forEach {
+            val item = it.capitalize()
+            val itemLower = it.decapitalize()
+            val itemSingle = if (item.endsWith("s")) item.dropLast(1) else item
+            val itemVal = itemSingle.decapitalize()
+
+            "$dir/${itemSingle}Tests.kt".buildFile {
+                """
+                package $titleTrimmed
+
+                import BaseTest
+                import Path
+                import io.ktor.http.HttpStatusCode.Companion.BadRequest
+                import io.ktor.http.HttpStatusCode.Companion.Conflict
+                import io.ktor.http.HttpStatusCode.Companion.Created
+                import io.ktor.http.HttpStatusCode.Companion.NoContent
+                import io.ktor.http.HttpStatusCode.Companion.NotFound
+                import io.ktor.http.HttpStatusCode.Companion.OK
+                import io.ktor.util.KtorExperimentalAPI
+                import org.junit.jupiter.api.Order
+                import org.junit.jupiter.api.Test
+                import parseResponse
+                import shared.$sharedFolder.$itemSingle
+                import shared.$sharedFolder.responses.${itemSingle}sResponse
+                import shouldBe
+                import shouldNotBe
+
+                @KtorExperimentalAPI
+                class ${itemSingle}Tests : BaseTest() {
+                    fun newItem(addition: Int, id: Int? = null) = 
+
+                    val path = Path.$titleTrimmedCap.${itemLower}s
+
+                    @Test
+                    @Order(1)
+                    fun `verify getting base url`() {
+                        get(path).sendStatus<Unit>() shouldBe NoContent
+                    }
+
+                    @Test
+                    @Order(2)
+                    fun `verify getting base url returns all items in table`() {
+                        post(path).sendStatus(newItem(0)) shouldBe Created
+                        post(path).sendStatus(newItem(1)) shouldBe Created
+
+                        val request = get(path).send<Unit>()
+                        val responseItems = request.response.content.parseResponse<${itemSingle}sResponse>()?.items
+
+                        val item1 = responseItems!![responseItems.lastIndex - 1]
+                        val item2 = responseItems[responseItems.lastIndex]
+                        request.response.status() shouldBe OK
+                    }
+
+                    @Test
+                    @Order(3)
+                    fun `verify getting an added item`() {
+                        post(path).sendStatus(newItem(2)) shouldBe Created
+
+                        val request = get(path).send<$itemSingle>()
+                        val addedItems = request.response.content.parseResponse<${itemSingle}sResponse>()?.items?.last()
+
+                        request.response.status() shouldBe OK
+                    }
+
+                    @Test
+                    @Order(4)
+                    fun `verify getting an item that does not exist`() {
+                        get(path, 99).sendStatus<Unit>() shouldBe NoContent
+                    }
+
+                    @Test
+                    @Order(5)
+                    fun `verify adding a new item`() {
+                        post(path).sendStatus(newItem(3)) shouldBe Created
+                    }
+
+                    @Test
+                    @Order(6)
+                    fun `verify adding a duplicate item`() {
+                        post(path).send(newItem(8))
+                        post(path).sendStatus((newItem(8))) shouldBe Conflict
+                    }
+
+                    @Test
+                    @Order(7)
+                    fun `verify updating an added item`() {
+                        val updatedName = "${itemLower}4"
+                        post(path).sendStatus(newItem(4)) shouldBe Created
+
+                        val $itemVal = get(path).asObject<${itemSingle}sResponse>().items?.last()
+
+                        put(path).sendStatus($itemVal?.copy()) shouldBe OK
+
+                        val updated$itemSingle = get(path, $itemVal?.id).asObject<${itemSingle}sResponse>().items?.first()
+
+                        updated$itemSingle shouldNotBe null
+                    }
+
+                    @Test
+                    @Order(8)
+                    fun `verify updating a non existent item`() {
+                        put(path).sendStatus(newItem(5, 99)) shouldBe BadRequest
+                    }
+
+                    @Test
+                    @Order(9)
+                    fun `verify updating without an id`() {
+                        put(path).sendStatus(newItem(6)) shouldBe BadRequest
+                    }
+
+                    @Test
+                    @Order(10)
+                    fun `verify deleting and item that has been added`() {
+                        post(path).sendStatus(newItem(7)) shouldBe Created
+
+                        val addedItem = get(path).asObject<${itemSingle}sResponse>().items?.last()
+
+                        delete(path, addedItem?.id).sendStatus<Unit>() shouldBe OK
+                    }
+
+                    @Test
+                    @Order(11)
+                    fun `verify deleting item that doesn't exist`() {
+                        delete(path, 99).sendStatus<Unit>() shouldBe NotFound
+                    }
+                }
+
+                """.trimIndent()
+            }
+        }
     }
 }

@@ -1,20 +1,29 @@
 package breathOfTheWild.ingredientHearts
 
 import BaseService
+import breathOfTheWild.image.ImagesService
+import breathOfTheWild.image.ImagesTable
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.base.InvalidAttributeException
 
-class IngredientHeartsService : BaseService<IngredientHeartsTable, IngredientHeart>(
+class IngredientHeartsService(
+    private val imagesService: ImagesService
+) : BaseService<IngredientHeartsTable, IngredientHeart>(
     IngredientHeartsTable
 ) {
     override val IngredientHeartsTable.connections: Join?
         get() = null
-        
+
     suspend fun getFor(id: Int) = getAll {
         IngredientHeartsTable.itemId eq id
-    }?.map { toItem(it) }?: throw InvalidAttributeException("IngredientHearts")
+    }?.map {
+        val imageId = toItem(it).imageId
+        imagesService.get {
+            ImagesTable.id eq imageId
+        } ?: throw InvalidAttributeException("IngredientHearts Image")
+    } ?: throw InvalidAttributeException("IngredientHearts")
 
     override suspend fun toItem(row: ResultRow) = IngredientHeart(
         row[table.id],

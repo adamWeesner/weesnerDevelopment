@@ -5,6 +5,7 @@ import breathOfTheWild.elixirIngredients.ElixirIngredientsService
 import breathOfTheWild.image.ImagesService
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.zelda.Elixir
 
@@ -15,7 +16,11 @@ class ElixirsService(
     ElixirsTable
 ) {
     override val ElixirsTable.connections: Join?
-        get() = null
+        get() = this.innerJoin(imagesService.table, {
+            image
+        }, {
+            id
+        })
 
     override suspend fun toItem(row: ResultRow) = Elixir(
         row[table.id],

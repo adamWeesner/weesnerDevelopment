@@ -6,6 +6,7 @@ import breathOfTheWild.roastedFoodEffect.RoastedFoodEffectService
 import breathOfTheWild.roastedFoodIngredients.RoastedFoodIngredientsService
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.zelda.RoastedFood
 
@@ -17,7 +18,11 @@ class RoastedFoodsService(
     RoastedFoodsTable
 ) {
     override val RoastedFoodsTable.connections: Join?
-        get() = null
+        get() = innerJoin(imagesService.table, {
+            image
+        }, {
+            id
+        })
 
     override suspend fun toItem(row: ResultRow) = RoastedFood(
         row[table.id],

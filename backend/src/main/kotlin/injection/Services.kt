@@ -74,25 +74,25 @@ val services = Kodein.Module("services") {
     bind<IncomeOccurrencesService>() with singleton { IncomeOccurrencesService(instance(), instance()) }
     bind<LoggingService>() with singleton { LoggingService() }
     // breathOfTheWild
-    bind<FrozenFoodEffectService>() with singleton { FrozenFoodEffectService() }
-    bind<IngredientHeartsService>() with singleton { IngredientHeartsService() }
+    bind<FrozenFoodEffectService>() with singleton { FrozenFoodEffectService(instance()) }
+    bind<IngredientHeartsService>() with singleton { IngredientHeartsService(instance()) }
     bind<CookingPotFoodIngredientsService>() with singleton { CookingPotFoodIngredientsService() }
-    bind<CookingPotFoodsService>() with singleton { CookingPotFoodsService() }
-    bind<OtherFoodEffectService>() with singleton { OtherFoodEffectService() }
-    bind<ElixirsService>() with singleton { ElixirsService() }
-    bind<FrozenFoodsService>() with singleton { FrozenFoodsService() }
+    bind<CookingPotFoodsService>() with singleton { CookingPotFoodsService(instance(), instance()) }
+    bind<OtherFoodEffectService>() with singleton { OtherFoodEffectService(instance()) }
+    bind<ElixirsService>() with singleton { ElixirsService(instance(), instance()) }
+    bind<FrozenFoodsService>() with singleton { FrozenFoodsService(instance(), instance(), instance()) }
     bind<CrittersService>() with singleton { CrittersService() }
     bind<FrozenFoodIngredientsService>() with singleton { FrozenFoodIngredientsService() }
-    bind<OtherFoodsService>() with singleton { OtherFoodsService() }
-    bind<EffectsService>() with singleton { EffectsService() }
+    bind<OtherFoodsService>() with singleton { OtherFoodsService(instance(), instance(), instance()) }
+    bind<EffectsService>() with singleton { EffectsService(instance()) }
     bind<MonsterPartsService>() with singleton { MonsterPartsService() }
     bind<RoastedFoodIngredientsService>() with singleton { RoastedFoodIngredientsService() }
     bind<OtherFoodIngredientsService>() with singleton { OtherFoodIngredientsService() }
     bind<ImagesService>() with singleton { ImagesService() }
-    bind<IngredientBonusAddOnsService>() with singleton { IngredientBonusAddOnsService() }
+    bind<IngredientBonusAddOnsService>() with singleton { IngredientBonusAddOnsService(instance()) }
     bind<IngredientDurationService>() with singleton { IngredientDurationService() }
     bind<ElixirIngredientsService>() with singleton { ElixirIngredientsService() }
-    bind<RoastedFoodsService>() with singleton { RoastedFoodsService() }
-    bind<IngredientsService>() with singleton { IngredientsService() }
-    bind<RoastedFoodEffectService>() with singleton { RoastedFoodEffectService() }
+    bind<RoastedFoodsService>() with singleton { RoastedFoodsService(instance(), instance(), instance()) }
+    bind<IngredientsService>() with singleton { IngredientsService(instance(), instance(), instance(), instance()) }
+    bind<RoastedFoodEffectService>() with singleton { RoastedFoodEffectService(instance()) }
 }

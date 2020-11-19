@@ -50,7 +50,7 @@ sealed class Path {
     /**
      * The available paths at [basePath]/value.
      */
-     object BreathOfTheWild : Path() {
+    object BreathOfTheWild : Path() {
         val basePath = "breathOfTheWild/"
         val all = "${basePath}all"
         val cookingPotFoods = "${basePath}cookingPotFoods"
@@ -60,7 +60,6 @@ sealed class Path {
         val otherFoods = "${basePath}otherFoods"
         val effects = "${basePath}effects"
         val monsterParts = "${basePath}monsterParts"
-        val images = "${basePath}images"
         val roastedFoods = "${basePath}roastedFoods"
         val ingredients = "${basePath}ingredients"
     }

@@ -11,10 +11,10 @@ class ElixirIngredientsService : BaseService<ElixirIngredientsTable, ElixirIngre
 ) {
     override val ElixirIngredientsTable.connections: Join?
         get() = null
-        
+
     suspend fun getFor(id: Int) = getAll {
         ElixirIngredientsTable.itemId eq id
-    }?.map { toItem(it).ingredient }?: throw InvalidAttributeException("ElixirIngredients")
+    }?.map { toItem(it).ingredient } ?: throw InvalidAttributeException("ElixirIngredients")
 
     override suspend fun toItem(row: ResultRow) = ElixirIngredient(
         row[table.id],

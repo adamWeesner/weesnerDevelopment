@@ -350,7 +350,7 @@ data class Builder(
                     
                 suspend fun getFor(id: Int) = getAll {
                     ${entryInfo.className}Table.itemId eq id
-                }?.map { toItem(it) }${if (nullable) "" else "?: throw InvalidAttributeException(\"${entryInfo.className}\")"}
+                }?.map { toItem(it) }${if (nullable) "" else " ?: throw InvalidAttributeException(\"${entryInfo.className}\")"}
             
                 override suspend fun toItem(row: ResultRow) = $trimmedName(
                     row[table.id],

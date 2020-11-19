@@ -6,6 +6,7 @@ import breathOfTheWild.otherFoodEffect.OtherFoodEffectService
 import breathOfTheWild.otherFoodIngredients.OtherFoodIngredientsService
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.zelda.OtherFood
 
@@ -17,7 +18,11 @@ class OtherFoodsService(
     OtherFoodsTable
 ) {
     override val OtherFoodsTable.connections: Join?
-        get() = null
+        get() = this.innerJoin(imagesService.table, {
+            image
+        }, {
+            id
+        })
 
     override suspend fun toItem(row: ResultRow) = OtherFood(
         row[table.id],

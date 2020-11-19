@@ -7,6 +7,7 @@ import breathOfTheWild.ingredientDuration.IngredientDurationService
 import breathOfTheWild.ingredientHearts.IngredientHeartsService
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.zelda.Ingredient
 
@@ -19,7 +20,11 @@ class IngredientsService(
     IngredientsTable
 ) {
     override val IngredientsTable.connections: Join?
-        get() = null
+        get() = innerJoin(imagesService.table, {
+            image
+        }, {
+            id
+        })
 
     override suspend fun toItem(row: ResultRow) = Ingredient(
         row[table.id],

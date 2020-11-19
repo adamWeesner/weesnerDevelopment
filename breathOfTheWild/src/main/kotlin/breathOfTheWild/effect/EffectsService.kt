@@ -4,6 +4,7 @@ import BaseService
 import breathOfTheWild.image.ImagesService
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import shared.zelda.Effect
 
@@ -13,7 +14,11 @@ class EffectsService(
     EffectsTable
 ) {
     override val EffectsTable.connections: Join?
-        get() = null
+        get() = innerJoin(imagesService.table, {
+            image
+        }, {
+            id
+        })
 
     override suspend fun toItem(row: ResultRow) = Effect(
         row[table.id],

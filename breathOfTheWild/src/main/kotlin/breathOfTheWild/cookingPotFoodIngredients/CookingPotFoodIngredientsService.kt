@@ -11,10 +11,10 @@ class CookingPotFoodIngredientsService : BaseService<CookingPotFoodIngredientsTa
 ) {
     override val CookingPotFoodIngredientsTable.connections: Join?
         get() = null
-        
+
     suspend fun getFor(id: Int) = getAll {
         CookingPotFoodIngredientsTable.itemId eq id
-    }?.map { toItem(it).ingredient }?: throw InvalidAttributeException("CookingPotFoodIngredients")
+    }?.map { toItem(it).ingredient } ?: throw InvalidAttributeException("CookingPotFoodIngredients")
 
     override suspend fun toItem(row: ResultRow) = CookingPotFoodIngredient(
         row[table.id],

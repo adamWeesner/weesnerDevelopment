@@ -1,19 +1,29 @@
 package breathOfTheWild.ingredientBonusAddOns
 
 import BaseService
+import breathOfTheWild.image.ImagesService
+import breathOfTheWild.image.ImagesTable
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import shared.base.InvalidAttributeException
 
-class IngredientBonusAddOnsService : BaseService<IngredientBonusAddOnsTable, IngredientBonusAddOn>(
+class IngredientBonusAddOnsService(
+    private val imagesService: ImagesService
+) : BaseService<IngredientBonusAddOnsTable, IngredientBonusAddOn>(
     IngredientBonusAddOnsTable
 ) {
     override val IngredientBonusAddOnsTable.connections: Join?
         get() = null
-        
+
     suspend fun getFor(id: Int) = getAll {
         IngredientBonusAddOnsTable.itemId eq id
-    }?.map { toItem(it) }
+    }?.map {
+        val imageId = toItem(it).imageId
+        imagesService.get {
+            ImagesTable.id eq imageId
+        } ?: throw InvalidAttributeException("FrozenFoodEffect Image")
+    }
 
     override suspend fun toItem(row: ResultRow) = IngredientBonusAddOn(
         row[table.id],

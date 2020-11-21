@@ -15,6 +15,8 @@ abstract class BaseService<T : IdTable, I : GenericItem>(
     }
 
     override suspend fun add(item: I) = tryCall {
+        if (item.id != null) return@tryCall -1
+
         try {
             table.insert {
                 it.toRow(item)
@@ -48,6 +50,9 @@ abstract class BaseService<T : IdTable, I : GenericItem>(
 
     override suspend fun update(item: I, op: SqlExpressionBuilder.() -> Op<Boolean>) = tryCall {
         if (item.id == null) return@tryCall -1
+
+        if (get { table.id eq item.id!! } == null) return@tryCall null
+
         table.update({
             op()
         }) {

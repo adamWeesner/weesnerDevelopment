@@ -76,7 +76,7 @@ object DatabaseServer {
                         is ClassCastException -> respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
                         is TokenExpiredException -> respondErrorAuthorizing(InvalidUserReason.Expired)
                         is JWTVerificationException -> respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
-                        else -> respondErrorServer(Throwable(e))
+                        else -> respondErrorAuthorizing(InvalidUserReason.General)
                     }
                 }
 

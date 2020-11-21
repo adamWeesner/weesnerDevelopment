@@ -87,23 +87,16 @@ class ComplexValidationTests : BaseTest() {
     }
 
     @Test
-    @Order(5)
-    fun `verify adding an item with an id to the database`() {
-        val newItem = item()
-        post(path).sendStatus(newItem.copy(id = 1)) shouldBe Created
-    }
-
-    @Test
     @Order(6)
     fun `verify getting base url with items in the database`() {
         val response = get(path).asObject<ComplexValidatorResponse>()
-        response.items?.size shouldBe 3
+        response.items?.size shouldBe 2
     }
 
     @Test
     @Order(7)
     fun `verify update an item in the database`() {
-        val savedId = 5
+        val savedId = 4
         val newItem = item()
 
         post(path).sendStatus(newItem) shouldBe Created
@@ -123,7 +116,7 @@ class ComplexValidationTests : BaseTest() {
         history.first() shouldBe History(
             history.first().id,
             "${ComplexValidatorItem::class.simpleName} ${firstItem.id} amount",
-            "15.34",
+            "14.34",
             "99.99",
             signedInUser,
             history.first().dateCreated,
@@ -153,7 +146,7 @@ class ComplexValidationTests : BaseTest() {
     @Test
     @Order(8)
     fun `verify update an item in the database with no data changed`() {
-        val savedId = 6
+        val savedId = 5
         val newItem = item()
 
         post(path).sendStatus(newItem) shouldBe Created
@@ -166,7 +159,7 @@ class ComplexValidationTests : BaseTest() {
         firstItem shouldBe ComplexValidatorItem(
             firstItem.id,
             signedInUser,
-            "item5",
+            "item4",
             firstItem.amount,
             category,
             firstItem.history,

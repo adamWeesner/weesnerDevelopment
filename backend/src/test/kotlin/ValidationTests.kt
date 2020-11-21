@@ -61,23 +61,16 @@ class ValidationTests : BaseTest() {
     }
 
     @Test
-    @Order(5)
-    fun `verify adding an item with an id to the database`() {
-        val newItem = item
-        post(path).sendStatus(newItem.copy(id = 1)) shouldBe Created
-    }
-
-    @Test
     @Order(6)
     fun `verify getting base url with items in the database`() {
         val response = get(path).asObject<ValidatorResponse>()
-        response.items?.size shouldBe 3
+        response.items?.size shouldBe 2
     }
 
     @Test
     @Order(7)
     fun `verify update an item in the database`() {
-        val savedId = 5
+        val savedId = 4
         val newItem = item
         post(path).sendStatus(newItem) shouldBe Created
         put(path).sendStatus(newItem.copy(id = savedId, amount = 99.99)) shouldBe OK
@@ -98,7 +91,7 @@ class ValidationTests : BaseTest() {
     @Test
     @Order(8)
     fun `verify update an item in the database with no data changed`() {
-        val savedId = 6
+        val savedId = 5
         val newItem = item
         post(path).sendStatus(newItem) shouldBe Created
         put(path).sendStatus(newItem.copy(id = savedId)) shouldBe OK
@@ -109,7 +102,7 @@ class ValidationTests : BaseTest() {
         getItem.items?.size shouldBe 1
         firstItem shouldBe ValidatorItem(
             firstItem.id,
-            "item5",
+            "item4",
             firstItem.amount,
             firstItem.dateCreated,
             firstItem.dateUpdated

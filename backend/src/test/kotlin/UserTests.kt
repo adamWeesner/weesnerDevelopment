@@ -1,4 +1,4 @@
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -27,7 +27,7 @@ class UserTests : BaseTest() {
     @Order(1)
     fun `access account without login gives InvalidJwt`() {
         get(path + Path.User.account, usingToken = null)
-            .asServerError<Unit, InvalidUserException>().reasonCode shouldBe InvalidUserReason.InvalidJwt.code
+            .asServerError<Unit, InvalidUserException>().reasonCode shouldBe InvalidUserReason.General.code
     }
 
     @Test

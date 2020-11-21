@@ -56,6 +56,7 @@ sealed class Path {
         val cookingPotFoods = "${basePath}cookingPotFoods"
         val elixirs = "${basePath}elixirs"
         val frozenFoods = "${basePath}frozenFoods"
+        val images = "${basePath}images"
         val critters = "${basePath}critters"
         val otherFoods = "${basePath}otherFoods"
         val effects = "${basePath}effects"

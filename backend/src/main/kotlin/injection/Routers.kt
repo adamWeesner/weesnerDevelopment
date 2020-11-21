@@ -8,6 +8,7 @@ import breathOfTheWild.critter.CrittersRouter
 import breathOfTheWild.effect.EffectsRouter
 import breathOfTheWild.elixir.ElixirsRouter
 import breathOfTheWild.frozenFood.FrozenFoodsRouter
+import breathOfTheWild.image.ImagesRouter
 import breathOfTheWild.ingredient.IngredientsRouter
 import breathOfTheWild.monsterPart.MonsterPartsRouter
 import breathOfTheWild.otherFood.OtherFoodsRouter
@@ -68,4 +69,5 @@ val routers = Kodein.Module("routers") {
     bind<MonsterPartsRouter>() with singleton { MonsterPartsRouter(BreathOfTheWild.monsterParts, instance()) }
     bind<RoastedFoodsRouter>() with singleton { RoastedFoodsRouter(BreathOfTheWild.roastedFoods, instance()) }
     bind<IngredientsRouter>() with singleton { IngredientsRouter(BreathOfTheWild.ingredients, instance()) }
+    bind<ImagesRouter>() with singleton { ImagesRouter(BreathOfTheWild.images, instance()) }
 }

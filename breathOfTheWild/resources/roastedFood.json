@@ -1,0 +1,1277 @@
+{
+  "items": [
+    {
+      "name": "Baked Apple",
+      "image": {
+        "description": "Baked Apple Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/bd/BotW_Baked_Apple_Icon.png/revision/latest/scale-to-width-down/40?cb=20171220152129",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "Direct heat has softened and sweetened this apple. Eat it to restore three quarters of a heart.",
+      "ingredients": [
+        "Apple"
+      ]
+    },
+    {
+      "name": "Baked Fortified Pumpkin",
+      "image": {
+        "description": "Baked Fortified Pumpkin Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/4/4b/BotW_Baked_Fortified_Pumpkin_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204634",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This fortified pumpkin has been roasted whole. The hard rind serves as a container for the steamed pumpkin flesh inside.",
+      "ingredients": [
+        "Fortified Pumpkin"
+      ]
+    },
+    {
+      "name": "Baked Palm Fruit",
+      "image": {
+        "description": "Baked Palm Fruit Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/85/BotW_Baked_Palm_Fruit_Icon.png/revision/latest/scale-to-width-down/40?cb=20171220152115",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This palm fruit was broiled with direct heat, resulting in steamed flesh inside the rind. Best served at the moment the juices emerge while roasting.",
+      "ingredients": [
+        "Palm Fruit"
+      ]
+    },
+    {
+      "name": "Blackened Crab",
+      "image": {
+        "description": "Blackened Crab Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/4/45/BotW_Blackened_Crab_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226115152",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A whole crab slow-roasted in its shell. The soft, flaky flesh pairs nicely with the scent of the charred shell for a meal that assaults all five of your senses in all the best ways.",
+      "ingredients": [
+        "Any Crab"
+      ]
+    },
+    {
+      "name": "Blueshell Escargot",
+      "image": {
+        "description": "Blueshell Escargot Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/c4/BotW_Blueshell_Escargot_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226115209",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "The shell of this hearty blueshell snail acted as a tiny slow cooker as it was roasted. Some people love the trademark bitterness of its tail meat.",
+      "ingredients": [
+        "Hearty Blueshell Snail"
+      ]
+    },
+    {
+      "name": "Campfire Egg",
+      "image": {
+        "description": "Campfire Egg Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/60/BotW_Campfire_Egg_Icon.png/revision/latest/scale-to-width-down/40?cb=20171222162317",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "Roasting a bird egg whole in its shell like this helps retain water, making the egg a bit chewier than usual.",
+      "ingredients": [
+        "Bird Egg"
+      ]
+    },
+    {
+      "name": "Charred Pepper",
+      "image": {
+        "description": "Charred Pepper Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/09/BotW_Charred_Pepper_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204716",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A pepper that's been gently caressed by an open flame. It's much less spicy now.",
+      "ingredients": [
+        "Spicy Pepper"
+      ]
+    },
+    {
+      "name": "Roasted Acorn",
+      "image": {
+        "description": "Roasted Acorn Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/e8/BotW_Roasted_Acorn_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223203600",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "An acorn cooked with direct heat. Its nutty aroma has been amplified.",
+      "ingredients": [
+        "Acorn"
+      ]
+    },
+    {
+      "name": "Roasted Armoranth",
+      "image": {
+        "description": "Roasted Armoranth Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/81/BotW_Roasted_Armoranth_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223203616",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "Simple, roasted armoranth. The heat has frayed the hard, chewy fiber just enough to make it easy to eat.",
+      "ingredients": [
+        "Armoranth"
+      ]
+    },
+    {
+      "name": "Roasted Bass",
+      "image": {
+        "description": "Roasted Bass Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/5/50/BotW_Roasted_Bass_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226114843",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A bass that's been cooked whole over an open flame. It's flaky and savory smelling. Offers more hearts than the raw version.",
+      "ingredients": [
+        "Hyrule Bass",
+        "Staminoka Bass"
+      ]
+    },
+    {
+      "name": "Roasted Hearty Bass",
+      "image": {
+        "description": "Roasted Hearty Bass Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/e4/BotW_Roasted_Hearty_Bass_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226114922",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "An open flame has crisped the skin of this hearty bass to perfection. It's a sizable portion and contains just the right amount of fat to create an exceptionally tasty dish.",
+      "ingredients": [
+        "Hearty Bass"
+      ]
+    },
+    {
+      "name": "Roasted Big Radish",
+      "image": {
+        "description": "Roasted Big Radish Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/d/d1/BotW_Roasted_Big_Radish_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223203629",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "5Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/0c/BotW_5Heart_Icon.png/revision/latest/scale-to-width-down/19?cb=20170307180202",
+          "width": 19,
+          "height": 16
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A roasted big hearty radish. To take such a precious vegetable and put it to the fire is decadent in a way.",
+      "ingredients": [
+        "Big Hearty Radish"
+      ]
+    },
+    {
+      "name": "Roasted Bird Drumstick",
+      "image": {
+        "description": "Roasted Bird Drumstick Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/0d/BotW_Roasted_Bird_Drumstick_Icon.png/revision/latest/scale-to-width-down/40?cb=20171222162247",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "Raw bird drumstick that's been cooked to a crisp, skin and all. It's devoid of seasoning, but it has a simple, accessible taste. Restores more hearts than the raw variety.",
+      "ingredients": [
+        "Raw Bird Drumstick"
+      ]
+    },
+    {
+      "name": "Roasted Bird Thigh",
+      "image": {
+        "description": "Roasted Bird Thigh Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/cd/BotW_Roasted_Bird_Thigh_Icon.png/revision/latest/scale-to-width-down/40?cb=20171222162254",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/f/fe/BotW_Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142842",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "Prime meat that's been flame-seared to perfection. The outide is crispy, but the inside is juicy. Eat it to recover hearts.",
+      "ingredients": [
+        "Raw Bird Thigh"
+      ]
+    },
+    {
+      "name": "Roasted Carp",
+      "image": {
+        "description": "Roasted Carp Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/c7/BotW_Roasted_Carp_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226114910",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "Roasting this freshwater carp helped to supress some of its stench, making it easier to stomach. You can really sink your teeth into the thick, meaty flesh.",
+      "ingredients": [
+        "Any Carp"
+      ]
+    },
+    {
+      "name": "Roasted Hearty Durian",
+      "image": {
+        "description": "Roasted Hearty Durian Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/3/36/BotW_Roasted_Hearty_Durian_Icon.png/revision/latest/scale-to-width-down/40?cb=20171220152046",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This hearty durian was roasted whole inside its hard shell. Unfortunately, roasting it did nothing to remove its distinct odor. Eat it to recover a lot of hearts.",
+      "ingredients": [
+        "Hearty Durian"
+      ]
+    },
+    {
+      "name": "Roasted Endura Carrot",
+      "image": {
+        "description": "Roasted Endura Carrot Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/e2/BotW_Roasted_Endura_Carrot_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223203650",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This flame-kissed endura carrot makes for a truly extravagant single-item dish. The fire really brought out its sweetness.",
+      "ingredients": [
+        "Endura Carrot"
+      ]
+    },
+    {
+      "name": "Roasted Hydromelon",
+      "image": {
+        "description": "Roasted Hydromelon Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/5/56/BotW_Roasted_Hydromelon_Icon.png/revision/latest/scale-to-width-down/40?cb=20171220152032",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This hydromelon was roasted whole for a very soft and flaky inner flesh with a rather intriguing flavor. Now this is your money melon!",
+      "ingredients": [
+        "Hydromelon"
+      ]
+    },
+    {
+      "name": "Roasted Lotus Seeds",
+      "image": {
+        "description": "Roasted Lotus Seeds Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/68/BotW_Roasted_Lotus_Seeds_Icon.png/revision/latest/scale-to-width-down/40?cb=20171220152018",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "Flame-roasted fleet-lotus seeds. Peel the skin back to get to the soft and flaky center.",
+      "ingredients": [
+        "Fleet-Lotus Seeds"
+      ]
+    },
+    {
+      "name": "Roasted Mighty Bananas",
+      "image": {
+        "description": "Roasted Mighty Bananas Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/67/BotW_Roasted_Mighty_Bananas_Icon.png/revision/latest/scale-to-width-down/40?cb=20171220152058",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "These mighty bananas have been roasted whole. Cooking them through has turned the fruit into a sticky, rich, aromatic syrup.",
+      "ingredients": [
+        "Mighty Bananas"
+      ]
+    },
+    {
+      "name": "Roasted Mighty Thistle",
+      "image": {
+        "description": "Roasted Mighty Thistle Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/62/BotW_Roasted_Mighty_Thistle_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223203703",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "Lightly toasted mighty thistle. It has no special effects, but now that it's been grilled, the pointy ends go down smooth.",
+      "ingredients": [
+        "Mighty Thistle"
+      ]
+    },
+    {
+      "name": "Roasted Porgy",
+      "image": {
+        "description": "Roasted Porgy Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/5/59/BotW_Roasted_Porgy_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226115024",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "The soft and fluffy texture of this seafaring fish has been enhanced by roasting it over an open fire. The crisp, aromatic skin is particularly delicious.",
+      "ingredients": [
+        "Any Porgy"
+      ]
+    },
+    {
+      "name": "Roasted Radish",
+      "image": {
+        "description": "Roasted Radish Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/4/42/BotW_Roasted_Radish_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223203718",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A roasted hearty radish. Fragrant and warm, it has no special effect but will restore hearts.",
+      "ingredients": [
+        "Hearty Radish"
+      ]
+    },
+    {
+      "name": "Roasted Hearty Salmon",
+      "image": {
+        "description": "Roasted Hearty Salmon Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/72/BotW_Roasted_Hearty_Salmon_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226115012",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A fresh hearty salmon roasted simply over an open flame without any additional flavoring. Not only is the skin edible, but it gives off a rather nice aroma as well.",
+      "ingredients": [
+        "Hearty Salmon"
+      ]
+    },
+    {
+      "name": "Roasted Swift Carrot",
+      "image": {
+        "description": "Roasted Swift Carrot Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/24/BotW_Roasted_Swift_Carrot_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223203729",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A fragrant swift carrot that's been lightly roasted. It doesn't have any special effects, but it will restore some health.",
+      "ingredients": [
+        "Swift Carrot"
+      ]
+    },
+    {
+      "name": "Roasted Tree Nut",
+      "image": {
+        "description": "Roasted Tree Nut Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/ef/BotW_Roasted_Tree_Nut_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223203749",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A tree seed roasted to amplify its fragrance. Gives more hearts that the raw variety.",
+      "ingredients": [
+        "Chickaloo Tree Nut"
+      ]
+    },
+    {
+      "name": "Roasted Trout",
+      "image": {
+        "description": "Roasted Trout Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/9/9c/BotW_Roasted_Trout_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226115037",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This trout can be found all over Hyrule. Served river-to-table, it's simply cooked for a soft and flaky flesh with a mild flavor.",
+      "ingredients": [
+        "Any Trout"
+      ]
+    },
+    {
+      "name": "Roasted Voltfruit",
+      "image": {
+        "description": "Roasted Voltfruit Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/4/4c/BotW_Roasted_Voltfruit_Icon.png/revision/latest/scale-to-width-down/40?cb=20171220151950",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This voltfruit from the Gerudo Desert has been charred to really bring out its sweet and sour flavors.",
+      "ingredients": [
+        "Voltfruit"
+      ]
+    },
+    {
+      "name": "Roasted Wildberry",
+      "image": {
+        "description": "Roasted Wildberry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2f/BotW_Roasted_Wildberry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171220152001",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This wildberry was prepared over an open flame to alter its sweet taste. It recovers more health than if eaten raw.",
+      "ingredients": [
+        "Wildberry"
+      ]
+    },
+    {
+      "name": "Roasted Whole Bird",
+      "image": {
+        "description": "Roasted Whole Bird Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/8f/BotW_Roasted_Whole_Bird_Icon.png/revision/latest/scale-to-width-down/40?cb=20171222162306",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This raw whole bird has been tickled by an open flame to bring out its flavor. Less is more, as the lack of additional seasoning allows its natural taste to shine.",
+      "ingredients": [
+        "Raw Whole Bird"
+      ]
+    },
+    {
+      "name": "Seared Gourmet Steak",
+      "image": {
+        "description": "Seared Gourmet Steak Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2d/BotW_Seared_Gourmet_Steak_Icon.png/revision/latest/scale-to-width-down/40?cb=20171222162213",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "The highest quality raw gourmet meat, just kissed by an open flame. No additional seasonings have been added, which lets the natural flavor of the meat really shine.",
+      "ingredients": [
+        "Raw Gourmet Meat"
+      ]
+    },
+    {
+      "name": "Seared Prime Steak",
+      "image": {
+        "description": "Seared Prime Steak Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/f/fc/BotW_Seared_Prime_Steak_Icon.png/revision/latest/scale-to-width-down/40?cb=20171222162200",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/f/fe/BotW_Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142842",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "Raw prime meat cooked over an open flame. The outside is perfectly browned, while the inside is mouthwateringly juicy.",
+      "ingredients": [
+        "Raw Prime Meat"
+      ]
+    },
+    {
+      "name": "Seared Steak",
+      "image": {
+        "description": "Seared Steak Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/b4/BotW_Seared_Steak_Icon.png/revision/latest/scale-to-width-down/40?cb=20171222162146",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "Raw meat cooked over an open flame. Cooking it has increased its flavor and the number of hearts it provides.",
+      "ingredients": [
+        "Raw Meat"
+      ]
+    },
+    {
+      "name": "Sneaky River Escargot",
+      "image": {
+        "description": "Sneaky River Escargot Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/6b/BotW_Sneaky_River_Escargot_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226115050",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "Sneaky river snail roasted whole in its shell. The meat is soft and a little chewy. Pulling all the meat from the shell in one go fills you with a sense of accomplishment.",
+      "ingredients": [
+        "Sneaky River Snail"
+      ]
+    },
+    {
+      "name": "Toasty Chillshroom",
+      "image": {
+        "description": "Toasty Chillshroom Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/1/1f/BotW_Toasty_Chillshroom_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204032",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A fully roasted chillshroom. It's evenly toasted and tastes a low better than when eaten raw. Eating it will restore a bit of health.",
+      "ingredients": [
+        "Chillshroom"
+      ]
+    },
+    {
+      "name": "Toasty Endura Shroom",
+      "image": {
+        "description": "Toasty Endura Shroom Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/1/17/BotW_Toasty_Endura_Shroom_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204049",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A toasted endura shroom. It doesn't grant any special effects, but boy is it tasty!",
+      "ingredients": [
+        "Endura Shroom"
+      ]
+    },
+    {
+      "name": "Toasted Hearty Truffle",
+      "image": {
+        "description": "Toasted Hearty Truffle Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/3/3f/BotW_Toasted_Hearty_Truffle_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204022",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A hearty truffle with a toasted, crispy outside and warm, gooey inside.",
+      "ingredients": [
+        "Hearty Truffle"
+      ]
+    },
+    {
+      "name": "Toasted Big Hearty Truffle",
+      "image": {
+        "description": "Toasted Big Hearty Truffle Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/1/13/BotW_Toasted_Big_Hearty_Truffle_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204012",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This big hearty truffle has been roasted whole. It gets full points for aroma and nutrition. Eat it to recover a lot of hearts.",
+      "ingredients": [
+        "Big Hearty Truffle"
+      ]
+    },
+    {
+      "name": "Toasty Ironshroom",
+      "image": {
+        "description": "Toasty Ironshroom Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/a/aa/BotW_Toasty_Ironshroom_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204137",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "An ironshroom exposed to an open flame. Its once-tough exterior is now crunchy and tasty. Restores a bit of health.",
+      "ingredients": [
+        "Ironshroom"
+      ]
+    },
+    {
+      "name": "Toasty Hylian Shroom",
+      "image": {
+        "description": "Toasty Hylian Shroom Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/6a/BotW_Toasty_Hylian_Shroom_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204120",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A Hylian Shroom toasted to perfection. The taste and fragrance are amplified, restoring more health to its consumer.",
+      "ingredients": [
+        "Hylian Shroom"
+      ]
+    },
+    {
+      "name": "Toasty Razorshroom",
+      "image": {
+        "description": "Toasty Razorshroom Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/00/BotW_Toasty_Razorshroom_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204149",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A razorshroom that's been exposed to direct heat. Its sharp exterior has softened considerably. Restores a bit of health.",
+      "ingredients": [
+        "Razorshroom"
+      ]
+    },
+    {
+      "name": "Toasty Rushroom",
+      "image": {
+        "description": "Toasty Rushroom Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/bf/BotW_Toasty_Rushroom_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204348",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A rushroom that's been put to the torch. It may have lost its speedy properties, but at least it tastes good now.",
+      "ingredients": [
+        "Rushroom"
+      ]
+    },
+    {
+      "name": "Toasty Silent Shroom",
+      "image": {
+        "description": "Toasty Silent Shroom Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/4/4b/BotW_Toasty_Silent_Shroom_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204426",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A whole, toasted silent shroom. High heat may have destroyed its soft glow, but it's now fragrant and taasty.",
+      "ingredients": [
+        "Silent Shroom"
+      ]
+    },
+    {
+      "name": "Toasty Stamella Shroom",
+      "image": {
+        "description": "Toasty Stamella Shroom Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/c8/BotW_Toasty_Stamella_Shroom_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204447",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This toasted Stamella Shroom doesn't grant any special effects, but it will restore one and a half hearts.",
+      "ingredients": [
+        "Stamella Shroom"
+      ]
+    },
+    {
+      "name": "Toasty Sunshroom",
+      "image": {
+        "description": "Toasty Sunshroom Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/4/4e/BotW_Toasty_Sunshroom_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204500",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "It's always a good idea to keep a fully roasted sunshroom or two on hand just in case. Eat it to recover a bit of health.",
+      "ingredients": [
+        "Sunshroom"
+      ]
+    },
+    {
+      "name": "Toasty Zapshroom",
+      "image": {
+        "description": "Toasty Zapshroom Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/3/38/BotW_Toasty_Zapshroom_Icon.png/revision/latest/scale-to-width-down/40?cb=20171223204510",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Three-Quarter Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/03/BotW_Three-Quarter_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20180322133601",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "It's not very shocking that this fully roasted zapshroom is delicious. Eat it to recover a bit of health.",
+      "ingredients": [
+        "Zapshroom"
+      ]
+    }
+  ]
+}

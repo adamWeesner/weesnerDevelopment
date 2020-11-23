@@ -1,0 +1,1713 @@
+{
+  "items": [
+    {
+      "name": "Apple Pie",
+      "image": {
+        "description": "Apple Pie Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/e7/BotW_Apple_Pie_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180043",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The crispy, flaky pie crust and sweet apples are a match made in heaven.",
+      "ingredients": [
+        "Tabantha Wheat",
+        "Cane Sugar",
+        "Goat Butter",
+        "Apple"
+      ]
+    },
+    {
+      "name": "Carrot Cake",
+      "image": {
+        "description": "Carrot Cake Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/81/BotW_Carrot_Cake_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180111",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Even those who don't like carrots tend to enjoy the mild sweetness of this cake.",
+      "ingredients": [
+        "Tabantha Wheat",
+        "Cane Sugar",
+        "Goat Butter",
+        "Any Carrot"
+      ]
+    },
+    {
+      "name": "Egg Pudding",
+      "image": {
+        "description": "Egg Pudding Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/22/BotW_Egg_Pudding_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180323",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Made by cooking eggs and milk in a special mold, its soft texture melts in your mouth.",
+      "ingredients": [
+        "Fresh Milk",
+        "Bird Egg",
+        "Cane Sugar"
+      ]
+    },
+    {
+      "name": "Egg Tart",
+      "image": {
+        "description": "Egg Tart Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/1/1c/BotW_Egg_Tart_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180051",
+        "width": 40,
+        "height": 40
+      },
+      "description": "You'll know this simple dessert is done baking when it smells just delightful.",
+      "ingredients": [
+        "Tabantha Wheat",
+        "Bird Egg",
+        "Cane Sugar",
+        "Goat Butter"
+      ]
+    },
+    {
+      "name": "Fish Pie",
+      "image": {
+        "description": "Fish Pie Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/ed/BotW_Fish_Pie_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180332",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A mainstay in any fisherman's home, the crisp crust pairs well with the fishy flavor.",
+      "ingredients": [
+        "Tabantha Wheat",
+        "Goat Butter",
+        "Rock Salt",
+        "Any Seafood"
+      ]
+    },
+    {
+      "name": "Carrot Stew",
+      "image": {
+        "description": "Carrot Stew Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/e5/BotW_Carrot_Stew_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181010",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This simple stew sat simmering for a long time to bring out the sweetness of the carrots.",
+      "ingredients": [
+        "Any Carrot",
+        "Fresh Milk",
+        "Goat Butter",
+        "Tabantha Wheat"
+      ]
+    },
+    {
+      "name": "Crab Omelet with Rice",
+      "image": {
+        "description": "Crab Omelet with Rice Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/6d/BotW_Crab_Omelet_with_Rice_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175957",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The fluffy crab legs pair perfectly with the rice for a truly scrumptious dish.",
+      "ingredients": [
+        "Hylian Rice",
+        "Bird Egg",
+        "Rock Salt",
+        "Any Crab"
+      ]
+    },
+    {
+      "name": "Crab Risotto",
+      "image": {
+        "description": "Crab Risotto Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/f/f3/BotW_Crab_Risotto_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180004",
+        "width": 40,
+        "height": 40
+      },
+      "description": "An everyday stable of seaside villages, the secret to its delicious flavor lies in crab fat.",
+      "ingredients": [
+        "Hylian Rice",
+        "Goat Butter",
+        "Rock Salt",
+        "Any Crab"
+      ]
+    },
+    {
+      "name": "Crab Stir-Fry",
+      "image": {
+        "description": "Crab Stir-Fry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/be/BotW_Crab_Stir-Fry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175650",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The Goron spice used in preparing this crab pairs perfectly with the flavor of the meat.",
+      "ingredients": [
+        "Goron Spice",
+        "Any Crab"
+      ]
+    },
+    {
+      "name": "Cream of Mushroom Soup",
+      "image": {
+        "description": "Cream of Mushroom Soup Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/0c/BotW_Cream_of_Mushroom_Soup_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180927",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The creamy mushroom and vegetable soup is so chunky it eats like a meal!",
+      "ingredients": [
+        "Any Mushroom",
+        "Any Vegetable, Herb, or Flower",
+        "Fresh Milk",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Cream of Vegetable Soup",
+      "image": {
+        "description": "Cream of Vegetable Soup Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/5/54/BotW_Cream_of_Vegetable_Soup_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180936",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Made by simmering vegetables in milk, this healthy dish is as simple as the ingredients.",
+      "ingredients": [
+        "Any Vegetable, Herb or Flower (except carrots or pumpkin)",
+        "Fresh Milk",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Creamy Heart Soup",
+      "image": {
+        "description": "Creamy Heart Soup Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/21/BotW_Creamy_Heart_Soup_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180914",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Enjoying this sweet soup with another person will bring you both closer together.",
+      "ingredients": [
+        "Hydromelon",
+        "Voltfruit",
+        "Any Radish",
+        "Fresh Milk"
+      ]
+    },
+    {
+      "name": "Creamy Meat Soup",
+      "image": {
+        "description": "Creamy Meat Soup Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/81/BotW_Creamy_Meat_Soup_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180846",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This nutritious soup contains serious portions of lightly-braised meat and many vegetables.",
+      "ingredients": [
+        "Any Meat",
+        "Any Vegetable, Herb, or Flower",
+        "Fresh Milk",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Creamy Seafood Soup",
+      "image": {
+        "description": "Creamy Seafood Soup Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/c7/BotW_Creamy_Seafood_Soup_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180854",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Thuck-cut chunks of seafood and stock provides a satisfying savoriness.",
+      "ingredients": [
+        "Any Seafood",
+        "Any Vegetable, Herb, or Flower",
+        "Fresh Milk",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Curry Pilaf",
+      "image": {
+        "description": "Curry Pilaf Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/c3/BotW_Curry_Pilaf_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175909",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The goron spice used in this pilaf has given it a rich, spicy aroma.",
+      "ingredients": [
+        "Hylian Rice",
+        "Bird Egg",
+        "Goat Butter",
+        "Goron Spice"
+      ]
+    },
+    {
+      "name": "Curry Rice",
+      "image": {
+        "description": "Curry Rice Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/d/d0/BotW_Curry_Rice_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180355",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A favorite all over Hyrule, this simple dish has a flavor you just won't get tired of.",
+      "ingredients": [
+        "Hylian Rice",
+        "Goron Spice"
+      ]
+    },
+    {
+      "name": "Dubious Food",
+      "image": {
+        "description": "Dubious Food Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/63/BotW_Dubious_Food_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181710",
+        "width": 40,
+        "height": 40
+      },
+      "description": "It's too gross to even look at. A bizarre smell issues forth from this heap. Eating it won't hurt you though...probably.",
+      "ingredients": [
+        "Food with critters or monster parts, or",
+        "Seasoning without food, or",
+        "Monster parts without critters, or",
+        "Critters without monster parts"
+      ]
+    },
+    {
+      "name": "Energizing Glazed Meat",
+      "image": {
+        "description": "Glazed Meat Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/b3/BotW_Glazed_Meat_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173645",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The sweetness of the honey permeates the meat, giving it a complex taste profile.",
+      "ingredients": [
+        "Courser Bee Honey",
+        "Any Meat"
+      ]
+    },
+    {
+      "name": "Energizing Honey Candy",
+      "image": {
+        "description": "Honey Candy Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/20/BotW_Honey_Candy_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181724",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A natural sweet, brimming with nutrition and made by stewing fresh honey.",
+      "ingredients": [
+        "Courser Bee Honey"
+      ]
+    },
+    {
+      "name": "Energizing Honeyed Apple",
+      "image": {
+        "description": "Honeyed Apple Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/d/dc/BotW_Honeyed_Apple_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180209",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A juicy sweet-and-sour dish combining newly ripened apples with honey.",
+      "ingredients": [
+        "Apple",
+        "Courser Bee Honey"
+      ]
+    },
+    {
+      "name": "Fish Skewer",
+      "image": {
+        "description": "Fish Skewer Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/5/59/BotW_Fish_Skewer_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228103911",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A simple dish made by cooking chunks of fresh fish on a skewer.",
+      "ingredients": [
+        "Any Fish"
+      ]
+    },
+    {
+      "name": "Copious Fish Skewers",
+      "image": {
+        "description": "Copious Fish Skewers Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/6f/BotW_Copious_Fish_Skewers_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228103922",
+        "width": 40,
+        "height": 40
+      },
+      "description": "It's just a whole heap of stuff shoved on to a skewer, but it's still a pretty tasty dish.",
+      "ingredients": [
+        "Any 4 different Seafood"
+      ]
+    },
+    {
+      "name": "Fish and Mushroom Skewer",
+      "image": {
+        "description": "Fish and Mushroom Skewer Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2d/BotW_Fish_and_Mushroom_Skewer_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228103842",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A simple dish made by cooking skewered, fresh fish alongside fragrant mushrooms.",
+      "ingredients": [
+        "Any Fish",
+        "Any Mushroom"
+      ]
+    },
+    {
+      "name": "Fragrant Mushroom Sauté",
+      "image": {
+        "description": "Fragrant Mushroom Sauté Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/c7/BotW_Fragrant_Mushroom_Saut%C3%A9_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181519",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The fragrant aroma of this sautéed spice and mushroom dish makes your mouth water.",
+      "ingredients": [
+        "Goron Spice",
+        "Any Mushroom"
+      ]
+    },
+    {
+      "name": "Fried Bananas",
+      "image": {
+        "description": "Fried Bananas Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/f/fb/BotW_Fried_Bananas_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180308",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Children love fried mighty bananas. The trick is frying them over very high heat.",
+      "ingredients": [
+        "Mighty Bananas",
+        "Tabantha Wheat",
+        "Cane Sugar"
+      ]
+    },
+    {
+      "name": "Fried Egg and Rice",
+      "image": {
+        "description": "Fried Egg and Rice Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/0a/BotW_Fried_Egg_and_Rice_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175751",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The soft egg yolk pairs well with the fresh rice in this simple dish.",
+      "ingredients": [
+        "Hylian Rice",
+        "Bird Egg"
+      ]
+    },
+    {
+      "name": "Fried Wild Greens",
+      "image": {
+        "description": "Fried Wild Greens Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/ea/BotW_Fried_Wild_Greens_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181244",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A basic vegetable dish made by sautéing fresh wild plants.",
+      "ingredients": [
+        "Any Vegetable, Herb, or Flower"
+      ]
+    },
+    {
+      "name": "Copious Fried Wild Greens",
+      "image": {
+        "description": "Copious Fried Wild Greens Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/b2/BotW_Copious_Fried_Wild_Greens_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175517",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A healthy dish made by cooking mixed greens over a strong flame.",
+      "ingredients": [
+        "Any 4 different Vegetables, Herbs, or Flowers"
+      ]
+    },
+    {
+      "name": "Fruit and Mushroom Mix",
+      "image": {
+        "description": "Fruit and Mushroom Mix Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/7b/BotW_Fruit_and_Mushroom_Mix_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173555",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This dish contrasts the sweetness of fruit with the savoriness of mushrooms.",
+      "ingredients": [
+        "Any Fruit",
+        "Any Mushroom"
+      ]
+    },
+    {
+      "name": "Fruit Pie",
+      "image": {
+        "description": "Fruit Pie Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/7a/BotW_Fruit_Pie_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180036",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A celebration isn't a celebration until this fruit-filled crust hits the table!",
+      "ingredients": [
+        "Any Fruit (besides Apple)",
+        "Tabantha Wheat",
+        "Cane Sugar",
+        "Goat Butter"
+      ]
+    },
+    {
+      "name": "Fruitcake",
+      "image": {
+        "description": "Fruitcake Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/3/39/BotW_Fruitcake_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181032",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Making ample use of fruits found all over Hyrule, this cake is a must for celebrations.",
+      "ingredients": [
+        "Apple or Wildberry",
+        "Any Fruit",
+        "Tabantha Wheat",
+        "Cane Sugar"
+      ]
+    },
+    {
+      "name": "Glazed Mushrooms",
+      "image": {
+        "description": "Glazed Mushrooms Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/61/BotW_Glazed_Mushrooms_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173635",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The honey in this mushroom dish gives it a sweet, complex taste and a savory finish.",
+      "ingredients": [
+        "Courser Bee Honey",
+        "Any Mushroom"
+      ]
+    },
+    {
+      "name": "Glazed Seafood",
+      "image": {
+        "description": "Glazed Seafood Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/78/BotW_Glazed_Seafood_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173655",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A seafood dish that you can actually wolf down whole!",
+      "ingredients": [
+        "Courser Bee Honey",
+        "Any Seafood"
+      ]
+    },
+    {
+      "name": "Glazed Veggies",
+      "image": {
+        "description": "Glazed Veggies Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/1/1c/BotW_Glazed_Veggies_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173721",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Don't like the taste of vegetables? Simply sauté them in honey for a salty-sweet flavor!",
+      "ingredients": [
+        "Courser Bee Honey",
+        "Any Vegetable, Herb, or Flower"
+      ]
+    },
+    {
+      "name": "Gourmet Meat and Rice Bowl",
+      "image": {
+        "description": "Gourmet Meat and Rice Bowl Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/f/fb/BotW_Gourmet_Meat_and_Rice_Bowl_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175845",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Only the most carefully selected cuts of high-quality meats go into this dish.",
+      "ingredients": [
+        "Raw Gourmet Meat",
+        "Hylian Rice",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Gourmet Meat and Seafood Fry",
+      "image": {
+        "description": "Gourmet Meat and Seafood Fry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/1/1e/BotW_Gourmet_Meat_and_Seafood_Fry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181136",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A marriage of the choicest cuts of meat and seafood. As delicious as it is filling!",
+      "ingredients": [
+        "Any Gourmet Meat",
+        "Any Seafood"
+      ]
+    },
+    {
+      "name": "Gourmet Meat Curry",
+      "image": {
+        "description": "Gourmet Meat Curry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/3/33/BotW_Gourmet_Meat_Curry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180654",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The high-quality meat used in this prized dish satisfies meat and curry lovers alike.",
+      "ingredients": [
+        "Raw Gourmet Meat",
+        "Goron Spice",
+        "Hylian Rice"
+      ]
+    },
+    {
+      "name": "Gourmet Meat Stew",
+      "image": {
+        "description": "Gourmet Meat Stew Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/5/55/BotW_Gourmet_Meat_Stew_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180811",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The meat has simmered for so long it melts in your mouth. A true bucket-list meal!",
+      "ingredients": [
+        "Any Gourmet Meat",
+        "Tabantha Wheat",
+        "Fresh Milk",
+        "Goat Butter"
+      ]
+    },
+    {
+      "name": "Gourmet Poultry Curry",
+      "image": {
+        "description": "Gourmet Poultry Curry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/80/BotW_Gourmet_Poultry_Curry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180607",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Once served in Hyrule Castle, the poultry used in this dish is of immensely high quality.",
+      "ingredients": [
+        "Raw Whole Bird",
+        "Goron Spice",
+        "Hylian Rice"
+      ]
+    },
+    {
+      "name": "Gourmet Poultry Pilaf",
+      "image": {
+        "description": "Gourmet Poultry Pilaf Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/0d/BotW_Gourmet_Poultry_Pilaf_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175734",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Made with the highest-quality poultry, every bite of this pilaf floods your mouth with flavor.",
+      "ingredients": [
+        "Raw Whole Bird",
+        "Hylian Rice",
+        "Goat Butter",
+        "Bird Egg"
+      ]
+    },
+    {
+      "name": "Gourmet Spiced Meat Skewer",
+      "image": {
+        "description": "Gourmet Spiced Meat Skewer Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/8c/BotW_Gourmet_Spiced_Meat_Skewer_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104015",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The rich aroma and juicy texture of this high-quality meat puts it in a league of its own.",
+      "ingredients": [
+        "Raw Gourmet Meat",
+        "Goron Spice"
+      ]
+    },
+    {
+      "name": "Hearty Clam Chowder",
+      "image": {
+        "description": "Clam Chowder Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/3/3b/BotW_Clam_Chowder_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180827",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The nutritional value of hearty blueshell snail combines with butter and milk in a rich soup.",
+      "ingredients": [
+        "Fresh Milk",
+        "Tabantha Wheat",
+        "Goat Butter",
+        "Hearty Blueshell Snail"
+      ]
+    },
+    {
+      "name": "Hearty Salmon Muenière",
+      "image": {
+        "description": "Salmon Muenière Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/21/BotW_Salmon_Mueni%C3%A8re_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181457",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The crispy skin of this fried hearty salmon puts its texture in a class all its own.",
+      "ingredients": [
+        "Tabantha Wheat",
+        "Goat Butter",
+        "Hearty Salmon"
+      ]
+    },
+    {
+      "name": "Herb Sauté",
+      "image": {
+        "description": "Herb Sauté Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/d/d3/BotW_Herb_Saut%C3%A9_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181534",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A fragrant mixture of herbs and spices.<br>It's easily recognized by its unique aroma.",
+      "ingredients": [
+        "Any Vegetable, Herb, or Flower",
+        "Goron Spice"
+      ]
+    },
+    {
+      "name": "Honey Crepe",
+      "image": {
+        "description": "Honey Crepe Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/1/18/BotW_Honey_Crepe_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180345",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Honey has been drizzled over thin crepes to bring out their natural sweetness and flavor.",
+      "ingredients": [
+        "Fresh Milk",
+        "Bird Egg",
+        "Tabantha Wheat",
+        "Cane Sugar",
+        "Courser Bee Honey"
+      ]
+    },
+    {
+      "name": "Honeyed Fruits",
+      "image": {
+        "description": "Honeyed Fruits Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/9/90/BotW_Honeyed_Fruits_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180149",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A dish that combines the thick sweetness of honey with the acidity of sour fruits.",
+      "ingredients": [
+        "Courser Bee Honey",
+        "Any Fruit (besides Apple)"
+      ]
+    },
+    {
+      "name": "Hot Buttered Apple",
+      "image": {
+        "description": "Hot Buttered Apple Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/bb/BotW_Hot_Buttered_Apple_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180133",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The apple's sweetness has been enhanced by smothering it with butter and baking it.",
+      "ingredients": [
+        "Apple",
+        "Goat Butter"
+      ]
+    },
+    {
+      "name": "Meat and Mushroom Skewer",
+      "image": {
+        "description": "Meat and Mushroom Skewer Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/87/BotW_Meat_and_Mushroom_Skewer_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228103852",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A filling dish made by grilling various mountain ingredients with either Steak or Bird Meat.",
+      "ingredients": [
+        "Any Meat",
+        "Any Mushroom"
+      ]
+    },
+    {
+      "name": "Meat and Rice Bowl",
+      "image": {
+        "description": "Meat and Rice Bowl Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/e6/BotW_Meat_and_Rice_Bowl_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175802",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This dish of rice and lightly seared meat is a mainstay all throughout Hyrule.",
+      "ingredients": [
+        "Hylian Rice",
+        "Any Meat",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Meat and Seafood Fry",
+      "image": {
+        "description": "Meat and Seafood Fry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/8a/BotW_Meat_and_Seafood_Fry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181102",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A filling dish made by cooking fresh seafood and meat together.",
+      "ingredients": [
+        "Any Meat",
+        "Any Seafood"
+      ]
+    },
+    {
+      "name": "Meat Curry",
+      "image": {
+        "description": "Meat Curry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/1/10/BotW_Meat_Curry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180647",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The heat from the spice allows you to enjoy the large portion of the meat's savoriness.",
+      "ingredients": [
+        "Raw Meat",
+        "Hylian Rice",
+        "Goron Spice"
+      ]
+    },
+    {
+      "name": "Meat Pie",
+      "image": {
+        "description": "Meat Pie Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/1/10/BotW_Meat_Pie_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180105",
+        "width": 40,
+        "height": 40
+      },
+      "description": "You'll need an extra napkin to deal with this juicy pie of perfectly baked minced meat.",
+      "ingredients": [
+        "Tabantha Wheat",
+        "Goat Butter",
+        "Rock Salt",
+        "Any Meat"
+      ]
+    },
+    {
+      "name": "Meat Skewer",
+      "image": {
+        "description": "Meat Skewer Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/3/3f/BotW_Meat_Skewer_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228103916",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A juicy, filling snack made by grilling small chunks of meat on a skewer.",
+      "ingredients": [
+        "Any 3 or less Meat"
+      ]
+    },
+    {
+      "name": "Copious Meat Skewers",
+      "image": {
+        "description": "Copious Meat Skewers Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/f/fa/BotW_Copious_Meat_Skewers_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228103935",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Just shove a bunch of meat on to a skewer and you're good to go.",
+      "ingredients": [
+        "Any 4 different Meats"
+      ]
+    },
+    {
+      "name": "Meat Stew",
+      "image": {
+        "description": "Meat Stew Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/6e/BotW_Meat_Stew_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180703",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The hearty meat in this mainstay dish leaves bellies satisfied all throughout Hyrule.",
+      "ingredients": [
+        "Raw Meat or Raw Bird Drumstick",
+        "Tabantha Wheat",
+        "Goat Butter",
+        "Fresh Milk"
+      ]
+    },
+    {
+      "name": "Meaty Rice Balls",
+      "image": {
+        "description": "Meaty Rice Balls Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/81/BotW_Meaty_Rice_Balls_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173539",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The sweet and spicy meat stuffed into these rice balls will keep you full for some time.",
+      "ingredients": [
+        "Any Meat",
+        "Hylian Rice"
+      ]
+    },
+    {
+      "name": "Monster Cake",
+      "image": {
+        "description": "Monster Cake Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/f/fa/BotW_Monster_Cake_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181642",
+        "width": 40,
+        "height": 40
+      },
+      "description": "It's said that once you have a taste of this cake, you'll never forget its sweetness.",
+      "ingredients": [
+        "Tabantha Wheat",
+        "Cane Sugar",
+        "Goat Butter",
+        "Monster Extract"
+      ]
+    },
+    {
+      "name": "Monster Curry",
+      "image": {
+        "description": "Monster Curry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/4/49/BotW_Monster_Curry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181649",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This unusual take on curry uses monster extract and doesn't rely on spices.",
+      "ingredients": [
+        "Hylian Rice",
+        "Goron Spice",
+        "Monster Extract"
+      ]
+    },
+    {
+      "name": "Monster Rice Balls",
+      "image": {
+        "description": "Monster Rice Balls Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/3/3e/BotW_Monster_Rice_Balls_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181541",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Rice balls flavored with monster extract. Their unique aroma is not for everyone.",
+      "ingredients": [
+        "Hylian Rice",
+        "Rock Salt",
+        "Monster Extract"
+      ]
+    },
+    {
+      "name": "Monster Soup",
+      "image": {
+        "description": "Monster Soup Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/1/16/BotW_Monster_Soup_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181604",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Using monster extract as a base, this soup's distinct gaminess is either loved or hated.",
+      "ingredients": [
+        "Monster Extract",
+        "Tabantha Wheat",
+        "Fresh Milk",
+        "Goat Butter"
+      ]
+    },
+    {
+      "name": "Monster Stew",
+      "image": {
+        "description": "Monster Stew Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/3/3a/BotW_Monster_Stew_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181556",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Meat and seafood simmered in monster extract. A savory dish despite its ingredients.",
+      "ingredients": [
+        "Any Meat",
+        "Any Seafood",
+        "Monster Extract"
+      ]
+    },
+    {
+      "name": "Mushroom Omelet",
+      "image": {
+        "description": "Mushroom Omelet Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/a/a9/BotW_Mushroom_Omelet_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181055",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The fluffy texture of this omelet is one of the great joys of this dish, as well as life.",
+      "ingredients": [
+        "Any Mushroom",
+        "Bird Egg",
+        "Goat Butter",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Mushroom Rice Balls",
+      "image": {
+        "description": "Mushroom Rice Balls Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/23/BotW_Mushroom_Rice_Balls_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173527",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The aroma of the mushrooms tickles your nose as you peel back the leafy wrapping.",
+      "ingredients": [
+        "Hylian Rice",
+        "Any Mushroom"
+      ]
+    },
+    {
+      "name": "Mushroom Risotto",
+      "image": {
+        "description": "Mushroom Risotto Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/3/3e/BotW_Mushroom_Risotto_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175916",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The tantalizing aroma of mushrooms and butter beckons you to the table.",
+      "ingredients": [
+        "Hylian Rice",
+        "Goat Butter",
+        "Rock Salt",
+        "Any Mushroom"
+      ]
+    },
+    {
+      "name": "Mushroom Skewer",
+      "image": {
+        "description": "Mushroom Skewer Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/8a/BotW_Mushroom_Skewer_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228103831",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This simple mushroom-packed skewer has its colorful presentation to thank for its appeal.",
+      "ingredients": [
+        "Any Mushroom"
+      ]
+    },
+    {
+      "name": "Copious Mushrooms Skewers",
+      "image": {
+        "description": "Copious Mushrooms Skewers Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/27/BotW_Copious_Mushrooms_Skewers_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175537",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Fans of fungal cuisine can't resist this simple mushroom-skewer dish. Very filling.",
+      "ingredients": [
+        "Any 4 different Mushrooms"
+      ]
+    },
+    {
+      "name": "Nutcake",
+      "image": {
+        "description": "Nutcake Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/d/dd/BotW_Nutcake_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180300",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Forest nuts give this cake a pleasant texture and a simple, understated sweetness.",
+      "ingredients": [
+        "Any Nut",
+        "Tabantha Wheat",
+        "Cane Sugar",
+        "Goat Butter"
+      ]
+    },
+    {
+      "name": "Omelet",
+      "image": {
+        "description": "Omelet Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/4/45/BotW_Omelet_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173625",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This simple dish is common all over Hyrule. Simply fry egg until it's nice and plump.",
+      "ingredients": [
+        "Bird Egg"
+      ]
+    },
+    {
+      "name": "Pepper Seafood",
+      "image": {
+        "description": "Pepper Seafood Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/a/ae/BotW_Pepper_Seafood_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181225",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The pepper seeds grilled with this seafood draw out its taste and pleasant aroma.",
+      "ingredients": [
+        "Spicy Pepper",
+        "Any Seafood"
+      ]
+    },
+    {
+      "name": "Plain Crepe",
+      "image": {
+        "description": "Plain Crepe Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/1/19/BotW_Plain_Crepe_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180237",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The simplicity of this dish lets the flavor of its ingredients shine.",
+      "ingredients": [
+        "Fresh Milk",
+        "Cane Sugar",
+        "Tabantha Wheat",
+        "Bird Egg",
+        "Goat Butter"
+      ]
+    },
+    {
+      "name": "Porgy Meunière",
+      "image": {
+        "description": "Porgy Meunière Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/9/94/BotW_Porgy_Meuni%C3%A8re_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181449",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Popular among residents of coastal regions, this juicy porgy is a delish dish.",
+      "ingredients": [
+        "Any Porgy",
+        "Goat Butter",
+        "Tabantha Wheat"
+      ]
+    },
+    {
+      "name": "Poultry Curry",
+      "image": {
+        "description": "Poultry Curry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/c0/BotW_Poultry_Curry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180546",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The savory meat pairs well with the aroma of spice in this common curry.",
+      "ingredients": [
+        "Raw Bird Drumstick",
+        "Hylian Rice",
+        "Goron Spice"
+      ]
+    },
+    {
+      "name": "Poultry Pilaf",
+      "image": {
+        "description": "Poultry Pilaf Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/d/d7/BotW_Poultry_Pilaf_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175719",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Sautéed Hylian rice steamed in poultry broth. Cook on low heat until the rice is fluffy.",
+      "ingredients": [
+        "Raw Bird Drumstick",
+        "Hylian Rice",
+        "Bird Egg",
+        "Goat Butter"
+      ]
+    },
+    {
+      "name": "Prime Meat and Rice Bowl",
+      "image": {
+        "description": "Prime Meat and Rice Bowl Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/a/a7/BotW_Prime_Meat_and_Rice_Bowl_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175833",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This bowl is loaded with high-quality meat. Your hunt for a serious meal ends here.",
+      "ingredients": [
+        "Raw Prime Meat",
+        "Hylian Rice",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Prime Meat and Seafood Fry",
+      "image": {
+        "description": "Prime Meat and Seafood Fry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/f/fc/BotW_Prime_Meat_and_Seafood_Fry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181125",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This comfort dish is made with choice cuts of meat and seafood.",
+      "ingredients": [
+        "Any Prime Meat",
+        "Any Seafood"
+      ]
+    },
+    {
+      "name": "Prime Meat Curry",
+      "image": {
+        "description": "Prime Meat Curry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/3/36/BotW_Prime_Meat_Curry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180643",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The high-quality meat in this curry has given it a deeper taste than most other curries.",
+      "ingredients": [
+        "Raw Prime Meat",
+        "Hylian Rice",
+        "Goron Spice"
+      ]
+    },
+    {
+      "name": "Prime Meat Stew",
+      "image": {
+        "description": "Prime Meat Stew Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/c8/BotW_Prime_Meat_Stew_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180711",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Letting the large portions of choice cuts of meat simmer brought out their savoriness.",
+      "ingredients": [
+        "Any Prime Meat",
+        "Tabantha Wheat",
+        "Goat Butter",
+        "Fresh Milk"
+      ]
+    },
+    {
+      "name": "Prime Poultry Curry",
+      "image": {
+        "description": "Prime Poultry Curry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/b6/BotW_Prime_Poultry_Curry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180559",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The secret to this curry's flavor is taking it off the heat while you add the spices.",
+      "ingredients": [
+        "Raw Bird Thigh",
+        "Goron Spice",
+        "Hylian Rice"
+      ]
+    },
+    {
+      "name": "Prime Poultry Pilaf",
+      "image": {
+        "description": "Prime Poultry Pilaf Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/1/19/BotW_Prime_Poultry_Pilaf_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175726",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The rice permeates the savory taste of the poultry in this Gerudo-region favorite.",
+      "ingredients": [
+        "Raw Bird Thigh",
+        "Hylian Rice",
+        "Bird Egg",
+        "Goat Butter"
+      ]
+    },
+    {
+      "name": "Prime Spiced Meat Skewer",
+      "image": {
+        "description": "Prime Spiced Meat Skewer Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2a/BotW_Prime_Spiced_Meat_Skewer_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104004",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The simple preparation of this steak dish belies its complex taste profile.",
+      "ingredients": [
+        "Raw Prime Meat",
+        "Goron Spice"
+      ]
+    },
+    {
+      "name": "Pumpkin Pie",
+      "image": {
+        "description": "Pumpkin Pie Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/5/53/BotW_Pumpkin_Pie_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180125",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The intense sweetness of fortified pumpkins makes this dessert popular among children.",
+      "ingredients": [
+        "Fortified Pumpkin",
+        "Tabantha Wheat",
+        "Cane Sugar",
+        "Goat Butter"
+      ]
+    },
+    {
+      "name": "Pumpkin Stew",
+      "image": {
+        "description": "Pumpkin Stew Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/b4/BotW_Pumpkin_Stew_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180818",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Simply simmer a fortified pumpkin to make this dish. A favorite in Kakariko Village.",
+      "ingredients": [
+        "Fortified Pumpkin",
+        "Tabantha Wheat",
+        "Goat Butter",
+        "Fresh Milk"
+      ]
+    },
+    {
+      "name": "Rock-Hard Food",
+      "image": {
+        "description": "Rock-Hard Food Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/78/BotW_Rock-Hard_Food_Icon.png/revision/latest/scale-to-width-down/50?cb=20171227181704",
+        "width": 50,
+        "height": 50
+      },
+      "description": "A dish gone awry after adding the wrong ingredient. Chewing your way through this won't be fun, but it will fill you up when you're between a rock and a hard place.",
+      "ingredients": [
+        "Wood or ore"
+      ]
+    },
+    {
+      "name": "Salmon Risotto",
+      "image": {
+        "description": "Salmon Risotto Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/e0/BotW_Salmon_Risotto_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175941",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The rice used in this rich risotto permeates the light flavor of the salmon.",
+      "ingredients": [
+        "Hearty Salmon",
+        "Hylian Rice",
+        "Goat Butter",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Salt-Grilled Crab",
+      "image": {
+        "description": "Salt-Grilled Crab Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/b6/BotW_Salt-Grilled_Crab_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181401",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Nine out of ten fishermen agree: crab is best enjoyed grilled and with just a bit of salt.",
+      "ingredients": [
+        "Rock Salt",
+        "Any Crab"
+      ]
+    },
+    {
+      "name": "Salt-Grilled Fish",
+      "image": {
+        "description": "Salt Grilled Fish Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/7e/BotW_Salt_Grilled_Fish_Icon.png/revision/latest/scale-to-width-down/50?cb=20171227181316",
+        "width": 50,
+        "height": 50
+      },
+      "description": "A simple dish made by rolling a whole fish in natural rock salt before grilling it.",
+      "ingredients": [
+        "Rock Salt",
+        "Any Fish or Snail"
+      ]
+    },
+    {
+      "name": "Salt-Grilled Gourmet Meat",
+      "image": {
+        "description": "Salt-Grilled Gourmet Meat Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/9/97/BotW_Salt-Grilled_Gourmet_Meat_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181355",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This lavish grilled dish makes liberal use of high-quality cuts of meat.",
+      "ingredients": [
+        "Rock Salt",
+        "Any Gourmet Meat"
+      ]
+    },
+    {
+      "name": "Salt-Grilled Greens",
+      "image": {
+        "description": "Salt-Grilled Greens Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/d/dc/BotW_Salt-Grilled_Greens_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181309",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A health-boosting dish made with leafy greens and a touch of salt.",
+      "ingredients": [
+        "Rock Salt",
+        "Any Vegetable, Herb, or Flower"
+      ]
+    },
+    {
+      "name": "Salt-Grilled Meat",
+      "image": {
+        "description": "Salt-Grilled Meat Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/be/BotW_Salt-Grilled_Meat_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181336",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Short on ingredients? Just rub some meat in salt and cook it for a simple, tasty dish.",
+      "ingredients": [
+        "Rock Salt",
+        "Raw Meat or Raw Bird Drumstick"
+      ]
+    },
+    {
+      "name": "Salt-Grilled Mushrooms",
+      "image": {
+        "description": "Salt-Grilled Mushrooms Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/b1/BotW_Salt-Grilled_Mushrooms_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181250",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A basic mushroom dish made by lightly salting mushrooms and grilling them.",
+      "ingredients": [
+        "Any Mushroom",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Salt-Grilled Prime Meat",
+      "image": {
+        "description": "Salt-Grilled Prime Meat Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/9/9f/BotW_Salt-Grilled_Prime_Meat_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181345",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A simple yet exquisite dish made by grilling high-quality meat on top of rock salt.",
+      "ingredients": [
+        "Any Prime Meat",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Sautéed Nuts",
+      "image": {
+        "description": "Sautéed Nuts Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/5/54/BotW_Saut%C3%A9ed_Nuts_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175637",
+        "width": 40,
+        "height": 40
+      },
+      "description": "These sautéed tree seeds are the perfect snack for the busy adventurer on the go!",
+      "ingredients": [
+        "Acorn",
+        "or",
+        "Chickaloo Tree Nut"
+      ]
+    },
+    {
+      "name": "Seafood Curry",
+      "image": {
+        "description": "Seafood Curry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/22/BotW_Seafood_Curry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180539",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This dish brims with treasures from the sea. Its spice packs a kick, so it's not for kids.",
+      "ingredients": [
+        "Goron Spice",
+        "Hylian Rice",
+        "Hearty Blueshell Snail or Any Porgy"
+      ]
+    },
+    {
+      "name": "Seafood Fried Rice",
+      "image": {
+        "description": "Seafood Fried Rice Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/c9/BotW_Seafood_Fried_Rice_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175853",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Various seafood has been sautéed with rice. The stronger the flame, the tastier the dish!",
+      "ingredients": [
+        "Hylian Rice",
+        "Rock Salt",
+        "Hearty Blueshell Snail or Any Porgy"
+      ]
+    },
+    {
+      "name": "Seafood Meunière",
+      "image": {
+        "description": "Seafood Meunière Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/81/BotW_Seafood_Meuni%C3%A8re_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181443",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Rich butter flanks fresh seafood. The secret ingredient is lots and lots of love.",
+      "ingredients": [
+        "Any Seafood (except Porgy or Salmon)",
+        "Tabantha Wheat",
+        "Goat Butter"
+      ]
+    },
+    {
+      "name": "Seafood Paella",
+      "image": {
+        "description": "Seafood Paella Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/d/d3/BotW_Seafood_Paella_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181016",
+        "width": 40,
+        "height": 40
+      },
+      "description": "No fisherman's birthday bash would be complete without this top-shelf seafood dish.",
+      "ingredients": [
+        "Hearty Blueshell Snail",
+        "Any Porgy",
+        "Hylian Rice",
+        "Goat Butter",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Seafood Rice Balls",
+      "image": {
+        "description": "Seafood Rice Balls Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/69/BotW_Seafood_Rice_Balls_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173505",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Stuffed with aromatic seafood, the flavor can vary by ingredients but never disappoints.",
+      "ingredients": [
+        "Hylian Rice",
+        "Any Seafood"
+      ]
+    },
+    {
+      "name": "Seafood Skewer",
+      "image": {
+        "description": "Seafood Skewer Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/d/dc/BotW_Seafood_Skewer_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228103942",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The natural water in this medley of seafaring creatures makes for a delicious broth.",
+      "ingredients": [
+        "Any Crab or Snail"
+      ]
+    },
+    {
+      "name": "Simmered Fruit",
+      "image": {
+        "description": "Simmered Fruit Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/ce/BotW_Simmered_Fruit_Icon.png/revision/latest/scale-to-width-down/50?cb=20171227175437",
+        "width": 50,
+        "height": 50
+      },
+      "description": "This sweet dish is made by heaping tasty fruits into a pan and simmering until tender.",
+      "ingredients": [
+        "Any Fruit"
+      ]
+    },
+    {
+      "name": "Copious Simmered Fruit",
+      "image": {
+        "description": "Copious Simmered Fruit Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/ce/BotW_Copious_Simmered_Fruit_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175525",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The flavors of the various fruits in this simmered dish exist in perfect harmony.",
+      "ingredients": [
+        "Any 4 different Fruit"
+      ]
+    },
+    {
+      "name": "Spiced Meat Skewer",
+      "image": {
+        "description": "Spiced Meat Skewer Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/d/db/BotW_Spiced_Meat_Skewer_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228103956",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A special Goron spice covers up the scent of the meat, allowing its flavor to shine.",
+      "ingredients": [
+        "Goron Spice",
+        "Raw Meat"
+      ]
+    },
+    {
+      "name": "Spicy Pepper Steak",
+      "image": {
+        "description": "Pepper Steak Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/b2/BotW_Pepper_Steak_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181152",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A dish made by cooking meat in crushed peppers, suppressing the gamy taste while accentuating its flavor.",
+      "ingredients": [
+        "Spicy Pepper",
+        "Any Meat"
+      ]
+    },
+    {
+      "name": "Spicy Sautéed Peppers",
+      "image": {
+        "description": "Sautéed Peppers Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/c1/BotW_Saut%C3%A9ed_Peppers_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175626",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The spiciness of these sautéed peppers has been broken by the heat for a sweeter taste.",
+      "ingredients": [
+        "Spicy Pepper"
+      ]
+    },
+    {
+      "name": "Steamed Fish",
+      "image": {
+        "description": "Steamed Fish Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/62/BotW_Steamed_Fish_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173443",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A refined dish made by wrapping a fresh fish in fragrant wild greens and cooking it.",
+      "ingredients": [
+        "Any Vegetable, Herb, or Flower",
+        "Any Seafood"
+      ]
+    },
+    {
+      "name": "Steamed Fruit",
+      "image": {
+        "description": "Steamed Fruit Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/82/BotW_Steamed_Fruit_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173433",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A regional dish made by steaming near-ripened fruits in the leaves of fragrant plants.",
+      "ingredients": [
+        "Any Fruit",
+        "Any Vegetable, Herb, or Flower"
+      ]
+    },
+    {
+      "name": "Steamed Meat",
+      "image": {
+        "description": "Steamed Meat Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/5/5b/BotW_Steamed_Meat_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173454",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This meat dish has been wrapped in fragrant leaves and steamed to preserve its moisture.",
+      "ingredients": [
+        "Any Meat",
+        "Any Vegetable, Herb, or Flower (except Pumpkin)"
+      ]
+    },
+    {
+      "name": "Steamed Mushroom",
+      "image": {
+        "description": "Steamed Mushrooms Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/a/ae/BotW_Steamed_Mushrooms_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173413",
+        "width": 40,
+        "height": 40
+      },
+      "description": "A healthy vegetable dish achieved by steaming mushrooms in plant leaves.",
+      "ingredients": [
+        "Any Mushroom",
+        "Any Vegetable, Herb, or Flower"
+      ]
+    },
+    {
+      "name": "Tough Meat-Stuffed Pumpkin",
+      "image": {
+        "description": "Meat-Stuffed Pumpkin Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/3/3f/BotW_Meat-Stuffed_Pumpkin_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175618",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Grants a low-level defense boost. This hollow, meat-filled fortified pumpkin is a local specialty or Kakariko Village.",
+      "ingredients": [
+        "Fortified Pumpkin",
+        "Any Meat"
+      ]
+    },
+    {
+      "name": "Vegetable Curry",
+      "image": {
+        "description": "Vegetable Curry Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/6f/BotW_Vegetable_Curry_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180405",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This healthy curry is popular for its mild flavor and moderate spiciness.",
+      "ingredients": [
+        "Any Carrot or Pumpkin",
+        "Hylian Rice",
+        "Goron Spice"
+      ]
+    },
+    {
+      "name": "Vegetable Omelet",
+      "image": {
+        "description": "Vegetable Omelet Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/5/58/BotW_Vegetable_Omelet_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181039",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This home-style dish mixes fluffy eggs with chopped vegetables for nutritional balance.",
+      "ingredients": [
+        "Any Vegetable, Herb, or Flower",
+        "Bird Egg",
+        "Goat Butter",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Vegetable Risotto",
+      "image": {
+        "description": "Vegetable Risotto Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/3/3d/BotW_Vegetable_Risotto_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227175932",
+        "width": 40,
+        "height": 40
+      },
+      "description": "The sweetness of the ingredients gives this risotto a mild flavor.",
+      "ingredients": [
+        "Any Carrot or Pumpkin",
+        "Hylian Rice",
+        "Goat Butter",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Veggie Cream Soup",
+      "image": {
+        "description": "Veggie Cream Soup Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/86/BotW_Veggie_Cream_Soup_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180906",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This creamy soup showcases the sweetness of vegetables in a veritable taste explosion.",
+      "ingredients": [
+        "Any Carrot or Pumpkin",
+        "Fresh Milk",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Veggie Rice Balls",
+      "image": {
+        "description": "Veggie Rice Balls Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/5/53/BotW_Veggie_Rice_Balls_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227173515",
+        "width": 40,
+        "height": 40
+      },
+      "description": "This home-style dish of Kakariko Village is stuffed with the bounty of the mountains.",
+      "ingredients": [
+        "Any Vegetable, Herb, or Flower",
+        "Hylian Rice"
+      ]
+    },
+    {
+      "name": "Warm Milk",
+      "image": {
+        "description": "Warm Milk Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/4/4d/BotW_Warm_Milk_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181732",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Make this by heating up some milk. Drink it before bed to ensure a good night's sleep.",
+      "ingredients": [
+        "Fresh Milk"
+      ]
+    },
+    {
+      "name": "Wheat Bread",
+      "image": {
+        "description": "Wheat Bread Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/22/BotW_Wheat_Bread_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227181511",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Made with wheat from the Tabantha region, this soft, springy bread smells just heavenly.",
+      "ingredients": [
+        "Tabantha Wheat",
+        "Rock Salt"
+      ]
+    },
+    {
+      "name": "Wildberry Crepe",
+      "image": {
+        "description": "Wildberry Crepe Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/4/42/BotW_Wildberry_Crepe_Icon.png/revision/latest/scale-to-width-down/40?cb=20171227180248",
+        "width": 40,
+        "height": 40
+      },
+      "description": "Sweet, tart wildberries are folded into thin, springy dough to make this dessert.",
+      "ingredients": [
+        "Wildberry",
+        "Fresh Milk",
+        "Cane Sugar",
+        "Tabantha Wheat",
+        "Bird Egg"
+      ]
+    }
+  ]
+}

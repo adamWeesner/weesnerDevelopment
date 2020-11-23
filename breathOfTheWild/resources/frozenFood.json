@@ -1,0 +1,337 @@
+{
+  "items": [
+    {
+      "name": "Frozen Bass",
+      "image": {
+        "description": "Frozen Bass Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/8/86/BotW_Frozen_Bass_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226115232",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "That's one cold fish. Eating it won't restore many hearts, but it will lower your body temperature a bit.",
+      "ingredients": [
+        "Any Bass"
+      ]
+    },
+    {
+      "name": "Frozen Hearty Bass",
+      "image": {
+        "description": "Frozen Hearty Bass Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/08/BotW_Frozen_Hearty_Bass_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226115358",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This hearty bass has been frozen by cool air. Eating it will be a challenge because it's frozen solid, but if you persevere, it will temporarily increase your heat resistance.",
+      "ingredients": [
+        "Hearty Bass"
+      ]
+    },
+    {
+      "name": "Frozen Bird Drumstick",
+      "image": {
+        "description": "Frozen Bird Drumstick Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/6a/BotW_Frozen_Bird_Drumstick_Icon.png/revision/latest/scale-to-width-down/40?cb=20171222162447",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "It's as hard as a rock but is supposedly edible. It restores a small number of hearts and has a cooling effect.",
+      "ingredients": [
+        "Raw Bird Drumstick"
+      ]
+    },
+    {
+      "name": "Frozen Bird Thigh",
+      "image": {
+        "description": "Frozen Bird Thigh Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/eb/BotW_Frozen_Bird_Thigh_Icon.png/revision/latest/scale-to-width-down/40?cb=20171222162500",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "High-quality, frozen bird meat. It's so solid it looks like it could be used as a weapon. Eating it will restore some hearts and cool you down, but don't break your teeth on it.",
+      "ingredients": [
+        "Raw Bird Thigh"
+      ]
+    },
+    {
+      "name": "Frozen Whole Bird",
+      "image": {
+        "description": "Frozen Whole Bird Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/70/BotW_Frozen_Whole_Bird_Icon.png/revision/latest/scale-to-width-down/40?cb=20171222162514",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This raw whole bird may have been frozen solid, but its flavor remains intact. Eating it will provide a temporary boost to your heat resistance.",
+      "ingredients": [
+        "Raw Whole Bird"
+      ]
+    },
+    {
+      "name": "Frozen Carp",
+      "image": {
+        "description": "Frozen Carp Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/4/47/BotW_Frozen_Carp_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226115301",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "The crunchy, icy texture of this chilled carp is quite the delicacy. Eating it will temporarily increase your heat resistance.",
+      "ingredients": [
+        "Any Carp"
+      ]
+    },
+    {
+      "name": "Frozen Crab",
+      "image": {
+        "description": "Frozen Crab Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/ed/BotW_Frozen_Crab_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226115315",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "Doesn't provide as much companionship as an unfrozen crab, but it won't spoil during your travels. Eat it to gain a temporary boost to your heat resistance.",
+      "ingredients": [
+        "Any Crab"
+      ]
+    },
+    {
+      "name": "Frozen River Snail",
+      "image": {
+        "description": "Frozen River Snail Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/02/BotW_Frozen_River_Snail_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226115410",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "The distinct glow of this sneaky river snail has diminished after it's been frozen, but eating it will provide a temporary increase to your heat resistance.",
+      "ingredients": [
+        "Sneaky River Snail"
+      ]
+    },
+    {
+      "name": "Frozen Trout",
+      "image": {
+        "description": "Frozen Trout Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/e5/BotW_Frozen_Trout_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226115420",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "Being frozen has condensed the taste of fish inside this trout's body. Eating it will provide a temporary boost to your heat resistance.",
+      "ingredients": [
+        "Any Trout"
+      ]
+    },
+    {
+      "name": "Icy Hearty Blueshell Snail",
+      "image": {
+        "description": "Icy Hearty Blueshell Snail Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/6b/BotW_Icy_Hearty_Blueshell_Snail_Icon.png/revision/latest/scale-to-width-down/40?cb=20171226115653",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "It takes a skilled chef to get the meat out of this frozen hearty blueshell snail. Eating this will provide a temporary increase to your heat resistance.",
+      "ingredients": [
+        "Hearty Blueshell Snail"
+      ]
+    },
+    {
+      "name": "Icy Meat",
+      "image": {
+        "description": "Icy Meat Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/a/a4/BotW_Icy_Meat_Icon.png/revision/latest/scale-to-width-down/40?cb=20171222162343",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "A frozen slab of animal meat. If you can manage to chew it up and swallow it, you'll restore some hearts and lower your body temperature.",
+      "ingredients": [
+        "Raw Meat"
+      ]
+    },
+    {
+      "name": "Icy Prime Meat",
+      "image": {
+        "description": "Icy Prime Meat Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/00/BotW_Icy_Prime_Meat_Icon.png/revision/latest/scale-to-width-down/40?cb=20171222162356",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Half-Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/76/BotW_Half-Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142357",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "High-quality, frozen animal meat. Doesn't restore many hearts, but it can lower your body temperature.",
+      "ingredients": [
+        "Raw Prime Meat"
+      ]
+    },
+    {
+      "name": "Icy Gourmet Meat",
+      "image": {
+        "description": "Icy Gourmet Meat Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/6/68/BotW_Icy_Gourmet_Meat_Icon.png/revision/latest/scale-to-width-down/40?cb=20171222162430",
+        "width": 40,
+        "height": 40
+      },
+      "effect": [
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        },
+        {
+          "description": "Heart Icon",
+          "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/2/2e/BotW_Heart_Icon.png/revision/latest/scale-to-width-down/18?cb=20160616142421",
+          "width": 18,
+          "height": 14
+        }
+      ],
+      "description": "This raw gourmet meat has been frozen for easy traveling. It's kept its flavor through the freezing process. Eating it as is will provide a temporary boost to your heat resistance.",
+      "ingredients": [
+        "Raw Gourmet Meat"
+      ]
+    }
+  ]
+}

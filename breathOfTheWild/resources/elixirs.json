@@ -1,0 +1,183 @@
+{
+  "items": [
+    {
+      "image": {
+        "description": "Chilly Elixir Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/b6/BotW_Chilly_Elixir_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104718",
+        "width": 40,
+        "height": 40
+      },
+      "name": "Chilly Elixir",
+      "description": "Grants a (Low/High)-level cooling effect, raising your body's resistance to heat. Crucial for long journeys through the desert.",
+      "effect": "Heat Resistance",
+      "ingredients": [
+        "Chilly Critter",
+        "Monster Part"
+      ]
+    },
+    {
+      "image": {
+        "description": "Electro Elixir Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/5/5c/BotW_Electro_Elixir_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104712",
+        "width": 40,
+        "height": 40
+      },
+      "name": "Electro Elixir",
+      "description": "Grants a (Low/Mid/High)-level resistance to electricity. Useful against enemies with electrical attacks.",
+      "effect": "Electricity Resistance",
+      "ingredients": [
+        "Electro Critter",
+        "Monster Part"
+      ]
+    },
+    {
+      "image": {
+        "description": "Enduring Elixir Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/b/b1/BotW_Enduring_Elixir_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104557",
+        "width": 40,
+        "height": 40
+      },
+      "name": "Enduring Elixir",
+      "description": "Restores stamina and temporarily extends your Stamina Wheel. The additional stamina will disappear as it's used.",
+      "effect": "Extra Stamina",
+      "ingredients": [
+        "Enduring Critter",
+        "Monster Part"
+      ]
+    },
+    {
+      "image": {
+        "description": "Energizing Elixir Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/1/1f/BotW_Energizing_Elixir_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104619",
+        "width": 40,
+        "height": 40
+      },
+      "name": "Energizing Elixir",
+      "description": "Restores your Stamina, which is used when performing physical actions such as climbing walls and swimming.",
+      "effect": "Restores Stamina",
+      "ingredients": [
+        "Energizing Critter",
+        "Monster Part"
+      ]
+    },
+    {
+      "image": {
+        "description": "Fairy Tonic Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/c/c7/BotW_Fairy_Tonic_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104730",
+        "width": 40,
+        "height": 40
+      },
+      "name": "Fairy Tonic",
+      "description": "This powerful recovery elixir harnesses the power of fairies. It has a sweet fragrance.",
+      "effect": "Restores Hearts",
+      "ingredients": [
+        "Fairy"
+      ]
+    },
+    {
+      "image": {
+        "description": "Fireproof Elixir Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/d/dc/BotW_Fireproof_Elixir_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104603",
+        "width": 40,
+        "height": 40
+      },
+      "name": "Fireproof Elixir",
+      "description": "Grants a fireproof effect, which prevents your body from catching fire. Be sure to pack this when venturing out to explore Death Mountain.",
+      "effect": "Flame Guard",
+      "ingredients": [
+        "Fireproof Critter",
+        "Monster Part"
+      ]
+    },
+    {
+      "image": {
+        "description": "Hasty Elixir Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/9/9d/BotW_Hasty_Elixir_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104522",
+        "width": 40,
+        "height": 40
+      },
+      "name": "Hasty Elixir",
+      "description": "Grants a (Low/Mid/High)-level haste effect, which boosts your movement speed while running, swimming, or climbing.",
+      "effect": "Speed Up",
+      "ingredients": [
+        "Hasty Critter",
+        "Monster Part"
+      ]
+    },
+    {
+      "image": {
+        "description": "Hearty Elixir Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/07/BotW_Hearty_Elixir_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104635",
+        "width": 40,
+        "height": 40
+      },
+      "name": "Hearty Elixir",
+      "description": "Restores you to full health and increases your maximum hearts. The additional hearts are lost as you take damage.",
+      "effect": "Extra Hearts",
+      "ingredients": [
+        "Hearty Animal",
+        "Monster Part"
+      ]
+    },
+    {
+      "image": {
+        "description": "Mighty Elixir Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/e/e1/BotW_Mighty_Elixir_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104534",
+        "width": 40,
+        "height": 40
+      },
+      "name": "Mighty Elixir",
+      "description": "",
+      "effect": "Attack Up",
+      "ingredients": [
+        "Mighty Animal",
+        "Monster Part"
+      ]
+    },
+    {
+      "image": {
+        "description": "Sneaky Elixir Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/7/7a/BotW_Sneaky_Elixir_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104641",
+        "width": 40,
+        "height": 40
+      },
+      "name": "Sneaky Elixir",
+      "description": "Grants a (Low/Mid/High)-level stealth effect, which calms the nerves and silences footfalls. Allows you to move about undetected by monsters and animals.",
+      "effect": "Increased sneak ability",
+      "ingredients": [
+        "Sneaky Critter",
+        "Monster Part"
+      ]
+    },
+    {
+      "image": {
+        "description": "Spicy Elixir Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/a/a8/BotW_Spicy_Elixir_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104705",
+        "width": 40,
+        "height": 40
+      },
+      "name": "Spicy Elixir",
+      "description": "Warms your body from its core, increasing your resistance to cold environments. Very useful in the snow-covered mountains.",
+      "effect": "Cold Resistance",
+      "ingredients": [
+        "Spicy Critter",
+        "Monster Part"
+      ]
+    },
+    {
+      "image": {
+        "description": "Tough Elixir Icon",
+        "src": "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/4/47/BotW_Tough_Elixir_Icon.png/revision/latest/scale-to-width-down/40?cb=20171228104541",
+        "width": 40,
+        "height": 40
+      },
+      "name": "Tough Elixir",
+      "description": "Grants a (Low/Mid/High)-level toughness effect, which fortifies your bones to strengthen your defense. Best to use before facing off against hard-hitting enemies.",
+      "effect": "Defense Up",
+      "ingredients": [
+        "Tough Critter",
+        "Monster Part"
+      ]
+    }
+  ]
+}

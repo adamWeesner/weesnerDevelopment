@@ -1,0 +1,88 @@
+{
+  "items": [
+    {
+      "part": "Ancient Core",
+      "durationIncrease": "?"
+    },
+    {
+      "part": "Ancient Gear",
+      "durationIncrease": "?"
+    },
+    {
+      "part": "Ancient Shaft",
+      "durationIncrease": "?"
+    },
+    {
+      "part": "Ancient Screw",
+      "durationIncrease": "?"
+    },
+    {
+      "part": "Bokoblin Fang",
+      "durationIncrease": "1:50"
+    },
+    {
+      "part": "Bokoblin Horn",
+      "durationIncrease": "1:10"
+    },
+    {
+      "part": "Chuchu Jelly",
+      "durationIncrease": "1:10"
+    },
+    {
+      "part": "Electric Keese Wing",
+      "durationIncrease": "1:50"
+    },
+    {
+      "part": "Giant Ancient Core",
+      "durationIncrease": "?"
+    },
+    {
+      "part": "Keese Eyeball",
+      "durationIncrease": "3:10"
+    },
+    {
+      "part": "Keese Wing",
+      "durationIncrease": "1:10"
+    },
+    {
+      "part": "Lizalfos Horn",
+      "durationIncrease": "1:10"
+    },
+    {
+      "part": "Lizalfos Tail",
+      "durationIncrease": "3:10"
+    },
+    {
+      "part": "Lizalfos Talon",
+      "durationIncrease": "1:50"
+    },
+    {
+      "part": "Moblin Fang",
+      "durationIncrease": "1:50"
+    },
+    {
+      "part": "Moblin Horn",
+      "durationIncrease": "1:10"
+    },
+    {
+      "part": "Octorok Balloon",
+      "durationIncrease": "1:10"
+    },
+    {
+      "part": "Octorok Eyeball",
+      "durationIncrease": "1:50"
+    },
+    {
+      "part": "Octorok Tentacle",
+      "durationIncrease": "1:10"
+    },
+    {
+      "part": "Red Chuchu Jelly",
+      "durationIncrease": "1:50"
+    },
+    {
+      "part": "White Chuchu Jelly",
+      "durationIncrease": "1:50"
+    }
+  ]
+}

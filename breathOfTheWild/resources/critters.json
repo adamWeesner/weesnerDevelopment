@@ -1,0 +1,106 @@
+{
+  "items": [
+    {
+      "critter": "Bladed Rhino Beetle",
+      "effectClass": "Mighty",
+      "boostEffect": "Attack Boost",
+      "durationIncrease": null
+    },
+    {
+      "critter": "Cold Darner",
+      "effectClass": "Chilly",
+      "boostEffect": "Heat Resistance",
+      "durationIncrease": null
+    },
+    {
+      "critter": "Electric Darner",
+      "effectClass": "Electro",
+      "boostEffect": "Electricity Resistance",
+      "durationIncrease": null
+    },
+    {
+      "critter": "Energetic Rhino Beetle",
+      "effectClass": null,
+      "boostEffect": null,
+      "durationIncrease": null
+    },
+    {
+      "critter": "Fireproof Lizard",
+      "effectClass": "Fireproof",
+      "boostEffect": "Flame Guard",
+      "durationIncrease": null
+    },
+    {
+      "critter": "Hearty Lizard",
+      "effectClass": "Hearty",
+      "boostEffect": "Extra Hearts",
+      "durationIncrease": null
+    },
+    {
+      "critter": "Hightail Lizard",
+      "effectClass": "Hasty",
+      "boostEffect": "Speed Boost",
+      "durationIncrease": "1:00"
+    },
+    {
+      "critter": "Hot-Footed Frog",
+      "effectClass": "Hasty",
+      "boostEffect": "Speed Boost",
+      "durationIncrease": "1:00"
+    },
+    {
+      "critter": "Restless Cricket",
+      "effectClass": "Energizing",
+      "boostEffect": "Restores Stamina 1/5 Wheel",
+      "durationIncrease": null
+    },
+    {
+      "critter": "Rugged Rhino Beetle",
+      "effectClass": "Tough",
+      "boostEffect": "Defense Boost",
+      "durationIncrease": null
+    },
+    {
+      "critter": "Smotherwing Butterfly",
+      "effectClass": "Fireproof",
+      "boostEffect": "Flame Guard",
+      "durationIncrease": null
+    },
+    {
+      "critter": "Summerwing Butterfly",
+      "effectClass": "Spicy",
+      "boostEffect": "Cold Resistance",
+      "durationIncrease": "2:30"
+    },
+    {
+      "critter": "Sunset Firefly",
+      "effectClass": "Sneaky",
+      "boostEffect": "Stealth Boost",
+      "durationIncrease": "2:00"
+    },
+    {
+      "critter": "Thunderwing Butterfly",
+      "effectClass": "Electro",
+      "boostEffect": "Electricity Resistance",
+      "durationIncrease": null
+    },
+    {
+      "critter": "Tireless Frog",
+      "effectClass": "Enduring",
+      "boostEffect": "Temporary Stamina Increase 1/5 Wheel",
+      "durationIncrease": null
+    },
+    {
+      "critter": "Warm Darner",
+      "effectClass": "Spicy",
+      "boostEffect": "Cold Resistance",
+      "durationIncrease": "2:30"
+    },
+    {
+      "critter": "Winterwing Butterfly",
+      "effectClass": "Chilly",
+      "boostEffect": "Heat Resistance",
+      "durationIncrease": "2:30"
+    }
+  ]
+}

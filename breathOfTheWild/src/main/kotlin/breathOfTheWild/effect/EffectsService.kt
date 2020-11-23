@@ -2,6 +2,8 @@ package breathOfTheWild.effect
 
 import BaseService
 import breathOfTheWild.image.ImagesService
+import breathOfTheWild.image.ImagesTable.src
+import isNotValidId
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.innerJoin
@@ -19,6 +21,23 @@ class EffectsService(
         }, {
             id
         })
+
+    override suspend fun add(item: Effect): Int? {
+        var currentItem = item
+
+        // save off the image and update the current items image to have the id if it has not been saved
+        val storedImage = imagesService.get { src eq currentItem.image.src }
+        if (storedImage == null) {
+            imagesService.add(currentItem.image).also {
+                if (it.isNotValidId) return it
+                currentItem = currentItem.copy(image = currentItem.image.copy(id = it))
+            }
+        } else {
+            currentItem = currentItem.copy(image = currentItem.image.copy(id = storedImage.id))
+        }
+
+        return super.add(currentItem)
+    }
 
     override suspend fun toItem(row: ResultRow) = Effect(
         row[table.id],

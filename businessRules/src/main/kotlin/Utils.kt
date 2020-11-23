@@ -1,17 +1,15 @@
 import auth.CustomPrincipal
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
-import io.ktor.auth.authentication
-import io.ktor.features.origin
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.request.authorization
-import io.ktor.request.httpMethod
-import io.ktor.request.uri
-import io.ktor.response.respond
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.features.*
+import io.ktor.http.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.util.pipeline.*
 import kimchi.Kimchi
 import kotlinx.io.core.toByteArray
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import shared.auth.InvalidUserException
 import shared.auth.InvalidUserReason
@@ -124,3 +122,11 @@ inline fun <reified T> String?.parse(): T =
  * Checks whether the Int is a valid successful id, added to the database.
  */
 val Int?.isNotValidId get() = this == null || this == -1
+
+/**
+ * Helper function to be able to do something like `service.get { id eq item.id }`
+ * instead of `service.get { service.table.id eq item.id }`.
+ */
+suspend inline fun <reified O, reified T, reified R : BaseService<O, T>> R.get(crossinline query: O.(SqlExpressionBuilder) -> Op<Boolean>) {
+    this.get { this@get.table.query(this) }
+}

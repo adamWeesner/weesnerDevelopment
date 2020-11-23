@@ -10,6 +10,7 @@ import com.weesnerdevelopment.AppConfig
 import com.weesnerdevelopment.DbLogger
 import com.weesnerdevelopment.injection.kodeinSetup
 import com.weesnerdevelopment.routes.*
+import com.weesnerdevelopment.seed.breathOfTheWildSeed
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -19,6 +20,7 @@ import io.ktor.http.auth.*
 import io.ktor.routing.*
 import io.ktor.websocket.*
 import kimchi.Kimchi
+import kotlinx.coroutines.launch
 import logging.LoggingService
 import logging.StdOutLogger
 import org.kodein.di.generic.instance
@@ -99,6 +101,10 @@ object DatabaseServer {
             taxFetcherRoutes()
             billManRoutes()
             breathOfTheWildRoutes()
+        }
+
+        launch {
+            breathOfTheWildSeed()
         }
     }
 }

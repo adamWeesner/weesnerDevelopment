@@ -2,8 +2,12 @@ package breathOfTheWild.roastedFood
 
 import BaseService
 import breathOfTheWild.image.ImagesService
+import breathOfTheWild.image.ImagesTable.src
+import breathOfTheWild.roastedFoodEffect.RoastedFoodEffect
 import breathOfTheWild.roastedFoodEffect.RoastedFoodEffectService
+import breathOfTheWild.roastedFoodIngredients.RoastedFoodIngredient
 import breathOfTheWild.roastedFoodIngredients.RoastedFoodIngredientsService
+import isNotValidId
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.innerJoin
@@ -23,6 +27,49 @@ class RoastedFoodsService(
         }, {
             id
         })
+
+    override suspend fun add(item: RoastedFood): Int? {
+        var currentItem = item
+
+        // save off the image and update the current items image to have the id if it has not been saved
+        val storedImage = imagesService.get { src eq currentItem.image.src }
+        if (storedImage == null) {
+            imagesService.add(currentItem.image).also {
+                if (it.isNotValidId) return it
+                currentItem = currentItem.copy(image = currentItem.image.copy(id = it))
+            }
+        } else {
+            currentItem = currentItem.copy(image = currentItem.image.copy(id = storedImage.id))
+        }
+
+        val savedItemId = super.add(currentItem)
+        if (savedItemId.isNotValidId) return savedItemId
+
+        // save off the hearts images
+        currentItem.effect.forEach {
+            var heartId: Int
+            val heartImage = imagesService.get { src eq it.src }
+            if (heartImage == null) {
+                imagesService.add(currentItem.image).also {
+                    if (it.isNotValidId) return it
+                    heartId = it!!
+                }
+            } else {
+                heartId = heartImage.id ?: return heartImage.id
+            }
+
+            roastedFoodEffectService.add(RoastedFoodEffect(null, heartId, savedItemId!!))
+        }
+
+        // save off the ingredients
+        currentItem.ingredients.forEach {
+            roastedFoodIngredientsService.add(RoastedFoodIngredient(null, it, savedItemId!!)).also {
+                if (it.isNotValidId) return it
+            }
+        }
+
+        return savedItemId
+    }
 
     override suspend fun toItem(row: ResultRow) = RoastedFood(
         row[table.id],

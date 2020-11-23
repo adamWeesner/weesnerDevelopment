@@ -268,7 +268,7 @@ data class Builder(
             import shared.currentTimeMillis
             
             data class $trimmedName(
-                override val id: Int?,
+                override val id: Int? = null,
                 ${tableInfo.joinToString(",\n                ")},
                 override val dateCreated: Long = currentTimeMillis(),
                 override val dateUpdated: Long = currentTimeMillis()

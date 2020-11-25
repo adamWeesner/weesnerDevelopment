@@ -53,7 +53,7 @@ class IngredientsService(
             var heartId: Int
             val heartImage = imagesService.get { src eq it.src }
             if (heartImage == null) {
-                imagesService.add(currentItem.image).also {
+                imagesService.add(it).also {
                     if (it.isNotValidId) return it
                     heartId = it!!
                 }
@@ -61,7 +61,9 @@ class IngredientsService(
                 heartId = heartImage.id ?: return heartImage.id
             }
 
-            ingredientHeartsService.add(IngredientHeart(null, heartId, savedItemId!!))
+            ingredientHeartsService.add(IngredientHeart(null, heartId, savedItemId!!)).also {
+                if (it.isNotValidId) return it
+            }
         }
 
         // save off the bonus addons
@@ -69,7 +71,7 @@ class IngredientsService(
             var heartId: Int
             val heartImage = imagesService.get { src eq it.src }
             if (heartImage == null) {
-                imagesService.add(currentItem.image).also {
+                imagesService.add(it).also {
                     if (it.isNotValidId) return it
                     heartId = it!!
                 }

@@ -101,6 +101,7 @@ object DatabaseServer {
             taxFetcherRoutes()
             billManRoutes()
             breathOfTheWildRoutes()
+            serialCabinetRoutes()
         }
 
         launch {

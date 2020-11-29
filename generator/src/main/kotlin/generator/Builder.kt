@@ -517,7 +517,9 @@ data class Builder(
         val routes = tables.map { it.path.slimmed().split(".")[2] }
 
         val data = """            // ${title.decapitalize()}
-            create(${routes.joinToString(",\n                ")})
+            create(
+                ${routes.joinToString(",\n                ")}
+            )
         }"""
 
         file.readLines().forEach { line ->
@@ -659,6 +661,8 @@ data class Builder(
                         val item1 = responseItems!![responseItems.lastIndex - 1]
                         val item2 = responseItems[responseItems.lastIndex]
                         request.response.status() shouldBe OK
+                        item1.name shouldBe "0"
+                        item2.name shouldBe "1"
                     }
 
                     @Test
@@ -670,6 +674,7 @@ data class Builder(
                         val addedItems = request.response.content.parseResponse<${itemSingle}sResponse>()?.items?.last()
 
                         request.response.status() shouldBe OK
+                        addedItems?.name shouldBe "2"
                     }
 
                     @Test
@@ -699,11 +704,12 @@ data class Builder(
 
                         val $itemVal = get(path).asObject<${itemSingle}sResponse>().items?.last()
 
-                        put(path).sendStatus($itemVal?.copy()) shouldBe OK
+                        put(path).sendStatus($itemVal?.copy(name = updatedName)) shouldBe OK
 
                         val updated$itemSingle = get(path, $itemVal?.id).asObject<${itemSingle}sResponse>().items?.first()
 
                         updated$itemSingle shouldNotBe null
+                        updated$itemSingle?.name shouldBe updatedName
                     }
 
                     @Test

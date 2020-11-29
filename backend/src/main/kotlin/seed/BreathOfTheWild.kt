@@ -31,6 +31,7 @@ import breathOfTheWild.roastedFood.RoastedFoodsTable
 import breathOfTheWild.roastedFoodEffect.RoastedFoodEffectTable
 import breathOfTheWild.roastedFoodIngredients.RoastedFoodIngredientsTable
 import io.ktor.application.*
+import kimchi.Kimchi
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.SchemaUtils.drop
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -39,6 +40,7 @@ import org.kodein.di.ktor.kodein
 import shared.fromJson
 import shared.zelda.responses.*
 import java.io.File
+import java.io.FileNotFoundException
 
 suspend fun Application.breathOfTheWildSeed() {
     val ingredientsService by kodein().instance<IngredientsService>()
@@ -139,4 +141,9 @@ suspend fun Application.breathOfTheWildSeed() {
 }
 
 private inline fun <reified T> parseFileAsClass(name: String) =
-    File("breathOfTheWild/resources/$name.json").readText().fromJson<T>()
+    try {
+        File("breathOfTheWild/resources/$name.json").readText().fromJson<T>()
+    } catch (e: FileNotFoundException) {
+        Kimchi.warn("Could not find file $name. ${e.message}")
+        null
+    }

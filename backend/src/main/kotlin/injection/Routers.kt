@@ -26,8 +26,11 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
+import serialCabinet.electronic.ElectronicsRouter
+import serialCabinet.manufacturer.ManufacturersRouter
 import socialSecurity.SocialSecurityRouter
 import taxWithholding.TaxWithholdingRouter
+import serialCabinet.category.CategoriesRouter as SerialCategoriesRouter
 
 val routers = Kodein.Module("routers") {
     bind<ValidatorRouter>() with singleton { ValidatorRouter(Server.validation, instance()) }
@@ -70,4 +73,9 @@ val routers = Kodein.Module("routers") {
     bind<RoastedFoodsRouter>() with singleton { RoastedFoodsRouter(BreathOfTheWild.roastedFoods, instance()) }
     bind<IngredientsRouter>() with singleton { IngredientsRouter(BreathOfTheWild.ingredients, instance()) }
     bind<ImagesRouter>() with singleton { ImagesRouter(BreathOfTheWild.images, instance()) }
+
+    // serialCabinet
+    bind<ManufacturersRouter>() with singleton { ManufacturersRouter(SerialCabinet.manufacturers, instance()) }
+    bind<SerialCategoriesRouter>() with singleton { SerialCategoriesRouter(SerialCabinet.categories, instance()) }
+    bind<ElectronicsRouter>() with singleton { ElectronicsRouter(SerialCabinet.electronics, instance()) }
 }

@@ -1,5 +1,6 @@
 import Path.BillMan.basePath
 import Path.BreathOfTheWild.basePath
+import Path.SerialCabinet.basePath
 import Path.TaxFetcher.basePath
 import Path.User.base
 
@@ -64,4 +65,16 @@ sealed class Path {
         val roastedFoods = "${basePath}roastedFoods"
         val ingredients = "${basePath}ingredients"
     }
+
+    /**
+     * The available paths at [basePath]/value.
+     */
+    object SerialCabinet : Path() {
+        val basePath = "serialCabinet/"
+        val all = "${basePath}all"
+        val manufacturers = "${basePath}manufacturers"
+        val categories = "${basePath}categories"
+        val electronics = "${basePath}electronics"
+    }
+
 }

@@ -24,6 +24,7 @@ dependencies {
     implementation(project(TaxFetcher.project))
     implementation(project(BillMan.project))
     implementation(project(BreathOfTheWild.project))
+    implementation(project(SerialCabinet.project))
     implementation(Kotlin.reflect)
     implementation(Ktor.authJwt)
     implementation(Ktor.webSockets)

@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/businessRules" />
             <option value="$PROJECT_DIR$/generator" />
+            <option value="$PROJECT_DIR$/serialCabinet" />
             <option value="$PROJECT_DIR$/taxFetcher" />
           </set>
         </option>

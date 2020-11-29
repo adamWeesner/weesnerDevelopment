@@ -43,8 +43,12 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 import payments.PaymentsService
+import serialCabinet.electronic.ElectronicsService
+import serialCabinet.itemCategories.ItemCategoriesService
+import serialCabinet.manufacturer.ManufacturersService
 import socialSecurity.SocialSecurityService
 import taxWithholding.TaxWithholdingService
+import serialCabinet.category.CategoriesService as SerialCategoriesService
 
 val services = Kodein.Module("services") {
     bind<ValidatorService>() with singleton { ValidatorService() }
@@ -95,4 +99,10 @@ val services = Kodein.Module("services") {
     bind<RoastedFoodsService>() with singleton { RoastedFoodsService(instance(), instance(), instance()) }
     bind<IngredientsService>() with singleton { IngredientsService(instance(), instance(), instance(), instance()) }
     bind<RoastedFoodEffectService>() with singleton { RoastedFoodEffectService(instance()) }
+
+    // serialCabinet
+    bind<ManufacturersService>() with singleton { ManufacturersService() }
+    bind<SerialCategoriesService>() with singleton { SerialCategoriesService() }
+    bind<ElectronicsService>() with singleton { ElectronicsService(instance(), instance(), instance()) }
+    bind<ItemCategoriesService>() with singleton { ItemCategoriesService(instance()) }
 }

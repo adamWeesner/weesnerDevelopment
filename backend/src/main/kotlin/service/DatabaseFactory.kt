@@ -44,6 +44,10 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.transactions.transaction
 import payments.PaymentsTable
+import serialCabinet.category.SerialCategoriesTable
+import serialCabinet.electronic.ElectronicsTable
+import serialCabinet.itemCategories.SerialItemCategoriesTable
+import serialCabinet.manufacturer.ManufacturersTable
 import socialSecurity.SocialSecurityTable
 import taxWithholding.TaxWithholdingTable
 
@@ -108,6 +112,13 @@ object DatabaseFactory {
                 RoastedFoodsTable,
                 IngredientsTable,
                 RoastedFoodEffectTable
+            )
+            // serial cabinet
+            create(
+                ManufacturersTable,
+                SerialCategoriesTable,
+                ElectronicsTable,
+                SerialItemCategoriesTable
             )
         }
     }

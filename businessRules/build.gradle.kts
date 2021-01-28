@@ -20,6 +20,7 @@ dependencies {
     implementation(Ktor.Server.netty)
     implementation(Ktor.webSockets)
     implementation(Ktor.authJwt)
+    implementation(Commons.base64)
     implementation(Ktor.Client.webSockets)
     implementation(Ktor.Client.okHttp)
     implementation(Moshi.core)

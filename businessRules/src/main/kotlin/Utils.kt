@@ -7,7 +7,6 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.util.pipeline.*
 import kimchi.Kimchi
-import kotlinx.io.core.toByteArray
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction

@@ -1,7 +1,7 @@
 object Kotlin {
     private const val base = "org.jetbrains.kotlin"
 
-    const val version = "1.4.10"
+    const val version = "1.4.20"
 
     const val jvm = "$base.jvm"
     const val kapt = "$base.kapt"

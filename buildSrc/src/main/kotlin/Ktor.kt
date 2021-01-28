@@ -4,6 +4,7 @@ object Ktor {
     const val version = "1.2.6"
 
     const val authJwt = "${base}auth-jwt:$version"
+    const val metrics = "${base}metrics:$version"
     const val webSockets = "${base}websockets:$version"
     const val serverTest = "${base}server-tests:$version"
 

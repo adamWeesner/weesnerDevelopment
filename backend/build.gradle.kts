@@ -28,6 +28,8 @@ dependencies {
     implementation(Kotlin.reflect)
     implementation(Ktor.authJwt)
     implementation(Ktor.webSockets)
+    implementation(Ktor.metrics)
+    implementation(Dropwizard.metricsJmx)
     implementation(Ktor.Server.core)
     implementation(Ktor.Server.netty)
     implementation(Ktor.Client.webSockets)

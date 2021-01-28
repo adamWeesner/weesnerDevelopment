@@ -103,6 +103,6 @@ val services = Kodein.Module("services") {
     // serialCabinet
     bind<ManufacturersService>() with singleton { ManufacturersService() }
     bind<SerialCategoriesService>() with singleton { SerialCategoriesService() }
-    bind<ElectronicsService>() with singleton { ElectronicsService(instance(), instance(), instance()) }
+    bind<ElectronicsService>() with singleton { ElectronicsService(instance(), instance(), instance(), instance()) }
     bind<ItemCategoriesService>() with singleton { ItemCategoriesService(instance()) }
 }

@@ -1,0 +1,11 @@
+package #package
+
+import shared.base.GenericItem
+import shared.currentTimeMillis
+
+data class #name(
+    override val id: Int? = null,
+    #variables,
+    override val dateCreated: Long = currentTimeMillis(),
+    override val dateUpdated: Long = currentTimeMillis()
+) : GenericItem

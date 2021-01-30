@@ -1,5 +1,6 @@
 package generator
 
+import generator.classes.GenFile
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Paths
@@ -8,7 +9,7 @@ import java.util.jar.JarFile
 
 data class SharedLibInfo(
     val sharedFolder: String,
-    val baseDirectory: File,
+    val baseDirectory: GenFile,
     val processEntry: (String, List<String>) -> Unit
 ) {
     private lateinit var sharedDirectory: String

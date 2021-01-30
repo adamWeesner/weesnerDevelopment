@@ -1,13 +1,15 @@
 package generator
 
-import com.github.ajalt.clikt.output.TermUi.echo
+import generator.classes.GenFile
+import generator.classes.GeneratorFile
+import generator.classes.Template
 import java.io.File
 
 data class Builder(
     val title: String,
     val sharedFolder: String
 ) {
-    private lateinit var baseDirectory: File
+    private lateinit var baseDirectory: GenFile
     private lateinit var entryInfo: EntryInfo
 
     private val titleTrimmed = title.split(" ").mapIndexed { index, item ->
@@ -33,14 +35,6 @@ data class Builder(
         updateBackendGradle(titleTrimmed)
         updateBuildSrc(titleTrimmed)
         updateDatabaseServer(titleTrimmed)
-    }
-
-    private fun String.buildFile(fileData: () -> String) {
-        val file = File(this)
-        val data = fileData()
-
-        file.writeText(data)
-        echo("+ ${file.path}")
     }
 
     private fun <T> String.toTableItem(
@@ -69,39 +63,16 @@ data class Builder(
         .replace(".kt", "")
 
     private fun createBaseDirectory() {
-        baseDirectory = File("$titleTrimmed/src/main/kotlin/$titleTrimmed")
-        baseDirectory.mkdirs()
-        echo("+ ${baseDirectory.path}")
+        baseDirectory = GeneratorFile.create("$titleTrimmed/src/main/kotlin/$titleTrimmed")
     }
 
-    private fun createGradleFile() = "$titleTrimmed/build.gradle.kts".buildFile {
-        """
-        import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-        plugins {
-            id(Kotlin.jvm)
-            id(Kotlin.kapt)
+    private fun createGradleFile() {
+        GeneratorFile.create("$titleTrimmed/build.gradle.kts").save {
+            Template("buildGradle").update { listOf("#1" to titleTrimmedCap) }
         }
-
-        group = Base.group
-        version = $titleTrimmedCap.version
-
-        sourceSets { sharedSources() }
-        repositories { sharedRepos() }
-        java { javaSource() }
-        tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
-
-        dependencies {
-            implementation(project(BusinessRules.project))
-            implementation(Ktor.Server.core)
-            implementation(Moshi.core)
-            implementation(Exposed.core)
-        }
-        
-        """.trimIndent()
     }
 
-    private fun generateTable() = "${entryInfo.subDirectory.path}/${entryInfo.className}sTable.kt".buildFile {
+    private fun generateTable() {
         val tableInfo = entryInfo.data.map {
             val split = it.split(":")
             val name = split[0].trim()
@@ -145,23 +116,23 @@ data class Builder(
 
         val packageName = "$titleTrimmed.${entryInfo.lowered}"
         val additionalImports =
-            if (tableInfo.any { it?.contains("ImagesTable") == true }) "\n        import $titleTrimmed.image.ImagesTable"
+            if (tableInfo.any { it?.contains("ImagesTable") == true }) "\nimport $titleTrimmed.image.ImagesTable"
             else ""
-        val objectData = tableInfo.filterNotNull().joinToString("\n            ")
+        val objectData = tableInfo.filterNotNull().joinToString("\n    ")
 
-        """
-        package $packageName
-
-        import generics.IdTable$additionalImports
-
-        object ${entryInfo.className}sTable : IdTable() {
-            $objectData
+        GeneratorFile.create("${entryInfo.subDirectory.path}/${entryInfo.className}sTable.kt").save {
+            Template("table").update {
+                listOf(
+                    "#package" to packageName,
+                    "#imports" to additionalImports,
+                    "#className" to entryInfo.className,
+                    "#data" to objectData
+                )
+            }
         }
-
-        """.trimIndent()
     }
 
-    private fun generateService() = "${entryInfo.subDirectory.path}/${entryInfo.className}sService.kt".buildFile {
+    private fun generateService() {
         val packageName = "$titleTrimmed.${entryInfo.lowered}"
         val extraServices = arrayListOf<String>()
         val extraImports = arrayListOf<String>()
@@ -191,180 +162,128 @@ data class Builder(
             )
         }
 
-        """
-        package $packageName
-
-        import BaseService
-        import org.jetbrains.exposed.sql.Join
-        import org.jetbrains.exposed.sql.ResultRow
-        import org.jetbrains.exposed.sql.statements.UpdateBuilder
-        import shared.$sharedFolder.${entryInfo.className}${
-            if (extraImports.isNotEmpty()) "\n        ${
-                extraImports.joinToString("\n        ")
-            }" else ""
-        }
-        
-        class ${entryInfo.className}sService${
-            if (extraServices.isEmpty()) "" else "(\n            ${extraServices.joinToString(",\n            ")}\n        )"
-        } : BaseService<${entryInfo.className}sTable, ${entryInfo.className}>(
-            ${entryInfo.className}sTable
-        ) {
-            override val ${entryInfo.className}sTable.connections: Join?
-                get() = null
-        
-            override suspend fun toItem(row: ResultRow) = ${entryInfo.className}(
-                row[table.id],
-                ${tableInfo.filter { it?.first != null }.joinToString(",\n                ") { it!!.first }},
-                row[table.dateCreated],
-                row[table.dateUpdated]
-            )
-        
-            override fun UpdateBuilder<Int>.toRow(item: ${entryInfo.className}) {
-                ${tableInfo.filter { it?.second != null }.joinToString("\n                ") { it?.second!! }}
+        GeneratorFile.create("${entryInfo.subDirectory.path}/${entryInfo.className}sService.kt").save {
+            Template("service").update {
+                listOf(
+                    "#package" to packageName,
+                    "#sharedFolder" to sharedFolder,
+                    "#class" to entryInfo.className,
+                    "#imports" to if (extraImports.isNotEmpty()) "\n${extraImports.joinToString("\n")}" else "",
+                    "variables" to if (extraServices.isEmpty()) "" else "(\n    ${extraServices.joinToString(",\n    ")}\n)",
+                    "#toItemExtras" to tableInfo.filter { it?.first != null }
+                        .joinToString(",\n        ") { it!!.first },
+                    "#toRowExtras" to tableInfo.filter { it?.second != null }
+                        .joinToString("\n        ") { it?.second!! }
+                )
             }
         }
-        
-        """.trimIndent()
     }
 
-    private fun generateRouter() = "${entryInfo.subDirectory.path}/${entryInfo.className}sRouter.kt".buildFile {
-        """
-        package $titleTrimmed.${entryInfo.lowered}
-
-        import BaseRouter
-        import shared.$sharedFolder.${entryInfo.className}
-        import shared.$sharedFolder.responses.${entryInfo.className}sResponse
-        import kotlin.reflect.full.createType
-        
-        data class ${entryInfo.className}sRouter(
-            override val basePath: String,
-            override val service: ${entryInfo.className}sService
-        ) : BaseRouter<${entryInfo.className}, ${entryInfo.className}sService>(
-            ${entryInfo.className}sResponse(),
-            service,
-            ${entryInfo.className}::class.createType()
-        )
-        
-        """.trimIndent()
+    private fun generateRouter() {
+        GeneratorFile.create("${entryInfo.subDirectory.path}/${entryInfo.className}sRouter.kt").save {
+            Template("router").update {
+                listOf(
+                    "#title" to titleTrimmed,
+                    "#classNameLower" to entryInfo.lowered,
+                    "#sharedFolder" to sharedFolder,
+                    "#className" to entryInfo.className
+                )
+            }
+        }
     }
 
     private fun generateRelationshipClass(entryInfo: EntryInfo) {
-        val trimmedName = if (entryInfo.className.endsWith("s")) entryInfo.className.dropLast(1)
-        else entryInfo.className
+        val trimmedName =
+            if (entryInfo.className.endsWith("s")) entryInfo.className.dropLast(1)
+            else entryInfo.className
 
-        "${entryInfo.subDirectory.path}/${trimmedName}.kt".buildFile {
-            val tableInfo = entryInfo.data.map {
-                val name = it.substringBefore(":")
-                val typeName = it.substringAfter(":").trim()
-                val type = typeName.toTableItem(typeName, elseValue = { "Int" })
+        val tableInfo = entryInfo.data.map {
+            val name = it.substringBefore(":")
+            val typeName = it.substringAfter(":").trim()
+            val type = typeName.toTableItem(typeName, elseValue = { "Int" })
 
-                "val $name: $type"
+            "val $name: $type"
+        }
+
+        GeneratorFile.create("${entryInfo.subDirectory.path}/${trimmedName}.kt").save {
+            Template("relationshipClass").update {
+                listOf(
+                    "#package" to "$titleTrimmed.${entryInfo.lowered}",
+                    "#name" to trimmedName,
+                    "#variables" to tableInfo.joinToString(",\n    ")
+                )
             }
-
-            """
-            package $titleTrimmed.${entryInfo.lowered}
-            
-            import shared.base.GenericItem
-            import shared.currentTimeMillis
-            
-            data class $trimmedName(
-                override val id: Int? = null,
-                ${tableInfo.joinToString(",\n                ")},
-                override val dateCreated: Long = currentTimeMillis(),
-                override val dateUpdated: Long = currentTimeMillis()
-            ) : GenericItem
-            
-            """.trimIndent()
         }
     }
 
-    private fun generateRelationshipTable(entryInfo: EntryInfo, baseLocation: String) =
-        "${entryInfo.subDirectory.path}/${entryInfo.className}Table.kt".buildFile {
-            val extraImports = mutableSetOf<String>()
-            val tableInfo = entryInfo.data.map {
-                val name = it.substringBefore(":").trim()
-                val typeName = it.substringAfter(":").trim()
+    private fun generateRelationshipTable(entryInfo: EntryInfo, baseLocation: String) {
+        val extraImports = mutableSetOf<String>()
+        val tableInfo = entryInfo.data.map {
+            val name = it.substringBefore(":").trim()
+            val typeName = it.substringAfter(":").trim()
 
-                val type = typeName.toTableItem(
-                    "varchar(\"$name\", 255)",
-                    "varchar(\"$name\", 255).nullable()",
-                    "integer(\"$name\")",
-                    "integer(\"$name\").nullable()",
-                    "double(\"$name\")",
-                    "double(\"$name\").nullable()",
-                    elseValue = {
-                        val item = if (typeName.endsWith("Id")) {
-                            val type = typeName.dropLast(2)
-                            extraImports.add("import $titleTrimmed.${type.decapitalize()}.${type.capitalize()}sTable")
-                            type
-                        } else {
-                            typeName
-                        }
-                        "reference(\"${typeName.decapitalize()}\", ${item.capitalize()}sTable.id, ReferenceOption.CASCADE)"
+            val type = typeName.toTableItem(
+                "varchar(\"$name\", 255)",
+                "varchar(\"$name\", 255).nullable()",
+                "integer(\"$name\")",
+                "integer(\"$name\").nullable()",
+                "double(\"$name\")",
+                "double(\"$name\").nullable()",
+                elseValue = {
+                    val item = if (typeName.endsWith("Id")) {
+                        val type = typeName.dropLast(2)
+                        extraImports.add("import $titleTrimmed.${type.decapitalize()}.${type.capitalize()}sTable")
+                        type
+                    } else {
+                        typeName
                     }
-                )
-                "val $name = $type"
-            }
-
-            """
-            package $titleTrimmed.${entryInfo.lowered}
-            
-            import $titleTrimmed.${baseLocation.decapitalize()}.${baseLocation.capitalize()}sTable
-            import generics.IdTable
-            import org.jetbrains.exposed.sql.ReferenceOption${
-                if (extraImports.isNotEmpty()) "\n            ${extraImports.joinToString("\n            ")}" else ""
-            }
-            
-            object ${entryInfo.className}Table : IdTable() {
-                ${tableInfo.joinToString("\n                ")}
-            }
-            
-            """.trimIndent()
+                    "reference(\"${typeName.decapitalize()}\", ${item.capitalize()}sTable.id, ReferenceOption.CASCADE)"
+                }
+            )
+            "val $name = $type"
         }
+        val packageName = "$titleTrimmed.${entryInfo.lowered}"
+        val tableImport = "$titleTrimmed.${baseLocation.decapitalize()}.${baseLocation.capitalize()}"
+        val imports = if (extraImports.isNotEmpty()) "\n${extraImports.joinToString("\n")}" else ""
+        val tableName = entryInfo.className
+        val tableData = tableInfo.joinToString("\n    ")
+
+        GeneratorFile.create("${entryInfo.subDirectory.path}/${entryInfo.className}Table.kt").save {
+            Template("relationshipTable").update {
+                listOf(
+                    "#package" to packageName,
+                    "#tableImport" to tableImport,
+                    "#imports" to imports,
+                    "#tableName" to tableName,
+                    "#data" to tableData
+                )
+            }
+        }
+    }
 
     private fun generateRelationshipService(entryInfo: EntryInfo, nullable: Boolean) {
         val trimmedName =
             if (entryInfo.className.endsWith("s")) entryInfo.className.dropLast(1) else entryInfo.className
 
-        "${entryInfo.subDirectory.path}/${entryInfo.className}Service.kt".buildFile {
-            val tableInfo = entryInfo.data.map {
-                val name = it.substringBefore(":")
-                "row[table.$name]," to "this[table.$name] = item.$name"
-            }
+        val tableInfo = entryInfo.data.map {
+            val name = it.substringBefore(":")
+            "row[table.$name]," to "this[table.$name] = item.$name"
+        }
+        val extraImports = if (!nullable) "\nimport shared.base.InvalidAttributeException" else ""
 
-            """
-            package $titleTrimmed.${entryInfo.lowered}
-            
-            import BaseService
-            import org.jetbrains.exposed.sql.Join
-            import org.jetbrains.exposed.sql.ResultRow
-            import org.jetbrains.exposed.sql.statements.UpdateBuilder${
-                if (!nullable) "\n            import shared.base.InvalidAttributeException" else ""
-            }
-            
-            class ${entryInfo.className}Service : BaseService<${entryInfo.className}Table, $trimmedName>(
-                ${entryInfo.className}Table
-            ) {
-                override val ${entryInfo.className}Table.connections: Join?
-                    get() = null
-                    
-                suspend fun getFor(id: Int) = getAll {
-                    ${entryInfo.className}Table.itemId eq id
-                }?.map { toItem(it) }${if (nullable) "" else " ?: throw InvalidAttributeException(\"${entryInfo.className}\")"}
-            
-                override suspend fun toItem(row: ResultRow) = $trimmedName(
-                    row[table.id],
-                    ${tableInfo.joinToString("\n                    ") { it.first }}
-                    row[table.dateCreated],
-                    row[table.dateUpdated]
+        GeneratorFile.create("${entryInfo.subDirectory.path}/${entryInfo.className}Service.kt").save {
+            Template("relationshipService").update {
+                listOf(
+                    "#package" to "$titleTrimmed.${entryInfo.lowered}",
+                    "#imports" to extraImports,
+                    "#classLower" to entryInfo.lowered,
+                    "#class" to entryInfo.className,
+                    "#name" to trimmedName,
+                    "#nullableItem" to if (nullable) "" else " ?: throw InvalidAttributeException(\"#class\")",
+                    "#toItemExtras" to tableInfo.joinToString("\n        ") { it.first },
+                    "#toRowExtras" to tableInfo.joinToString("\n        ") { it.second }
                 )
-            
-                override fun UpdateBuilder<Int>.toRow(item: $trimmedName) {
-                    ${tableInfo.joinToString("\n                    ") { it.second }}
-                }
             }
-            
-            """.trimIndent()
         }
     }
 
@@ -374,7 +293,7 @@ data class Builder(
         val tables = arrayListOf<File>()
         val names = routers.map { it.name.decapitalize().replace(".kt", "") }
 
-        entryInfo.baseDirectory.listFiles()?.forEach {
+        File(entryInfo.baseDirectory.path).listFiles()?.forEach {
             if (it.isDirectory) it.listFiles()?.forEach {
                 if (it.name.endsWith("Router.kt")) routers.add(it)
                 if (it.name.endsWith("Service.kt")) services.add(it)
@@ -382,27 +301,25 @@ data class Builder(
             }
         }
 
-        "./backend/src/main/kotlin/routes/${title}Routes.kt".buildFile {
-            """
-            package com.weesnerdevelopment.routes
-            
-            ${routers.joinToString("\n") { "import ${it.path.slimmed()}" }}
-            import io.ktor.auth.*
-            import io.ktor.routing.*
-            import org.kodein.di.generic.instance
-            import org.kodein.di.ktor.kodein
-            
-            fun Routing.${title.decapitalize()}Routes() {
-                ${names.joinToString("\n                ") { "val $it by kodein().instance<${it.capitalize()}>()" }}
-            
-                ${
-                names.joinToString("\n\n                ") {
-                    "${it}.apply {\n                    authenticate {\n                    setupRoutes()\n                    }\n                }"
-                }
+        val imports = routers.joinToString("\n") {
+            "import ${it.path.slimmed()}"
+        }
+        val instances = names.joinToString("\n    ") {
+            "val $it by kodein().instance<${it.capitalize()}>()"
+        }
+        val routes = names.joinToString("\n\n    ") {
+            "${it}.apply {\n        authenticate {\n            setupRoutes()\n        }\n        }"
+        }
+
+        GeneratorFile.create("./backend/src/main/kotlin/routes/${title}Routes.kt").save {
+            Template("routes").update {
+                listOf(
+                    "#routeImports" to imports,
+                    "#title" to title.decapitalize(),
+                    "#instances" to instances,
+                    "#routes" to routes
+                )
             }
-            }
-    
-            """.trimIndent()
         }
 
         updateInjectionRouters(titleTrimmed, routers)
@@ -413,7 +330,6 @@ data class Builder(
     }
 
     private fun updateInjectionRouters(baseDir: String, routers: List<File>) {
-        val file = File("./backend/src/main/kotlin/injection/Routers.kt")
         var lastLine = ""
         val updatedFileData = StringBuilder()
 
@@ -427,25 +343,24 @@ data class Builder(
             "    bind<$trimmedName>() with singleton { $trimmedName(${baseDir.capitalize()}.$className, instance()) }"
         }
 
-        file.readLines().forEachIndexed { index, line ->
-            if (lastLine.trim().startsWith("import ") && line.trim() == "") {
-                updatedFileData.append(imports).append("\n\n")
-            } else if (lastLine.trim().startsWith("bind<") && line.trim() == "}") {
-                updatedFileData.append("\n    // $baseDir\n")
-                updatedFileData.append(bindings).append("\n}")
-            } else {
-                updatedFileData.append(line).append("\n")
+        GeneratorFile.open("./backend/src/main/kotlin/injection/Routers.kt").update { lines ->
+            lines.forEach { line ->
+                if (lastLine.trim().startsWith("import ") && line.trim() == "") {
+                    updatedFileData.append(imports).append("\n\n")
+                } else if (lastLine.trim().startsWith("bind<") && line.trim() == "}") {
+                    updatedFileData.append("\n    // $baseDir\n")
+                    updatedFileData.append(bindings).append("\n}")
+                } else {
+                    updatedFileData.append(line).append("\n")
+                }
+
+                lastLine = line
             }
-
-            lastLine = line
+            updatedFileData.toString()
         }
-
-        file.writeText(updatedFileData.toString())
-        echo("updated ${file.path}")
     }
 
     private fun updateInjectionServices(baseDir: String, services: List<File>) {
-        val file = File("./backend/src/main/kotlin/injection/Services.kt")
         var lastLine = ""
         val updatedFileData = StringBuilder()
 
@@ -456,25 +371,24 @@ data class Builder(
             "    bind<$trimmedName>() with singleton { $trimmedName() }"
         }
 
-        file.readLines().forEach { line ->
-            if (lastLine.trim().startsWith("import ") && line.trim() == "") {
-                updatedFileData.append(imports).append("\n\n")
-            } else if (lastLine.trim().startsWith("bind<") && line.trim() == "}") {
-                updatedFileData.append("\n    // $baseDir\n")
-                updatedFileData.append(bindings).append("\n}")
-            } else {
-                updatedFileData.append(line).append("\n")
+        GeneratorFile.open("./backend/src/main/kotlin/injection/Services.kt").update { lines ->
+            lines.forEach { line ->
+                if (lastLine.trim().startsWith("import ") && line.trim() == "") {
+                    updatedFileData.append(imports).append("\n\n")
+                } else if (lastLine.trim().startsWith("bind<") && line.trim() == "}") {
+                    updatedFileData.append("\n    // $baseDir\n")
+                    updatedFileData.append(bindings).append("\n}")
+                } else {
+                    updatedFileData.append(line).append("\n")
+                }
+
+                lastLine = line
             }
-
-            lastLine = line
+            updatedFileData.toString()
         }
-
-        file.writeText(updatedFileData.toString())
-        echo("updated ${file.path}")
     }
 
     private fun updatePaths(baseDir: String, routers: List<File>) {
-        val file = File("./businessRules/src/main/kotlin/Paths.kt")
         var lastLine = ""
         val updatedFileData = StringBuilder()
 
@@ -482,34 +396,28 @@ data class Builder(
             it.path.slimmed().replace("Router", "").split(".")[1].decapitalize()
         }
 
-        val data =
-            """
-            /**
-             * The available paths at [basePath]/value.
-             */
-             object ${baseDir.capitalize()} : Path() {
-                val basePath = "$baseDir/"
-                val all = "${"\${basePath}"}all"
-            ${routes.joinToString("\n") { "        val ${it}s = \"${"\${basePath}"}${it}s\"" }}
-            }
-            
-            """.trimIndent()
-
-        file.readLines().forEach { line ->
-            if (lastLine.trim().startsWith("import ") && line.trim() == "")
-                updatedFileData.append("import Path.${baseDir.capitalize()}.basePath\n\n")
-            else if (lastLine == "    }" && line == "}") updatedFileData.append("$data\n}")
-            else updatedFileData.append("$line\n")
-
-            lastLine = line
+        val data = Template("path").update {
+            listOf(
+                "#name" to baseDir.capitalize(),
+                "#basePath" to baseDir,
+                "#variables" to routes.joinToString("\n") { "   val ${it}s = \${basePath}${it}s\"" }
+            )
         }
 
-        file.writeText(updatedFileData.toString())
-        echo("updated ${file.path}")
+        GeneratorFile.open("./businessRules/src/main/kotlin/Paths.kt").update { lines ->
+            lines.forEach { line ->
+                if (lastLine.trim().startsWith("import ") && line.trim() == "")
+                    updatedFileData.append("import Path.${baseDir.capitalize()}.basePath\n\n")
+                else if (lastLine == "    }" && line == "}") updatedFileData.append("$data\n}")
+                else updatedFileData.append("$line\n")
+
+                lastLine = line
+            }
+            updatedFileData.toString()
+        }
     }
 
     private fun updateDatabaseFactory(tables: List<File>) {
-        val file = File("./backend/src/main/kotlin/service/DatabaseFactory.kt")
         var lastLine = ""
         val updatedFileData = StringBuilder()
 
@@ -522,89 +430,81 @@ data class Builder(
             )
         }"""
 
-        file.readLines().forEach { line ->
-            if (lastLine.trim().startsWith("import ") && line.trim() == "") updatedFileData.append("$imports\n\n")
-            else if (lastLine == "            )" && line == "        }") updatedFileData.append(data).append("\n")
-            else updatedFileData.append(line).append("\n")
+        GeneratorFile.open("./backend/src/main/kotlin/service/DatabaseFactory.kt").update {
+            it.forEach { line ->
+                if (lastLine.trim().startsWith("import ") && line.trim() == "") updatedFileData.append("$imports\n\n")
+                else if (lastLine == "            )" && line == "        }") updatedFileData.append(data).append("\n")
+                else updatedFileData.append(line).append("\n")
 
-            lastLine = line
+                lastLine = line
+            }
+            updatedFileData.toString()
         }
-
-        file.writeText(updatedFileData.toString())
-        echo("updated ${file.path}")
     }
 
     private fun updateSettingsGradle(lowered: String) {
-        val file = File("./settings.gradle.kts")
-        val lastLine = file.readLines().last()
+        val file = GeneratorFile.open("./settings.gradle.kts")
+        val lastLine = file.data.split("\n").last { it.isNotEmpty() }
         val updatedFileData = StringBuilder()
         val data = """include("$lowered")"""
 
-        file.readLines().forEach { line ->
-            updatedFileData.append(line).append("\n")
-            if (line == lastLine) updatedFileData.append(data).append("\n")
-        }
+        file.update {
+            it.forEach { line ->
+                updatedFileData.append(line).append("\n")
+                if (line == lastLine) updatedFileData.append(data).append("\n")
+            }
 
-        file.writeText(updatedFileData.toString())
-        echo("updated ${file.path}")
+            updatedFileData.toString()
+        }
     }
 
     private fun updateBackendGradle(lowered: String) {
-        val file = File("./backend/build.gradle.kts")
         var lastLine = ""
         val updatedFileData = StringBuilder()
         val data = """    implementation(project(${lowered.capitalize()}.project))"""
 
-        file.readLines().forEach { line ->
-            if (lastLine.startsWith("    implementation(project") && !line.startsWith("    implementation(project")) {
-                updatedFileData.append(data).append("\n")
+        GeneratorFile.open("./backend/build.gradle.kts").update {
+            it.forEach { line ->
+                if (lastLine.startsWith("    implementation(project") && !line.startsWith("    implementation(project")) {
+                    updatedFileData.append(data).append("\n")
+                }
+                updatedFileData.append(line).append("\n")
+                lastLine = line
             }
-            updatedFileData.append(line).append("\n")
-            lastLine = line
+            updatedFileData.toString()
         }
-
-        file.writeText(updatedFileData.toString())
-        echo("updated ${file.path}")
     }
 
     private fun updateBuildSrc(lowered: String) {
-        val name = lowered.capitalize()
-        val file = File("./buildSrc/src/main/kotlin/$name.kt")
-
-        val data =
-            """
-            object $name {
-                const val version = "1.0.0"
-            
-                const val project = ":$lowered"
+        GeneratorFile.open("./buildSrc/src/main/kotlin/${lowered.capitalize()}.kt").update {
+            Template("buildSrc").update {
+                listOf(
+                    "#name" to lowered.capitalize(),
+                    "#nameLower" to lowered
+                )
             }
-            
-            """.trimIndent()
-
-        file.writeText(data)
-        echo("+ ${file.path}")
+        }
     }
 
     private fun updateDatabaseServer(lowered: String) {
-        val file = File("./backend/src/main/kotlin/service/DatabaseServer.kt")
         var lastLine = ""
         val updatedFileData = StringBuilder()
         val data = """            ${lowered}Routes()"""
 
-        file.readLines().forEach { line ->
-            if (lastLine.contains("Routes()") && line == "        }") updatedFileData.append("${data}\n        }\n")
-            else updatedFileData.append(line).append("\n")
+        GeneratorFile.open("./backend/src/main/kotlin/service/DatabaseServer.kt").update {
+            it.forEach { line ->
+                if (lastLine.contains("Routes()") && line == "        }") updatedFileData.append("${data}\n        }\n")
+                else updatedFileData.append(line).append("\n")
 
-            lastLine = line
+                lastLine = line
+            }
+
+            updatedFileData.toString()
         }
-
-        file.writeText(updatedFileData.toString())
-        echo("updated ${file.path}")
     }
 
     private fun createTests(routers: List<File>) {
-        val dir = File("./backend/src/test/kotlin/$titleTrimmed")
-        dir.mkdirs()
+        val dir = GeneratorFile.create("./backend/src/test/kotlin/$titleTrimmed")
 
         val routes = routers.map {
             it.path.slimmed().replace("Router", "").split(".")[1]
@@ -616,132 +516,17 @@ data class Builder(
             val itemSingle = if (item.endsWith("s")) item.dropLast(1) else item
             val itemVal = itemSingle.decapitalize()
 
-            "$dir/${itemSingle}Tests.kt".buildFile {
-                """
-                package $titleTrimmed
-
-                import BaseTest
-                import Path
-                import io.ktor.http.HttpStatusCode.Companion.BadRequest
-                import io.ktor.http.HttpStatusCode.Companion.Conflict
-                import io.ktor.http.HttpStatusCode.Companion.Created
-                import io.ktor.http.HttpStatusCode.Companion.NoContent
-                import io.ktor.http.HttpStatusCode.Companion.NotFound
-                import io.ktor.http.HttpStatusCode.Companion.OK
-                import io.ktor.util.KtorExperimentalAPI
-                import org.junit.jupiter.api.Order
-                import org.junit.jupiter.api.Test
-                import parseResponse
-                import shared.$sharedFolder.$itemSingle
-                import shared.$sharedFolder.responses.${itemSingle}sResponse
-                import shouldBe
-                import shouldNotBe
-
-                @KtorExperimentalAPI
-                class ${itemSingle}Tests : BaseTest() {
-                    fun newItem(addition: Int, id: Int? = null) = 
-
-                    val path = Path.$titleTrimmedCap.${itemLower}s
-
-                    @Test
-                    @Order(1)
-                    fun `verify getting base url`() {
-                        get(path).sendStatus<Unit>() shouldBe NoContent
-                    }
-
-                    @Test
-                    @Order(2)
-                    fun `verify getting base url returns all items in table`() {
-                        post(path).sendStatus(newItem(0)) shouldBe Created
-                        post(path).sendStatus(newItem(1)) shouldBe Created
-
-                        val request = get(path).send<Unit>()
-                        val responseItems = request.response.content.parseResponse<${itemSingle}sResponse>()?.items
-
-                        val item1 = responseItems!![responseItems.lastIndex - 1]
-                        val item2 = responseItems[responseItems.lastIndex]
-                        request.response.status() shouldBe OK
-                        item1.name shouldBe "0"
-                        item2.name shouldBe "1"
-                    }
-
-                    @Test
-                    @Order(3)
-                    fun `verify getting an added item`() {
-                        post(path).sendStatus(newItem(2)) shouldBe Created
-
-                        val request = get(path).send<$itemSingle>()
-                        val addedItems = request.response.content.parseResponse<${itemSingle}sResponse>()?.items?.last()
-
-                        request.response.status() shouldBe OK
-                        addedItems?.name shouldBe "2"
-                    }
-
-                    @Test
-                    @Order(4)
-                    fun `verify getting an item that does not exist`() {
-                        get(path, 99).sendStatus<Unit>() shouldBe NoContent
-                    }
-
-                    @Test
-                    @Order(5)
-                    fun `verify adding a new item`() {
-                        post(path).sendStatus(newItem(3)) shouldBe Created
-                    }
-
-                    @Test
-                    @Order(6)
-                    fun `verify adding a duplicate item`() {
-                        post(path).send(newItem(8))
-                        post(path).sendStatus((newItem(8))) shouldBe Conflict
-                    }
-
-                    @Test
-                    @Order(7)
-                    fun `verify updating an added item`() {
-                        val updatedName = "${itemLower}4"
-                        post(path).sendStatus(newItem(4)) shouldBe Created
-
-                        val $itemVal = get(path).asObject<${itemSingle}sResponse>().items?.last()
-
-                        put(path).sendStatus($itemVal?.copy(name = updatedName)) shouldBe OK
-
-                        val updated$itemSingle = get(path, $itemVal?.id).asObject<${itemSingle}sResponse>().items?.first()
-
-                        updated$itemSingle shouldNotBe null
-                        updated$itemSingle?.name shouldBe updatedName
-                    }
-
-                    @Test
-                    @Order(8)
-                    fun `verify updating a non existent item`() {
-                        put(path).sendStatus(newItem(5, 99)) shouldBe BadRequest
-                    }
-
-                    @Test
-                    @Order(9)
-                    fun `verify updating without an id`() {
-                        put(path).sendStatus(newItem(6)) shouldBe BadRequest
-                    }
-
-                    @Test
-                    @Order(10)
-                    fun `verify deleting and item that has been added`() {
-                        post(path).sendStatus(newItem(7)) shouldBe Created
-
-                        val addedItem = get(path).asObject<${itemSingle}sResponse>().items?.last()
-
-                        delete(path, addedItem?.id).sendStatus<Unit>() shouldBe OK
-                    }
-
-                    @Test
-                    @Order(11)
-                    fun `verify deleting item that doesn't exist`() {
-                        delete(path, 99).sendStatus<Unit>() shouldBe NotFound
-                    }
+            GeneratorFile.create("${dir.path}/${itemSingle}Tests.kt").save {
+                Template("routeTests").update {
+                    listOf(
+                        "#title" to titleTrimmed,
+                        "#titleCap" to titleTrimmedCap,
+                        "#sharedFolder" to sharedFolder,
+                        "#item" to itemSingle,
+                        "#itemLower" to itemLower,
+                        "#itemVal" to itemVal
+                    )
                 }
-
-                """.trimIndent()
             }
         }
     }

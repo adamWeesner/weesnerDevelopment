@@ -1,0 +1,28 @@
+package #package
+
+import BaseService
+import org.jetbrains.exposed.sql.Join
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.statements.UpdateBuilder#imports
+
+class #classService : BaseService<#classTable, #name>(
+    #classTable
+) {
+    override val #classTable.connections: Join?
+        get() = null
+
+    suspend fun getFor(id: Int) = getAll {
+        #classsTable.itemId eq id
+    }?.map { toItem(it) }#nullableItem
+
+    override suspend fun toItem(row: ResultRow) = #name(
+        row[table.id],
+        #toItemExtras
+        row[table.dateCreated],
+        row[table.dateUpdated]
+    )
+
+    override fun UpdateBuilder<Int>.toRow(item: #name) {
+        #toRowExtras
+    }
+}

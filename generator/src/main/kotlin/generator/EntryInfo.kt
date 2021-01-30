@@ -1,9 +1,10 @@
 package generator
 
+import generator.classes.GenFile
 import java.io.File
 
 data class EntryInfo(
-    val baseDirectory: File,
+    val baseDirectory: GenFile,
     val className: String,
     val data: List<String>
 ) {

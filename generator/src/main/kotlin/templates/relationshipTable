@@ -1,0 +1,9 @@
+package #package
+
+import #tableImportsTable
+import generics.IdTable
+import org.jetbrains.exposed.sql.ReferenceOption#imports
+
+object #tableNameTable : IdTable() {
+    #data
+}

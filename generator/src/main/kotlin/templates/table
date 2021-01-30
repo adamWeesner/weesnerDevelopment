@@ -1,0 +1,7 @@
+package #package
+
+import generics.IdTable#imports
+
+object #classNamesTable : IdTable() {
+    #data
+}

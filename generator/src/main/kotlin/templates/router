@@ -1,0 +1,15 @@
+package #title.#classNameLower
+
+import BaseRouter
+import shared.#sharedFolder.#className
+import shared.#sharedFolder.responses.#classNamesResponse
+import kotlin.reflect.full.createType
+
+data class #classNamesRouter(
+    override val basePath: String,
+    override val service: #classNamesService
+) : BaseRouter<#className, #classNamesService>(
+    #classNamesResponse(),
+    service,
+    #className::class.createType()
+)

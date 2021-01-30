@@ -1,0 +1,8 @@
+/**
+ * The available paths at [basePath]/value.
+ */
+ object #name : Path() {
+    val basePath = "#basePath/"
+    val all = "$\{basePath}all"
+    #variables
+}

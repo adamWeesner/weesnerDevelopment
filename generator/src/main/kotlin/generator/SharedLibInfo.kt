@@ -34,14 +34,17 @@ data class SharedLibInfo(
         forEach {
             val fileName = it.name.replace("$sharedDirectory/", "")
             val file = File("${baseDirectory.path}/$fileName")
-            val inputStream = jarFile.getInputStream(it)
-            val outputStream = FileOutputStream(file)
 
-            while (inputStream.available() > 0) {
-                outputStream.write(inputStream.read())
+            if (file.exists()) {
+                val inputStream = jarFile.getInputStream(it)
+                val outputStream = FileOutputStream(file)
+
+                while (inputStream.available() > 0) {
+                    outputStream.write(inputStream.read())
+                }
+
+                file.processEntry(entryData)
             }
-
-            file.processEntry(entryData)
         }
     }
 

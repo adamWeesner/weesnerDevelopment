@@ -29,8 +29,8 @@ data class Builder(
             generateTable()
             generateService()
             generateRouter()
+            generateRoutes(titleTrimmedCap)
         }
-        generateRoutes(titleTrimmedCap, entryInfo)
         updateSettingsGradle(titleTrimmed)
         updateBackendGradle(titleTrimmed)
         updateBuildSrc(titleTrimmed)
@@ -287,7 +287,7 @@ data class Builder(
         }
     }
 
-    private fun generateRoutes(title: String, entryInfo: EntryInfo) {
+    private fun generateRoutes(title: String) {
         val routers = arrayListOf<File>()
         val services = arrayListOf<File>()
         val tables = arrayListOf<File>()
@@ -479,8 +479,8 @@ data class Builder(
         GeneratorFile.open("./buildSrc/src/main/kotlin/${lowered.capitalize()}.kt").update {
             Template("buildSrc").update {
                 listOf(
-                    "#name" to lowered.capitalize(),
-                    "#nameLower" to lowered
+                    "#nameLower" to lowered,
+                    "#name" to lowered.capitalize()
                 )
             }
         }
@@ -519,12 +519,12 @@ data class Builder(
             GeneratorFile.create("${dir.path}/${itemSingle}Tests.kt").save {
                 Template("routeTests").update {
                     listOf(
-                        "#title" to titleTrimmed,
                         "#titleCap" to titleTrimmedCap,
+                        "#title" to titleTrimmed,
                         "#sharedFolder" to sharedFolder,
-                        "#item" to itemSingle,
                         "#itemLower" to itemLower,
-                        "#itemVal" to itemVal
+                        "#itemVal" to itemVal,
+                        "#item" to itemSingle
                     )
                 }
             }

@@ -35,7 +35,7 @@ data class GeneratorFile(
             File(path).writeText(data())
             echo("+ $path")
         } else {
-            echo("----- data for $name -----\n")
+            echo("----- data for $path -----\n")
             echo("${data()}\n")
         }
     }

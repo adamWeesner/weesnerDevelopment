@@ -1,0 +1,831 @@
+openapi: 3.0.1
+info:
+  title: Weesner Development - Bill Man
+  description: This is the api for Weesner Development Bill Man.
+  contact:
+    email: weesnerDevelopment@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: https://api.weesnerDevelopment.com/billMan
+  - url: http://api.weesnerDevelopment.com/billMan
+tags:
+  - name: Categories
+    description: Everything you need to retrieve category data.
+  - name: Bills
+    description: Everything you need to retrieve bill data.
+  - name: Income
+    description: Everything you need to retrieve income data.
+  - name: Occurrences
+    description: Everything you need to retrieve occurrence data.
+paths:
+  /categories:
+    get:
+      tags:
+        - Categories
+      summary: Finds all Categories accessible to the user
+      operationId: findCategories
+      parameters:
+        - name: category
+          in: query
+          description: The category you want to retrieve, not giving a category id will
+            retrieve all categories
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+        401:
+          description: Unauthorized to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        404:
+          description: Unable to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+    put:
+      tags:
+        - Categories
+      summary: Update existing Category data
+      operationId: updateCategory
+      requestBody:
+        description: Category data that needs to be updated
+        content:
+          application/json:
+            schema:
+              required:
+                - id
+              type: object
+              properties:
+                id:
+                  type: integer
+                owner:
+                  $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        200:
+          description: Successfully updated Category data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    $ref: '#/components/schemas/Category'
+        404:
+          description: Category data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+      x-codegen-request-body-name: body
+    post:
+      tags:
+        - Categories
+      summary: Add new Category data
+      operationId: addCategory
+      requestBody:
+        description: Category object that needs to be added
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+                - owner
+              type: object
+              properties:
+                owner:
+                  $ref: '#/components/schemas/User'
+                name:
+                  type: string
+        required: true
+      responses:
+        201:
+          description: Successfully added Category data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    $ref: '#/components/schemas/Category'
+        409:
+          description: Data conflicted with something already in the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictResponse'
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+        - Categories
+      summary: Deletes Category data with the id
+      operationId: deleteCategory
+      parameters:
+        - name: category
+          in: query
+          description: Id of the data to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successfully deleted data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+        400:
+          description: Invalid data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        404:
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+  /bills:
+    get:
+      tags:
+        - Bills
+      summary: Finds all Bills accessible to the user
+      operationId: findBills
+      parameters:
+        - name: bill
+          in: query
+          description: The bill you want to retrieve, not giving a bill id will retrieve
+            all bills
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Bill'
+        404:
+          description: Unable to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+    put:
+      tags:
+        - Bills
+      summary: Update existing Bill data
+      operationId: updateBill
+      requestBody:
+        description: Bill data that needs to be updated
+        content:
+          application/json:
+            schema:
+              required:
+                - id
+              type: object
+              properties:
+                id:
+                  type: integer
+                owner:
+                  $ref: '#/components/schemas/User'
+                name:
+                  type: string
+                amount:
+                  type: string
+                varyingAmount:
+                  type: boolean
+                payoffAmount:
+                  type: string
+                sharedUsers:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/User'
+                categories:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Category'
+                color:
+                  $ref: '#/components/schemas/Color'
+        required: true
+      responses:
+        200:
+          description: Successfully updated Bill data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    $ref: '#/components/schemas/Bill'
+        404:
+          description: Bill data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+      x-codegen-request-body-name: body
+    post:
+      tags:
+        - Bills
+      summary: Add new Bill data
+      operationId: addBill
+      requestBody:
+        description: Bill object that needs to be added
+        content:
+          application/json:
+            schema:
+              required:
+                - amount
+                - categories
+                - color
+                - name
+                - owner
+                - varyingAmount
+              type: object
+              properties:
+                owner:
+                  $ref: '#/components/schemas/User'
+                name:
+                  type: string
+                amount:
+                  type: string
+                varyingAmount:
+                  type: boolean
+                payoffAmount:
+                  type: string
+                sharedUsers:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/User'
+                categories:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Category'
+                color:
+                  $ref: '#/components/schemas/Color'
+        required: true
+      responses:
+        201:
+          description: Successfully added Bill data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    $ref: '#/components/schemas/Bill'
+        409:
+          description: Data conflicted with something already in the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictResponse'
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+        - Bills
+      summary: Deletes Bill data with the id
+      operationId: deleteBill
+      parameters:
+        - name: bill
+          in: query
+          description: Id of the data to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successfully deleted data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+        400:
+          description: Invalid data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        404:
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+  /income:
+    get:
+      tags:
+        - Income
+      summary: Finds all Income accessible to the user
+      operationId: findIncome
+      parameters:
+        - name: income
+          in: query
+          description: The income you want to retrieve, not giving a income id will
+            retrieve all income
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Income'
+        404:
+          description: Unable to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+    put:
+      tags:
+        - Income
+      summary: Update existing Income data
+      operationId: updateIncome
+      requestBody:
+        description: Income data that needs to be updated
+        content:
+          application/json:
+            schema:
+              required:
+                - id
+              type: object
+              properties:
+                id:
+                  type: integer
+                owner:
+                  $ref: '#/components/schemas/User'
+                name:
+                  type: string
+                amount:
+                  type: string
+                varyingAmount:
+                  type: boolean
+                color:
+                  $ref: '#/components/schemas/Color'
+        required: true
+      responses:
+        200:
+          description: Successfully updated Income data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    $ref: '#/components/schemas/Income'
+        404:
+          description: Income data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+      x-codegen-request-body-name: body
+    post:
+      tags:
+        - Income
+      summary: Add new Income data
+      operationId: addIncome
+      requestBody:
+        description: Income object that needs to be added
+        content:
+          application/json:
+            schema:
+              required:
+                - amount
+                - color
+                - name
+                - owner
+                - varyingAmount
+              type: object
+              properties:
+                owner:
+                  $ref: '#/components/schemas/User'
+                name:
+                  type: string
+                amount:
+                  type: string
+                varyingAmount:
+                  type: boolean
+                color:
+                  $ref: '#/components/schemas/Color'
+        required: true
+      responses:
+        201:
+          description: Successfully added Income data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    $ref: '#/components/schemas/Income'
+        409:
+          description: Data conflicted with something already in the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictResponse'
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+        - Income
+      summary: Deletes Income data with the id
+      operationId: deleteIncome
+      parameters:
+        - name: income
+          in: query
+          description: Id of the data to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successfully deleted data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+        400:
+          description: Invalid data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        404:
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+  /occurrences:
+    get:
+      tags:
+        - Occurrences
+      summary: Finds all Occurrences accessible to the user, supply either a bill
+        or occurrence
+      operationId: findOccurrences
+      parameters:
+        - name: occurrence
+          in: query
+          description: The occurrences you want to retrieve
+          schema:
+            type: integer
+        - name: bill
+          in: query
+          description: The bill you want to retrieve occurrences for
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Occurrence'
+        404:
+          description: Unable to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+    put:
+      tags:
+        - Occurrences
+      summary: Update existing Occurrence data
+      operationId: updateOccurrence
+      requestBody:
+        description: Occurrence data that needs to be updated
+        content:
+          application/json:
+            schema:
+              required:
+                - id
+              type: object
+              properties:
+                id:
+                  type: integer
+                owner:
+                  $ref: '#/components/schemas/User'
+                sharedUsers:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/User'
+                itemId:
+                  type: string
+                dueDate:
+                  type: integer
+                amountLeft:
+                  type: string
+                amount:
+                  type: string
+                every:
+                  type: string
+                payments:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Payment'
+        required: true
+      responses:
+        200:
+          description: Successfully updated Occurrence data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    $ref: '#/components/schemas/Occurrence'
+        404:
+          description: Occurrence data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+      x-codegen-request-body-name: body
+    post:
+      tags:
+        - Occurrences
+      summary: Add new Occurrence data
+      operationId: addOccurrence
+      requestBody:
+        description: Occurrence object that needs to be added
+        content:
+          application/json:
+            schema:
+              required:
+                - amount
+                - dueDate
+                - every
+                - itemId
+                - owner
+              type: object
+              properties:
+                owner:
+                  $ref: '#/components/schemas/User'
+                sharedUsers:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/User'
+                itemId:
+                  type: string
+                dueDate:
+                  type: integer
+                amountLeft:
+                  type: string
+                amount:
+                  type: string
+                every:
+                  type: string
+                payments:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Payment'
+        required: true
+      responses:
+        201:
+          description: Successfully added Occurrence data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    $ref: '#/components/schemas/Occurrence'
+        409:
+          description: Data conflicted with something already in the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictResponse'
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+        - Occurrences
+      summary: Deletes Occurrence data with the id
+      operationId: deleteOccurrence
+      parameters:
+        - name: income
+          in: query
+          description: Id of the data to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successfully deleted data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+        400:
+          description: Invalid data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        404:
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+components:
+  schemas:
+    GenericItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        dateCreated:
+          type: integer
+        dateUpdated:
+          type: integer
+    HistoryItem:
+      type: object
+      properties:
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/History'
+    User:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+    Bill:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+        - $ref: '#/components/schemas/HistoryItem'
+        - type: object
+    Category:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+        - $ref: '#/components/schemas/HistoryItem'
+        - type: object
+    Income:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+        - $ref: '#/components/schemas/HistoryItem'
+        - type: object
+    Occurrence:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+        - $ref: '#/components/schemas/HistoryItem'
+        - type: object
+    Payment:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+        - $ref: '#/components/schemas/HistoryItem'
+        - type: object
+    Color:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+        - $ref: '#/components/schemas/HistoryItem'
+        - type: object
+    History:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+    NotFoundResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 404
+        message:
+          type: string
+    ConflictResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 409
+        message:
+          type: string
+    BadRequestResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 400
+        message:
+          type: string
+    UnauthorizedResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Unauthorized
+        statusCode:
+          type: integer
+          example: 401
+        message:
+          type: object
+          properties:
+            url:
+              type: string
+            statusCode:
+              type: integer
+              example: 401
+            reasonCode:
+              type: integer

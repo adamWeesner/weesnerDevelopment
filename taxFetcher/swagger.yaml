@@ -1,0 +1,942 @@
+openapi: 3.0.1
+info:
+  title: Weesner Development - Tax Fetcher
+  description: This is the api for Weesner Development Tax Fetcher.
+  contact:
+    email: weesnerDevelopment@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.1.0
+servers:
+  - url: https://api.weesnerDevelopment.com/taxFetcher
+  - url: http://api.weesnerDevelopment.com/taxFetcher
+tags:
+  - name: Social Security
+    description: Everything you need to retrieve Social Security tax data.
+    externalDocs:
+      description: Find out more
+      url: https://www.irs.gov/taxtopics/tc751
+  - name: Medicare
+    description: Everything you need to retrieve Medicare tax data.
+    externalDocs:
+      description: Find out more
+      url: https://www.irs.gov/taxtopics/tc751
+  - name: Tax Withholding
+    description: Everything you need to retrieve Tax Withholding data.
+    externalDocs:
+      description: Find out more
+      url: https://www.irs.gov/pub/irs-pdf/p15.pdf
+  - name: Federal Income Tax
+    description: Everything you need to retrieve Federal Income Tax data.
+    externalDocs:
+      description: Find out more
+      url: https://www.irs.gov/pub/irs-pdf/p15.pdf
+paths:
+  /socialSecurity:
+    get:
+      tags:
+        - Social Security
+      summary: Finds all Social Security
+      operationId: findSocialSecurity
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SocialSecurity'
+        404:
+          description: Unable to retrieve Social Security data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+    put:
+      tags:
+        - Social Security
+      summary: Update existing Social Security data
+      operationId: updateSocialSecurity
+      requestBody:
+        description: Social Security data that needs to be updated
+        content:
+          application/json:
+            schema:
+              required:
+                - id
+              type: object
+              properties:
+                id:
+                  type: integer
+                year:
+                  type: integer
+                percent:
+                  type: number
+                limit:
+                  type: integer
+        required: true
+      responses:
+        200:
+          description: Successfully updated Social Security data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    $ref: '#/components/schemas/SocialSecurity'
+        404:
+          description: Social Security data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+      x-codegen-request-body-name: body
+    post:
+      tags:
+        - Social Security
+      summary: Add new Social Security data
+      operationId: addSocialSecurity
+      requestBody:
+        description: Social Security object that needs to be added
+        content:
+          application/json:
+            schema:
+              required:
+                - limit
+                - percent
+                - year
+              type: object
+              properties:
+                year:
+                  type: integer
+                percent:
+                  type: number
+                limit:
+                  type: integer
+        required: true
+      responses:
+        201:
+          description: Successfully added Socials Security data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    $ref: '#/components/schemas/SocialSecurity'
+        409:
+          description: Data conflicted with something already in the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictResponse'
+      x-codegen-request-body-name: body
+  /socialSecurity/{year}:
+    get:
+      tags:
+        - Social Security
+      summary: Get Social Security data for the year
+      operationId: getSocialSecurityYear
+      parameters:
+        - name: year
+          in: path
+          description: Year of data to get
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successfully retrieved data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    $ref: '#/components/schemas/SocialSecurity'
+        400:
+          description: Invalid data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        404:
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+    delete:
+      tags:
+        - Social Security
+      summary: Deletes Social Security data for the year
+      operationId: deleteSocialSecurity
+      parameters:
+        - name: year
+          in: path
+          description: Year of data to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successfully deleted data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+        400:
+          description: Invalid data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        404:
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+  /medicare:
+    get:
+      tags:
+        - Medicare
+      summary: Finds all Medicare
+      operationId: findMedicare
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Medicare'
+        404:
+          description: Unable to retrieve Medicare data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+    put:
+      tags:
+        - Medicare
+      summary: Update existing Medicare data
+      operationId: updateMedicare
+      requestBody:
+        description: Medicare data that needs to be updated
+        content:
+          application/json:
+            schema:
+              required:
+                - id
+              type: object
+              properties:
+                id:
+                  type: integer
+                year:
+                  type: integer
+                percent:
+                  type: number
+                additionalPercent:
+                  type: number
+                limits:
+                  $ref: '#/components/schemas/MedicareLimit'
+        required: true
+      responses:
+        200:
+          description: Successfully updated Medicare data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    $ref: '#/components/schemas/Medicare'
+        404:
+          description: Medicare data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+      x-codegen-request-body-name: body
+    post:
+      tags:
+        - Medicare
+      summary: Add new Medicare data
+      operationId: addMedicare
+      requestBody:
+        description: Medicare object that needs to be added
+        content:
+          application/json:
+            schema:
+              required:
+                - additionalPercent
+                - limits
+                - percent
+                - year
+              type: object
+              properties:
+                year:
+                  type: integer
+                percent:
+                  type: number
+                additionalPercent:
+                  type: number
+                limits:
+                  $ref: '#/components/schemas/MedicareLimit'
+        required: true
+      responses:
+        201:
+          description: Successfully added Medicare data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    $ref: '#/components/schemas/Medicare'
+        409:
+          description: Data conflicted with something already in the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictResponse'
+      x-codegen-request-body-name: body
+  /medicare/{year}:
+    get:
+      tags:
+        - Medicare
+      summary: Get Medicare data for the year
+      operationId: getMedicareYear
+      parameters:
+        - name: year
+          in: path
+          description: Year of data to get
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successfully retrieved data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    $ref: '#/components/schemas/Medicare'
+        400:
+          description: Invalid data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        404:
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+    delete:
+      tags:
+        - Medicare
+      summary: Deletes Medicare data for the year
+      operationId: deleteMedicare
+      parameters:
+        - name: year
+          in: path
+          description: Year of data to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successfully deleted data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+        400:
+          description: Invalid data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        404:
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+  /taxWithholding:
+    get:
+      tags:
+        - Tax Withholding
+      summary: Finds all Tax Withholding
+      operationId: findTaxWithholding
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TaxWithholding'
+        404:
+          description: Unable to retrieve Tax Withholding data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+    put:
+      tags:
+        - Tax Withholding
+      summary: Update existing Tax Withholding data
+      operationId: updateTaxWithholding
+      requestBody:
+        description: Tax Withholding data that needs to be updated
+        content:
+          application/json:
+            schema:
+              required:
+                - id
+              type: object
+              properties:
+                id:
+                  type: integer
+                year:
+                  type: integer
+                type:
+                  type: string
+                  enum:
+                    - General
+                    - NonResident
+                payPeriod:
+                  $ref: '#/components/schemas/PayPeriod'
+                amount:
+                  type: number
+        required: true
+      responses:
+        200:
+          description: Successfully updated Tax Withholding data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    $ref: '#/components/schemas/TaxWithholding'
+        404:
+          description: Tax Withholding data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+      x-codegen-request-body-name: body
+    post:
+      tags:
+        - Tax Withholding
+      summary: Add new Tax Withholding data
+      operationId: addTaxWithholding
+      requestBody:
+        description: Tax Withholding object that needs to be added
+        content:
+          application/json:
+            schema:
+              required:
+                - amount
+                - payPeriod
+                - type
+                - year
+              type: object
+              properties:
+                year:
+                  type: integer
+                type:
+                  type: string
+                  enum:
+                    - General
+                    - NonResident
+                payPeriod:
+                  $ref: '#/components/schemas/PayPeriod'
+                amount:
+                  type: number
+        required: true
+      responses:
+        201:
+          description: Successfully added Tax Withholding data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    $ref: '#/components/schemas/TaxWithholding'
+        409:
+          description: Data conflicted with something already in the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictResponse'
+      x-codegen-request-body-name: body
+  /taxWithholding/{year}:
+    get:
+      tags:
+        - Tax Withholding
+      summary: Get Tax Withholding data for the year
+      operationId: getTaxWithholdingYear
+      parameters:
+        - name: year
+          in: path
+          description: Year of data to get
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successfully retrieved data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    $ref: '#/components/schemas/TaxWithholding'
+        400:
+          description: Invalid data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        404:
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+    delete:
+      tags:
+        - Tax Withholding
+      summary: Deletes Tax Withholding data for the year
+      operationId: deleteTaxWithholding
+      parameters:
+        - name: year
+          in: path
+          description: Year of data to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successfully deleted data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+        400:
+          description: Invalid data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        404:
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+  /federalIncomeTax:
+    get:
+      tags:
+        - Federal Income Tax
+      summary: Finds all Federal Income Tax
+      operationId: findFederalIncomeTax
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FederalIncomeTax'
+        404:
+          description: Unable to retrieve Federal Income Tax data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+    put:
+      tags:
+        - Federal Income Tax
+      summary: Update existing Federal Income Tax data
+      operationId: updateFederalIncomeTax
+      requestBody:
+        description: Federal Income Tax data that needs to be updated
+        content:
+          application/json:
+            schema:
+              required:
+                - id
+              type: object
+              properties:
+                id:
+                  type: integer
+                year:
+                  type: integer
+                maritalStatus:
+                  $ref: '#/components/schemas/MaritalStatus'
+                payPeriod:
+                  $ref: '#/components/schemas/PayPeriod'
+                over:
+                  type: number
+                notOver:
+                  type: number
+                plus:
+                  type: number
+                percent:
+                  type: number
+                nonTaxable:
+                  type: number
+        required: true
+      responses:
+        200:
+          description: Successfully updated Federal Income Tax data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    $ref: '#/components/schemas/FederalIncomeTax'
+        404:
+          description: Federal Income Tax data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+      x-codegen-request-body-name: body
+    post:
+      tags:
+        - Federal Income Tax
+      summary: Add new Federal Income Tax data
+      operationId: addFederalIncomeTax
+      requestBody:
+        description: Federal Income Tax object that needs to be added
+        content:
+          application/json:
+            schema:
+              required:
+                - maritalStatus
+                - nonTaxable
+                - notOver
+                - over
+                - payPeriod
+                - percent
+                - plus
+                - year
+              type: object
+              properties:
+                year:
+                  type: integer
+                maritalStatus:
+                  $ref: '#/components/schemas/MaritalStatus'
+                payPeriod:
+                  $ref: '#/components/schemas/PayPeriod'
+                over:
+                  type: number
+                notOver:
+                  type: number
+                plus:
+                  type: number
+                percent:
+                  type: number
+                nonTaxable:
+                  type: number
+        required: true
+      responses:
+        201:
+          description: Successfully added Federal Income Tax data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    $ref: '#/components/schemas/FederalIncomeTax'
+        409:
+          description: Data conflicted with something already in the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictResponse'
+      x-codegen-request-body-name: body
+  /federalIncomeTax/{year}:
+    get:
+      tags:
+        - Federal Income Tax
+      summary: Get Federal Income Tax data for the year
+      operationId: getFederalIncomeTaxYear
+      parameters:
+        - name: year
+          in: path
+          description: Year of data to get
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successfully retrieved data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    $ref: '#/components/schemas/FederalIncomeTax'
+        400:
+          description: Invalid data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        404:
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+    delete:
+      tags:
+        - Federal Income Tax
+      summary: Deletes Federal Income Tax data for the year
+      operationId: deleteFederalIncomeTax
+      parameters:
+        - name: year
+          in: path
+          description: Year of data to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successfully deleted data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+        400:
+          description: Invalid data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        404:
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+components:
+  schemas:
+    GenericItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        dateCreated:
+          type: integer
+        dateUpdated:
+          type: integer
+    HistoryItem:
+      type: object
+      properties:
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/History'
+    User:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+    SocialSecurity:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+        - $ref: '#/components/schemas/HistoryItem'
+        - type: object
+    Medicare:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+        - $ref: '#/components/schemas/HistoryItem'
+        - type: object
+    MedicareLimit:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+    TaxWithholding:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+        - $ref: '#/components/schemas/HistoryItem'
+        - type: object
+    FederalIncomeTax:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+        - $ref: '#/components/schemas/HistoryItem'
+        - type: object
+    History:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+    NotFoundResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 404
+        message:
+          type: string
+    ConflictResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 409
+        message:
+          type: string
+    BadRequestResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 400
+        message:
+          type: string
+    UnauthorizedResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Unauthorized
+        statusCode:
+          type: integer
+          example: 401
+        message:
+          type: object
+          properties:
+            url:
+              type: string
+            statusCode:
+              type: integer
+              example: 401
+            reasonCode:
+              type: integer
+    PayPeriod:
+      type: string
+      enum:
+        - Weekly
+        - Biweekly
+        - Semimonthly
+        - Monthly
+        - Quarterly
+        - Semiannual
+        - Annual
+        - Daily
+    MaritalStatus:
+      type: string
+      enum:
+        - Single
+        - Married
+        - Separate

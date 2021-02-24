@@ -1,0 +1,360 @@
+openapi: 3.0.1
+info:
+  title: Weesner Development - Breath of the Wild
+  description: This is the api for Weesner Development Breath of the wild.
+  contact:
+    email: weesnerDevelopment@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: https://api.weesnerDevelopment.com/breathOfTheWild
+  - url: http://api.weesnerDevelopment.com/breathOfTheWild
+tags:
+  - name: Cooking Pot Foods
+  - name: Critters
+  - name: Effects
+  - name: Elixirs
+  - name: Ingredients
+paths:
+  /cookingPotFoods:
+    get:
+      tags:
+        - Cooking Pot Foods
+      summary: Finds all cooking pot foods accessible to the user
+      operationId: getCookingPotFoods
+      parameters:
+        - name: id
+          in: query
+          description: The id of the cooking pot food you want to retrieve, not giving an id will
+            retrieve all cooking pot foods
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CookingPotFood'
+        401:
+          description: Unauthorized to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        404:
+          description: Unable to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+  /critters:
+    get:
+      tags:
+        - Critters
+      summary: Finds all critters accessible to the user
+      operationId: getCritters
+      parameters:
+        - name: id
+          in: query
+          description: The id of the critter you want to retrieve, not giving an id will
+            retrieve all critters
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Critter'
+        401:
+          description: Unauthorized to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        404:
+          description: Unable to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+  /effects:
+    get:
+      tags:
+        - Effects
+      summary: Finds all effects accessible to the user
+      operationId: getEffects
+      parameters:
+        - name: id
+          in: query
+          description: The id of the effect you want to retrieve, not giving an id will
+            retrieve all effects
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Effect'
+        401:
+          description: Unauthorized to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        404:
+          description: Unable to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+  /elixirs:
+    get:
+      tags:
+        - Elixirs
+      summary: Finds all elixirs accessible to the user
+      operationId: getElixirs
+      parameters:
+        - name: id
+          in: query
+          description: The id of the elixir you want to retrieve, not giving an id will
+            retrieve all elixirs
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Elixir'
+        401:
+          description: Unauthorized to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        404:
+          description: Unable to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+  /ingredients:
+    get:
+      tags:
+        - Ingredients
+      summary: Finds all ingredients accessible to the user
+      operationId: getIngredients
+      parameters:
+        - name: id
+          in: query
+          description: The id of the ingredient you want to retrieve, not giving an id will
+            retrieve all ingredients
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Ingredient'
+        401:
+          description: Unauthorized to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        404:
+          description: Unable to retrieve data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+components:
+  schemas:
+    CookingPotFood:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - $ref: '#/components/schemas/Image'
+        - type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        ingredients:
+          type: array
+          items:
+            type: string
+    Critter:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+      properties:
+        critter:
+          type: string
+        effectClass:
+          type: string
+        boostEffect:
+          type: string
+    Effect:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - $ref: '#/components/schemas/Image'
+        - type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        timeLimit:
+          type: string
+    Elixir:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - $ref: '#/components/schemas/Image'
+        - type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        ingredients:
+          type: array
+          items:
+            type: string
+    Ingredient:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - $ref: '#/components/schemas/Image'
+        - type: object
+      properties:
+        title:
+          type: string
+        name:
+          type: string
+        hearts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        bonusAddOns:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        duration:
+          type: array
+          items:
+            type: string
+    GenericItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        dateCreated:
+          type: integer
+        dateUpdated:
+          type: integer
+    Image:
+      allOf:
+        - $ref: '#/components/schemas/GenericItem'
+        - type: object
+      properties:
+        description:
+          type: string
+        src:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+    NotFoundResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 404
+        message:
+          type: string
+    ConflictResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 409
+        message:
+          type: string
+    BadRequestResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 400
+        message:
+          type: string
+    UnauthorizedResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Unauthorized
+        statusCode:
+          type: integer
+          example: 401
+        message:
+          type: object
+          properties:
+            url:
+              type: string
+            statusCode:
+              type: integer
+              example: 401
+            reasonCode:
+              type: integer

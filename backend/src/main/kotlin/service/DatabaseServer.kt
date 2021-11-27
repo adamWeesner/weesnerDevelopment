@@ -6,8 +6,6 @@ import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.codahale.metrics.Slf4jReporter
 import com.codahale.metrics.jmx.JmxReporter
-import com.ryanharter.ktor.moshi.moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.weesnerdevelopment.AppConfig
 import com.weesnerdevelopment.DbLogger
 import com.weesnerdevelopment.injection.kodeinSetup
@@ -22,9 +20,11 @@ import io.ktor.http.*
 import io.ktor.http.auth.*
 import io.ktor.metrics.dropwizard.*
 import io.ktor.routing.*
+import io.ktor.serialization.*
 import io.ktor.websocket.*
 import kimchi.Kimchi
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import logging.LoggingService
 import logging.StdOutLogger
 import org.kodein.di.generic.instance
@@ -75,9 +75,11 @@ object DatabaseServer {
                 .start()
         }
         install(ContentNegotiation) {
-            moshi {
-                add(KotlinJsonAdapterFactory())
-            }
+            json(Json {
+                prettyPrint = true
+                prettyPrintIndent = "  "
+                isLenient = true
+            })
         }
         install(StatusPages) {
             exception<Throwable> { e ->

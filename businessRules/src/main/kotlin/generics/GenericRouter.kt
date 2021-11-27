@@ -76,10 +76,10 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
      */
     open fun Route.getDefault() {
         get("/") {
-            response?.let {
+            response.let {
                 it.items = service.getAll()
-                respond(Ok(response))
-            } ?: respond(NotFound("Could not get items."))
+                respond(Ok(it.parse()))
+            }
         }
     }
 
@@ -93,7 +93,7 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
             val param = call.parameters["item"] ?: return@get respond(BadRequest("Invalid param."))
             when (val retrieved = service.getSingle { singleEq(param) }) {
                 null -> respond(NotFound("Could not get item for param $param."))
-                else -> respond(Ok(retrieved))
+                else -> respond(Ok(response.apply { items = listOf(retrieved) }.parse()))
             }
         }
     }
@@ -123,7 +123,7 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
 
             when (val added = service.add(item)) {
                 null -> respond(Conflict("An error occurred add item $item."))
-                else -> respond(Created(added))
+                else -> respond(Created(response.apply { items = listOf(added) }.parse()))
             }
         }
     }
@@ -191,8 +191,8 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
 
             when {
                 updated == null -> respond(BadRequest("An error occurred updating $item."))
-                updated.id != item.id -> respond(Created(updated))
-                else -> respond(Ok(updated))
+                updated.id != item.id -> respond(Created(response.apply { items = listOf(updated) }.parse()))
+                else -> respond(Ok(response.apply { items = listOf(updated) }.parse()))
             }
         }
     }

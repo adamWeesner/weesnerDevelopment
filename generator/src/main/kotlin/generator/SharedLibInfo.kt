@@ -61,7 +61,7 @@ data class SharedLibInfo(
                         data.contains(Regex("override .*")) ||
                         data.contains(Regex("import .*")) ||
                         data.contains("package shared.$sharedFolder") ||
-                        data.contains("@Parcelize") ||
+                        data.contains("@Serializable") ||
                         data.trim().startsWith("/**") ||
                         data.trim().startsWith("*") ||
                         data.trim().startsWith("*/")

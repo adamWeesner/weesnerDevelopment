@@ -95,10 +95,12 @@ class UserRouter(
                     service.table.id eq hashedUser?.id!!
                 }
 
+                val updatedUserInfo = service.getUserByUuidRedacted(item.uuid ?: "")
+
                 val response = when {
                     updated == null -> BadRequest("Error occurred updated user information.")
-                    updated != item.id -> Created(it)
-                    else -> Ok(it)
+                    updated != item.id -> Created(updatedUserInfo.toJson())
+                    else -> Ok(updatedUserInfo.toJson())
                 }
 
                 respond(response)
@@ -116,7 +118,7 @@ class UserRouter(
                     val generatedToken = asHashed()?.asToken(jwtProvider) ?: throw Exception("Generate token was null")
 
                     call.response.header("x-auth-token", generatedToken)
-                    respond(Ok(TokenResponse(generatedToken)))
+                    respond(Ok(TokenResponse(generatedToken).toJson()))
                 } ?: respondErrorAuthorizing(InvalidUserReason.NoUserFound)
             }
         }
@@ -142,7 +144,7 @@ class UserRouter(
 
                 val response = when (val added = service.addUser(newUser)) {
                     null -> Conflict("Unable to save user credentials.")
-                    else -> Created(TokenResponse(added.asHashed()?.asToken(jwtProvider)))
+                    else -> Created(TokenResponse(added.asHashed()?.asToken(jwtProvider)).toJson())
                 }
 
                 respond(response)

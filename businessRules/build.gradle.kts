@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id(Kotlin.jvm)
     id(Kotlin.kapt)
+    kotlin("plugin.serialization") version Kotlin.version
 }
 
 group = Base.group
@@ -22,7 +23,7 @@ dependencies {
     implementation(Commons.base64)
     implementation(Ktor.Client.webSockets)
     implementation(Ktor.Client.okHttp)
-    implementation(Moshi.core)
+    implementation(Ktor.serialization)
     implementation(Exposed.core)
     implementation(Kimchi.core)
 }

@@ -179,7 +179,7 @@ class BillTests : BaseTest("application-test.conf") {
     @Test
     @Order(7)
     fun `verify updating a non existent item`() {
-        put(path).sendStatus(newItem(5, 99)) shouldBe HttpStatusCode.BadRequest
+        put(path).sendStatus(newItem(5, 99)) shouldBe BadRequest
     }
 
     @Test

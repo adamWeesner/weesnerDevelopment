@@ -34,13 +34,21 @@ open class UtilsTests {
                 History(
                     null,
                     "SocialSecurity 1 limit",
-                    128000,
-                    127500,
+                    "128000",
+                    "127500",
                     fakeUser,
                     this[0].dateCreated,
                     this[0].dateUpdated
                 ),
-                History(null, "SocialSecurity 1 percent", 3.4, 3.6, fakeUser, this[1].dateCreated, this[1].dateUpdated)
+                History(
+                    null,
+                    "SocialSecurity 1 percent",
+                    "3.4",
+                    "3.6",
+                    fakeUser,
+                    this[1].dateCreated,
+                    this[1].dateUpdated
+                )
             )
         }
     }
@@ -55,13 +63,21 @@ open class UtilsTests {
                 History(
                     null,
                     "SocialSecurity 1 limit",
-                    128000,
-                    127500,
+                    "128000",
+                    "127500",
                     fakeUser,
                     this[0].dateCreated,
                     this[0].dateUpdated
                 ),
-                History(null, "SocialSecurity 1 percent", 3.4, 3.6, fakeUser, this[1].dateCreated, this[1].dateUpdated)
+                History(
+                    null,
+                    "SocialSecurity 1 percent",
+                    "3.4",
+                    "3.6",
+                    fakeUser,
+                    this[1].dateCreated,
+                    this[1].dateUpdated
+                )
             )
         }
     }
@@ -96,14 +112,30 @@ open class UtilsTests {
                 History(
                     null,
                     "Medicare 1 additionalPercent",
-                    1.1,
-                    1.2,
+                    "1.1",
+                    "1.2",
                     fakeUser,
                     this[0].dateCreated,
                     this[0].dateUpdated
                 ),
-                History(null, "MedicareLimit 1 amount", 123, 124, fakeUser, this[1].dateCreated, this[1].dateUpdated),
-                History(null, "MedicareLimit 3 amount", 345, 346, fakeUser, this[2].dateCreated, this[2].dateUpdated)
+                History(
+                    null,
+                    "MedicareLimit 1 amount",
+                    "123",
+                    "124",
+                    fakeUser,
+                    this[1].dateCreated,
+                    this[1].dateUpdated
+                ),
+                History(
+                    null,
+                    "MedicareLimit 3 amount",
+                    "345",
+                    "346",
+                    fakeUser,
+                    this[2].dateCreated,
+                    this[2].dateUpdated
+                )
             )
         }
     }
@@ -166,13 +198,13 @@ open class UtilsTests {
                     null,
                     "Bill 1 sharedUser",
                     null,
-                    User(2, "randomuuid1", "random", "random@email.com", null, null, null, null, 1, 1),
+                    User(2, "randomuuid1", "random", "random@email.com", null, null, null, null, 1, 1).toJson(),
                     fakeUser,
                     this[1].dateCreated,
                     this[1].dateUpdated
                 ),
                 History(null, "Category 1 name", "cat1", "cat2", fakeUser, this[2].dateCreated, this[2].dateUpdated),
-                History(null, "Color 1 green", 255, 150, fakeUser, this[3].dateCreated, this[3].dateUpdated)
+                History(null, "Color 1 green", "255", "150", fakeUser, this[3].dateCreated, this[3].dateUpdated)
             )
         }
     }
@@ -242,8 +274,8 @@ open class UtilsTests {
                 History(
                     null,
                     "Bill 1 sharedUser",
-                    User(3, "randomuuid2", "random", "random@email.com", null, null, null, null, 1, 1),
-                    User(2, "randomuuid1", "random", "random@email.com", null, null, null, null, 1, 1),
+                    User(3, "randomuuid2", "random", "random@email.com", null, null, null, null, 1, 1).toJson(),
+                    User(2, "randomuuid1", "random", "random@email.com", null, null, null, null, 1, 1).toJson(),
                     fakeUser,
                     this[0].dateCreated,
                     this[0].dateUpdated
@@ -317,7 +349,7 @@ open class UtilsTests {
                     null,
                     "Bill 1 sharedUser",
                     null,
-                    User(3, "randomuuid2", "random", "random@email.com", null, null, null, null, 1, 1),
+                    User(3, "randomuuid2", "random", "random@email.com", null, null, null, null, 1, 1).toJson(),
                     fakeUser,
                     this[0].dateCreated,
                     this[0].dateUpdated
@@ -326,7 +358,7 @@ open class UtilsTests {
                     null,
                     "Bill 1 sharedUser",
                     null,
-                    User(2, "randomuuid1", "random", "random@email.com", null, null, null, null, 1, 1),
+                    User(2, "randomuuid1", "random", "random@email.com", null, null, null, null, 1, 1).toJson(),
                     fakeUser,
                     this[1].dateCreated,
                     this[1].dateUpdated
@@ -399,7 +431,7 @@ open class UtilsTests {
                 History(
                     null,
                     "Bill 1 sharedUser",
-                    User(3, "randomuuid2", "random", "random@email.com", null, null, null, null, 1, 1),
+                    User(3, "randomuuid2", "random", "random@email.com", null, null, null, null, 1, 1).toJson(),
                     null,
                     fakeUser,
                     this[0].dateCreated,
@@ -408,7 +440,7 @@ open class UtilsTests {
                 History(
                     null,
                     "Bill 1 sharedUser",
-                    User(2, "randomuuid1", "random", "random@email.com", null, null, null, null, 1, 1),
+                    User(2, "randomuuid1", "random", "random@email.com", null, null, null, null, 1, 1).toJson(),
                     null,
                     fakeUser,
                     this[1].dateCreated,

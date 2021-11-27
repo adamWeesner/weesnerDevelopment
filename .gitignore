@@ -1,4 +1,4 @@
-/backend/server/database.mv.db
+**/database.mv.db
 /server/weesnerDevelopment.*
 /server
 /**/build

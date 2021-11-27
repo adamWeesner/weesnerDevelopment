@@ -11,6 +11,3 @@ repositories { sharedRepos() }
 java { javaSource() }
 tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
 
-dependencies {
-    implementation(Kotlin.stdLib)
-}

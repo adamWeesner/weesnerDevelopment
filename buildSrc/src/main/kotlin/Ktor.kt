@@ -1,12 +1,14 @@
 object Ktor {
     private const val base = "io.ktor:ktor-"
 
-    const val version = "1.2.6"
+    const val version = "1.6.5"
 
     const val authJwt = "${base}auth-jwt:$version"
     const val metrics = "${base}metrics:$version"
     const val webSockets = "${base}websockets:$version"
     const val serverTest = "${base}server-tests:$version"
+    const val serialization = "${base}serialization:$version"
+    const val locations = "${base}locations:$version"
 
     object Server {
         const val mainClass = "io.ktor.server.netty.EngineMain"

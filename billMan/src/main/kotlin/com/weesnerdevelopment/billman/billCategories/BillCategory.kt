@@ -1,4 +1,4 @@
-package billCategories
+package com.weesnerdevelopment.billman.billCategories
 
 import com.weesnerdevelopment.shared.base.GenericItem
 import com.weesnerdevelopment.shared.currentTimeMillis

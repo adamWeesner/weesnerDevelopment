@@ -1,4 +1,4 @@
-package billMan
+package com.weesnerdevelopment.billMan
 
 import HttpLog
 import Path.BillMan

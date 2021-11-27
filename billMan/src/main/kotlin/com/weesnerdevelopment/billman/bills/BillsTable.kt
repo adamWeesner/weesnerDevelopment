@@ -1,4 +1,4 @@
-package bills
+package com.weesnerdevelopment.billman.bills
 
 import auth.UsersTable
 import generics.HistoricTable

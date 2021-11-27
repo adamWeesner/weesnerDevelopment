@@ -1,4 +1,4 @@
-package income
+package com.weesnerdevelopment.billman.income
 
 import BaseRouter
 import com.weesnerdevelopment.shared.base.GenericResponse

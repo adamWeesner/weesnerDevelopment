@@ -1,4 +1,4 @@
-package billCategories
+package com.weesnerdevelopment.billman.billCategories
 
 import com.weesnerdevelopment.billman.bills.BillsTable
 import com.weesnerdevelopment.billman.categories.CategoriesTable

@@ -1,4 +1,4 @@
-package payments
+package com.weesnerdevelopment.billman.payments
 
 import BaseService
 import auth.UsersService

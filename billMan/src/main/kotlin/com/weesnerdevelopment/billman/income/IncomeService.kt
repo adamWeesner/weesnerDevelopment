@@ -1,4 +1,4 @@
-package income
+package com.weesnerdevelopment.billman.income
 
 import BaseService
 import auth.UsersService

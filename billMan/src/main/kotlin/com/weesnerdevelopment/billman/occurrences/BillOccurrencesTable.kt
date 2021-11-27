@@ -1,7 +1,7 @@
-package occurrences
+package com.weesnerdevelopment.billman.occurrences
 
 import auth.UsersTable
-import bills.BillsTable
+import com.weesnerdevelopment.billman.bills.BillsTable
 import generics.HistoricTable
 import generics.IdTable
 import history.HistoryTable

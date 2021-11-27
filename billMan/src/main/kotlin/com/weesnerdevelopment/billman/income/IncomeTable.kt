@@ -1,4 +1,4 @@
-package income
+package com.weesnerdevelopment.billman.income
 
 import auth.UsersTable
 import generics.HistoricTable

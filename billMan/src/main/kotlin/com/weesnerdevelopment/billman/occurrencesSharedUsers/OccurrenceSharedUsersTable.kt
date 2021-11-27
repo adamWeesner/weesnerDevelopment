@@ -1,8 +1,8 @@
-package occurrencesSharedUsers
+package com.weesnerdevelopment.billman.occurrencesSharedUsers
 
 import auth.UsersTable
+import com.weesnerdevelopment.billman.occurrences.BillOccurrencesTable
 import generics.IdTable
-import occurrences.BillOccurrencesTable
 import org.jetbrains.exposed.sql.ReferenceOption
 
 object OccurrenceSharedUsersTable : IdTable() {

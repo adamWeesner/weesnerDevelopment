@@ -1,4 +1,4 @@
-package incomeOccurrences
+package com.weesnerdevelopment.billman.incomeOccurrences
 
 import auth.UsersTable
 import com.weesnerdevelopment.billman.income.IncomeTable

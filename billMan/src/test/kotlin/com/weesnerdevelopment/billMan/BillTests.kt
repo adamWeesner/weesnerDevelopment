@@ -1,35 +1,35 @@
-package billMan
+package com.weesnerdevelopment.billMan
 
-import BaseTest
 import Path
-import billCategories.BillCategoriesTable
-import billSharedUsers.BillsSharedUsersTable
-import bills.BillsTable
-import colors.ColorsTable
-import io.ktor.http.HttpStatusCode
+import com.weesnerdevelopment.billman.billCategories.BillCategoriesTable
+import com.weesnerdevelopment.billman.billSharedUsers.BillsSharedUsersTable
+import com.weesnerdevelopment.billman.bills.BillsTable
+import com.weesnerdevelopment.billman.colors.ColorsTable
+import com.weesnerdevelopment.billman.occurrences.BillOccurrencesTable
+import com.weesnerdevelopment.billman.occurrencesSharedUsers.OccurrenceSharedUsersTable
+import com.weesnerdevelopment.billman.payments.PaymentsTable
+import com.weesnerdevelopment.shared.auth.TokenResponse
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.billMan.Bill
+import com.weesnerdevelopment.shared.billMan.BillOccurrence
+import com.weesnerdevelopment.shared.billMan.Category
+import com.weesnerdevelopment.shared.billMan.Color
+import com.weesnerdevelopment.shared.billMan.responses.BillsResponse
+import com.weesnerdevelopment.shared.billMan.responses.CategoriesResponse
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.parseResponse
+import com.weesnerdevelopment.test.utils.shouldBe
+import io.ktor.http.*
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.NoContent
 import io.ktor.http.HttpStatusCode.Companion.OK
-import occurrences.BillOccurrencesTable
-import occurrencesSharedUsers.OccurrenceSharedUsersTable
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import parse
-import parseResponse
-import payments.PaymentsTable
-import shared.auth.TokenResponse
-import shared.auth.User
-import shared.billMan.Bill
-import shared.billMan.BillOccurrence
-import shared.billMan.Category
-import shared.billMan.Color
-import shared.billMan.responses.BillsResponse
-import shared.billMan.responses.CategoriesResponse
-import shouldBe
 
 class BillTests : BaseTest("application-test.conf") {
     val billStart = "randomBill"

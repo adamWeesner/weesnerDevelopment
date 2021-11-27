@@ -1,4 +1,4 @@
-package categories
+package com.weesnerdevelopment.billman.categories
 
 import BaseService
 import auth.UsersService

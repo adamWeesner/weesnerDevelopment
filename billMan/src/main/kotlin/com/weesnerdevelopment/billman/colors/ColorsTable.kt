@@ -1,6 +1,6 @@
-package colors
+package com.weesnerdevelopment.billman.colors
 
-import bills.BillsTable
+import com.weesnerdevelopment.billman.bills.BillsTable
 import generics.HistoricTable
 import generics.IdTable
 import history.HistoryTable

@@ -1,4 +1,4 @@
-package incomeOccurrences
+package com.weesnerdevelopment.billman.incomeOccurrences
 
 import BaseRouter
 import com.weesnerdevelopment.shared.base.GenericResponse

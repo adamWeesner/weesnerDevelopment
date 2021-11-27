@@ -1,4 +1,4 @@
-package billSharedUsers
+package com.weesnerdevelopment.billman.billSharedUsers
 
 import com.weesnerdevelopment.shared.base.GenericItem
 import com.weesnerdevelopment.shared.currentTimeMillis

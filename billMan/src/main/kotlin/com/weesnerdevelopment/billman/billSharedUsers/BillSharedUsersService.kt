@@ -1,4 +1,4 @@
-package billSharedUsers
+package com.weesnerdevelopment.billman.billSharedUsers
 
 import BaseService
 import auth.UsersService

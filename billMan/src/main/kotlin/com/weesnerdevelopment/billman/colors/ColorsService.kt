@@ -1,4 +1,4 @@
-package colors
+package com.weesnerdevelopment.billman.colors
 
 import BaseService
 import com.weesnerdevelopment.shared.billMan.Color

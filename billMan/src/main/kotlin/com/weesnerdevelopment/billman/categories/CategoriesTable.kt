@@ -1,4 +1,4 @@
-package categories
+package com.weesnerdevelopment.billman.categories
 
 import auth.UsersTable
 import generics.HistoricTable

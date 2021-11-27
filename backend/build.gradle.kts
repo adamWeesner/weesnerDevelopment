@@ -22,7 +22,6 @@ task("stage").dependsOn("installDist")
 dependencies {
     implementation(project(BusinessRules.project))
     implementation(project(TaxFetcher.project))
-    implementation(project(BillMan.project))
     implementation(project(BreathOfTheWild.project))
     implementation(project(SerialCabinet.project))
     implementation(Ktor.authJwt)

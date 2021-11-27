@@ -1,4 +1,4 @@
-package occurrences
+package com.weesnerdevelopment.billman.occurrences
 
 import BaseRouter
 import com.weesnerdevelopment.shared.auth.InvalidUserReason

@@ -1,4 +1,4 @@
-package occurrences
+package com.weesnerdevelopment.billman.occurrences
 
 import org.jetbrains.exposed.sql.Column
 

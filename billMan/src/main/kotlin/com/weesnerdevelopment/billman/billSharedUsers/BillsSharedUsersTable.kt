@@ -1,7 +1,7 @@
-package billSharedUsers
+package com.weesnerdevelopment.billman.billSharedUsers
 
 import auth.UsersTable
-import bills.BillsTable
+import com.weesnerdevelopment.billman.bills.BillsTable
 import generics.IdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 

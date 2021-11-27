@@ -40,13 +40,15 @@ sealed class Path {
      * The available paths at [basePath]/value.
      */
     object BillMan : Path() {
-        val basePath = "billMan/"
-        val bills = "${basePath}bills"
-        val categories = "${basePath}categories"
-        val income = "${basePath}income"
-        val occurrences = "$bills/occurrences"
-        val incomeOccurrences = "$income/occurrences"
-        val logging = "${basePath}logging"
+        private const val version = "v1"
+        const val basePath = "$version/billMan/"
+        const val health = "${basePath}health"
+        const val bills = "${basePath}bills"
+        const val categories = "${basePath}categories"
+        const val income = "${basePath}income"
+        const val occurrences = "$bills/occurrences"
+        const val incomeOccurrences = "$income/occurrences"
+        const val logging = "${basePath}logging"
     }
 
     /**

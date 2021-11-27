@@ -1,4 +1,4 @@
-package bills
+package com.weesnerdevelopment.billman.bills
 
 import BaseService
 import auth.UsersService

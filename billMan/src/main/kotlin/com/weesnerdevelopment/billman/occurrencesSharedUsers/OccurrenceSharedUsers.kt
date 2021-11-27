@@ -1,4 +1,4 @@
-package occurrencesSharedUsers
+package com.weesnerdevelopment.billman.occurrencesSharedUsers
 
 import com.weesnerdevelopment.shared.base.GenericItem
 import com.weesnerdevelopment.shared.currentTimeMillis

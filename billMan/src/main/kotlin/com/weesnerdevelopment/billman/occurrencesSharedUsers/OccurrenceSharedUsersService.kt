@@ -1,4 +1,4 @@
-package occurrencesSharedUsers
+package com.weesnerdevelopment.billman.occurrencesSharedUsers
 
 import BaseService
 import auth.UsersService

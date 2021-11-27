@@ -1,4 +1,4 @@
-package incomeOccurrences
+package com.weesnerdevelopment.billman.incomeOccurrences
 
 import BaseService
 import auth.UsersService

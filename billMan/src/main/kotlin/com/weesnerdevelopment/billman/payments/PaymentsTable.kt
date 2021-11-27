@@ -1,10 +1,10 @@
-package payments
+package com.weesnerdevelopment.billman.payments
 
 import auth.UsersTable
+import com.weesnerdevelopment.billman.occurrences.BillOccurrencesTable
 import generics.HistoricTable
 import generics.IdTable
 import history.HistoryTable
-import occurrences.BillOccurrencesTable
 import org.jetbrains.exposed.sql.ReferenceOption
 
 object PaymentsTable : IdTable(), HistoricTable {

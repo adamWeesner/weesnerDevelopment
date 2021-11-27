@@ -1,4 +1,4 @@
-package billCategories
+package com.weesnerdevelopment.billman.billCategories
 
 import BaseService
 import com.weesnerdevelopment.billman.categories.CategoriesService

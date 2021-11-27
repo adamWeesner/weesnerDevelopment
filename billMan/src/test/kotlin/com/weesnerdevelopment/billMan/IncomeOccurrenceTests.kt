@@ -1,4 +1,4 @@
-package billMan
+package com.weesnerdevelopment.billMan
 
 import Path
 import com.weesnerdevelopment.shared.auth.User

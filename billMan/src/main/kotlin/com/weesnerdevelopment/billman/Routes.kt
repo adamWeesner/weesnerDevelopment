@@ -1,17 +1,17 @@
-package com.weesnerdevelopment.routes
+package com.weesnerdevelopment.billman
 
-import bills.BillsRouter
-import categories.CategoriesRouter
-import income.IncomeRouter
-import incomeOccurrences.IncomeOccurrenceRouter
-import io.ktor.auth.authenticate
-import io.ktor.routing.Routing
+import com.weesnerdevelopment.billman.bills.BillsRouter
+import com.weesnerdevelopment.billman.categories.CategoriesRouter
+import com.weesnerdevelopment.billman.income.IncomeRouter
+import com.weesnerdevelopment.billman.incomeOccurrences.IncomeOccurrenceRouter
+import com.weesnerdevelopment.billman.occurrences.BillOccurrenceRouter
+import io.ktor.auth.*
+import io.ktor.routing.*
 import logging.LoggingRouter
-import occurrences.BillOccurrenceRouter
 import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 
-fun Routing.billManRoutes() {
+fun Routing.routes() {
     val billsRouter by kodein().instance<BillsRouter>()
     val categoriesRouter by kodein().instance<CategoriesRouter>()
     val incomeRouter by kodein().instance<IncomeRouter>()
@@ -19,12 +19,9 @@ fun Routing.billManRoutes() {
     val incomeOccurrencesRouter by kodein().instance<IncomeOccurrenceRouter>()
     val loggingRouter by kodein().instance<LoggingRouter>()
 
+    billsRouter.setup(this)
+
     authenticate {
-        billsRouter.apply {
-            authenticate {
-                setupRoutes()
-            }
-        }
         categoriesRouter.apply {
             authenticate {
                 setupRoutes()

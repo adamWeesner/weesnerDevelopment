@@ -1,8 +1,10 @@
 package breathOfTheWild.otherFood
 
 import BaseRouter
-import shared.zelda.OtherFood
-import shared.zelda.responses.OtherFoodsResponse
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.toJson
+import com.weesnerdevelopment.shared.zelda.OtherFood
+import com.weesnerdevelopment.shared.zelda.responses.OtherFoodsResponse
 import kotlin.reflect.full.createType
 
 data class OtherFoodsRouter(

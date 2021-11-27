@@ -1,8 +1,10 @@
 package breathOfTheWild.elixir
 
 import BaseRouter
-import shared.zelda.Elixir
-import shared.zelda.responses.ElixirsResponse
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.toJson
+import com.weesnerdevelopment.shared.zelda.Elixir
+import com.weesnerdevelopment.shared.zelda.responses.ElixirsResponse
 import kotlin.reflect.full.createType
 
 data class ElixirsRouter(

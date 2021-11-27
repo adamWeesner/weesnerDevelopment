@@ -3,10 +3,10 @@ package breathOfTheWild.otherFoodEffect
 import BaseService
 import breathOfTheWild.image.ImagesService
 import breathOfTheWild.image.ImagesTable
+import com.weesnerdevelopment.shared.base.InvalidAttributeException
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.base.InvalidAttributeException
 
 class OtherFoodEffectService(
     private val imagesService: ImagesService

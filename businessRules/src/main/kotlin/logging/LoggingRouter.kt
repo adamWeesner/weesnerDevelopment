@@ -1,6 +1,8 @@
 package logging
 
 import BaseRouter
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.toJson
 import io.ktor.http.cio.websocket.*
 import io.ktor.routing.*
 import io.ktor.websocket.*

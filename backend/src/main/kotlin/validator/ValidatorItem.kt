@@ -1,7 +1,7 @@
 package com.weesnerdevelopment.validator
 
-import shared.base.GenericItem
-import shared.currentTimeMillis
+import com.weesnerdevelopment.shared.base.GenericItem
+import com.weesnerdevelopment.shared.currentTimeMillis
 
 data class ValidatorItem(
     override val id: Int? = null,

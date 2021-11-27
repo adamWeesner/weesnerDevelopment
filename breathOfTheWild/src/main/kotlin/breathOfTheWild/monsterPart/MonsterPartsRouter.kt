@@ -1,8 +1,10 @@
 package breathOfTheWild.monsterPart
 
 import BaseRouter
-import shared.zelda.MonsterPart
-import shared.zelda.responses.MonsterPartsResponse
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.toJson
+import com.weesnerdevelopment.shared.zelda.MonsterPart
+import com.weesnerdevelopment.shared.zelda.responses.MonsterPartsResponse
 import kotlin.reflect.full.createType
 
 data class MonsterPartsRouter(

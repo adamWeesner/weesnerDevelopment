@@ -1,13 +1,15 @@
 package medicare
 
 import auth.UsersService
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.taxFetcher.Medicare
+import com.weesnerdevelopment.shared.taxFetcher.responses.MedicareResponse
+import com.weesnerdevelopment.shared.toJson
 import generics.GenericRouter
 import history.HistoryService
 import io.ktor.application.ApplicationCall
 import io.ktor.util.pipeline.PipelineContext
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import shared.taxFetcher.Medicare
-import shared.taxFetcher.responses.MedicareResponse
 
 class MedicareRouter(
     basePath: String,

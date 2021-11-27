@@ -1,7 +1,7 @@
 package breathOfTheWild.roastedFoodEffect
 
-import shared.base.GenericItem
-import shared.currentTimeMillis
+import com.weesnerdevelopment.shared.base.GenericItem
+import com.weesnerdevelopment.shared.currentTimeMillis
 
 data class RoastedFoodEffect(
     override val id: Int?,

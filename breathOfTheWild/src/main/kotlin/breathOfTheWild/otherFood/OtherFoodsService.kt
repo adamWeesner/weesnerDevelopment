@@ -7,12 +7,12 @@ import breathOfTheWild.otherFoodEffect.OtherFoodEffect
 import breathOfTheWild.otherFoodEffect.OtherFoodEffectService
 import breathOfTheWild.otherFoodIngredients.OtherFoodIngredient
 import breathOfTheWild.otherFoodIngredients.OtherFoodIngredientsService
+import com.weesnerdevelopment.shared.zelda.OtherFood
 import isNotValidId
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.zelda.OtherFood
 
 class OtherFoodsService(
     private val imagesService: ImagesService,

@@ -1,7 +1,7 @@
 package breathOfTheWild.frozenFoodIngredients
 
-import shared.base.GenericItem
-import shared.currentTimeMillis
+import com.weesnerdevelopment.shared.base.GenericItem
+import com.weesnerdevelopment.shared.currentTimeMillis
 
 data class FrozenFoodIngredient(
     override val id: Int?,

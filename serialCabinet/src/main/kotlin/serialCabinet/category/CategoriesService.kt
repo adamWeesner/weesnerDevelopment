@@ -1,10 +1,10 @@
 package serialCabinet.category
 
 import BaseService
+import com.weesnerdevelopment.shared.serialCabinet.Category
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.serialCabinet.Category
 
 class CategoriesService : BaseService<SerialCategoriesTable, Category>(
     SerialCategoriesTable

@@ -1,6 +1,6 @@
 package logging
 
-import shared.base.GenericItem
+import com.weesnerdevelopment.shared.base.GenericItem
 
 data class Logger(
     override val id: Int? = null,

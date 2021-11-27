@@ -1,15 +1,15 @@
 package history
 
 import BaseService
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.base.GenericItem
+import com.weesnerdevelopment.shared.base.History
+import com.weesnerdevelopment.shared.base.InvalidAttributeException
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.auth.User
-import shared.base.GenericItem
-import shared.base.History
-import shared.base.InvalidAttributeException
 
 class HistoryService : BaseService<HistoryTable, History>(
     HistoryTable

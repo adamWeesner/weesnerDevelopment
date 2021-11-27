@@ -9,12 +9,12 @@ import breathOfTheWild.ingredientDuration.IngredientDuration
 import breathOfTheWild.ingredientDuration.IngredientDurationService
 import breathOfTheWild.ingredientHearts.IngredientHeart
 import breathOfTheWild.ingredientHearts.IngredientHeartsService
+import com.weesnerdevelopment.shared.zelda.Ingredient
 import isNotValidId
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.zelda.Ingredient
 
 class IngredientsService(
     private val imagesService: ImagesService,

@@ -1,7 +1,17 @@
 package serialCabinet
 
-import BaseTest
 import Path
+import com.weesnerdevelopment.shared.currentTimeMillis
+import com.weesnerdevelopment.shared.serialCabinet.Category
+import com.weesnerdevelopment.shared.serialCabinet.Electronic
+import com.weesnerdevelopment.shared.serialCabinet.Manufacturer
+import com.weesnerdevelopment.shared.serialCabinet.responses.CategoriesResponse
+import com.weesnerdevelopment.shared.serialCabinet.responses.ElectronicsResponse
+import com.weesnerdevelopment.shared.serialCabinet.responses.ManufacturersResponse
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.parseResponse
+import com.weesnerdevelopment.test.utils.shouldBe
+import com.weesnerdevelopment.test.utils.shouldNotBe
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.Created
@@ -16,20 +26,10 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import parseResponse
 import serialCabinet.category.SerialCategoriesTable
 import serialCabinet.electronic.ElectronicsTable
 import serialCabinet.itemCategories.SerialItemCategoriesTable
 import serialCabinet.manufacturer.ManufacturersTable
-import shared.currentTimeMillis
-import shared.serialCabinet.Category
-import shared.serialCabinet.Electronic
-import shared.serialCabinet.Manufacturer
-import shared.serialCabinet.responses.CategoriesResponse
-import shared.serialCabinet.responses.ElectronicsResponse
-import shared.serialCabinet.responses.ManufacturersResponse
-import shouldBe
-import shouldNotBe
 
 @KtorExperimentalAPI
 class ElectronicTests : BaseTest() {

@@ -269,7 +269,7 @@ data class Builder(
             val name = it.substringBefore(":")
             "row[table.$name]," to "this[table.$name] = item.$name"
         }
-        val extraImports = if (!nullable) "\nimport shared.base.InvalidAttributeException" else ""
+        val extraImports = if (!nullable) "\nimport com.weesnerdevelopment.shared.base.InvalidAttributeException" else ""
 
         GeneratorFile.create("${entryInfo.subDirectory.path}/${entryInfo.className}Service.kt").save {
             Template("relationshipService").update {

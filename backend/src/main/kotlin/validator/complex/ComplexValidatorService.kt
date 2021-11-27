@@ -2,17 +2,16 @@ package com.weesnerdevelopment.validator.complex
 
 import BaseService
 import auth.UsersService
-import categories.CategoriesService
+import com.weesnerdevelopment.shared.base.History
+import com.weesnerdevelopment.shared.base.InvalidAttributeException
+import com.weesnerdevelopment.shared.billMan.Category
 import diff
 import history.HistoryService
+import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
-import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.base.History
-import shared.base.InvalidAttributeException
-import shared.billMan.Category
 
 class ComplexValidatorService(
     private val usersService: UsersService,

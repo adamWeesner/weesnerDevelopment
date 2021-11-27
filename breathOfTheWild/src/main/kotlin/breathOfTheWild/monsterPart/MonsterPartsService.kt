@@ -1,10 +1,10 @@
 package breathOfTheWild.monsterPart
 
 import BaseService
+import com.weesnerdevelopment.shared.zelda.MonsterPart
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.zelda.MonsterPart
 
 class MonsterPartsService : BaseService<MonsterPartsTable, MonsterPart>(
     MonsterPartsTable

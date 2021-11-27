@@ -1,12 +1,11 @@
 package com.weesnerdevelopment.validator.complex
 
-import shared.auth.User
-import shared.base.GenericItem
-import shared.base.History
-import shared.base.HistoryItem
-import shared.base.OwnedItem
-import shared.billMan.Category
-import shared.currentTimeMillis
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.base.GenericItem
+import com.weesnerdevelopment.shared.base.History
+import com.weesnerdevelopment.shared.base.HistoryItem
+import com.weesnerdevelopment.shared.base.OwnedItem
+import com.weesnerdevelopment.shared.currentTimeMillis
 
 data class ComplexValidatorItem(
     override val id: Int? = null,

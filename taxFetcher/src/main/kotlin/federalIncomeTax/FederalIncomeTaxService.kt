@@ -1,11 +1,11 @@
 package federalIncomeTax
 
+import com.weesnerdevelopment.shared.taxFetcher.FederalIncomeTax
+import com.weesnerdevelopment.shared.taxFetcher.MaritalStatus
+import com.weesnerdevelopment.shared.taxFetcher.PayPeriod
 import generics.GenericService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.taxFetcher.FederalIncomeTax
-import shared.taxFetcher.MaritalStatus
-import shared.taxFetcher.PayPeriod
 
 class FederalIncomeTaxService : GenericService<FederalIncomeTax, FederalIncomeTaxesTable>(
     FederalIncomeTaxesTable

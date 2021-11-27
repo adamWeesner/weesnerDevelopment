@@ -1,24 +1,24 @@
 package taxFetcher
 
-import BaseTest
-import BuiltRequest
 import Path
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.base.History
+import com.weesnerdevelopment.shared.taxFetcher.PayPeriod.Biweekly
+import com.weesnerdevelopment.shared.taxFetcher.PayPeriod.Weekly
+import com.weesnerdevelopment.shared.taxFetcher.TaxWithholding
+import com.weesnerdevelopment.shared.taxFetcher.TaxWithholdingTypes.General
+import com.weesnerdevelopment.shared.taxFetcher.responses.TaxWithholdingResponse
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.BuiltRequest
+import com.weesnerdevelopment.test.utils.parseResponse
+import com.weesnerdevelopment.test.utils.shouldBe
+import io.ktor.http.*
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
-import io.ktor.http.HttpStatusCode
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import parseResponse
-import shared.auth.User
-import shared.base.History
-import shared.taxFetcher.PayPeriod.Biweekly
-import shared.taxFetcher.PayPeriod.Weekly
-import shared.taxFetcher.TaxWithholding
-import shared.taxFetcher.TaxWithholdingTypes.General
-import shared.taxFetcher.responses.TaxWithholdingResponse
-import shouldBe
 
 class TaxWithholdingTests : BaseTest() {
     fun newItem(year: Int) = TaxWithholding(

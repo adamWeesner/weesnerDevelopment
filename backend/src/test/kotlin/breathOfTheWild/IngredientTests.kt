@@ -1,8 +1,14 @@
 package breathOfTheWild
 
-import BaseTest
 import Path
 import breathOfTheWild.image.ImagesResponse
+import com.weesnerdevelopment.shared.zelda.Image
+import com.weesnerdevelopment.shared.zelda.Ingredient
+import com.weesnerdevelopment.shared.zelda.responses.IngredientsResponse
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.parseResponse
+import com.weesnerdevelopment.test.utils.shouldBe
+import com.weesnerdevelopment.test.utils.shouldNotBe
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.Created
@@ -13,12 +19,6 @@ import io.ktor.util.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import parseResponse
-import shared.zelda.Image
-import shared.zelda.Ingredient
-import shared.zelda.responses.IngredientsResponse
-import shouldBe
-import shouldNotBe
 
 @KtorExperimentalAPI
 class IngredientTests : BaseTest() {

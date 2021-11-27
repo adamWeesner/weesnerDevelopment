@@ -1,11 +1,11 @@
 package medicare
 
+import com.weesnerdevelopment.shared.taxFetcher.Medicare
 import dbQuery
 import generics.GenericService
 import model.ChangeType
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.taxFetcher.Medicare
 
 class MedicareService(
     private val limitsService: MedicareLimitsService

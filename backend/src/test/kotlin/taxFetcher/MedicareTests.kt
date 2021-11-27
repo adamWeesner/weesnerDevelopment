@@ -1,25 +1,25 @@
 package taxFetcher
 
-import BaseTest
-import BuiltRequest
 import Path
+import com.weesnerdevelopment.shared.taxFetcher.MaritalStatus.Single
+import com.weesnerdevelopment.shared.taxFetcher.Medicare
+import com.weesnerdevelopment.shared.taxFetcher.MedicareLimit
+import com.weesnerdevelopment.shared.taxFetcher.responses.MedicareResponse
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.BuiltRequest
+import com.weesnerdevelopment.test.utils.parseResponse
+import com.weesnerdevelopment.test.utils.shouldBe
+import io.ktor.http.*
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
-import io.ktor.http.HttpStatusCode
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import parseResponse
-import shared.taxFetcher.MaritalStatus.Single
-import shared.taxFetcher.Medicare
-import shared.taxFetcher.MedicareLimit
-import shared.taxFetcher.responses.MedicareResponse
-import shouldBe
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class MedicareTests : BaseTest() {
+class MedicareTests : BaseTest("application-test.conf") {
     fun newItem(year: Int) = Medicare(
         year = year,
         percent = 6.25,

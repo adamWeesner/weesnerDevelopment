@@ -4,14 +4,14 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.DecodedJWT
-import shared.auth.HashedUser
+import com.weesnerdevelopment.shared.auth.HashedUser
 import java.util.*
 
 class JwtProvider(
     private val issuer: String,
     private val audience: String,
     private val validFor: Long,
-    private val cipher: auth.Cipher
+    private val cipher: Cipher
 ) {
     /**
      * Builds a [JWTVerifier] with the given [issuer].

@@ -1,14 +1,16 @@
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.base.GenericItem
+import com.weesnerdevelopment.shared.base.History
+import com.weesnerdevelopment.shared.billMan.Bill
+import com.weesnerdevelopment.shared.billMan.Category
+import com.weesnerdevelopment.shared.billMan.Color
+import com.weesnerdevelopment.shared.taxFetcher.MaritalStatus
+import com.weesnerdevelopment.shared.taxFetcher.Medicare
+import com.weesnerdevelopment.shared.taxFetcher.MedicareLimit
+import com.weesnerdevelopment.shared.taxFetcher.SocialSecurity
+import com.weesnerdevelopment.shared.toJson
+import com.weesnerdevelopment.test.utils.shouldBe
 import org.junit.jupiter.api.Test
-import shared.auth.User
-import shared.base.GenericItem
-import shared.base.History
-import shared.billMan.Bill
-import shared.billMan.Category
-import shared.billMan.Color
-import shared.taxFetcher.MaritalStatus
-import shared.taxFetcher.Medicare
-import shared.taxFetcher.MedicareLimit
-import shared.taxFetcher.SocialSecurity
 
 open class UtilsTests {
     val fakeUser =

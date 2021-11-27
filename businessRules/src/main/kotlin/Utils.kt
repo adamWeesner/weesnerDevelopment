@@ -1,4 +1,12 @@
 import auth.CustomPrincipal
+import com.weesnerdevelopment.shared.auth.InvalidUserException
+import com.weesnerdevelopment.shared.auth.InvalidUserReason
+import com.weesnerdevelopment.shared.base.GenericItem
+import com.weesnerdevelopment.shared.base.Response
+import com.weesnerdevelopment.shared.base.Response.Companion.InternalError
+import com.weesnerdevelopment.shared.base.Response.Companion.Unauthorized
+import com.weesnerdevelopment.shared.base.ServerError
+import com.weesnerdevelopment.shared.fromJson
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
@@ -10,14 +18,6 @@ import kimchi.Kimchi
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import shared.auth.InvalidUserException
-import shared.auth.InvalidUserReason
-import shared.base.GenericItem
-import shared.base.Response
-import shared.base.Response.Companion.InternalError
-import shared.base.Response.Companion.Unauthorized
-import shared.base.ServerError
-import shared.fromJson
 
 /**
  * Helper function to query [T] in the table.
@@ -71,7 +71,7 @@ suspend fun PipelineContext<*, ApplicationCall>.respond(response: Response) = re
 
         Kimchi.debug("<-- ${call.request.origin.version} (${time}ms)")
         Kimchi.debug("Response: $message")
-        Kimchi.debug("<-- END HTTP (${response.message.toString().toByteArray().size}-byte body)")
+        Kimchi.debug("<-- END HTTP (${message.toString().toByteArray().size}-byte body)")
     }
 }
 
@@ -84,7 +84,7 @@ suspend fun PipelineContext<*, ApplicationCall>.respondError(error: Response) = 
 
     call.respond(
         HttpStatusCode(status.code, status.description),
-        ServerError(status.description, status.code, message)
+        ServerError(status.description, status.code, message ?: "")
     ).also {
         val callItem = callItems.firstOrNull { it.instance == this@respondError.toString() }
         callItems.remove(callItem)

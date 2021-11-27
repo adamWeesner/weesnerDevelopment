@@ -1,10 +1,10 @@
 package breathOfTheWild.elixirIngredients
 
 import BaseService
+import com.weesnerdevelopment.shared.base.InvalidAttributeException
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.base.InvalidAttributeException
 
 class ElixirIngredientsService : BaseService<ElixirIngredientsTable, ElixirIngredient>(
     ElixirIngredientsTable

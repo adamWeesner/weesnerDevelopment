@@ -1,12 +1,12 @@
 package medicare
 
+import com.weesnerdevelopment.shared.taxFetcher.MaritalStatus
+import com.weesnerdevelopment.shared.taxFetcher.MedicareLimit
 import dbQuery
 import generics.GenericService
 import model.ChangeType
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.taxFetcher.MaritalStatus
-import shared.taxFetcher.MedicareLimit
 
 class MedicareLimitsService : GenericService<MedicareLimit, MedicareLimitsTable>(
     MedicareLimitsTable

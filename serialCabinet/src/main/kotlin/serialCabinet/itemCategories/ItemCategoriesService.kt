@@ -1,11 +1,11 @@
 package serialCabinet.itemCategories
 
 import BaseService
+import com.weesnerdevelopment.shared.base.InvalidAttributeException
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import serialCabinet.category.CategoriesService
-import shared.base.InvalidAttributeException
 
 class ItemCategoriesService(
     private val categoriesService: CategoriesService

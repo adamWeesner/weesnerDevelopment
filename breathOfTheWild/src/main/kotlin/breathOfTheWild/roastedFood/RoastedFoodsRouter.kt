@@ -1,8 +1,10 @@
 package breathOfTheWild.roastedFood
 
 import BaseRouter
-import shared.zelda.RoastedFood
-import shared.zelda.responses.RoastedFoodsResponse
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.toJson
+import com.weesnerdevelopment.shared.zelda.RoastedFood
+import com.weesnerdevelopment.shared.zelda.responses.RoastedFoodsResponse
 import kotlin.reflect.full.createType
 
 data class RoastedFoodsRouter(

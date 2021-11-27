@@ -1,7 +1,7 @@
 package logging
 
-import shared.base.GenericResponse
+import com.weesnerdevelopment.shared.base.GenericResponse
 
 data class LoggingResponse(
-    override var items: List<Logger>? = null
+    override var items: List<Logger> = emptyList()
 ) : GenericResponse<Logger>

@@ -1,7 +1,8 @@
-import shared.auth.User
-import shared.base.GenericItem
-import shared.base.History
-import shared.base.HistoryItem
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.base.GenericItem
+import com.weesnerdevelopment.shared.base.History
+import com.weesnerdevelopment.shared.base.HistoryItem
+import com.weesnerdevelopment.shared.toJson
 import kotlin.reflect.full.declaredMemberProperties
 
 /**

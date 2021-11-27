@@ -1,8 +1,8 @@
 package auth
 
+import com.weesnerdevelopment.shared.auth.HashedUser
+import com.weesnerdevelopment.shared.auth.InvalidUserReason
 import org.apache.commons.codec.binary.Base64
-import shared.auth.HashedUser
-import shared.auth.InvalidUserReason
 
 /**
  * Verify data being passed for username and password are only made up of valid [Base64] string data.

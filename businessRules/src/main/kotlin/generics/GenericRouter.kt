@@ -1,30 +1,28 @@
 package generics
 
 import auth.UsersService
+import com.weesnerdevelopment.shared.auth.HashedUser
+import com.weesnerdevelopment.shared.auth.InvalidUserReason
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.base.*
+import com.weesnerdevelopment.shared.base.Response.Companion.BadRequest
+import com.weesnerdevelopment.shared.base.Response.Companion.Conflict
+import com.weesnerdevelopment.shared.base.Response.Companion.Created
+import com.weesnerdevelopment.shared.base.Response.Companion.NotFound
+import com.weesnerdevelopment.shared.base.Response.Companion.Ok
 import diff
 import history.HistoryService
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.cio.websocket.DefaultWebSocketSession
-import io.ktor.http.cio.websocket.Frame
-import io.ktor.request.receive
+import io.ktor.application.*
+import io.ktor.http.*
+import io.ktor.http.cio.websocket.*
+import io.ktor.request.*
 import io.ktor.routing.*
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.util.pipeline.*
 import loggedUserData
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import parse
 import respond
 import respondErrorAuthorizing
-import shared.auth.HashedUser
-import shared.auth.InvalidUserReason
-import shared.auth.User
-import shared.base.*
-import shared.base.Response.Companion.BadRequest
-import shared.base.Response.Companion.Conflict
-import shared.base.Response.Companion.Created
-import shared.base.Response.Companion.NotFound
-import shared.base.Response.Companion.Ok
 import kotlin.reflect.KType
 
 /**

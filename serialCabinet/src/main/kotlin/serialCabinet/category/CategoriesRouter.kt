@@ -1,8 +1,10 @@
 package serialCabinet.category
 
 import BaseRouter
-import shared.serialCabinet.Category
-import shared.serialCabinet.responses.CategoriesResponse
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.serialCabinet.Category
+import com.weesnerdevelopment.shared.serialCabinet.responses.CategoriesResponse
+import com.weesnerdevelopment.shared.toJson
 import kotlin.reflect.full.createType
 
 data class CategoriesRouter(

@@ -1,21 +1,21 @@
 package taxFetcher
 
-import BaseTest
-import BuiltRequest
 import Path
+import com.weesnerdevelopment.shared.taxFetcher.FederalIncomeTax
+import com.weesnerdevelopment.shared.taxFetcher.MaritalStatus.Single
+import com.weesnerdevelopment.shared.taxFetcher.PayPeriod.Weekly
+import com.weesnerdevelopment.shared.taxFetcher.responses.FederalIncomeTaxResponse
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.BuiltRequest
+import com.weesnerdevelopment.test.utils.parseResponse
+import com.weesnerdevelopment.test.utils.shouldBe
+import io.ktor.http.*
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
-import io.ktor.http.HttpStatusCode
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import parseResponse
-import shared.taxFetcher.FederalIncomeTax
-import shared.taxFetcher.MaritalStatus.Single
-import shared.taxFetcher.PayPeriod.Weekly
-import shared.taxFetcher.responses.FederalIncomeTaxResponse
-import shouldBe
 
 class FederalIncomeTaxTests : BaseTest() {
     fun newItem(year: Int) = FederalIncomeTax(

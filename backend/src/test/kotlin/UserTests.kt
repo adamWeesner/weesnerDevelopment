@@ -1,8 +1,10 @@
+import com.weesnerdevelopment.shared.auth.*
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.shouldBe
 import io.ktor.http.*
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import shared.auth.*
 import java.util.*
 import kotlin.random.Random
 

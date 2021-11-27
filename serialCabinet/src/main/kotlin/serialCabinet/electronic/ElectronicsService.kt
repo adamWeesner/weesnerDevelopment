@@ -2,6 +2,11 @@ package serialCabinet.electronic
 
 import BaseService
 import auth.UsersService
+import com.weesnerdevelopment.shared.base.History
+import com.weesnerdevelopment.shared.base.InvalidAttributeException
+import com.weesnerdevelopment.shared.billMan.Bill
+import com.weesnerdevelopment.shared.billMan.Category
+import com.weesnerdevelopment.shared.serialCabinet.Electronic
 import diff
 import history.HistoryService
 import isNotValidId
@@ -11,11 +16,6 @@ import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 import serialCabinet.itemCategories.ItemCategories
 import serialCabinet.itemCategories.ItemCategoriesService
 import serialCabinet.manufacturer.ManufacturersService
-import shared.base.History
-import shared.base.InvalidAttributeException
-import shared.billMan.Bill
-import shared.billMan.Category
-import shared.serialCabinet.Electronic
 
 class ElectronicsService(
     private val manufacturersService: ManufacturersService,

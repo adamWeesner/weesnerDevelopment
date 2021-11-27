@@ -29,10 +29,11 @@ sealed class Path {
      * The available paths at [base]/value.
      */
     object User : Path() {
-        const val base = "user"
-        const val account = "/account"
-        const val login = "/login"
-        const val signUp = "/signUp"
+        const val base = "user/"
+        const val account = "account"
+        const val login = "login"
+        const val signUp = "signUp"
+        const val logging = "logging"
     }
 
     /**

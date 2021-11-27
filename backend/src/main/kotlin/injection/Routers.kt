@@ -1,6 +1,8 @@
 package com.weesnerdevelopment.injection
 
 import Path.*
+import auth.Cipher
+import auth.JwtProvider
 import auth.UserRouter
 import bills.BillsRouter
 import breathOfTheWild.cookingPotFood.CookingPotFoodsRouter
@@ -33,6 +35,11 @@ import taxWithholding.TaxWithholdingRouter
 import serialCabinet.category.CategoriesRouter as SerialCategoriesRouter
 
 val routers = Kodein.Module("routers") {
+    bind<JwtProvider>() with singleton {
+        val appConfig = instance<AppConfig>()
+        JwtProvider(appConfig.issuer, appConfig.audience, appConfig.expiresIn, Cipher(appConfig.secret))
+    }
+
     bind<ValidatorRouter>() with singleton { ValidatorRouter(Server.validation, instance()) }
     bind<ComplexValidatorRouter>() with singleton { ComplexValidatorRouter(Server.complexValidation, instance()) }
     // user

@@ -13,6 +13,7 @@ import com.weesnerdevelopment.DbLogger
 import com.weesnerdevelopment.injection.kodeinSetup
 import com.weesnerdevelopment.routes.*
 import com.weesnerdevelopment.seed.breathOfTheWildSeed
+import com.weesnerdevelopment.shared.auth.InvalidUserReason
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -30,7 +31,6 @@ import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 import respondErrorAuthorizing
 import respondErrorServer
-import shared.auth.InvalidUserReason
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
@@ -115,7 +115,6 @@ object DatabaseServer {
         }
         install(Routing) {
             serverRoutes()
-            userRoutes()
             taxFetcherRoutes()
             billManRoutes()
             breathOfTheWildRoutes()

@@ -1,7 +1,7 @@
-package com.weesnerdevelopment.routes
+package com.weesnerdevelopment.auth
 
 import auth.UserRouter
-import io.ktor.routing.Routing
+import io.ktor.routing.*
 import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 

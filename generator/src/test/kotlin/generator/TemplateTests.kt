@@ -1,5 +1,6 @@
 package generator
 
+import com.weesnerdevelopment.test.utils.shouldBe
 import generator.classes.Template
 import kotlin.test.Test
 

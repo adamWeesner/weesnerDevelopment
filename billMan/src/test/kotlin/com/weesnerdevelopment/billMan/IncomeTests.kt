@@ -21,7 +21,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
-class IncomeTests : BaseTest() {
+class IncomeTests : BaseTest("application-test.conf") {
     val path = BillMan.income
     var counter = 1
 

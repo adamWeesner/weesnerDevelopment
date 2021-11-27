@@ -1,6 +1,6 @@
 package com.weesnerdevelopment
 
-import io.ktor.config.ApplicationConfig
+import io.ktor.config.*
 import kimchi.Kimchi
 import java.net.InetAddress
 
@@ -19,8 +19,9 @@ class AppConfig(
     val secret = getJwt("secret")
     val expiresIn = getJwt("expiresIn").toLong()
 
-    val baseUrl get() = if (isDevelopment) getLocalIp() else "weesnerDevelopment.com"
+    val baseUrl get() = if (isDevelopment || isTesting) getLocalIp() else "weesnerDevelopment.com"
     val isDevelopment get() = appEnv == Environment.development.name
+    val isTesting get() = appEnv == Environment.testing.name
 
     private fun getDeployment(item: String) = config.property("$deployment.$item").getString()
     private fun getJwt(item: String) = config.property("$jwt.$item").getString()
@@ -36,5 +37,5 @@ class AppConfig(
  * Which environment we are running in.
  */
 enum class Environment {
-    development, production
+    development, production, testing
 }

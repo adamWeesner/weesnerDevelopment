@@ -9,7 +9,7 @@ import java.util.*
 import kotlin.random.Random
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class UserTests : BaseTest() {
+class UserTests : BaseTest("application-test.conf") {
     val newUser
         get() = User(
             name = "Adam",

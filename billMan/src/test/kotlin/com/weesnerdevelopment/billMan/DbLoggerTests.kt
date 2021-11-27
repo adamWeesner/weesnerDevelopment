@@ -18,7 +18,7 @@ import org.junit.jupiter.api.*
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class DbLoggerTests : BaseTest() {
+class DbLoggerTests : BaseTest("application-test.conf") {
     @Test
     @Order(1)
     fun `adding an item adds to logs`() {

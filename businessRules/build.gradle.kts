@@ -15,7 +15,6 @@ tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
 
 dependencies {
     api(fileTree("../libs") { include("*.jar") })
-    api(Kotlin.stdLib)
     implementation(Ktor.Server.core)
     implementation(Ktor.Server.netty)
     implementation(Ktor.webSockets)

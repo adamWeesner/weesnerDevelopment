@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
-class ComplexValidationTests : BaseTest() {
+class ComplexValidationTests : BaseTest("application-test.conf") {
     val path = Server.complexValidation
     var counter = 1
     lateinit var category: Category

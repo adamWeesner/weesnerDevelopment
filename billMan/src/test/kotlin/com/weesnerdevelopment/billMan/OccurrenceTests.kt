@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class OccurrenceTests : BaseTest() {
+class OccurrenceTests : BaseTest("application-test.conf") {
     lateinit var startBill: Bill
 
     @BeforeAll

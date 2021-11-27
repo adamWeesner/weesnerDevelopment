@@ -1,12 +1,14 @@
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.server.testing.TestApplicationEngine
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.setBody
-import shared.base.Response
-import shared.base.ServerError
-import shared.toJson
+package com.weesnerdevelopment.test.utils
+
+import com.typesafe.config.ConfigFactory
+import com.weesnerdevelopment.shared.base.Response
+import com.weesnerdevelopment.shared.base.ServerError
+import com.weesnerdevelopment.shared.toJson
+import io.ktor.config.*
+import io.ktor.http.*
+import io.ktor.server.testing.*
+import parse
+import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
@@ -48,7 +50,7 @@ class BuiltRequest(
      * [send] the request returning the response as [T].
      */
     inline fun <reified T, reified R> asServerError(body: T? = null) =
-        send(body).response.content.parse<ServerError>().message.toJson().parse<R>()
+        send(body).response.content.parse<ServerError>().message.parse<R>()
 
     /**
      * [send] the request returning the response as [T].

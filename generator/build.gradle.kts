@@ -19,7 +19,5 @@ dependencies {
     implementation(project(BusinessRules.project))
     implementation("com.github.ajalt.clikt:clikt:3.0.1")
 
-    testImplementation(Kotlin.Test.core)
-    testImplementation(Kotlin.Test.junit5)
-    testImplementation(Junit.core)
+    testImplementation(project(TestUtils.project))
 }

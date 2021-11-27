@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/generator" />
             <option value="$PROJECT_DIR$/serialCabinet" />
             <option value="$PROJECT_DIR$/taxFetcher" />
+            <option value="$PROJECT_DIR$/testUtils" />
           </set>
         </option>
       </GradleProjectSettings>

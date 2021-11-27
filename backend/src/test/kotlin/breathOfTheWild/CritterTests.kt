@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
 @KtorExperimentalAPI
-class CritterTests : BaseTest() {
+class CritterTests : BaseTest("application-test.conf") {
     private fun newItem(addition: Int, id: Int? = null) = Critter(
         id,
         addition.toString(),

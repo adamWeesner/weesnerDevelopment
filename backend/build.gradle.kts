@@ -25,7 +25,6 @@ dependencies {
     implementation(project(BillMan.project))
     implementation(project(BreathOfTheWild.project))
     implementation(project(SerialCabinet.project))
-    implementation(Kotlin.reflect)
     implementation(Ktor.authJwt)
     implementation(Ktor.webSockets)
     implementation(Ktor.metrics)
@@ -46,8 +45,5 @@ dependencies {
     implementation(Logback.core)
     implementation(Kimchi.core)
 
-    testImplementation(Ktor.serverTest)
-    testImplementation(Kotlin.Test.core)
-    testImplementation(Kotlin.Test.junit5)
-    testImplementation(Junit.core)
+    testImplementation(project(TestUtils.project))
 }

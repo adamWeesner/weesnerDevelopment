@@ -19,9 +19,9 @@ import java.io.File
 @OptIn(KtorExperimentalAPI::class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-open class BaseTest {
+open class BaseTest(configPath: String) {
     val engine = TestApplicationEngine(createTestEnvironment {
-        config = HoconApplicationConfig(ConfigFactory.load("application-test.conf"))
+        config = HoconApplicationConfig(ConfigFactory.load(configPath))
     })
 
     var token: String = ""

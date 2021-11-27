@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
 @KtorExperimentalAPI
-class CookingPotFoodTests : BaseTest() {
+class CookingPotFoodTests : BaseTest("application-test.conf") {
     private lateinit var image: Image
 
     private fun newItem(addition: Int, id: Int? = null) = CookingPotFood(

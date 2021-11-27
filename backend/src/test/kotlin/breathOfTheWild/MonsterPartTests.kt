@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
 @KtorExperimentalAPI
-class MonsterPartTests : BaseTest() {
+class MonsterPartTests : BaseTest("application-test.conf") {
     private fun newItem(addition: Int, id: Int? = null) = MonsterPart(
         id,
         addition.toString(),

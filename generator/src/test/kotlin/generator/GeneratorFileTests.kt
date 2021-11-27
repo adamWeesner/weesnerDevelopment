@@ -1,5 +1,6 @@
 package generator
 
+import com.weesnerdevelopment.test.utils.shouldBe
 import generator.classes.GeneratorFile
 import org.junit.jupiter.api.Test
 

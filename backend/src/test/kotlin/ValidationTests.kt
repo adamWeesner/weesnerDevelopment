@@ -12,7 +12,7 @@ import io.ktor.http.HttpStatusCode.Companion.OK
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
-class ValidationTests : BaseTest() {
+class ValidationTests : BaseTest("application-test.conf") {
     private var counter = 1
     private val item: ValidatorItem
         get() = ValidatorItem(

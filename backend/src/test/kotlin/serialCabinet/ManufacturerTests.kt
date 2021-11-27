@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
 @KtorExperimentalAPI
-class ManufacturerTests : BaseTest() {
+class ManufacturerTests : BaseTest("application-test.conf") {
     fun newItem(addition: Int, id: Int? = null) = Manufacturer(
         id,
         addition.toString()

@@ -17,10 +17,12 @@ import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubtypeOf
 
 abstract class BaseRouter<I : GenericItem, S : Service<I>>(
-    private val response: GenericResponse<I>,
+    private val genericResponse: GenericResponse<I>,
     override val service: S,
     override val kType: KType
 ) : Router<I, S> {
+    abstract fun GenericResponse<I>.parse(): String
+
     override fun Route.setupRoutes() {
         route("/$basePath") {
             addRequest()
@@ -91,11 +93,11 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
             }
 
             val response =
-                if (filteredItems.isNullOrEmpty()) NoContent(response)
-                else Ok(response.let {
+                if (filteredItems.isNullOrEmpty()) Ok(genericResponse.parse())
+                else Ok(genericResponse.let {
                     it.items = filteredItems
                     it
-                })
+                }.parse())
 
             respond(response)
         }

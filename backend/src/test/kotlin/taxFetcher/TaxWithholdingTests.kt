@@ -20,7 +20,7 @@ import io.ktor.http.HttpMethod.Companion.Put
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
-class TaxWithholdingTests : BaseTest() {
+class TaxWithholdingTests : BaseTest("application-test.conf") {
     fun newItem(year: Int) = TaxWithholding(
         year = year,
         amount = 1.23,

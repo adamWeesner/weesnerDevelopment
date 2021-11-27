@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
 @KtorExperimentalAPI
-class CategoryTests : BaseTest() {
+class CategoryTests : BaseTest("application-test.conf") {
     fun newItem(addition: Int, id: Int? = null) = Category(
         id,
         addition.toString(),

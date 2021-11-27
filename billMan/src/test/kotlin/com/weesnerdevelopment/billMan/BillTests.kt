@@ -31,7 +31,7 @@ import shared.billMan.responses.BillsResponse
 import shared.billMan.responses.CategoriesResponse
 import shouldBe
 
-class BillTests : BaseTest() {
+class BillTests : BaseTest("application-test.conf") {
     val billStart = "randomBill"
     lateinit var startCategory: Category
 

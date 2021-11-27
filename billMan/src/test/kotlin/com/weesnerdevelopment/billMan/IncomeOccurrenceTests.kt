@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class IncomeOccurrenceTests : BaseTest() {
+class IncomeOccurrenceTests : BaseTest("application-test.conf") {
     lateinit var startIncome: Income
 
     @BeforeAll

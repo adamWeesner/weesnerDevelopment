@@ -17,7 +17,7 @@ import io.ktor.http.HttpMethod.Companion.Put
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
-class FederalIncomeTaxTests : BaseTest() {
+class FederalIncomeTaxTests : BaseTest("application-test.conf") {
     fun newItem(year: Int) = FederalIncomeTax(
         year = year,
         percent = 10.0,

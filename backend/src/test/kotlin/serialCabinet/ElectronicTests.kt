@@ -32,7 +32,7 @@ import serialCabinet.itemCategories.SerialItemCategoriesTable
 import serialCabinet.manufacturer.ManufacturersTable
 
 @KtorExperimentalAPI
-class ElectronicTests : BaseTest() {
+class ElectronicTests : BaseTest("application-test.conf") {
     lateinit var startManufacturer: Manufacturer
     lateinit var startCategory: Category
 

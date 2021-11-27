@@ -17,7 +17,7 @@ import io.ktor.http.HttpMethod.Companion.Put
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
-class SocialSecurityTests : BaseTest() {
+class SocialSecurityTests : BaseTest("application-test.conf") {
     fun newItem(year: Int) = SocialSecurity(
         year = year,
         percent = 1.45,

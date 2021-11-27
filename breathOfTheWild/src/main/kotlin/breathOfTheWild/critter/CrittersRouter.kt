@@ -14,4 +14,6 @@ data class CrittersRouter(
     CrittersResponse(),
     service,
     Critter::class.createType()
-)
+) {
+    override fun GenericResponse<Critter>.parse(): String = this.toJson()
+}

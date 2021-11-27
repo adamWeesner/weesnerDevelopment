@@ -36,6 +36,8 @@ class UserRouter(
     service,
     User::class.createType()
 ) {
+    override fun GenericResponse<User>.parse(): String = this.toJson()
+
     override fun Route.setupRoutes() {
         route(basePath) {
             getRequest()

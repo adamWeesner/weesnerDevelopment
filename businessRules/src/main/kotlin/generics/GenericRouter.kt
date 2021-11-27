@@ -43,8 +43,10 @@ import kotlin.reflect.KType
 abstract class GenericRouter<O : GenericItem, T : IdTable>(
     val basePath: String,
     val service: GenericService<O, T>,
-    private val response: GenericResponse<O>? = null
+    private val response: GenericResponse<O>
 ) {
+    abstract fun GenericResponse<O>.parse(): String
+
     lateinit var itemType: KType
 
     /**

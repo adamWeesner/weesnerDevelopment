@@ -16,6 +16,8 @@ class LoggingRouter(
     service,
     Logger::class.createType()
 ) {
+    override fun GenericResponse<Logger>.parse(): String = this.toJson()
+
     override fun Route.setupRoutes() {
         route("/$basePath") {
             addRequest()

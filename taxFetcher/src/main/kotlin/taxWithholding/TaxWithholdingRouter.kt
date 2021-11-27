@@ -21,6 +21,8 @@ class TaxWithholdingRouter(
     taxWithholdingService,
     TaxWithholdingResponse()
 ) {
+    override fun GenericResponse<TaxWithholding>.parse(): String = this.toJson()
+
     override suspend fun postQualifier(receivedItem: TaxWithholding) =
         service.getAll().firstOrNull {
             it.year == receivedItem.year && it.type == receivedItem.type && it.payPeriod == receivedItem.payPeriod

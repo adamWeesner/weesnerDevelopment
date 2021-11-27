@@ -14,4 +14,6 @@ data class MonsterPartsRouter(
     MonsterPartsResponse(),
     service,
     MonsterPart::class.createType()
-)
+) {
+    override fun GenericResponse<MonsterPart>.parse(): String = this.toJson()
+}

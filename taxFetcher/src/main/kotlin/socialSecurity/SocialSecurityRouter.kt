@@ -21,6 +21,8 @@ class SocialSecurityRouter(
     socialSecurityService,
     SocialSecurityResponse()
 ) {
+    override fun GenericResponse<SocialSecurity>.parse(): String = this.toJson()
+
     override suspend fun postQualifier(receivedItem: SocialSecurity) =
         service.getSingle { service.table.year eq receivedItem.year }
 

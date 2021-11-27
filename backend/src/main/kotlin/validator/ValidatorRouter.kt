@@ -12,4 +12,6 @@ class ValidatorRouter(
     ValidatorResponse(),
     service,
     ValidatorItem::class.createType()
-)
+) {
+    override fun GenericResponse<ValidatorItem>.parse(): String = this.toJson()
+}

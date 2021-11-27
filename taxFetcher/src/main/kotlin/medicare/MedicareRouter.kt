@@ -21,6 +21,8 @@ class MedicareRouter(
     medicareService,
     MedicareResponse()
 ) {
+    override fun GenericResponse<Medicare>.parse(): String = this.toJson()
+
     override suspend fun postQualifier(receivedItem: Medicare) =
         service.getSingle { service.table.year eq receivedItem.year }
 

@@ -13,4 +13,6 @@ data class ImagesRouter(
     ImagesResponse(),
     service,
     Image::class.createType()
-)
+) {
+    override fun GenericResponse<Image>.parse(): String = this.toJson()
+}

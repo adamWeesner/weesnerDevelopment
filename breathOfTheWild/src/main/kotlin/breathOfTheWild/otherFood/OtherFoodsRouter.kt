@@ -14,4 +14,6 @@ data class OtherFoodsRouter(
     OtherFoodsResponse(),
     service,
     OtherFood::class.createType()
-)
+) {
+    override fun GenericResponse<OtherFood>.parse(): String = this.toJson()
+}

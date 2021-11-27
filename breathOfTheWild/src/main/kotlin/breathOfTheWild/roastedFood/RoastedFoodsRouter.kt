@@ -14,4 +14,6 @@ data class RoastedFoodsRouter(
     RoastedFoodsResponse(),
     service,
     RoastedFood::class.createType()
-)
+) {
+    override fun GenericResponse<RoastedFood>.parse(): String = this.toJson()
+}

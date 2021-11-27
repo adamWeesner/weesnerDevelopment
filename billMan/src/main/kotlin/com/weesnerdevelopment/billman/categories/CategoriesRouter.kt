@@ -14,4 +14,6 @@ class CategoriesRouter(
     CategoriesResponse(),
     service,
     Category::class.createType()
-)
+) {
+    override fun GenericResponse<Category>.parse(): String = this.toJson()
+}

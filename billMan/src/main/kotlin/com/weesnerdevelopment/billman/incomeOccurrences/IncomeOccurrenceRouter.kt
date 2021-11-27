@@ -14,4 +14,6 @@ class IncomeOccurrenceRouter(
     IncomeOccurrencesResponse(),
     service,
     IncomeOccurrence::class.createType()
-)
+) {
+    override fun GenericResponse<IncomeOccurrence>.parse(): String = this.toJson()
+}

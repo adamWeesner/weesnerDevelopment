@@ -21,6 +21,8 @@ class FederalIncomeTaxRouter(
     federalIncomeTaxService,
     FederalIncomeTaxResponse()
 ) {
+    override fun GenericResponse<FederalIncomeTax>.parse(): String = this.toJson()
+
     override suspend fun postQualifier(receivedItem: FederalIncomeTax) =
         service.getAll().filter {
             it.year == receivedItem.year && it.maritalStatus == receivedItem.maritalStatus && it.payPeriod == receivedItem.payPeriod

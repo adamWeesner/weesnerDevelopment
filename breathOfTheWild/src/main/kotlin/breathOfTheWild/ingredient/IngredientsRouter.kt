@@ -14,4 +14,6 @@ data class IngredientsRouter(
     IngredientsResponse(),
     service,
     Ingredient::class.createType()
-)
+) {
+    override fun GenericResponse<Ingredient>.parse(): String = this.toJson()
+}

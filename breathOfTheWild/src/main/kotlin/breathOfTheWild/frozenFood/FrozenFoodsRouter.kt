@@ -14,4 +14,6 @@ data class FrozenFoodsRouter(
     FrozenFoodsResponse(),
     service,
     FrozenFood::class.createType()
-)
+) {
+    override fun GenericResponse<FrozenFood>.parse(): String = this.toJson()
+}

@@ -28,6 +28,8 @@ class BillOccurrenceRouter(
     service,
     BillOccurrence::class.createType()
 ) {
+    override fun GenericResponse<BillOccurrence>.parse(): String = this.toJson()
+
     override fun Route.updateRequest() {
         put {
             val body = runCatching {

@@ -12,4 +12,6 @@ class ComplexValidatorRouter(
     ComplexValidatorResponse(),
     service,
     ComplexValidatorItem::class.createType()
-)
+) {
+    override fun GenericResponse<ComplexValidatorItem>.parse(): String = this.toJson()
+}

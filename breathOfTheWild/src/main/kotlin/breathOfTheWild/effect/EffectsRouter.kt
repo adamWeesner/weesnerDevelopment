@@ -14,4 +14,6 @@ data class EffectsRouter(
     EffectsResponse(),
     service,
     Effect::class.createType()
-)
+) {
+    override fun GenericResponse<Effect>.parse(): String = this.toJson()
+}

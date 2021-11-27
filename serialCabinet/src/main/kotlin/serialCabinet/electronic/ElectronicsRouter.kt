@@ -14,4 +14,6 @@ data class ElectronicsRouter(
     ElectronicsResponse(),
     service,
     Electronic::class.createType()
-)
+) {
+    override fun GenericResponse<Electronic>.parse(): String = this.toJson()
+}

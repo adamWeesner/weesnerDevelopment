@@ -14,4 +14,6 @@ data class ManufacturersRouter(
     ManufacturersResponse(),
     service,
     Manufacturer::class.createType()
-)
+) {
+    override fun GenericResponse<Manufacturer>.parse(): String = this.toJson()
+}

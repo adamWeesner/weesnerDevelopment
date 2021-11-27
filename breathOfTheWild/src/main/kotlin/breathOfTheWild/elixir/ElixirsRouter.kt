@@ -14,4 +14,6 @@ data class ElixirsRouter(
     ElixirsResponse(),
     service,
     Elixir::class.createType()
-)
+) {
+    override fun GenericResponse<Elixir>.parse(): String = this.toJson()
+}

@@ -23,8 +23,10 @@ object AuthDatabase {
 
         transaction {
             // base tables
-            create(UsersTable)
-            create(HistoryTable)
+            create(
+                UsersTable,
+                HistoryTable
+            )
         }
     }
 

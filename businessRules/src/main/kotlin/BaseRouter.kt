@@ -169,7 +169,6 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
 
 fun PipelineContext<Unit, ApplicationCall>.getUserInfo() = call.loggedUserData()?.getData()?.let {
     when {
-        it.username != null -> "username" to it.username
         it.uuid != null -> "uuid" to it.uuid
         else -> null
     }

@@ -18,6 +18,7 @@ dependencies {
     api(fileTree("../libs") { include("*.jar") })
     implementation(Ktor.Server.core)
     implementation(Ktor.Server.netty)
+    implementation(Ktor.locations)
     implementation(Ktor.webSockets)
     implementation(Ktor.authJwt)
     implementation(Commons.base64)

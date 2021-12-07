@@ -39,19 +39,19 @@ open class BaseTest(configPath: String) {
     }
 
     fun createUser() {
-        token = post(Path.User.base + Path.User.signUp, usingToken = null).asClass<User, TokenResponse>(
+        token = post(Path.User.basePath + Path.User.signUp, usingToken = null).asClass<User, TokenResponse>(
             User(
                 name = "test",
                 email = "test@email.com",
                 username = "test",
                 password = "test"
             )
-        )?.token ?: post(Path.User.base + Path.User.login, usingToken = null)
+        )?.token ?: post(Path.User.basePath + Path.User.login, usingToken = null)
             .asClass<HashedUser, TokenResponse>(HashedUser("test", "test"))?.token
                 ?: throw IllegalArgumentException("Something happened... should have gotten a token")
 
 
-        signedInUser = get(Path.User.base + Path.User.account).asObject()
+        signedInUser = get(Path.User.basePath + Path.User.account).asObject()
     }
 
     private fun String.buildUrl(id: Int?, additional: String? = null): String {

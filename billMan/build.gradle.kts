@@ -15,14 +15,20 @@ repositories { sharedRepos() }
 java { javaSource() }
 tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
 tasks.withType<Test> { useJUnitPlatform() }
-application { mainClassName = Ktor.Server.mainClass }
-tasks.withType<Jar> { manifest { attributes(mapOf("Main-Class" to application.mainClassName)) } }
+application { mainClass.set(Ktor.Server.mainClass) }
+tasks.withType<Jar> { manifest { attributes(mapOf("Main-Class" to application.mainClass)) } }
 task("stage").dependsOn("installDist")
+tasks {
+    shadowJar {
+        manifest {
+            attributes(Pair("Main-Class", application.mainClass))
+        }
+    }
+}
 
 dependencies {
     implementation(project(BusinessRules.project))
     implementation(project(Auth.project))
-    implementation(project(Backend.project))
 
     implementation(Dropwizard.metricsJmx)
     implementation(Exposed.core)

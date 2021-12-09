@@ -1,19 +1,7 @@
 package com.weesnerdevelopment.billman.income
 
-import BaseRouter
-import com.weesnerdevelopment.shared.base.GenericResponse
-import com.weesnerdevelopment.shared.billMan.Income
-import com.weesnerdevelopment.shared.billMan.responses.IncomeResponse
-import com.weesnerdevelopment.shared.toJson
-import kotlin.reflect.full.createType
+import io.ktor.routing.*
 
-class IncomeRouter(
-    override val basePath: String,
-    service: IncomeService
-) : BaseRouter<Income, IncomeService>(
-    IncomeResponse(),
-    service,
-    Income::class.createType()
-) {
-    override fun GenericResponse<Income>.parse(): String = this.toJson()
+interface IncomeRouter {
+    fun setup(routing: Routing)
 }

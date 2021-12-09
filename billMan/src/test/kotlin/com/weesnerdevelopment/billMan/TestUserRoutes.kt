@@ -1,7 +1,12 @@
-package com.weesnerdevelopment.billMan.updated
+package com.weesnerdevelopment.billMan
 
 import Path
-import com.weesnerdevelopment.billman.redux.*
+import com.weesnerdevelopment.auth.user.UserTable
+import com.weesnerdevelopment.billman.bill.BillSharedUsersTable
+import com.weesnerdevelopment.billman.bill.BillTable
+import com.weesnerdevelopment.billman.bill.BillsCategoriesTable
+import com.weesnerdevelopment.billman.category.CategoryTable
+import com.weesnerdevelopment.billman.color.ColorTable
 import com.weesnerdevelopment.test.utils.fromFile
 import com.weesnerdevelopment.test.utils.handleRequest
 import com.weesnerdevelopment.test.utils.shouldBe

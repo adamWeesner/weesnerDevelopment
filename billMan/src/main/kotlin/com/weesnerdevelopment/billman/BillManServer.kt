@@ -6,10 +6,7 @@ import auth.JwtProvider
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.codahale.metrics.jmx.JmxReporter
-import com.weesnerdevelopment.AppConfig
-import com.weesnerdevelopment.DbLogger
-import com.weesnerdevelopment.auth.AuthDatabase
-import com.weesnerdevelopment.auth.userRoutes
+import com.weesnerdevelopment.businessRules.AppConfig
 import com.weesnerdevelopment.shared.auth.InvalidUserReason
 import com.weesnerdevelopment.shared.base.Response
 import io.ktor.application.*
@@ -24,29 +21,33 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.websocket.*
 import kimchi.Kimchi
-import logging.LoggingService
+import kotlinx.serialization.ExperimentalSerializationApi
 import logging.StdOutLogger
 import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 import respond
 import respondErrorAuthorizing
 import respondErrorServer
-import java.time.Duration
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class, ExperimentalSerializationApi::class)
 object BillManServer {
     fun Application.main() {
         initKodein()
 
-        val loggingService by kodein().instance<LoggingService>()
-        Kimchi.addLog(DbLogger.apply { service = loggingService })
-        Kimchi.addLog(StdOutLogger)
-
         val appConfig by kodein().instance<AppConfig>()
         val jwtProvider by kodein().instance<JwtProvider>()
+//        val loggingService by kodein().instance<LoggingService>()
+
+//        if (!appConfig.isTesting)
+//            Kimchi.addLog(DbLogger.apply { service = loggingService })
+
+        if (appConfig.isTesting || appConfig.isDevelopment)
+            Kimchi.addLog(StdOutLogger)
 
         BillManDatabase.init(appConfig.isTesting)
-        AuthDatabase.init(appConfig.isTesting)
 
         install(DefaultHeaders)
         if (appConfig.isDevelopment || appConfig.isTesting)
@@ -57,11 +58,12 @@ object BillManServer {
             header(HttpHeaders.Authorization)
             host("${appConfig.baseUrl}:${appConfig.port}")
             host("localhost:3000")
-            maxAge = Duration.ofDays(1)
+            maxAgeDuration = Duration.days(1)
             allowCredentials = true
             allowNonSimpleContentTypes = true
         }
-        install(DropwizardMetrics) {
+        if (!appConfig.isTesting) {
+            install(DropwizardMetrics) {
 //            Slf4jReporter.forRegistry(registry)
 //                .outputTo(log)
 //                .convertRatesTo(TimeUnit.SECONDS)
@@ -69,11 +71,12 @@ object BillManServer {
 //                .build()
 //                .start(10, TimeUnit.SECONDS)
 
-            JmxReporter.forRegistry(registry)
-                .convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.MILLISECONDS)
-                .build()
-                .start()
+                JmxReporter.forRegistry(registry)
+                    .convertRatesTo(TimeUnit.SECONDS)
+                    .convertDurationsTo(TimeUnit.MILLISECONDS)
+                    .build()
+                    .start()
+            }
         }
         install(ContentNegotiation) {
             json(com.weesnerdevelopment.shared.json {
@@ -118,13 +121,12 @@ object BillManServer {
         }
         install(Locations)
         install(Routing) {
-            route("/$health") {
-                get("/") {
+            route(health) {
+                get {
                     respond(Response.Ok("Server is up and running"))
                 }
             }
 
-            userRoutes()
             routes()
         }
     }

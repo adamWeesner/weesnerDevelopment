@@ -1,19 +1,25 @@
 package com.weesnerdevelopment.billman
 
-import com.weesnerdevelopment.billman.billCategories.BillCategoriesTable
-import com.weesnerdevelopment.billman.billSharedUsers.BillsSharedUsersTable
-import com.weesnerdevelopment.billman.bills.BillTable
-import com.weesnerdevelopment.billman.bills.BillsTable
-import com.weesnerdevelopment.billman.categories.CategoriesTable
-import com.weesnerdevelopment.billman.colors.ColorsTable
+import com.weesnerdevelopment.billman.bill.BillHistoryTable
+import com.weesnerdevelopment.billman.bill.BillSharedUsersTable
+import com.weesnerdevelopment.billman.bill.BillTable
+import com.weesnerdevelopment.billman.bill.BillsCategoriesTable
+import com.weesnerdevelopment.billman.bill.occurrence.BillOccurrenceHistoryTable
+import com.weesnerdevelopment.billman.bill.occurrence.BillOccurrencePaymentsTable
+import com.weesnerdevelopment.billman.bill.occurrence.BillOccurrenceSharedUsersTable
+import com.weesnerdevelopment.billman.bill.occurrence.BillOccurrenceTable
+import com.weesnerdevelopment.billman.bill.occurrence.payment.PaymentHistoryTable
+import com.weesnerdevelopment.billman.bill.occurrence.payment.PaymentTable
+import com.weesnerdevelopment.billman.category.CategoryHistoryTable
+import com.weesnerdevelopment.billman.category.CategoryTable
+import com.weesnerdevelopment.billman.color.ColorHistoryTable
+import com.weesnerdevelopment.billman.color.ColorTable
+import com.weesnerdevelopment.billman.income.IncomeHistoryTable
 import com.weesnerdevelopment.billman.income.IncomeTable
-import com.weesnerdevelopment.billman.incomeOccurrences.IncomeOccurrencesTable
-import com.weesnerdevelopment.billman.occurrences.BillOccurrencesTable
-import com.weesnerdevelopment.billman.occurrencesSharedUsers.OccurrenceSharedUsersTable
-import com.weesnerdevelopment.billman.payments.PaymentsTable
+import com.weesnerdevelopment.billman.income.occurrence.IncomeOccurrenceHistoryTable
+import com.weesnerdevelopment.billman.income.occurrence.IncomeOccurrenceTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import logging.LoggingTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -34,22 +40,31 @@ object BillManDatabase {
             Database.connect(hikari())
 
         transaction {
-            // logging
-            create(LoggingTable)
-
-            // bill man
             create(
                 BillTable,
-                BillsTable,
+                BillHistoryTable,
+                BillsCategoriesTable,
+                BillSharedUsersTable,
+
+                BillOccurrenceTable,
+                BillOccurrenceHistoryTable,
+                BillOccurrenceSharedUsersTable,
+                BillOccurrencePaymentsTable,
+
+                PaymentTable,
+                PaymentHistoryTable,
+
+                CategoryTable,
+                CategoryHistoryTable,
+
+                ColorTable,
+                ColorHistoryTable,
+
                 IncomeTable,
-                CategoriesTable,
-                ColorsTable,
-                PaymentsTable,
-                BillOccurrencesTable,
-                BillCategoriesTable,
-                BillsSharedUsersTable,
-                OccurrenceSharedUsersTable,
-                IncomeOccurrencesTable
+                IncomeHistoryTable,
+
+                IncomeOccurrenceTable,
+                IncomeOccurrenceHistoryTable
             )
 
             if (testing)

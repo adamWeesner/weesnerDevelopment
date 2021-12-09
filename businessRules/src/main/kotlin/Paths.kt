@@ -2,7 +2,6 @@ import Path.BillMan.basePath
 import Path.BreathOfTheWild.basePath
 import Path.SerialCabinet.basePath
 import Path.TaxFetcher.basePath
-import Path.User.base
 
 /**
  * The available paths at /[Path].
@@ -29,11 +28,12 @@ sealed class Path {
      * The available paths at [base]/value.
      */
     object User : Path() {
-        const val base = "user/"
-        const val account = "account"
-        const val login = "login"
-        const val signUp = "signUp"
-        const val logging = "logging"
+        private const val version = "v1"
+        const val basePath = "$version/user"
+        const val account = "${basePath}/account"
+        const val login = "${basePath}/login"
+        const val signUp = "${basePath}/signUp"
+        const val logging = "${basePath}/logging"
     }
 
     /**
@@ -46,7 +46,7 @@ sealed class Path {
         const val bills = "${basePath}bills"
         const val categories = "${basePath}categories"
         const val income = "${basePath}income"
-        const val occurrences = "$bills/occurrences"
+        const val billOccurrences = "$bills/occurrences"
         const val incomeOccurrences = "$income/occurrences"
         const val logging = "${basePath}logging"
     }

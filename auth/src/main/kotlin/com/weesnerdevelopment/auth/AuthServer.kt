@@ -1,57 +1,53 @@
-package com.weesnerdevelopment.service
+package com.weesnerdevelopment.auth
 
+import Path.BillMan.health
 import auth.CustomPrincipal
 import auth.JwtProvider
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
-import com.codahale.metrics.Slf4jReporter
 import com.codahale.metrics.jmx.JmxReporter
-import com.weesnerdevelopment.DbLogger
 import com.weesnerdevelopment.businessRules.AppConfig
-import com.weesnerdevelopment.injection.kodeinSetup
-import com.weesnerdevelopment.routes.breathOfTheWildRoutes
-import com.weesnerdevelopment.routes.serialCabinetRoutes
-import com.weesnerdevelopment.routes.serverRoutes
-import com.weesnerdevelopment.routes.taxFetcherRoutes
-import com.weesnerdevelopment.seed.breathOfTheWildSeed
 import com.weesnerdevelopment.shared.auth.InvalidUserReason
+import com.weesnerdevelopment.shared.base.Response
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.http.auth.*
+import io.ktor.locations.*
 import io.ktor.metrics.dropwizard.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.websocket.*
 import kimchi.Kimchi
-import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import logging.LoggingService
 import logging.StdOutLogger
 import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
+import respond
 import respondErrorAuthorizing
 import respondErrorServer
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
-object DatabaseServer {
+object AuthServer {
     fun Application.main() {
-        kodeinSetup()
-
-        val loggingService by kodein().instance<LoggingService>()
-        Kimchi.addLog(DbLogger.apply { service = loggingService })
-        Kimchi.addLog(StdOutLogger)
+        initKodein()
 
         val appConfig by kodein().instance<AppConfig>()
         val jwtProvider by kodein().instance<JwtProvider>()
+//        val loggingService by kodein().instance<LoggingService>()
 
-        DatabaseFactory.init()
+//        if (!appConfig.isTesting)
+//            Kimchi.addLog(DbLogger.apply { service = loggingService })
+
+        if (appConfig.isTesting || appConfig.isDevelopment)
+            Kimchi.addLog(StdOutLogger)
+
+        AuthDatabase.init(appConfig.isTesting)
 
         install(DefaultHeaders)
-        if (appConfig.isDevelopment)
+        if (appConfig.isDevelopment || appConfig.isTesting)
             install(CallLogging)
         install(WebSockets)
         install(CORS) {
@@ -63,22 +59,24 @@ object DatabaseServer {
             allowCredentials = true
             allowNonSimpleContentTypes = true
         }
-        install(DropwizardMetrics) {
-            Slf4jReporter.forRegistry(registry)
-                .outputTo(log)
-                .convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.MILLISECONDS)
-                .build()
-                .start(10, TimeUnit.SECONDS)
+        if (!appConfig.isTesting) {
+            install(DropwizardMetrics) {
+//            Slf4jReporter.forRegistry(registry)
+//                .outputTo(log)
+//                .convertRatesTo(TimeUnit.SECONDS)
+//                .convertDurationsTo(TimeUnit.MILLISECONDS)
+//                .build()
+//                .start(10, TimeUnit.SECONDS)
 
-            JmxReporter.forRegistry(registry)
-                .convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.MILLISECONDS)
-                .build()
-                .start()
+                JmxReporter.forRegistry(registry)
+                    .convertRatesTo(TimeUnit.SECONDS)
+                    .convertDurationsTo(TimeUnit.MILLISECONDS)
+                    .build()
+                    .start()
+            }
         }
         install(ContentNegotiation) {
-            json(Json {
+            json(com.weesnerdevelopment.shared.json {
                 prettyPrint = true
                 prettyPrintIndent = "  "
                 isLenient = true
@@ -113,20 +111,21 @@ object DatabaseServer {
                 verifier(jwtProvider.verifier)
                 this.realm = appConfig.realm
                 validate { credential ->
+                    Kimchi.debug("credential $credential")
                     if (credential.payload.audience.contains(appConfig.audience)) CustomPrincipal(credential.payload)
                     else null
                 }
             }
         }
+        install(Locations)
         install(Routing) {
-            serverRoutes()
-            taxFetcherRoutes()
-            breathOfTheWildRoutes()
-            serialCabinetRoutes()
-        }
+            route(health) {
+                get {
+                    respond(Response.Ok("Server is up and running"))
+                }
+            }
 
-        launch {
-            breathOfTheWildSeed()
+            routes()
         }
     }
 }

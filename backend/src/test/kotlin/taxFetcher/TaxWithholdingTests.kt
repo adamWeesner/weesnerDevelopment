@@ -130,7 +130,7 @@ class TaxWithholdingTests : BaseTest("application-test.conf") {
     @Test
     @Order(7)
     fun `verify updating an added item`() {
-        val userAccount = BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
+        val userAccount = BuiltRequest(engine, Get, "${Path.User.basePath}${Path.User.account}", token).asObject<User>()
         val taxWithholding = BuiltRequest(engine, Post, path, token).asObject(newItem(2004))
         val updateRequest =
             BuiltRequest(engine, Put, path, token).send(taxWithholding.copy(amount = 1.4, payPeriod = Biweekly))

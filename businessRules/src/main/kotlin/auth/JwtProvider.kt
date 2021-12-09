@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.weesnerdevelopment.shared.auth.HashedUser
+import com.weesnerdevelopment.shared.auth.User
 import java.util.*
 
 class JwtProvider(
@@ -36,6 +37,19 @@ class JwtProvider(
         .withAudience(audience)
         .withClaim("attr-username", hashedUser.username)
         .withClaim("attr-password", hashedUser.password)
+        .withExpiresAt(Date(System.currentTimeMillis() + validFor)).sign(cipher.algorithm)
+
+    /**
+     * Create a JWT token for the given [hashedUser].
+     */
+    fun createJWT(user: User): String? = JWT.create()
+        .withIssuedAt(Date())
+        .withSubject("Authentication")
+        .withIssuer(issuer)
+        .withAudience(audience)
+        .withClaim("attr-uuid", user.uuid)
+        .withClaim("attr-username", user.username)
+        .withClaim("attr-password", user.password)
         .withExpiresAt(Date(System.currentTimeMillis() + validFor)).sign(cipher.algorithm)
 }
 

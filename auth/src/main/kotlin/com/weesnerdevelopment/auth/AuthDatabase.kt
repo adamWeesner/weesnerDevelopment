@@ -1,6 +1,7 @@
 package com.weesnerdevelopment.auth
 
 import auth.UsersTable
+import com.weesnerdevelopment.auth.user.UserHistoryTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import history.HistoryTable
@@ -22,9 +23,10 @@ object AuthDatabase {
             Database.connect(hikari())
 
         transaction {
-            // base tables
             create(
                 UsersTable,
+                UserHistoryTable,
+
                 HistoryTable
             )
         }

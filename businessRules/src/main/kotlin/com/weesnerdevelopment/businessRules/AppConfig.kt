@@ -1,4 +1,4 @@
-package com.weesnerdevelopment
+package com.weesnerdevelopment.businessRules
 
 import io.ktor.config.*
 import kimchi.Kimchi

@@ -26,7 +26,7 @@ class UserTests : BaseTest("application-test.conf") {
         password = Base64.getEncoder().encodeToString(newUser.password?.toByteArray())
     )
 
-    val path = Path.User.base
+    val path = Path.User.basePath
 
     @Test
     @Order(1)

@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.injection
 
-import com.weesnerdevelopment.AppConfig
+import com.weesnerdevelopment.businessRules.AppConfig
 import io.ktor.application.*
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.singleton

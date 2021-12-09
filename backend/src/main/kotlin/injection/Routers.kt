@@ -14,7 +14,7 @@ import breathOfTheWild.ingredient.IngredientsRouter
 import breathOfTheWild.monsterPart.MonsterPartsRouter
 import breathOfTheWild.otherFood.OtherFoodsRouter
 import breathOfTheWild.roastedFood.RoastedFoodsRouter
-import com.weesnerdevelopment.AppConfig
+import com.weesnerdevelopment.businessRules.AppConfig
 import com.weesnerdevelopment.validator.ValidatorRouter
 import com.weesnerdevelopment.validator.complex.ComplexValidatorRouter
 import federalIncomeTax.FederalIncomeTaxRouter
@@ -39,7 +39,7 @@ val routers = Kodein.Module("routers") {
     bind<ComplexValidatorRouter>() with singleton { ComplexValidatorRouter(Server.complexValidation, instance()) }
     // user
     bind<UserRouter>() with singleton {
-        UserRouter(User.base, instance(), instance(), User.account, User.login, User.signUp)
+        UserRouter(User.basePath, instance(), instance(), User.account, User.login, User.signUp)
     }
 
     // taxFetcher

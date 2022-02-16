@@ -2,10 +2,8 @@ package com.weesnerdevelopment.auth.user
 
 import auth.JwtProvider
 import auth.asToken
+import com.weesnerdevelopment.businessRules.*
 import com.weesnerdevelopment.businessRules.get
-import com.weesnerdevelopment.businessRules.post
-import com.weesnerdevelopment.businessRules.put
-import com.weesnerdevelopment.businessRules.respond
 import com.weesnerdevelopment.shared.auth.HashedUser
 import com.weesnerdevelopment.shared.auth.TokenResponse
 import com.weesnerdevelopment.shared.auth.User
@@ -14,6 +12,7 @@ import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.locations.*
+import io.ktor.locations.delete
 import io.ktor.routing.*
 import java.util.*
 
@@ -57,6 +56,36 @@ data class UserRouterImpl(
                         )
 
                     when (val foundUser = repo.account(id)) {
+                        null -> {
+                            return@get respond(
+                                HttpStatusCode.NotFound,
+                                ServerError(
+                                    HttpStatusCode.NotFound.description,
+                                    HttpStatusCode.NotFound.value,
+                                    "No account with id '$id' found."
+                                )
+                            )
+                        }
+                        else -> {
+                            return@get respond(HttpStatusCode.OK, foundUser.redact)
+                        }
+                    }
+                }
+
+                get<UserInfoEndpoint> {
+                    val id = getBearerUuid()
+
+                    if (id == null)
+                        return@get respond(
+                            HttpStatusCode.BadRequest,
+                            ServerError(
+                                HttpStatusCode.BadRequest.description,
+                                HttpStatusCode.BadRequest.value,
+                                "Invalid id '$id' attempting to get account."
+                            )
+                        )
+
+                    when (val foundUser = repo.info(id.toString())) {
                         null -> {
                             return@get respond(
                                 HttpStatusCode.NotFound,

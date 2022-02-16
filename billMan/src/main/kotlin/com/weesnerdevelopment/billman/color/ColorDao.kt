@@ -1,7 +1,5 @@
 package com.weesnerdevelopment.billman.color
 
-import com.weesnerdevelopment.history.HistoryDao
-import com.weesnerdevelopment.history.toHistories
 import com.weesnerdevelopment.shared.billMan.Color
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -21,7 +19,7 @@ class ColorDao(id: EntityID<UUID>) : UUIDEntity(id) {
     var alpha by ColorTable.alpha
     var dateCreated by ColorTable.dateCreated
     var dateUpdated by ColorTable.dateUpdated
-    val history by HistoryDao via ColorHistoryTable
+//    val history by HistoryDao via ColorHistoryTable
 }
 
 fun ColorDao.toColor(): Color = Color(
@@ -30,7 +28,7 @@ fun ColorDao.toColor(): Color = Color(
     green = green,
     blue = blue,
     alpha = alpha,
-    history = history.toHistories(),
+//    history = history.toHistories(),
     dateCreated = dateCreated,
     dateUpdated = dateUpdated
 )

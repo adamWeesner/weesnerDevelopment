@@ -1,9 +1,5 @@
 package com.weesnerdevelopment.billman.bill.occurrence.payment
 
-import com.weesnerdevelopment.auth.user.UserDao
-import com.weesnerdevelopment.auth.user.toUser
-import com.weesnerdevelopment.history.HistoryDao
-import com.weesnerdevelopment.history.toHistories
 import com.weesnerdevelopment.shared.billMan.Payment
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -18,19 +14,19 @@ class PaymentDao(id: EntityID<UUID>) : UUIDEntity(id) {
     }
 
     val uuid by PaymentTable.id
-    var owner by UserDao referencedOn PaymentTable.owner
+    var owner by PaymentTable.owner
     var occurrence by PaymentTable.occurrence
     var amount by PaymentTable.amount
     var dateCreated by PaymentTable.dateCreated
     var dateUpdated by PaymentTable.dateUpdated
-    val history by HistoryDao via PaymentHistoryTable
+    //val history by HistoryDao via PaymentHistoryTable
 }
 
 fun PaymentDao.toPayment(): Payment = Payment(
     uuid = uuid.value.toString(),
-    owner = owner.toUser(),
+    owner = owner,
     amount = amount,
-    history = history.toHistories(),
+    //history = history.toHistories(),
     dateCreated = dateCreated,
     dateUpdated = dateUpdated
 )

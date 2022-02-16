@@ -1,10 +1,9 @@
 package com.weesnerdevelopment.billman.bill
 
-import com.weesnerdevelopment.auth.user.UserTable
+import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
-import org.jetbrains.exposed.sql.Table
 
-object BillSharedUsersTable : Table() {
-    val user = reference("owner", UserTable, ReferenceOption.CASCADE)
+object BillSharedUsersTable : UUIDTable() {
+    val user = varchar("owner", 36)
     val bill = reference("bill", BillTable, ReferenceOption.CASCADE)
 }

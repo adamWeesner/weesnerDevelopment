@@ -1,6 +1,7 @@
 package com.weesnerdevelopment.billman
 
-import com.weesnerdevelopment.auth.kodeinUser
+import auth.Cipher
+import auth.JwtProvider
 import com.weesnerdevelopment.billman.bill.BillsRepository
 import com.weesnerdevelopment.billman.bill.BillsRepositoryImpl
 import com.weesnerdevelopment.billman.bill.BillsRouter
@@ -32,7 +33,10 @@ fun Application.initKodein() {
     kodein {
         bind<AppConfig>() with singleton { AppConfig(environment.config) }
 
-        import(kodeinUser)
+        bind<JwtProvider>() with singleton {
+            val appConfig = instance<AppConfig>()
+            JwtProvider(appConfig.issuer, appConfig.audience, appConfig.expiresIn, Cipher(appConfig.secret))
+        }
 
         bind<BillsRepository>() with singleton { BillsRepositoryImpl }
         bind<BillsRouter>() with singleton { BillsRouterImpl(instance(), instance()) }

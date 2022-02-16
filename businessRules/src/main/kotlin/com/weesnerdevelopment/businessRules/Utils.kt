@@ -19,7 +19,10 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.pipeline.*
 import kimchi.Kimchi
+import kimchi.logger.KimchiLogger
 import logRequest
+import loggedUserData
+import java.util.*
 
 /**
  * Attempts to retrieve data from the user in a safe way, returning either an
@@ -90,3 +93,11 @@ suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.respond
             Kimchi.debug("<-- END HTTP (${parsedResponse.toByteArray().size}-byte body)")
         }
     }
+
+fun PipelineContext<Unit, ApplicationCall>.getBearerUuid() = call.loggedUserData()?.getData()?.let {
+    UUID.fromString(it.uuid)
+}
+
+val String?.asUuid get() = runCatching { UUID.fromString(this) }.getOrNull() ?: UUID.randomUUID()
+
+val Log: KimchiLogger = Kimchi

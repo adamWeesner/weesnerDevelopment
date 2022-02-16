@@ -5,6 +5,7 @@ import com.weesnerdevelopment.shared.auth.User
 import java.util.*
 
 interface UserRepository {
+    fun info(id: String): User?
     fun account(id: UUID): User?
     fun create(new: User): User
     fun login(user: HashedUser): User?

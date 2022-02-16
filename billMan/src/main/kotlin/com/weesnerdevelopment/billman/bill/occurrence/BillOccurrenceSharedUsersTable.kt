@@ -1,10 +1,9 @@
 package com.weesnerdevelopment.billman.bill.occurrence
 
-import com.weesnerdevelopment.auth.user.UserTable
+import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
-import org.jetbrains.exposed.sql.Table
 
-object BillOccurrenceSharedUsersTable : Table() {
-    val user = reference("owner", UserTable, ReferenceOption.CASCADE)
+object BillOccurrenceSharedUsersTable : UUIDTable() {
+    val user = varchar("owner", 36)
     val occurrence = reference("occurrence", BillOccurrenceTable, ReferenceOption.CASCADE)
 }

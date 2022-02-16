@@ -1,5 +1,6 @@
 package com.weesnerdevelopment.auth.user
 
+import com.weesnerdevelopment.businessRules.asUuid
 import com.weesnerdevelopment.history.HistoryDao
 import com.weesnerdevelopment.shared.auth.HashedUser
 import com.weesnerdevelopment.shared.auth.User
@@ -33,8 +34,7 @@ object UserRepositoryImpl : UserRepository {
         return UserDao.action {
             find {
                 (UserTable.username eq user.username) and (UserTable.password eq user.password)
-            }
-                .firstOrNull()
+            }.firstOrNull()
                 ?.toUser()
         }
     }
@@ -76,5 +76,9 @@ object UserRepositoryImpl : UserRepository {
 
         foundUser.delete()
         return true
+    }
+
+    override fun info(id: String): User? {
+        return account(id.asUuid)
     }
 }

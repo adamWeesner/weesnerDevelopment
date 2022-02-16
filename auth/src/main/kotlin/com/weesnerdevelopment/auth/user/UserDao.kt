@@ -3,21 +3,12 @@ package com.weesnerdevelopment.auth.user
 import com.weesnerdevelopment.history.HistoryDao
 import com.weesnerdevelopment.history.toHistories
 import com.weesnerdevelopment.shared.auth.User
-import io.ktor.application.*
-import io.ktor.util.pipeline.*
-import loggedUserData
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
-
-fun PipelineContext<Unit, ApplicationCall>.getBearerUuid() = call.loggedUserData()?.getData()?.let {
-    UUID.fromString(it.uuid)
-}
-
-val String?.asUuid get() = runCatching { UUID.fromString(this) }.getOrNull() ?: UUID.randomUUID()
 
 val User.redact
     get() = User(

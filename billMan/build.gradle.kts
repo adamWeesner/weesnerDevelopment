@@ -28,7 +28,6 @@ tasks {
 
 dependencies {
     implementation(project(BusinessRules.project))
-    implementation(project(Auth.project))
 
     implementation(Dropwizard.metricsJmx)
     implementation(Exposed.core)
@@ -44,6 +43,8 @@ dependencies {
     implementation(Ktor.webSockets)
     implementation(Ktor.serialization)
     implementation(Ktor.locations)
+    implementation(Ktor.Client.okHttp)
+    implementation(Ktor.Client.logging)
     implementation(Ktor.Server.core)
     implementation(Logback.core)
 

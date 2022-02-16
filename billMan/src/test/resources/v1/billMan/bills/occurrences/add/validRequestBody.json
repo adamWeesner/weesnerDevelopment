@@ -1,0 +1,17 @@
+{
+  "id": null,
+  "uuid": "4f982b2d-1b86-40de-8710-6bfb4649f1e4",
+  "owner": "e0f97212-4431-448b-bd97-f70235328cd1",
+  "itemId": "4f982b2d-1b86-40de-8710-6bfb4649f1e4",
+  "dueDate": 1638247835949,
+  "amountLeft": "12.34",
+  "amount": "123.45",
+  "every": "1 Month",
+  "sharedUsers": [
+    "e0f97212-4431-448b-bd97-f70235328cd1"
+  ],
+  "payments": null,
+  "history": null,
+  "dateCreated": 1638247835949,
+  "dateUpdated": 1638247835949
+}

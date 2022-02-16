@@ -1,0 +1,5 @@
+{
+  "status": "Bad Request",
+  "statusCode": 400,
+  "message": "Cannot update invalid bill occurrence."
+}

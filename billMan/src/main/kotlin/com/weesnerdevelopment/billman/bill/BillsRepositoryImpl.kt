@@ -1,36 +1,36 @@
 package com.weesnerdevelopment.billman.bill
 
-import com.weesnerdevelopment.auth.user.UserDao
-import com.weesnerdevelopment.auth.user.asUuid
-import com.weesnerdevelopment.auth.user.toUser
 import com.weesnerdevelopment.billman.category.CategoryDao
 import com.weesnerdevelopment.billman.color.ColorDao
-import com.weesnerdevelopment.billman.color.toColor
-import com.weesnerdevelopment.history.HistoryDao
+import com.weesnerdevelopment.businessRules.Log
+import com.weesnerdevelopment.businessRules.asUuid
 import com.weesnerdevelopment.shared.billMan.Bill
 import com.weesnerdevelopment.shared.currentTimeMillis
-import diff
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 object BillsRepositoryImpl : BillsRepository {
-    override fun getAll(user: UUID): List<Bill> {
-        return BillDao.action {
-            runCatching {
-                find {
-                    BillTable.owner eq user
-                }.toBills()
-            }.getOrNull() ?: emptyList()
-        }
+    override fun getAll(user: String): List<Bill> = BillDao.action {
+        Log.info("Attempting to get all of user $user bills")
+        runCatching {
+            find {
+                BillTable.owner eq user
+            }.toBills()
+        }.getOrElse {
+            Log.error("Failed to get bills for user $user", it)
+            null
+        } ?: emptyList()
     }
 
-    override fun get(user: UUID, id: UUID): Bill? {
-        return BillDao.action { getSingle(user, id)?.toBill() }
+    override fun get(user: String, id: String): Bill? = BillDao.action {
+        getSingle(user, id)?.toBill()
     }
 
     override fun add(new: Bill): Bill? = runCatching {
+        Log.info("Adding new color for new bill")
         val newColor = ColorDao.action {
             new(new.color.uuid.asUuid) {
                 red = new.color.red
@@ -42,119 +42,187 @@ object BillsRepositoryImpl : BillsRepository {
             }
         }
 
-        val billCategories = new.categories.map { CategoryDao.action { get(UUID.fromString(it.uuid)) } }
-        val billSharedUsers = new.sharedUsers?.map { UserDao.action { get(UUID.fromString(it.uuid)) } }
+        Log.info("Linking categories for new bill")
+        val billCategories = new.categories.map { CategoryDao.action { get(it.uuid.asUuid) } }
 
-        BillDao.action {
+        Log.info("Adding new bill")
+        val newBill = BillDao.action {
             new(new.uuid.asUuid) {
+                owner = new.owner
                 name = new.name
                 amount = new.amount
                 varyingAmount = new.varyingAmount
                 payoffAmount = new.payoffAmount
                 color = newColor
-                if (billSharedUsers != null)
-                    sharedUsers = SizedCollection(billSharedUsers)
                 dateCreated = new.dateCreated
                 dateUpdated = new.dateUpdated
 
-                owner = new.owner.let { UserDao.action { get(UUID.fromString(it.uuid)) } }
                 categories = SizedCollection(billCategories)
-            }.toBill()
+            }
         }
-    }.getOrNull()
+
+        Log.info("Adding and linking shared users for new bill")
+        new.sharedUsers.forEach {
+            BillSharedUsersDao.action {
+                new(UUID.randomUUID()) {
+                    user = it
+                    bill = newBill.id
+                }
+            }
+        }
+
+        Log.info("Converting new bill")
+        BillDao.action {
+            newBill.toBill()
+        }
+    }.getOrElse {
+        Log.error("Failed to add new bill", it)
+        null
+    }
 
     override fun update(updated: Bill): Bill? {
-        val foundBill = getSingle(UUID.fromString(updated.owner.uuid), UUID.fromString(updated.uuid))
-        if (foundBill == null)
+        val uuid = updated.uuid
+        if (uuid == null) {
+            Log.error("Attempted to update a bill without a valid uuid")
             return null
+        }
 
-        // check if color changed, if did, delete old one, add new one
-        if (ColorDao.action { foundBill.color.toColor().uuid } != updated.color.uuid) {
-            foundBill.color.delete()
-            val newColor = ColorDao.action {
-                new(updated.color.uuid.asUuid) {
-                    red = updated.color.red
-                    green = updated.color.green
-                    blue = updated.color.blue
-                    alpha = updated.color.alpha
-                    dateCreated = updated.color.dateCreated
-                    dateUpdated = updated.color.dateUpdated
+        val foundBill = getSingle(updated.owner, uuid)
+        if (foundBill == null) {
+            Log.error("Could not find bill matching the owner and uuid")
+            return null
+        }
+        val foundBillAsBill = BillDao.action { foundBill.toBill() }
+
+        if (foundBillAsBill.color != updated.color) {
+            // check if color changed, if did, delete old one, add new one
+            if (ColorDao.action { foundBillAsBill.color.uuid } != updated.color.uuid) {
+                Log.info("Deleting and re-adding color for bill, as it changed")
+                ColorDao.action { foundBill.color.delete() }
+                val newColor = ColorDao.action {
+                    new(updated.color.uuid.asUuid) {
+                        red = updated.color.red
+                        green = updated.color.green
+                        blue = updated.color.blue
+                        alpha = updated.color.alpha
+                        dateCreated = updated.color.dateCreated
+                        dateUpdated = currentTimeMillis()
+                    }
+                }
+                foundBill.color = newColor
+            } else {
+                // update color
+                Log.info("Updating color for updated bill")
+                ColorDao.action {
+                    foundBill.color.apply {
+                        red = updated.color.red
+                        green = updated.color.green
+                        blue = updated.color.blue
+                        alpha = updated.color.alpha
+                        dateUpdated = currentTimeMillis()
+                    }
                 }
             }
-            foundBill.color = newColor
         } else {
-            // update color
-            ColorDao.action {
-                foundBill.color.apply {
-                    red = updated.color.red
-                    green = updated.color.green
-                    blue = updated.color.blue
-                    alpha = updated.color.alpha
-                    dateUpdated = currentTimeMillis()
+            Log.info("Updated bills color matched found bill, skipping update")
+        }
+
+
+        if (foundBillAsBill.categories != updated.categories) {
+            Log.info("Removing old categories for updated bill")
+            foundBill.categories.forEach {
+                transaction {
+                    BillsCategoriesTable.deleteWhere {
+                        (BillsCategoriesTable.bill eq foundBill.id) and (BillsCategoriesTable.category eq it.uuid)
+                    }
                 }
             }
+
+            Log.info("Adding new categories for updated bill")
+            val newBillCategories = updated.categories.map { CategoryDao.action { get(UUID.fromString(it.uuid)) } }
+            foundBill.categories = SizedCollection(newBillCategories)
+        } else {
+            Log.info("Updated bills categories matched found bill, skipping update")
         }
 
-        // update categories
-        foundBill.categories.forEach {
-            BillsCategoriesTable.deleteWhere {
-                (BillsCategoriesTable.bill eq foundBill.id) and (BillsCategoriesTable.category eq it.uuid)
+        if (foundBillAsBill.sharedUsers != updated.sharedUsers) {
+
+            // update shared users
+            Log.info("Removing shared users for found bill")
+            BillSharedUsersDao.action {
+                BillSharedUsersTable.deleteWhere {
+                    (BillSharedUsersTable.bill eq foundBill.id)
+                }
             }
-        }
 
-        val newBillCategories = updated.categories.map { CategoryDao.action { get(UUID.fromString(it.uuid)) } }
-        foundBill.categories = SizedCollection(newBillCategories)
-
-        // update shared users
-        foundBill.sharedUsers.forEach {
-            BillSharedUsersTable.deleteWhere {
-                (BillSharedUsersTable.bill eq foundBill.id) and (BillSharedUsersTable.user eq it.uuid)
+            Log.info("Adding and linking shared users for new bill")
+            updated.sharedUsers.map {
+                BillSharedUsersDao.action {
+                    new(UUID.randomUUID()) {
+                        user = it
+                        bill = foundBill.id
+                    }
+                }
             }
+        } else {
+            Log.info("Updated bills shared users matched found bill, skipping update")
         }
-
-        val newSharedUsers = updated.sharedUsers?.map { UserDao.action { get(UUID.fromString(it.uuid)) } }
-        if (newSharedUsers != null)
-            foundBill.sharedUsers = SizedCollection(newSharedUsers)
 
         // update history
-        foundBill.toBill().diff(updated).updates(foundBill.owner.toUser()).forEach {
-            HistoryDao.action {
-                new {
-                    field = it.field
-                    oldValue = it.oldValue
-                    newValue = it.newValue
-                    updatedBy = UserDao.action { get(UUID.fromString(it.updatedBy.uuid)).uuid }
-                    dateCreated = it.dateCreated
-                    dateUpdated = it.dateUpdated
-                }
+//        foundBill.toBill().diff(updated).updates(foundBill.owner.toUser()).forEach {
+//            HistoryDao.action {
+//                new {
+//                    field = it.field
+//                    oldValue = it.oldValue
+//                    newValue = it.newValue
+//                    updatedBy = UserDao.action { get(UUID.fromString(it.updatedBy.uuid)).uuid }
+//                    dateCreated = it.dateCreated
+//                    dateUpdated = it.dateUpdated
+//                }
+//            }
+//        }
+
+        // update bill
+        Log.info("Updating bill")
+        BillDao.action {
+            foundBill.apply {
+                name = updated.name
+                amount = updated.amount
+                varyingAmount = updated.varyingAmount
+                payoffAmount = updated.payoffAmount
+                dateUpdated = currentTimeMillis()
             }
         }
 
-        // update bill
-        foundBill.apply {
-            name = updated.name
-            amount = updated.amount
-            varyingAmount = updated.varyingAmount
-            payoffAmount = updated.payoffAmount
-            dateUpdated = currentTimeMillis()
-        }
-
-        return get(foundBill.owner.id.value, foundBill.id.value)
+        return get(foundBill.owner, foundBill.id.value.toString())
     }
 
-    override fun delete(user: UUID, id: UUID) = BillDao.action {
+    override fun delete(user: String, id: String): Boolean {
         val foundBill = getSingle(user, id)
 
-        if (foundBill == null)
-            return@action false
+        if (foundBill == null) {
+            Log.error("Could not find a bill matching the id $id, for user $user to delete")
+            return false
+        }
 
-        foundBill.delete()
-        return@action true
+        if (foundBill.owner != user) {
+            Log.warn("A user ($user) that was not the owner of the bill occurrence ${foundBill.id} tried to delete it.")
+            return false
+        }
+
+        Log.info("Deleting bill")
+        BillDao.action { foundBill.delete() }
+        return true
     }
 
-    private fun getSingle(user: UUID, id: UUID): BillDao? = BillDao.action {
-        find {
-            (BillTable.owner eq user) and (BillTable.id eq id)
-        }.firstOrNull()
+    private fun getSingle(user: String, id: String): BillDao? = BillDao.action {
+        runCatching {
+            find {
+                (BillTable.owner eq user) and (BillTable.id eq id.asUuid)
+            }.first()
+        }.getOrElse {
+            Log.error("Failed to get single bill with id $id for user $user", it)
+            null
+        }
     }
 }

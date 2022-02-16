@@ -1,12 +1,11 @@
 package com.weesnerdevelopment.billman.bill
 
 import com.weesnerdevelopment.shared.billMan.Bill
-import java.util.*
 
 interface BillsRepository {
-    fun getAll(user: UUID): List<Bill>
-    fun get(user: UUID, id: UUID): Bill?
+    fun getAll(user: String): List<Bill>
+    fun get(user: String, id: String): Bill?
     fun add(new: Bill): Bill?
     fun update(updated: Bill): Bill?
-    fun delete(user: UUID, id: UUID): Boolean
+    fun delete(user: String, id: String): Boolean
 }

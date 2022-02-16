@@ -22,6 +22,10 @@ import kimchi.Kimchi
 import kimchi.logger.KimchiLogger
 import logRequest
 import loggedUserData
+import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 /**
@@ -98,6 +102,40 @@ fun PipelineContext<Unit, ApplicationCall>.getBearerUuid() = call.loggedUserData
     UUID.fromString(it.uuid)
 }
 
-val String?.asUuid get() = runCatching { UUID.fromString(this) }.getOrNull() ?: UUID.randomUUID()
+val String?.asUuid
+    get() = runCatching { UUID.fromString(this) }.getOrNull() ?: UUID.randomUUID()
 
 val Log: KimchiLogger = Kimchi
+
+/**
+ * Helper function to try a database transaction or return null, if the transaction fails
+ */
+fun <T : UUIDEntity, R> T.tryTransaction(event: T.() -> R) =
+    runCatching {
+        transaction { event() }
+    }.getOrElse {
+        Log.error("Failed to complete database transaction from entity", it)
+        null
+    }
+
+/**
+ * Helper function to try a database transaction or return null, if the transaction fails
+ */
+fun <T : UUIDEntityClass<U>, U, R> T.tryTransaction(event: T.() -> R) =
+    runCatching {
+        transaction { event() }
+    }.getOrElse {
+        Log.error("Failed to complete database transaction", it)
+        null
+    }
+
+/**
+ * Helper function to try a database transaction or return null, if the transaction fails
+ */
+fun <T : Table, R> T.tryTransaction(event: T.() -> R) =
+    runCatching {
+        transaction { event() }
+    }.getOrElse {
+        Log.error("Failed to complete database transaction from table", it)
+        null
+    }

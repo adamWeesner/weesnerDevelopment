@@ -5,57 +5,48 @@ import com.weesnerdevelopment.businessRules.Log
 import com.weesnerdevelopment.businessRules.asUuid
 import com.weesnerdevelopment.shared.billMan.IncomeOccurrence
 import com.weesnerdevelopment.shared.currentTimeMillis
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.and
 import java.util.*
 
 object IncomeOccurrenceRepositoryImpl : IncomeOccurrenceRepository {
-    override fun getAll(user: String): List<IncomeOccurrence> = IncomeOccurrenceDao.action {
+    override fun getAll(user: String): List<IncomeOccurrence> {
         Log.info("Attempting to get all of user $user income occurrences")
-        runCatching {
-            find {
-                (IncomeOccurrenceTable.owner eq user)
-            }.toIncomeOccurrences()
-        }.getOrElse {
-            Log.error("Failed to get income occurrences for user $user", it)
-            null
-        } ?: emptyList()
+        return getFor {
+            (IncomeOccurrenceTable.owner eq user)
+        }?.toIncomeOccurrences()
+            ?: emptyList()
     }
 
-    override fun getAllFor(user: String, incomeId: String): List<IncomeOccurrence> = IncomeOccurrenceDao.action {
+    override fun getAllFor(user: String, incomeId: String): List<IncomeOccurrence> {
         Log.info("Attempting to get all of user $user income occurrences for bill $incomeId")
-        runCatching {
-            find {
-                (IncomeOccurrenceTable.owner eq user) and (IncomeOccurrenceTable.income eq incomeId.asUuid)
-            }.toIncomeOccurrences()
-        }.getOrElse {
-            Log.error("Failed to get income occurrences for user $user for income $incomeId", it)
-            null
-        } ?: emptyList()
+        return getFor {
+            (IncomeOccurrenceTable.owner eq user) and (IncomeOccurrenceTable.income eq incomeId.asUuid)
+        }?.toIncomeOccurrences()
+            ?: emptyList()
     }
 
-    override fun get(user: String, id: String): IncomeOccurrence? {
-        return IncomeOccurrenceDao.action { getSingle(user, id)?.toIncomeOccurrence() }
-    }
+    override fun get(user: String, id: String) =
+        getSingle(user, id)?.toIncomeOccurrence()
 
     override fun add(new: IncomeOccurrence): IncomeOccurrence? {
         val retrievedIncome = IncomeDao.action { get(UUID.fromString(new.itemId)) }
 
+        if (retrievedIncome == null)
+            return null
+
         return IncomeOccurrenceDao.action {
             Log.info("Adding new income occurrence")
-            runCatching {
-                new(new.uuid.asUuid) {
-                    owner = new.owner
-                    income = retrievedIncome
-                    dueDate = new.dueDate
-                    amount = new.amount
-                    every = new.every
-                    dateCreated = new.dateCreated
-                    dateUpdated = new.dateUpdated
-                }.toIncomeOccurrence()
-            }.getOrElse {
-                Log.error("Failed to add new income occurrence", it)
-                null
-            }
+            new(new.uuid.asUuid) {
+                owner = new.owner
+                income = retrievedIncome
+                dueDate = new.dueDate
+                amount = new.amount
+                every = new.every
+                dateCreated = new.dateCreated
+                dateUpdated = new.dateUpdated
+            }.toIncomeOccurrence()
         }
     }
 
@@ -118,14 +109,12 @@ object IncomeOccurrenceRepositoryImpl : IncomeOccurrenceRepository {
         return true
     }
 
+    private fun getFor(op: SqlExpressionBuilder.() -> Op<Boolean>) =
+        IncomeOccurrenceDao.action { find(op) }
+
     private fun getSingle(user: String, id: String): IncomeOccurrenceDao? = IncomeOccurrenceDao.action {
-        runCatching {
-            find {
-                (IncomeOccurrenceTable.owner eq user) and (IncomeOccurrenceTable.id eq id.asUuid)
-            }.first()
-        }.getOrElse {
-            Log.error("Failed to get single income occurrence with id $id for user $user", it)
-            null
-        }
+        getFor {
+            (IncomeOccurrenceTable.owner eq user) and (IncomeOccurrenceTable.id eq id.asUuid)
+        }?.firstOrNull()
     }
 }

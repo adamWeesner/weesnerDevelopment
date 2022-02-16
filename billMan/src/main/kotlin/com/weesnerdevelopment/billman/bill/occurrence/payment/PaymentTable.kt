@@ -1,10 +1,10 @@
 package com.weesnerdevelopment.billman.bill.occurrence.payment
 
 import com.weesnerdevelopment.billman.bill.occurrence.BillOccurrenceTable
+import com.weesnerdevelopment.businessRules.tryTransaction
 import generics.GenericTable
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
-import org.jetbrains.exposed.sql.transactions.transaction
 
 object PaymentTable : UUIDTable(), GenericTable {
     val owner = varchar("owner", 36)
@@ -13,5 +13,5 @@ object PaymentTable : UUIDTable(), GenericTable {
     override val dateCreated = long("dateCreated")
     override val dateUpdated = long("dateUpdated")
 
-    fun <T> action(event: PaymentTable.() -> T) = transaction { event() }
+    fun <T> action(event: PaymentTable.() -> T) = tryTransaction(event)
 }

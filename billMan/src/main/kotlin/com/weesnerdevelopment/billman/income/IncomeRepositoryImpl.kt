@@ -1,31 +1,27 @@
 package com.weesnerdevelopment.billman.income
 
 import com.weesnerdevelopment.billman.color.ColorDao
-import com.weesnerdevelopment.billman.color.toColor
 import com.weesnerdevelopment.businessRules.Log
 import com.weesnerdevelopment.businessRules.asUuid
 import com.weesnerdevelopment.shared.billMan.Income
 import com.weesnerdevelopment.shared.currentTimeMillis
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.and
 
 object IncomeRepositoryImpl : IncomeRepository {
-    override fun getAll(user: String): List<Income> = IncomeDao.action {
+    override fun getAll(user: String): List<Income> {
         Log.info("Attempting to get all of user $user income")
-        runCatching {
-            find {
-                IncomeTable.owner eq user
-            }.toIncomes()
-        }.getOrElse {
-            Log.error("Failed to get income for user $user", it)
-            null
-        } ?: emptyList()
+        return getFor {
+            IncomeTable.owner eq user
+        }?.toIncomes()
+            ?: emptyList()
     }
 
-    override fun get(user: String, id: String): Income? {
-        return IncomeDao.action { getSingle(user, id)?.toIncome() }
-    }
+    override fun get(user: String, id: String): Income? =
+        getSingle(user, id)?.toIncome()
 
-    override fun add(new: Income): Income? = runCatching {
+    override fun add(new: Income): Income? {
         Log.info("Adding new color for new income")
         val newColor = ColorDao.action {
             new(new.color.uuid.asUuid) {
@@ -38,20 +34,24 @@ object IncomeRepositoryImpl : IncomeRepository {
             }
         }
 
+        if (newColor == null)
+            return null
+
         Log.info("Adding new income")
-        IncomeDao.action {
+        val newIncome = IncomeDao.action {
             new(new.uuid.asUuid) {
                 owner = new.owner
                 name = new.name
+                color = newColor
                 amount = new.amount
                 varyingAmount = new.varyingAmount
                 dateCreated = new.dateCreated
                 dateUpdated = new.dateUpdated
-
-                color = newColor
-            }.toIncome()
+            }
         }
-    }.getOrNull()
+
+        return newIncome?.toIncome()
+    }
 
     override fun update(updated: Income): Income? {
         val uuid = updated.uuid
@@ -68,9 +68,9 @@ object IncomeRepositoryImpl : IncomeRepository {
         }
         val foundIncomeAsIncome = IncomeDao.action { foundIncome.toIncome() }
 
-        if (foundIncomeAsIncome.color != updated.color) {
+        if (foundIncomeAsIncome?.color != updated.color) {
             // check if color changed, if did, delete old one, add new one
-            if (ColorDao.action { foundIncome.color.toColor().uuid } != updated.color.uuid) {
+            if (foundIncomeAsIncome?.color?.uuid != updated.color.uuid) {
                 Log.info("Deleting and re-adding color for income, as it changed")
                 ColorDao.action { foundIncome.color.delete() }
                 val newColor = ColorDao.action {
@@ -83,6 +83,9 @@ object IncomeRepositoryImpl : IncomeRepository {
                         dateUpdated = updated.color.dateUpdated
                     }
                 }
+                if (newColor == null)
+                    return null
+
                 foundIncome.color = newColor
             } else {
                 // update color
@@ -147,14 +150,13 @@ object IncomeRepositoryImpl : IncomeRepository {
         return true
     }
 
-    private fun getSingle(user: String, id: String): IncomeDao? = IncomeDao.action {
-        runCatching {
-            find {
+    private fun getFor(op: SqlExpressionBuilder.() -> Op<Boolean>) =
+        IncomeDao.action { find(op) }
+
+    private fun getSingle(user: String, id: String): IncomeDao? =
+        IncomeDao.action {
+            getFor {
                 (IncomeTable.owner eq user) and (IncomeTable.id eq id.asUuid)
-            }.first()
-        }.getOrElse {
-            Log.error("Failed to get single income with id $id for user $user", it)
-            null
+            }?.firstOrNull()
         }
-    }
 }

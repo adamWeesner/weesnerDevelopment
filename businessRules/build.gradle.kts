@@ -26,5 +26,6 @@ dependencies {
     implementation(Ktor.Client.okHttp)
     implementation(Ktor.serialization)
     implementation(Exposed.core)
+    implementation(Exposed.dao)
     implementation(Kimchi.core)
 }

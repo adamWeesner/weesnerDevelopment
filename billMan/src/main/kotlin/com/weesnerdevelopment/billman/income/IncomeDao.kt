@@ -2,17 +2,17 @@ package com.weesnerdevelopment.billman.income
 
 import com.weesnerdevelopment.billman.color.ColorDao
 import com.weesnerdevelopment.billman.color.toColor
+import com.weesnerdevelopment.businessRules.tryTransaction
 import com.weesnerdevelopment.shared.billMan.Income
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.SizedIterable
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 class IncomeDao(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<IncomeDao>(IncomeTable) {
-        fun <T> action(event: Companion.() -> T) = transaction { event() }
+        fun <T> action(event: Companion.() -> T) = tryTransaction(event)
     }
 
     var owner by IncomeTable.owner
@@ -24,21 +24,25 @@ class IncomeDao(id: EntityID<UUID>) : UUIDEntity(id) {
     var dateUpdated by IncomeTable.dateUpdated
 //    val history by HistoryDao via IncomeHistoryTable
 
-    fun <T> action(event: IncomeDao.() -> T) = transaction { event() }
+    fun <T> action(event: IncomeDao.() -> T) = tryTransaction(event)
 }
 
-fun SizedIterable<IncomeDao>.toIncomes(): List<Income> = map {
-    it.toIncome()
-}
-
-fun IncomeDao.toIncome(): Income = Income(
-    uuid = id.value.toString(),
-    name = name,
-    owner = owner,
-    amount = amount,
-    varyingAmount = varyingAmount,
-    color = color.toColor(),
+fun IncomeDao.toIncome(): Income? = action {
+    Income(
+        uuid = id.value.toString(),
+        name = name,
+        owner = owner,
+        amount = amount,
+        varyingAmount = varyingAmount,
+        color = color.toColor()!!,
 //    history = history.toHistories(),
-    dateCreated = dateCreated,
-    dateUpdated = dateUpdated
-)
+        dateCreated = dateCreated,
+        dateUpdated = dateUpdated
+    )
+}
+
+fun SizedIterable<IncomeDao>.toIncomes(): List<Income> = IncomeDao.action {
+    mapNotNull {
+        it.toIncome()
+    }
+} ?: emptyList()

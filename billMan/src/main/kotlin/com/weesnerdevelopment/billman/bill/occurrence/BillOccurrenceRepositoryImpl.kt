@@ -7,43 +7,34 @@ import com.weesnerdevelopment.businessRules.Log
 import com.weesnerdevelopment.businessRules.asUuid
 import com.weesnerdevelopment.shared.billMan.BillOccurrence
 import com.weesnerdevelopment.shared.currentTimeMillis
-import org.jetbrains.exposed.sql.SizedCollection
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.*
 import java.util.*
 
 object BillOccurrenceRepositoryImpl : BillOccurrenceRepository {
-    override fun getAll(user: String): List<BillOccurrence> = BillOccurrenceDao.action {
+    override fun getAll(user: String): List<BillOccurrence> {
         Log.info("Attempting to get all of user $user bill occurrences")
-        runCatching {
-            find {
-                (BillOccurrenceTable.owner eq user)
-            }.toBillOccurrences()
-        }.getOrElse {
-            Log.error("Failed to get bill occurrences for user $user", it)
-            null
-        } ?: emptyList()
+        return getFor {
+            (BillOccurrenceTable.owner eq user)
+        }?.toBillOccurrences()
+            ?: emptyList()
     }
 
-    override fun getAllFor(user: String, billId: String): List<BillOccurrence> = BillOccurrenceDao.action {
+    override fun getAllFor(user: String, billId: String): List<BillOccurrence> {
         Log.info("Attempting to get all of user $user bill occurrences for bill $billId")
-        runCatching {
-            find {
-                (BillOccurrenceTable.owner eq user) and (BillOccurrenceTable.bill eq billId.asUuid)
-            }.toBillOccurrences()
-        }.getOrElse {
-            Log.error("Failed to get bill occurrences for user $user for bill $billId", it)
-            null
-        } ?: emptyList()
+        return getFor {
+            (BillOccurrenceTable.owner eq user) and (BillOccurrenceTable.bill eq billId.asUuid)
+        }?.toBillOccurrences()
+            ?: emptyList()
     }
 
-    override fun get(user: String, id: String): BillOccurrence? {
-        return BillOccurrenceDao.action { getSingle(user, id)?.toBillOccurrence() }
-    }
+    override fun get(user: String, id: String): BillOccurrence? =
+        getSingle(user, id)?.toBillOccurrence()
 
-    override fun add(new: BillOccurrence): BillOccurrence? = runCatching {
+    override fun add(new: BillOccurrence): BillOccurrence? {
         val retrievedBill = BillDao.action { get(UUID.fromString(new.itemId)) }
+
+        if (retrievedBill == null)
+            return null
 
         Log.info("Adding new bill occurrence")
         val newOccurrence = BillOccurrenceDao.action {
@@ -59,6 +50,9 @@ object BillOccurrenceRepositoryImpl : BillOccurrenceRepository {
             }
         }
 
+        if (newOccurrence == null)
+            return null
+
         Log.info("Linking shared users for added bill occurrence")
         new.sharedUsers?.forEach {
             BillOccurrenceSharedUsersDao.action {
@@ -69,11 +63,7 @@ object BillOccurrenceRepositoryImpl : BillOccurrenceRepository {
             }
         }
 
-
-        return BillOccurrenceDao.action { newOccurrence.toBillOccurrence() }
-    }.getOrElse {
-        Log.error("Failed to add new bill occurrence", it)
-        null
+        return newOccurrence.toBillOccurrence()
     }
 
     override fun update(updated: BillOccurrence): BillOccurrence? {
@@ -88,14 +78,14 @@ object BillOccurrenceRepositoryImpl : BillOccurrenceRepository {
             Log.error("Could not find bill occurrence matching the owner and uuid")
             return null
         }
-        val foundBillOccurrenceAsOccurrence = BillOccurrenceDao.action { foundBillOccurrence?.toBillOccurrence() }
+        val foundBillOccurrenceAsOccurrence = BillOccurrenceDao.action { foundBillOccurrence.toBillOccurrence() }
 
-        if (foundBillOccurrenceAsOccurrence.sharedUsers != updated.sharedUsers) {
+        if (foundBillOccurrenceAsOccurrence?.sharedUsers != updated.sharedUsers) {
             Log.info("Removing all bill occurrence shared users")
             // update shared users
-            transaction {
-                BillOccurrenceSharedUsersTable.deleteWhere {
-                    (BillOccurrenceSharedUsersTable.occurrence eq foundBillOccurrence.id)
+            BillOccurrenceSharedUsersTable.action {
+                deleteWhere {
+                    occurrence eq foundBillOccurrence.id
                 }
             }
 
@@ -141,11 +131,14 @@ object BillOccurrenceRepositoryImpl : BillOccurrenceRepository {
         return get(foundBillOccurrence.owner, foundBillOccurrence.id.value.toString())
     }
 
-    override fun pay(id: String, payment: String): BillOccurrence? = runCatching {
+    override fun pay(id: String, payment: String): BillOccurrence? {
         val foundBillOccurrence = BillOccurrenceDao.action { get(id.asUuid) }
+        if (foundBillOccurrence == null)
+            return null
 
         val occurrenceAmountLeft = foundBillOccurrence.amountLeft.toDouble()
         val paymentAmount = payment.toDouble()
+
         // todo what should we do if they change their amount to be lower than the amountLeft?
         if (occurrenceAmountLeft < paymentAmount) {
             Log.error("The amount left ${foundBillOccurrence.amountLeft} for the bill occurence $id was less than the payment amount $payment")
@@ -163,6 +156,9 @@ object BillOccurrenceRepositoryImpl : BillOccurrenceRepository {
             }
         }
 
+        if (newPayment == null)
+            return null
+
         BillOccurrenceDao.action {
             foundBillOccurrence.apply {
                 amountLeft = (occurrenceAmountLeft - paymentAmount).toString()
@@ -172,9 +168,6 @@ object BillOccurrenceRepositoryImpl : BillOccurrenceRepository {
         }
 
         return get(foundBillOccurrence.owner, foundBillOccurrence.id.value.toString())
-    }.getOrElse {
-        Log.error("Failed to pay for bill occurrence", it)
-        null
     }
 
     override fun delete(user: String, id: String): Boolean {
@@ -195,14 +188,12 @@ object BillOccurrenceRepositoryImpl : BillOccurrenceRepository {
         return true
     }
 
+    private fun getFor(op: SqlExpressionBuilder.() -> Op<Boolean>) =
+        BillOccurrenceDao.action { find(op) }
+
     private fun getSingle(user: String, id: String): BillOccurrenceDao? = BillOccurrenceDao.action {
-        runCatching {
-            BillOccurrenceDao.find {
-                (BillOccurrenceTable.owner eq user) and (BillOccurrenceTable.id eq id.asUuid)
-            }.first()
-        }.getOrElse {
-            Log.error("Failed to get single bill occurrence with id $id for user $user", it)
-            null
-        }
+        getFor {
+            (BillOccurrenceTable.owner eq user) and (BillOccurrenceTable.id eq id.asUuid)
+        }?.firstOrNull()
     }
 }

@@ -1,8 +1,8 @@
 package com.weesnerdevelopment.billman.category
 
+import com.weesnerdevelopment.businessRules.tryTransaction
 import generics.GenericTable
 import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.transactions.transaction
 
 object CategoryTable : UUIDTable(), GenericTable {
     val name = varchar("name", 255).uniqueIndex()
@@ -10,5 +10,5 @@ object CategoryTable : UUIDTable(), GenericTable {
     override val dateCreated = long("dateCreated")
     override val dateUpdated = long("dateUpdated")
 
-    fun <T> action(event: CategoryTable.() -> T) = transaction { event() }
+    fun <T> action(event: CategoryTable.() -> T) = tryTransaction(event)
 }

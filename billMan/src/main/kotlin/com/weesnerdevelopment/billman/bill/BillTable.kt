@@ -1,10 +1,10 @@
 package com.weesnerdevelopment.billman.bill
 
 import com.weesnerdevelopment.billman.color.ColorTable
+import com.weesnerdevelopment.businessRules.tryTransaction
 import generics.GenericTable
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
-import org.jetbrains.exposed.sql.transactions.transaction
 
 object BillTable : UUIDTable(), GenericTable {
     val owner = varchar("owner", 36)
@@ -16,5 +16,5 @@ object BillTable : UUIDTable(), GenericTable {
     override val dateCreated = long("dateCreated")
     override val dateUpdated = long("dateUpdated")
 
-    fun <T> action(event: BillTable.() -> T) = transaction { event() }
+    fun <T> action(event: BillTable.() -> T) = tryTransaction(event)
 }

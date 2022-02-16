@@ -90,7 +90,7 @@ object BillOccurrenceRepositoryImpl : BillOccurrenceRepository {
         }
         val foundBillOccurrenceAsOccurrence = BillOccurrenceDao.action { foundBillOccurrence?.toBillOccurrence() }
 
-        if (foundBillOccurrenceAsOccurrence?.sharedUsers != updated.sharedUsers) {
+        if (foundBillOccurrenceAsOccurrence.sharedUsers != updated.sharedUsers) {
             Log.info("Removing all bill occurrence shared users")
             // update shared users
             transaction {

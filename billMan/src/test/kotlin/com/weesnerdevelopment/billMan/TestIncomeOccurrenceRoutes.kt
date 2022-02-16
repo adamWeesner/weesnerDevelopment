@@ -15,15 +15,12 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class TestBillOccurrenceRoutes : BillManTests() {
-    override val baseUrl = Path.BillMan.billOccurrences
+class TestIncomeOccurrenceRoutes : BillManTests() {
+    override val baseUrl = Path.BillMan.incomeOccurrences
 
-    private fun TestApplicationEngine.addBill(token: String) {
-        val addCat = handleRequest(Post, Path.BillMan.categories, "add/validRequestBodyNoOwner", token)
-        addCat.response.status() shouldBe HttpStatusCode.Created
-
-        val addBill = handleRequest(Post, Path.BillMan.bills, "add/validRequestBody", token)
-        addBill.response.status() shouldBe HttpStatusCode.Created
+    private fun TestApplicationEngine.addIncome(token: String) {
+        val addIncome = handleRequest(Post, Path.BillMan.income, "add/validRequestBody", token)
+        addIncome.response.status() shouldBe HttpStatusCode.Created
     }
 
     @Nested
@@ -39,7 +36,7 @@ class TestBillOccurrenceRoutes : BillManTests() {
 
         @Test
         fun `get all of 1 bills occurrences returns occurrences list`() = testApp(config) { token ->
-            addBill(token)
+            addIncome(token)
 
             val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
             add.response.status() shouldBe HttpStatusCode.Created
@@ -70,7 +67,7 @@ class TestBillOccurrenceRoutes : BillManTests() {
 
         @Test
         fun `get single occurrence that is in the database`() = testApp(config) { token ->
-            addBill(token)
+            addIncome(token)
 
             val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
             add.response.status() shouldBe HttpStatusCode.Created
@@ -86,7 +83,7 @@ class TestBillOccurrenceRoutes : BillManTests() {
     inner class Add : Testing() {
         @Test
         fun `add new occurrence`() = testApp(config) { token ->
-            addBill(token)
+            addIncome(token)
 
             val call = handleRequest(Post, baseUrl, "add/validRequestBody", token)
             call.response.status() shouldBe HttpStatusCode.Created
@@ -106,7 +103,7 @@ class TestBillOccurrenceRoutes : BillManTests() {
     inner class Update : Testing() {
         @Test
         fun `update existing occurrence`() = testApp(config) { token ->
-            addBill(token)
+            addIncome(token)
 
             val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
             add.response.status() shouldBe HttpStatusCode.Created
@@ -134,76 +131,11 @@ class TestBillOccurrenceRoutes : BillManTests() {
     }
 
     @Nested
-    @DisplayName("pay")
-    inner class Pay : Testing() {
-        @Test
-        fun `pay for existing occurrence`() = testApp(config) { token ->
-            addBill(token)
-
-            val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
-            add.response.status() shouldBe HttpStatusCode.Created
-
-            val call = handleRequest(
-                method = Put,
-                uri = "$baseUrl/pay?id=4f982b2d-1b86-40de-8710-6bfb4649f1e4&payment=1.23",
-                bearerToken = token
-            )
-            call.response.status() shouldBe HttpStatusCode.OK
-            call.response.content
-                ?.replace(Regex("\"dateCreated\": \\d+"), "")
-                ?.replace(Regex("\"dateUpdated\": \\d+"), "")
-                ?.replace(Regex("\"uuid\": \"[a-f0-9-]+\""), "") shouldBe fromFile(baseUrl, "update/successResponsePay")
-                .replace(Regex("\"dateCreated\": \\d+"), "")
-                .replace(Regex("\"dateUpdated\": \\d+"), "")
-                .replace(Regex("\"uuid\": \"[a-f0-9-]+\""), "")
-        }
-
-        @Test
-        fun `pay for existing occurrence over amount left`() = testApp(config) { token ->
-            addBill(token)
-
-            val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
-            add.response.status() shouldBe HttpStatusCode.Created
-
-            val call = handleRequest(
-                method = Put,
-                uri = "$baseUrl/pay?id=4f982b2d-1b86-40de-8710-6bfb4649f1e4&payment=99",
-                bearerToken = token
-            )
-            call.response.status() shouldBe HttpStatusCode.BadRequest
-            call.response.content shouldBe fromFile(baseUrl, "update/invalidResponsePay")
-        }
-
-        @Test
-        fun `pay for non-existing occurrence`() = testApp(config) { token ->
-            val call = handleRequest(Put, baseUrl, "update/validRequestBody", token)
-            call.response.status() shouldBe HttpStatusCode.BadRequest
-            call.response.content shouldBe fromFile(baseUrl, "update/nonExistResponse")
-        }
-
-        @Test
-        fun `pay for occurrence with invalid id`() = testApp(config) { token ->
-            addBill(token)
-
-            val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
-            add.response.status() shouldBe HttpStatusCode.Created
-
-            val call = handleRequest(
-                method = Put,
-                uri = "$baseUrl/pay?id=abc&payment=1.23",
-                bearerToken = token
-            )
-            call.response.status() shouldBe HttpStatusCode.BadRequest
-            call.response.content shouldBe fromFile(baseUrl, "update/invalidIdResponsePay")
-        }
-    }
-
-    @Nested
     @DisplayName("delete")
     inner class Delete : Testing() {
         @Test
         fun `delete existing occurrence`() = testApp(config) { token ->
-            addBill(token)
+            addIncome(token)
 
             val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
             add.response.status() shouldBe HttpStatusCode.Created

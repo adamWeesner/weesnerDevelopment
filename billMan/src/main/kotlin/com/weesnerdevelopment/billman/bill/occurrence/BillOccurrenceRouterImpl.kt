@@ -114,7 +114,7 @@ data class BillOccurrenceRouterImpl(
                     val id = call.occurrenceId
                     val paymentAmount = call.payment
 
-                    if (id == null || paymentAmount == null) {
+                    if (id == null || paymentAmount == null || runCatching { UUID.fromString(id) }.getOrNull() == null) {
                         return@locationPut respond(
                             HttpStatusCode.BadRequest,
                             ServerError(

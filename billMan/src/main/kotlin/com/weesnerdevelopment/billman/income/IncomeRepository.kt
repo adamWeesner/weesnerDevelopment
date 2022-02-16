@@ -1,12 +1,11 @@
 package com.weesnerdevelopment.billman.income
 
 import com.weesnerdevelopment.shared.billMan.Income
-import java.util.*
 
 interface IncomeRepository {
-    fun getAll(user: UUID): List<Income>
-    fun get(user: UUID, id: UUID): Income?
+    fun getAll(user: String): List<Income>
+    fun get(user: String, id: String): Income?
     fun add(new: Income): Income?
     fun update(updated: Income): Income?
-    fun delete(user: UUID, id: UUID): Boolean
+    fun delete(user: String, id: String): Boolean
 }

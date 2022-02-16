@@ -206,7 +206,7 @@ object BillsRepositoryImpl : BillsRepository {
         }
 
         if (foundBill.owner != user) {
-            Log.warn("A user ($user) that was not the owner of the bill occurrence ${foundBill.id} tried to delete it.")
+            Log.warn("A user ($user) that was not the owner of the bill ${foundBill.id} tried to delete it.")
             return false
         }
 

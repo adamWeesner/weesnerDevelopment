@@ -27,7 +27,7 @@ fun HistoryDao.toHistory(): History = History(
     field = field,
     oldValue = oldValue,
     newValue = newValue,
-    updatedBy = updatedBy.let { UserDao.action { get(it).toUser() } },
+    updatedBy = updatedBy.let { UserDao.action { get(it).toUser() }!! },
     dateCreated = dateCreated,
     dateUpdated = dateUpdated
 )

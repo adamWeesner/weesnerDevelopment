@@ -1,5 +1,6 @@
 package com.weesnerdevelopment.auth.user
 
+import com.weesnerdevelopment.businessRules.tryTransaction
 import com.weesnerdevelopment.history.HistoryDao
 import com.weesnerdevelopment.history.toHistories
 import com.weesnerdevelopment.shared.auth.User
@@ -7,7 +8,6 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.SizedIterable
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 val User.redact
@@ -23,7 +23,7 @@ val User.redact
 
 class UserDao(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<UserDao>(UserTable) {
-        fun <T> action(event: Companion.() -> T) = transaction { event() }
+        fun <T> action(event: Companion.() -> T) = tryTransaction(event)
     }
 
     val uuid by UserTable.id
@@ -36,21 +36,25 @@ class UserDao(id: EntityID<UUID>) : UUIDEntity(id) {
     var dateUpdated by UserTable.dateUpdated
     val history: SizedIterable<HistoryDao>? by HistoryDao via UserHistoryTable
 
-    fun <T> action(event: UserDao.() -> T) = transaction { event() }
+    fun <T> action(event: UserDao.() -> T) = tryTransaction(event)
 }
 
-fun UserDao.toUser(): User = User(
-    uuid = uuid.value.toString(),
-    name = name,
-    email = email,
-    photoUrl = photoUrl,
-    username = username,
-    password = password,
-    dateCreated = dateCreated,
-    dateUpdated = dateUpdated,
-    history = history?.toHistories()
-)
-
-fun SizedIterable<UserDao>.toUsers(): List<User> = map {
-    it.toUser()
+fun UserDao.toUser(): User? = action {
+    User(
+        uuid = uuid.value.toString(),
+        name = name,
+        email = email,
+        photoUrl = photoUrl,
+        username = username,
+        password = password,
+        dateCreated = dateCreated,
+        dateUpdated = dateUpdated,
+        history = history?.toHistories()
+    )
 }
+
+fun SizedIterable<UserDao>.toUsers(): List<User> = UserDao.action {
+    mapNotNull {
+        it.toUser()
+    }
+} ?: emptyList()

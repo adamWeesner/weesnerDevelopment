@@ -14,7 +14,6 @@ import io.ktor.http.*
 import io.ktor.locations.*
 import io.ktor.locations.delete
 import io.ktor.routing.*
-import java.util.*
 
 @OptIn(KtorExperimentalLocationsAPI::class)
 data class UserRouterImpl(
@@ -45,17 +44,18 @@ data class UserRouterImpl(
                 get<UserAccountEndpoint> {
                     val id = getBearerUuid()
 
-                    if (id == null)
+                    if (id == null) {
                         return@get respond(
                             HttpStatusCode.BadRequest,
                             ServerError(
                                 HttpStatusCode.BadRequest.description,
                                 HttpStatusCode.BadRequest.value,
-                                "Invalid id '$id' attempting to get account."
+                                "Invalid id attempting to get account."
                             )
                         )
+                    }
 
-                    when (val foundUser = repo.account(id)) {
+                    when (val foundUser = repo.account(id.toString())) {
                         null -> {
                             return@get respond(
                                 HttpStatusCode.NotFound,
@@ -75,15 +75,16 @@ data class UserRouterImpl(
                 get<UserInfoEndpoint> {
                     val id = getBearerUuid()
 
-                    if (id == null)
+                    if (id == null) {
                         return@get respond(
                             HttpStatusCode.BadRequest,
                             ServerError(
                                 HttpStatusCode.BadRequest.description,
                                 HttpStatusCode.BadRequest.value,
-                                "Invalid id '$id' attempting to get account."
+                                "Invalid id attempting to get account."
                             )
                         )
+                    }
 
                     when (val foundUser = repo.info(id.toString())) {
                         null -> {
@@ -137,26 +138,14 @@ data class UserRouterImpl(
                     )
                 }
 
-                val idAsUuid = runCatching { UUID.fromString(id) }.getOrNull()
-
-                if (idAsUuid == null)
-                    return@get respond(
-                        HttpStatusCode.BadRequest,
-                        ServerError(
-                            HttpStatusCode.BadRequest.description,
-                            HttpStatusCode.BadRequest.value,
-                            "Invalid id '$id' attempting to get account."
-                        )
-                    )
-
-                when (val foundUser = repo.account(idAsUuid)) {
+                when (val foundUser = repo.account(id)) {
                     null -> {
                         return@get respond(
                             HttpStatusCode.NotFound,
                             ServerError(
                                 HttpStatusCode.NotFound.description,
                                 HttpStatusCode.NotFound.value,
-                                "No account with id '$idAsUuid' found."
+                                "No account with id '$id' found."
                             )
                         )
                     }
@@ -168,7 +157,7 @@ data class UserRouterImpl(
             }
 
             post<UserEndpoint, User> { user ->
-                if (user == null)
+                if (user == null) {
                     return@post respond(
                         HttpStatusCode.BadRequest,
                         ServerError(
@@ -177,15 +166,27 @@ data class UserRouterImpl(
                             "Cannot add invalid user."
                         )
                     )
+                }
 
                 val newUser = repo.create(user)
+                if (newUser == null) {
+                    return@post respond(
+                        HttpStatusCode.BadRequest,
+                        ServerError(
+                            HttpStatusCode.BadRequest.description,
+                            HttpStatusCode.BadRequest.value,
+                            "Cannot add invalid user."
+                        )
+                    )
+                }
+
                 val token = newUser.asToken(jwtProvider)
                 return@post respond(HttpStatusCode.Created, TokenResponse(token))
             }
 
             authenticate {
                 put<UserEndpoint, User> { user ->
-                    if (user == null)
+                    if (user == null) {
                         return@put respond(
                             HttpStatusCode.BadRequest,
                             ServerError(
@@ -194,9 +195,10 @@ data class UserRouterImpl(
                                 "Cannot update invalid user."
                             )
                         )
+                    }
 
                     val updatedUser = repo.update(user)
-                    if (updatedUser == null)
+                    if (updatedUser == null) {
                         return@put respond(
                             HttpStatusCode.BadRequest,
                             ServerError(
@@ -205,13 +207,14 @@ data class UserRouterImpl(
                                 "An error occurred attempting to update user."
                             )
                         )
+                    }
 
                     return@put respond(HttpStatusCode.OK, updatedUser)
                 }
 
                 delete<UserEndpoint> {
                     val id = call.userId
-                    val authUuid = getBearerUuid()!!
+                    val authUuid = getBearerUuid().toString()
 
                     if (id.isNullOrBlank()) {
                         return@delete respond(
@@ -224,28 +227,18 @@ data class UserRouterImpl(
                         )
                     }
 
-                    val idAsUuid = runCatching { UUID.fromString(id) }.getOrNull()
-
-                    if (idAsUuid == null)
-                        return@delete respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id '$id' attempting to delete user."
-                            )
-                        )
-
                     when (val deletedUser = repo.delete(authUuid)) {
-                        false -> return@delete respond(
-                            HttpStatusCode.NotFound,
-                            ServerError(
-                                HttpStatusCode.NotFound.description,
-                                HttpStatusCode.NotFound.value,
-                                "No user with id '$idAsUuid' found."
+                        false ->
+                            return@delete respond(
+                                HttpStatusCode.NotFound,
+                                ServerError(
+                                    HttpStatusCode.NotFound.description,
+                                    HttpStatusCode.NotFound.value,
+                                    "No user with id '$authUuid' found."
+                                )
                             )
-                        )
-                        else -> return@delete respond(HttpStatusCode.OK, deletedUser)
+                        else ->
+                            return@delete respond(HttpStatusCode.OK, deletedUser)
                     }
                 }
             }

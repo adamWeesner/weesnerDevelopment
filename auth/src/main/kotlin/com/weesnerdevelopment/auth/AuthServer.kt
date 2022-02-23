@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.auth
 
-import Path.BillMan.health
+import Path.User.health
 import auth.CustomPrincipal
 import auth.JwtProvider
 import com.auth0.jwt.exceptions.JWTVerificationException
@@ -17,19 +17,23 @@ import io.ktor.http.*
 import io.ktor.http.auth.*
 import io.ktor.locations.*
 import io.ktor.metrics.dropwizard.*
+import io.ktor.request.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.websocket.*
 import kimchi.Kimchi
+import kotlinx.serialization.ExperimentalSerializationApi
 import logging.StdOutLogger
 import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 import respond
 import respondErrorAuthorizing
 import respondErrorServer
-import java.time.Duration
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class, ExperimentalSerializationApi::class)
 object AuthServer {
     fun Application.main() {
         initKodein()
@@ -55,7 +59,7 @@ object AuthServer {
             header(HttpHeaders.Authorization)
             host("${appConfig.baseUrl}:${appConfig.port}")
             host("localhost:3000")
-            maxAge = Duration.ofDays(1)
+            maxAgeDuration = Duration.days(1)
             allowCredentials = true
             allowNonSimpleContentTypes = true
         }
@@ -121,7 +125,7 @@ object AuthServer {
         install(Routing) {
             route(health) {
                 get {
-                    respond(Response.Ok("Server is up and running"))
+                    respond(Response.Ok("Auth ${this.call.request.path().replace("/health", "")} is up and running"))
                 }
             }
 

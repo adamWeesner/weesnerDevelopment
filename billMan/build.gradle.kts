@@ -43,7 +43,6 @@ dependencies {
     implementation(Ktor.webSockets)
     implementation(Ktor.serialization)
     implementation(Ktor.locations)
-    implementation(Ktor.Client.okHttp)
     implementation(Ktor.Client.logging)
     implementation(Ktor.Server.core)
     implementation(Logback.core)

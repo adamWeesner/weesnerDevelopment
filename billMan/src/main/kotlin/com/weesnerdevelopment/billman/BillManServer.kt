@@ -17,6 +17,7 @@ import io.ktor.http.*
 import io.ktor.http.auth.*
 import io.ktor.locations.*
 import io.ktor.metrics.dropwizard.*
+import io.ktor.request.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.websocket.*
@@ -123,7 +124,7 @@ object BillManServer {
         install(Routing) {
             route(health) {
                 get {
-                    respond(Response.Ok("Server is up and running"))
+                    respond(Response.Ok("BillMan ${this.call.request.path().replace("/health", "")} is up and running"))
                 }
             }
 

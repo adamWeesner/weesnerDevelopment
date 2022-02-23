@@ -9,5 +9,8 @@ version = Base.version
 
 repositories { sharedRepos() }
 java { javaSource() }
-tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
+tasks.withType<KotlinCompile>().all {
+    kotlinOptions.freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn")
+    kotlinOptions.jvmTarget = Jvm.version
+}
 

@@ -19,7 +19,7 @@ object Ktor {
 
     object Client {
         const val webSockets = "${base}client-websockets:$version"
-        const val okHttp = "${base}client-okhttp:$version"
+        const val java = "${base}client-java:$version"
         const val logging = "${base}client-logging:$version"
     }
 }

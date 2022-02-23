@@ -23,7 +23,7 @@ dependencies {
     implementation(Ktor.authJwt)
     implementation(Commons.base64)
     implementation(Ktor.Client.webSockets)
-    implementation(Ktor.Client.okHttp)
+    implementation(Ktor.Client.java)
     implementation(Ktor.serialization)
     implementation(Exposed.core)
     implementation(Exposed.dao)

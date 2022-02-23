@@ -31,7 +31,7 @@ dependencies {
     implementation(Ktor.Server.core)
     implementation(Ktor.Server.netty)
     implementation(Ktor.Client.webSockets)
-    implementation(Ktor.Client.okHttp)
+    implementation(Ktor.Client.java)
     implementation(Ktor.serialization)
     implementation(Exposed.core)
     implementation(Exposed.jdbc)

@@ -30,6 +30,7 @@ sealed class Path {
     object User : Path() {
         private const val version = "v1"
         const val basePath = "$version/user"
+        const val health = "${basePath}/health"
         const val account = "${basePath}/account"
         const val login = "${basePath}/login"
         const val info = "${basePath}/info"

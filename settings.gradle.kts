@@ -1,6 +1,7 @@
 rootProject.name = "weesnerDevelopment"
 include("auth")
 include("backend")
+include("backendRouter")
 include("businessRules")
 include("taxFetcher")
 include("billMan")

@@ -14,3 +14,12 @@ tasks.withType<KotlinCompile>().all {
     kotlinOptions.jvmTarget = Jvm.version
 }
 
+allprojects {
+    repositories { sharedRepos() }
+    tasks.withType<KotlinCompile>().all {
+        kotlinOptions.freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn")
+        kotlinOptions.jvmTarget = Jvm.version
+    }
+    tasks.withType<Test> { useJUnitPlatform() }
+}
+

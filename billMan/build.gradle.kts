@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     application
     id(Kotlin.jvm)
@@ -11,10 +9,7 @@ group = BillMan.group
 version = BillMan.version
 
 sourceSets { sharedSources() }
-repositories { sharedRepos() }
 java { javaSource() }
-tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
-tasks.withType<Test> { useJUnitPlatform() }
 application { mainClass.set(Ktor.Server.mainClass) }
 tasks.withType<Jar> { manifest { attributes(mapOf("Main-Class" to application.mainClass)) } }
 task("stage").dependsOn("installDist")

@@ -79,7 +79,7 @@ inline fun <reified T : Any> Route.delete(
 suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.respond(status: HttpStatusCode, response: T) =
     response.run {
         if (!call.request.origin.uri.contains(Path.BillMan.logging))
-            Kimchi.info("${HttpLog(call.request.httpMethod.value, call.request.origin.uri, status.value)}")
+            Log.info("${HttpLog(call.request.httpMethod.value, call.request.origin.uri, status.value)}")
 
         call.respond(status, response).also {
             val callItem = callItems.firstOrNull { it.instance == this@respond.toString() }
@@ -92,9 +92,9 @@ suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.respond
 
             val time = System.currentTimeMillis() - (callItem?.time ?: System.currentTimeMillis())
 
-            Kimchi.debug("<-- ${call.request.origin.version} ${status.value} ${status.description} (${time}ms)")
-            Kimchi.debug("Response: $parsedResponse")
-            Kimchi.debug("<-- END HTTP (${parsedResponse.toByteArray().size}-byte body)")
+            Log.debug("<-- ${call.request.origin.version} ${status.value} ${status.description} (${time}ms)")
+            Log.debug("Response: $parsedResponse")
+            Log.debug("<-- END HTTP (${parsedResponse.toByteArray().size}-byte body)")
         }
     }
 

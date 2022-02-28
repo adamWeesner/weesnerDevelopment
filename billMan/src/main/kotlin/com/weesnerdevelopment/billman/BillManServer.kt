@@ -20,7 +20,6 @@ import io.ktor.metrics.dropwizard.*
 import io.ktor.request.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
-import io.ktor.websocket.*
 import kimchi.Kimchi
 import kotlinx.serialization.ExperimentalSerializationApi
 import logging.StdOutLogger
@@ -45,20 +44,33 @@ object BillManServer {
 //        if (!appConfig.isTesting)
 //            Kimchi.addLog(DbLogger.apply { service = loggingService })
 
-        if (appConfig.isTesting || appConfig.isDevelopment)
-            Kimchi.addLog(StdOutLogger)
+        Kimchi.addLog(StdOutLogger)
 
         BillManDatabase.init(appConfig.isTesting)
 
-        install(DefaultHeaders)
+        install(DefaultHeaders) {
+            header(HttpHeaders.AcceptCharset, Charsets.UTF_8.toString())
+            header(
+                HttpHeaders.Accept,
+                ContentType.Application.Json.withParameter("charset", Charsets.UTF_8.toString()).toString()
+            )
+        }
         if (appConfig.isDevelopment || appConfig.isTesting)
             install(CallLogging)
-        install(WebSockets)
+        if (!appConfig.isTesting && !appConfig.isDevelopment) {
+            install(HSTS)
+            install(HttpsRedirect)
+        }
         install(CORS) {
             method(HttpMethod.Options)
+            header(HttpHeaders.ContentType)
             header(HttpHeaders.Authorization)
-            host("${appConfig.baseUrl}:${appConfig.port}")
-            host("localhost:3000")
+            host("${appConfig.baseUrl}:${appConfig.sslPort}", schemes = listOf("https"))
+            host(appConfig.baseUrl, schemes = listOf("https"))
+            if (appConfig.isTesting || appConfig.isDevelopment) {
+                host("${appConfig.baseUrl}:${appConfig.port}", schemes = listOf("http"))
+                host("localhost:3000")
+            }
             maxAgeDuration = Duration.days(1)
             allowCredentials = true
             allowNonSimpleContentTypes = true

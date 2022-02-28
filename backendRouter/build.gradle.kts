@@ -22,6 +22,9 @@ tasks {
 }
 
 dependencies {
+    val tcnative_version = rootProject.extra["tcnative_version"]
+    val tcnative_classifier = rootProject.extra["tcnative_classifier"]
+
     implementation(project(BusinessRules.project))
     implementation(project(Backend.project))
 
@@ -29,8 +32,14 @@ dependencies {
     implementation(KodeIn.core)
     implementation(KodeIn.ktorServer)
     implementation(Logback.core)
-    implementation(Ktor.Server.core)
+    implementation(Ktor.serialization)
     implementation(Ktor.Client.java)
+    implementation(Ktor.Server.core)
+    implementation(Ktor.Server.netty)
+
+    implementation("io.netty:netty-tcnative:$tcnative_version")
+    implementation("io.netty:netty-tcnative-boringssl-static:$tcnative_version")
+    implementation("io.netty:netty-tcnative-boringssl-static:$tcnative_version:$tcnative_classifier")
 
     testImplementation(project(TestUtils.project))
 }

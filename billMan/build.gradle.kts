@@ -22,6 +22,9 @@ tasks {
 }
 
 dependencies {
+    val tcnative_version = rootProject.extra["tcnative_version"]
+    val tcnative_classifier = rootProject.extra["tcnative_classifier"]
+
     implementation(project(BusinessRules.project))
 
     implementation(Dropwizard.metricsJmx)
@@ -41,6 +44,10 @@ dependencies {
     implementation(Ktor.Client.logging)
     implementation(Ktor.Server.core)
     implementation(Logback.core)
+
+    implementation("io.netty:netty-tcnative:$tcnative_version")
+    implementation("io.netty:netty-tcnative-boringssl-static:$tcnative_version")
+    implementation("io.netty:netty-tcnative-boringssl-static:$tcnative_version:$tcnative_classifier")
 
     testImplementation(project(TestUtils.project))
 }

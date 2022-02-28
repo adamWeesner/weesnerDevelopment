@@ -12,6 +12,7 @@ class AppConfig(
 
     val appEnv = getDeployment("environment")
     val port = getDeployment("port")
+    val sslPort = getDeployment("sslPort")
 
     val issuer = getJwt("domain")
     val audience = getJwt("audience")

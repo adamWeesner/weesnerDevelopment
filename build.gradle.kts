@@ -14,6 +14,24 @@ tasks.withType<KotlinCompile>().all {
     kotlinOptions.jvmTarget = Jvm.version
 }
 
+buildscript {
+    extra.apply {
+        set("tcnative_version", "2.0.48.Final")
+
+        val osName = System.getProperty("os.name").toLowerCase()
+        val classifier = if (osName.contains("win")) {
+            "windows-x86_64"
+        } else if (osName.contains("linux")) {
+            "linux-x86_64"
+        } else if (osName.contains("mac")) {
+            "osx-x86_64"
+        } else {
+            ""
+        }
+        set("tcnative_classifier", "osx-x86_64")
+    }
+}
+
 allprojects {
     repositories { sharedRepos() }
     tasks.withType<KotlinCompile>().all {

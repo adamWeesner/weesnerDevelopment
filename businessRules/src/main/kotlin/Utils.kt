@@ -1,4 +1,5 @@
 import auth.CustomPrincipal
+import com.weesnerdevelopment.businessRules.Log
 import com.weesnerdevelopment.shared.auth.InvalidUserException
 import com.weesnerdevelopment.shared.auth.InvalidUserReason
 import com.weesnerdevelopment.shared.base.GenericItem
@@ -14,7 +15,6 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.util.pipeline.*
-import kimchi.Kimchi
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -48,12 +48,12 @@ fun <I : GenericItem> PipelineContext<*, ApplicationCall>.logRequest(body: I? = 
     val url = "${request.scheme}://${request.remoteHost}:${request.port}/${request.uri}"
     val method = call.request.httpMethod.value
 
-    Kimchi.debug("--> $method ${request.version} $url")
+    Log.debug("--> $method ${request.version} $url")
     if (!call.request.authorization().isNullOrBlank())
-        Kimchi.debug("authorization: ${call.request.authorization()}")
+        Log.debug("authorization: ${call.request.authorization()}")
     if (body != null)
-        Kimchi.debug("body: $body")
-    Kimchi.debug("--> END $method")
+        Log.debug("body: $body")
+    Log.debug("--> END $method")
 }
 
 /**
@@ -61,7 +61,7 @@ fun <I : GenericItem> PipelineContext<*, ApplicationCall>.logRequest(body: I? = 
  */
 suspend fun PipelineContext<*, ApplicationCall>.respond(response: Response) = response.run {
     if (!call.request.origin.uri.contains(Path.BillMan.logging))
-        Kimchi.info("${HttpLog(call.request.httpMethod.value, call.request.origin.uri, status.code)}")
+        Log.info("${HttpLog(call.request.httpMethod.value, call.request.origin.uri, status.code)}")
 
     call.respond(HttpStatusCode(status.code, status.description), this).also {
         val callItem = callItems.firstOrNull { it.instance == this@respond.toString() }
@@ -69,9 +69,9 @@ suspend fun PipelineContext<*, ApplicationCall>.respond(response: Response) = re
 
         val time = System.currentTimeMillis() - (callItem?.time ?: System.currentTimeMillis())
 
-        Kimchi.debug("<-- ${call.request.origin.version} (${time}ms)")
-        Kimchi.debug("Response: $message")
-        Kimchi.debug("<-- END HTTP (${message.toString().toByteArray().size}-byte body)")
+        Log.debug("<-- ${call.request.origin.version} (${time}ms)")
+        Log.debug("Response: $message")
+        Log.debug("<-- END HTTP (${message.toString().toByteArray().size}-byte body)")
     }
 }
 
@@ -80,7 +80,7 @@ suspend fun PipelineContext<*, ApplicationCall>.respond(response: Response) = re
  */
 suspend fun PipelineContext<*, ApplicationCall>.respondError(error: Response) = error.run {
     if (!call.request.origin.uri.contains(Path.BillMan.logging))
-        Kimchi.info("${HttpLog(call.request.httpMethod.value, call.request.origin.uri, status.code)}")
+        Log.info("${HttpLog(call.request.httpMethod.value, call.request.origin.uri, status.code)}")
 
     call.respond(
         HttpStatusCode(status.code, status.description),
@@ -91,9 +91,9 @@ suspend fun PipelineContext<*, ApplicationCall>.respondError(error: Response) = 
 
         val time = System.currentTimeMillis() - (callItem?.time ?: System.currentTimeMillis())
 
-        Kimchi.debug("<-- ${call.request.origin.version} (${time}ms)")
-        Kimchi.debug("Response: $message")
-        Kimchi.debug("<-- END HTTP (${error.message.toString().toByteArray().size}-byte body)")
+        Log.debug("<-- ${call.request.origin.version} (${time}ms)")
+        Log.debug("Response: $message")
+        Log.debug("<-- END HTTP (${error.message.toString().toByteArray().size}-byte body)")
     }
 }
 

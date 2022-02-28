@@ -7,6 +7,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.codahale.metrics.jmx.JmxReporter
 import com.weesnerdevelopment.businessRules.AppConfig
+import com.weesnerdevelopment.businessRules.Log
 import com.weesnerdevelopment.shared.auth.InvalidUserReason
 import com.weesnerdevelopment.shared.base.Response
 import io.ktor.application.*
@@ -20,7 +21,6 @@ import io.ktor.metrics.dropwizard.*
 import io.ktor.request.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
-import io.ktor.websocket.*
 import kimchi.Kimchi
 import kotlinx.serialization.ExperimentalSerializationApi
 import logging.StdOutLogger
@@ -45,23 +45,43 @@ object AuthServer {
 //        if (!appConfig.isTesting)
 //            Kimchi.addLog(DbLogger.apply { service = loggingService })
 
-        if (appConfig.isTesting || appConfig.isDevelopment)
-            Kimchi.addLog(StdOutLogger)
+        Kimchi.addLog(StdOutLogger)
 
         AuthDatabase.init(appConfig.isTesting)
 
-        install(DefaultHeaders)
+        install(DefaultHeaders) {
+            header(HttpHeaders.AcceptCharset, Charsets.UTF_8.toString())
+            header(
+                HttpHeaders.Accept,
+                ContentType.Application.Json.withParameter("charset", Charsets.UTF_8.toString()).toString()
+            )
+        }
         if (appConfig.isDevelopment || appConfig.isTesting)
             install(CallLogging)
-        install(WebSockets)
+        if (!appConfig.isTesting && !appConfig.isDevelopment) {
+            install(HSTS)
+            install(HttpsRedirect)
+        }
         install(CORS) {
             method(HttpMethod.Options)
+            header(HttpHeaders.ContentType)
             header(HttpHeaders.Authorization)
-            host("${appConfig.baseUrl}:${appConfig.port}")
-            host("localhost:3000")
+            host("${appConfig.baseUrl}:${appConfig.sslPort}", schemes = listOf("https"))
+            host(appConfig.baseUrl, schemes = listOf("https"))
+            if (appConfig.isTesting || appConfig.isDevelopment) {
+                host("${appConfig.baseUrl}:${appConfig.port}", schemes = listOf("http"))
+                host("localhost:3000")
+            }
             maxAgeDuration = Duration.days(1)
             allowCredentials = true
             allowNonSimpleContentTypes = true
+        }
+        install(ContentNegotiation) {
+            json(com.weesnerdevelopment.shared.json {
+                prettyPrint = true
+                prettyPrintIndent = "  "
+                isLenient = true
+            })
         }
         if (!appConfig.isTesting) {
             install(DropwizardMetrics) {
@@ -78,13 +98,6 @@ object AuthServer {
                     .build()
                     .start()
             }
-        }
-        install(ContentNegotiation) {
-            json(com.weesnerdevelopment.shared.json {
-                prettyPrint = true
-                prettyPrintIndent = "  "
-                isLenient = true
-            })
         }
         install(StatusPages) {
             exception<Throwable> { e ->
@@ -115,7 +128,7 @@ object AuthServer {
                 verifier(jwtProvider.verifier)
                 this.realm = appConfig.realm
                 validate { credential ->
-                    Kimchi.debug("credential $credential")
+                    Log.debug("credential $credential")
                     if (credential.payload.audience.contains(appConfig.audience)) CustomPrincipal(credential.payload)
                     else null
                 }

@@ -1,8 +1,8 @@
 package com.weesnerdevelopment.router
 
-import Path
 import com.weesnerdevelopment.businessRules.AppConfig
 import com.weesnerdevelopment.businessRules.Log
+import com.weesnerdevelopment.shared.Paths
 import com.weesnerdevelopment.shared.base.Response.Companion.BadRequest
 import io.ktor.application.*
 import io.ktor.client.*
@@ -146,9 +146,9 @@ suspend fun PipelineContext<Unit, ApplicationCall>.redirectInternally(httpClient
     val cp = object : RequestConnectionPoint by call.request.local {
         override val port: Int
             get() = when {
-                uri.startsWith("/${Path.User.basePath}", true) ->
+                uri.startsWith("/${Paths.User.basePath}", true) ->
                     8082
-                uri.startsWith("/${Path.BillMan.basePath}", true) ->
+                uri.startsWith("/${Paths.BillMan.basePath}", true) ->
                     8081
                 else ->
                     call.request.local.port

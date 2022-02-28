@@ -1,8 +1,8 @@
 package com.weesnerdevelopment.billman.income.occurrence
 
-import Path
+import com.weesnerdevelopment.shared.Paths
 import io.ktor.locations.*
 
 @OptIn(KtorExperimentalLocationsAPI::class)
-@Location(Path.BillMan.incomeOccurrences)
+@Location(Paths.BillMan.incomeOccurrences)
 data class IncomeOccurrenceEndpoint(val id: String? = null)

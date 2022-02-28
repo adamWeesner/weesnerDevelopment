@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.billMan
 
-import Path
+import com.weesnerdevelopment.shared.Paths
 import com.weesnerdevelopment.test.utils.fromFile
 import com.weesnerdevelopment.test.utils.handleRequest
 import com.weesnerdevelopment.test.utils.shouldBe
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class TestIncomeRoutes : BillManTests() {
-    override val baseUrl = Path.BillMan.income
+    override val baseUrl = Paths.BillMan.income
 
     @Nested
     @DisplayName("get all")

@@ -1,12 +1,12 @@
 package com.weesnerdevelopment.billman
 
-import Path.BillMan.health
 import auth.CustomPrincipal
 import auth.JwtProvider
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.codahale.metrics.jmx.JmxReporter
 import com.weesnerdevelopment.businessRules.AppConfig
+import com.weesnerdevelopment.shared.Paths
 import com.weesnerdevelopment.shared.auth.InvalidUserReason
 import com.weesnerdevelopment.shared.base.Response
 import io.ktor.application.*
@@ -134,7 +134,7 @@ object BillManServer {
         }
         install(Locations)
         install(Routing) {
-            route(health) {
+            route(Paths.BillMan.health) {
                 get {
                     respond(Response.Ok("BillMan ${this.call.request.path().replace("/health", "")} is up and running"))
                 }

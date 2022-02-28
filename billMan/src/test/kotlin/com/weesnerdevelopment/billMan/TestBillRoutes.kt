@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.billMan
 
-import Path
+import com.weesnerdevelopment.shared.Paths
 import com.weesnerdevelopment.test.utils.fromFile
 import com.weesnerdevelopment.test.utils.handleRequest
 import com.weesnerdevelopment.test.utils.shouldBe
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class TestBillRoutes : BillManTests() {
-    override val baseUrl = Path.BillMan.bills
+    override val baseUrl = Paths.BillMan.bills
 
     @Nested
     @DisplayName("get all")
@@ -30,7 +30,7 @@ class TestBillRoutes : BillManTests() {
 
         @Test
         fun `get all with 1 bill returns bills list`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Path.BillMan.categories, "add/validRequestBodyNoOwner", token)
+            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
             addCat.response.status() shouldBe HttpStatusCode.Created
 
             val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
@@ -62,7 +62,7 @@ class TestBillRoutes : BillManTests() {
 
         @Test
         fun `get single bill that is in the database`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Path.BillMan.categories, "add/validRequestBodyNoOwner", token)
+            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
             addCat.response.status() shouldBe HttpStatusCode.Created
 
             val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
@@ -79,7 +79,7 @@ class TestBillRoutes : BillManTests() {
     inner class Add : Testing() {
         @Test
         fun `add new bill`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Path.BillMan.categories, "add/validRequestBodyNoOwner", token)
+            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
             addCat.response.status() shouldBe HttpStatusCode.Created
 
             val call = handleRequest(Post, baseUrl, "add/validRequestBody", token)
@@ -100,7 +100,7 @@ class TestBillRoutes : BillManTests() {
     inner class Update : Testing() {
         @Test
         fun `update existing bill`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Path.BillMan.categories, "add/validRequestBodyNoOwner", token)
+            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
             addCat.response.status() shouldBe HttpStatusCode.Created
 
             val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
@@ -133,7 +133,7 @@ class TestBillRoutes : BillManTests() {
     inner class Delete : Testing() {
         @Test
         fun `delete existing bill`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Path.BillMan.categories, "add/validRequestBodyNoOwner", token)
+            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
             addCat.response.status() shouldBe HttpStatusCode.Created
 
             val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)

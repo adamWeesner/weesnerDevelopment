@@ -1,8 +1,8 @@
 package com.weesnerdevelopment.businessRules
 
 import HttpLog
-import Path
 import callItems
+import com.weesnerdevelopment.shared.Paths
 import com.weesnerdevelopment.shared.base.GenericItem
 import com.weesnerdevelopment.shared.base.Response
 import com.weesnerdevelopment.shared.toJson
@@ -78,7 +78,7 @@ inline fun <reified T : Any> Route.delete(
  */
 suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.respond(status: HttpStatusCode, response: T) =
     response.run {
-        if (!call.request.origin.uri.contains(Path.BillMan.logging))
+        if (!call.request.origin.uri.contains(Paths.BillMan.logging))
             Log.info("${HttpLog(call.request.httpMethod.value, call.request.origin.uri, status.value)}")
 
         call.respond(status, response).also {

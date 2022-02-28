@@ -1,7 +1,7 @@
 package com.weesnerdevelopment.test.utils
 
-import Path
 import com.typesafe.config.ConfigFactory
+import com.weesnerdevelopment.shared.Paths
 import com.weesnerdevelopment.shared.auth.HashedUser
 import com.weesnerdevelopment.shared.auth.TokenResponse
 import com.weesnerdevelopment.shared.auth.User
@@ -39,19 +39,19 @@ open class BaseTest(configPath: String) {
     }
 
     fun createUser() {
-        token = post(Path.User.basePath + Path.User.signUp, usingToken = null).asClass<User, TokenResponse>(
+        token = post(Paths.User.basePath + Paths.User.signUp, usingToken = null).asClass<User, TokenResponse>(
             User(
                 name = "test",
                 email = "test@email.com",
                 username = "test",
                 password = "test"
             )
-        )?.token ?: post(Path.User.basePath + Path.User.login, usingToken = null)
+        )?.token ?: post(Paths.User.basePath + Paths.User.login, usingToken = null)
             .asClass<HashedUser, TokenResponse>(HashedUser("test", "test"))?.token
                 ?: throw IllegalArgumentException("Something happened... should have gotten a token")
 
 
-        signedInUser = get(Path.User.basePath + Path.User.account).asObject()
+        signedInUser = get(Paths.User.basePath + Paths.User.account).asObject()
     }
 
     private fun String.buildUrl(id: Int?, additional: String? = null): String {

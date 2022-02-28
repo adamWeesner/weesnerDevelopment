@@ -1,8 +1,8 @@
 package com.weesnerdevelopment.billman.bill
 
-import Path
+import com.weesnerdevelopment.shared.Paths
 import io.ktor.locations.*
 
 @OptIn(KtorExperimentalLocationsAPI::class)
-@Location(Path.BillMan.bills)
+@Location(Paths.BillMan.bills)
 data class BillsEndpoint(val id: String? = null)

@@ -1,8 +1,8 @@
 package com.weesnerdevelopment.auth.user
 
-import Path
+import com.weesnerdevelopment.shared.Paths
 import io.ktor.locations.*
 
 @OptIn(KtorExperimentalLocationsAPI::class)
-@Location(Path.User.info)
+@Location(Paths.User.info)
 data class UserInfoEndpoint(val id: String? = null)

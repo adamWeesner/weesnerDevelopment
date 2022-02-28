@@ -1,4 +1,3 @@
-import Path.BillMan.basePath
 import Path.BreathOfTheWild.basePath
 import Path.SerialCabinet.basePath
 import Path.TaxFetcher.basePath
@@ -22,35 +21,6 @@ sealed class Path {
         val medicare = "${basePath}medicare"
         val federalIncomeTax = "${basePath}federalIncomeTax"
         val taxWithholding = "${basePath}taxWithholding"
-    }
-
-    /**
-     * The available paths at [base]/value.
-     */
-    object User : Path() {
-        private const val version = "v1"
-        const val basePath = "user/$version"
-        const val health = "${basePath}/health"
-        const val account = "${basePath}/account"
-        const val login = "${basePath}/login"
-        const val info = "${basePath}/info"
-        const val signUp = "${basePath}/signUp"
-        const val logging = "${basePath}/logging"
-    }
-
-    /**
-     * The available paths at [basePath]/value.
-     */
-    object BillMan : Path() {
-        private const val version = "v1"
-        const val basePath = "billMan/$version/"
-        const val health = "${basePath}health"
-        const val bills = "${basePath}bills"
-        const val categories = "${basePath}categories"
-        const val income = "${basePath}income"
-        const val billOccurrences = "$bills/occurrences"
-        const val incomeOccurrences = "$income/occurrences"
-        const val logging = "${basePath}logging"
     }
 
     /**

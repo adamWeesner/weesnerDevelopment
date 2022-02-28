@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.billMan
 
-import Path
+import com.weesnerdevelopment.shared.Paths
 import com.weesnerdevelopment.test.utils.fromFile
 import com.weesnerdevelopment.test.utils.handleRequest
 import com.weesnerdevelopment.test.utils.shouldBe
@@ -16,13 +16,13 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class TestBillOccurrenceRoutes : BillManTests() {
-    override val baseUrl = Path.BillMan.billOccurrences
+    override val baseUrl = Paths.BillMan.billOccurrences
 
     private fun TestApplicationEngine.addBill(token: String) {
-        val addCat = handleRequest(Post, Path.BillMan.categories, "add/validRequestBodyNoOwner", token)
+        val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
         addCat.response.status() shouldBe HttpStatusCode.Created
 
-        val addBill = handleRequest(Post, Path.BillMan.bills, "add/validRequestBody", token)
+        val addBill = handleRequest(Post, Paths.BillMan.bills, "add/validRequestBody", token)
         addBill.response.status() shouldBe HttpStatusCode.Created
     }
 

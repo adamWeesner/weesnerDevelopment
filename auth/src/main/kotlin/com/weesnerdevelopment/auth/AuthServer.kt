@@ -1,6 +1,5 @@
 package com.weesnerdevelopment.auth
 
-import Path.User.health
 import auth.CustomPrincipal
 import auth.JwtProvider
 import com.auth0.jwt.exceptions.JWTVerificationException
@@ -8,6 +7,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException
 import com.codahale.metrics.jmx.JmxReporter
 import com.weesnerdevelopment.businessRules.AppConfig
 import com.weesnerdevelopment.businessRules.Log
+import com.weesnerdevelopment.shared.Paths
 import com.weesnerdevelopment.shared.auth.InvalidUserReason
 import com.weesnerdevelopment.shared.base.Response
 import io.ktor.application.*
@@ -136,7 +136,7 @@ object AuthServer {
         }
         install(Locations)
         install(Routing) {
-            route(health) {
+            route(Paths.User.health) {
                 get {
                     respond(Response.Ok("Auth ${this.call.request.path().replace("/health", "")} is up and running"))
                 }

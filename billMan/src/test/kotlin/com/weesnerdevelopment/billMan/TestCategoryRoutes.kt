@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.billMan
 
-import Path
+import com.weesnerdevelopment.shared.Paths
 import com.weesnerdevelopment.test.utils.fromFile
 import com.weesnerdevelopment.test.utils.handleRequest
 import com.weesnerdevelopment.test.utils.shouldBe
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class TestCategoryRoutes : BillManTests() {
-    override val baseUrl = Path.BillMan.categories
+    override val baseUrl = Paths.BillMan.categories
 
     @Nested
     @DisplayName("get all")
@@ -74,7 +74,7 @@ class TestCategoryRoutes : BillManTests() {
     inner class Add : Testing() {
         @Test
         fun `add new category`() = testApp(config) { token ->
-            val call = handleRequest(Post, Path.BillMan.categories, "add/validRequestBodyNoOwner", token)
+            val call = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
             call.response.status() shouldBe HttpStatusCode.Created
             call.response.content shouldBe fromFile(baseUrl, "add/successResponse")
         }
@@ -92,7 +92,7 @@ class TestCategoryRoutes : BillManTests() {
     inner class Update : Testing() {
         @Test
         fun `update existing category`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Path.BillMan.categories, "add/validRequestBody", token)
+            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBody", token)
             addCat.response.status() shouldBe HttpStatusCode.Created
 
             val call = handleRequest(HttpMethod.Put, baseUrl, "update/validRequestBody", token)
@@ -104,7 +104,7 @@ class TestCategoryRoutes : BillManTests() {
 
         @Test
         fun `update existing category no owner`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Path.BillMan.categories, "add/validRequestBodyNoOwner", token)
+            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
             addCat.response.status() shouldBe HttpStatusCode.Created
 
             val call = handleRequest(HttpMethod.Put, baseUrl, "update/validRequestBody", token)
@@ -114,7 +114,7 @@ class TestCategoryRoutes : BillManTests() {
 
         @Test
         fun `update existing category not owned by user`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Path.BillMan.categories, "add/validRequestBodyNoOwner", token)
+            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
             addCat.response.status() shouldBe HttpStatusCode.Created
 
             val call = handleRequest(HttpMethod.Put, baseUrl, "update/validRequestBodyNotYours", token)
@@ -142,7 +142,7 @@ class TestCategoryRoutes : BillManTests() {
     inner class Delete : Testing() {
         @Test
         fun `delete existing category`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Path.BillMan.categories, "add/validRequestBody", token)
+            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBody", token)
             addCat.response.status() shouldBe HttpStatusCode.Created
 
             val call = handleRequest(

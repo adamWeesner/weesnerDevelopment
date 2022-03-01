@@ -1,13 +1,15 @@
 package federalIncomeTax
 
 import auth.UsersService
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.taxFetcher.FederalIncomeTax
+import com.weesnerdevelopment.shared.taxFetcher.responses.FederalIncomeTaxResponse
+import com.weesnerdevelopment.shared.toJson
 import generics.GenericRouter
 import history.HistoryService
-import io.ktor.application.ApplicationCall
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.application.*
+import io.ktor.util.pipeline.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import shared.taxFetcher.FederalIncomeTax
-import shared.taxFetcher.responses.FederalIncomeTaxResponse
 
 class FederalIncomeTaxRouter(
     basePath: String,
@@ -19,6 +21,8 @@ class FederalIncomeTaxRouter(
     federalIncomeTaxService,
     FederalIncomeTaxResponse()
 ) {
+    override fun GenericResponse<FederalIncomeTax>.parse(): String = this.toJson()
+
     override suspend fun postQualifier(receivedItem: FederalIncomeTax) =
         service.getAll().filter {
             it.year == receivedItem.year && it.maritalStatus == receivedItem.maritalStatus && it.payPeriod == receivedItem.payPeriod

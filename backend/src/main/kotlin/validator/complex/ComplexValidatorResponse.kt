@@ -1,7 +1,7 @@
 package com.weesnerdevelopment.validator.complex
 
-import shared.base.GenericResponse
+import com.weesnerdevelopment.shared.base.GenericResponse
 
 data class ComplexValidatorResponse(
-    override var items: List<ComplexValidatorItem>? = null
+    override var items: List<ComplexValidatorItem> = emptyList()
 ) : GenericResponse<ComplexValidatorItem>

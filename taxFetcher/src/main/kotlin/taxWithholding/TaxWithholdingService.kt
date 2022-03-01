@@ -1,11 +1,11 @@
 package taxWithholding
 
+import com.weesnerdevelopment.shared.taxFetcher.PayPeriod
+import com.weesnerdevelopment.shared.taxFetcher.TaxWithholding
+import com.weesnerdevelopment.shared.taxFetcher.TaxWithholdingTypes
 import generics.GenericService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.taxFetcher.PayPeriod
-import shared.taxFetcher.TaxWithholding
-import shared.taxFetcher.TaxWithholdingTypes
 
 class TaxWithholdingService : GenericService<TaxWithholding, TaxWithholdingTable>(
     TaxWithholdingTable

@@ -1,7 +1,7 @@
 package breathOfTheWild.ingredientBonusAddOns
 
-import shared.base.GenericItem
-import shared.currentTimeMillis
+import com.weesnerdevelopment.shared.base.GenericItem
+import com.weesnerdevelopment.shared.currentTimeMillis
 
 data class IngredientBonusAddOn(
     override val id: Int?,

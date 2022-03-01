@@ -1,7 +1,8 @@
-import shared.auth.User
-import shared.base.GenericItem
-import shared.base.History
-import shared.base.HistoryItem
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.base.GenericItem
+import com.weesnerdevelopment.shared.base.History
+import com.weesnerdevelopment.shared.base.HistoryItem
+import com.weesnerdevelopment.shared.toJson
 import kotlin.reflect.full.declaredMemberProperties
 
 /**
@@ -10,7 +11,7 @@ import kotlin.reflect.full.declaredMemberProperties
  * @param added The items that where added to the item.
  * @param removed The items that where removed from the item.
  */
-data class ItemDiff(val added: List<Pair<String, Any?>>, val removed: List<Pair<String, Any?>>) {
+data class ItemDiff(val added: List<Pair<String, String?>>, val removed: List<Pair<String, String?>>) {
     private val addedDiff: Int
         get() {
             val diff = added.size - removed.size
@@ -23,7 +24,11 @@ data class ItemDiff(val added: List<Pair<String, Any?>>, val removed: List<Pair<
             return if (diff < 0) 0 else diff
         }
 
-    private fun List<Pair<String, Any?>>.mapExtras(diff: Int, updatedBy: User, added: Boolean = true): List<History> {
+    private fun List<Pair<String, String?>>.mapExtras(
+        diff: Int,
+        updatedBy: User,
+        added: Boolean = true
+    ): List<History> {
         val extras = this.subList(this.size - diff, this.size)
 
         return extras.map {
@@ -36,7 +41,7 @@ data class ItemDiff(val added: List<Pair<String, Any?>>, val removed: List<Pair<
         }
     }
 
-    private fun List<Pair<String, Any?>>.sorted(diff: Int) = this.subList(0, this.size - diff).sortedBy { it.first }
+    private fun List<Pair<String, String?>>.sorted(diff: Int) = this.subList(0, this.size - diff).sortedBy { it.first }
 
     /**
      * Converts the [added] and [removed] lists to a cohesive list of the updates as a list of [History].F
@@ -63,8 +68,8 @@ data class ItemDiff(val added: List<Pair<String, Any?>>, val removed: List<Pair<
 /**
  * Splits the [GenericItem] generic item in to a list of its parameters names and their values.
  */
-fun GenericItem.separate(): List<Pair<String, Any?>> {
-    val split = mutableListOf<Pair<String, Any?>>()
+fun GenericItem.separate(): List<Pair<String, String?>> {
+    val split = mutableListOf<Pair<String, String?>>()
     this.javaClass.kotlin.declaredMemberProperties.forEach {
         if (
             it.name == HistoryItem::history.name
@@ -77,12 +82,12 @@ fun GenericItem.separate(): List<Pair<String, Any?>> {
         when (val item = it.get(this)) {
             is GenericItem -> split += item.separate()
             is List<*> -> item.filterIsInstance<GenericItem>().forEach { listItem ->
-                if (listItem is User) split.add(Pair("${this::class.simpleName} $id sharedUser", listItem))
+                if (listItem is User) split.add(Pair("${this::class.simpleName} $id sharedUser", listItem.toJson()))
                 else split += listItem.separate()
             }
             else -> {
                 if (it.name == "sharedUsers") split.add(Pair("${this::class.simpleName} $id sharedUser", null))
-                else split.add(Pair("${this::class.simpleName} $id ${it.name}", item))
+                else split.add(Pair("${this::class.simpleName} $id ${it.name}", item.toString()))
             }
         }
     }

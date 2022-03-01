@@ -1,7 +1,7 @@
 package com.weesnerdevelopment.validator
 
-import shared.base.GenericResponse
+import com.weesnerdevelopment.shared.base.GenericResponse
 
 data class ValidatorResponse(
-    override var items: List<ValidatorItem>? = null
+    override var items: List<ValidatorItem> = emptyList()
 ) : GenericResponse<ValidatorItem>

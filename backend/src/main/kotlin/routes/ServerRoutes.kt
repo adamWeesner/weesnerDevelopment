@@ -1,16 +1,14 @@
 package com.weesnerdevelopment.routes
 
 import Path.Server.health
+import com.weesnerdevelopment.shared.base.Response.Companion.Ok
 import com.weesnerdevelopment.validator.ValidatorRouter
 import com.weesnerdevelopment.validator.complex.ComplexValidatorRouter
-import io.ktor.auth.authenticate
-import io.ktor.routing.Routing
-import io.ktor.routing.get
-import io.ktor.routing.route
+import io.ktor.auth.*
+import io.ktor.routing.*
 import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 import respond
-import shared.base.Response.Companion.Ok
 
 fun Routing.serverRoutes() {
     val validatorRouter by kodein().instance<ValidatorRouter>()

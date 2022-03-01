@@ -7,12 +7,12 @@ import breathOfTheWild.frozenFoodIngredients.FrozenFoodIngredient
 import breathOfTheWild.frozenFoodIngredients.FrozenFoodIngredientsService
 import breathOfTheWild.image.ImagesService
 import breathOfTheWild.image.ImagesTable.src
+import com.weesnerdevelopment.shared.zelda.FrozenFood
 import isNotValidId
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.zelda.FrozenFood
 
 class FrozenFoodsService(
     private val imagesService: ImagesService,

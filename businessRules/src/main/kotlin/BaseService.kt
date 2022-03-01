@@ -1,7 +1,7 @@
+import com.weesnerdevelopment.shared.base.GenericItem
 import generics.IdTable
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
-import shared.base.GenericItem
 
 abstract class BaseService<T : IdTable, I : GenericItem>(
     override val table: T

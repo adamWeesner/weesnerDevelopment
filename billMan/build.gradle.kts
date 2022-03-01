@@ -1,22 +1,53 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
+    application
     id(Kotlin.jvm)
+    id(Kotlin.kapt)
+    id(ShadowJar.core) version ShadowJar.version
 }
 
-group = Base.group
+group = BillMan.group
 version = BillMan.version
 
 sourceSets { sharedSources() }
-repositories { sharedRepos() }
 java { javaSource() }
-tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
+application { mainClass.set(Ktor.Server.mainClass) }
+tasks.withType<Jar> { manifest { attributes(mapOf("Main-Class" to application.mainClass)) } }
+task("stage").dependsOn("installDist")
+tasks {
+    shadowJar {
+        manifest {
+            attributes(Pair("Main-Class", application.mainClass))
+        }
+    }
+}
 
 dependencies {
+    val tcnative_version = rootProject.extra["tcnative_version"]
+    val tcnative_classifier = rootProject.extra["tcnative_classifier"]
+
     implementation(project(BusinessRules.project))
-    implementation(Moshi.core)
-    implementation(Ktor.authJwt)
-    implementation(Ktor.Server.core)
+
+    implementation(Dropwizard.metricsJmx)
     implementation(Exposed.core)
+    implementation(Exposed.jdbc)
+    implementation(Exposed.dao)
+    implementation(H2.database)
+    implementation(Hikari.core)
+    implementation(Kimchi.core)
     implementation(KodeIn.core)
+    implementation(KodeIn.ktorServer)
+    implementation(Ktor.authJwt)
+    implementation(Ktor.metrics)
+    implementation(Ktor.webSockets)
+    implementation(Ktor.serialization)
+    implementation(Ktor.locations)
+    implementation(Ktor.Client.logging)
+    implementation(Ktor.Server.core)
+    implementation(Logback.core)
+
+    implementation("io.netty:netty-tcnative:$tcnative_version")
+    implementation("io.netty:netty-tcnative-boringssl-static:$tcnative_version")
+    implementation("io.netty:netty-tcnative-boringssl-static:$tcnative_version:$tcnative_classifier")
+
+    testImplementation(project(TestUtils.project))
 }

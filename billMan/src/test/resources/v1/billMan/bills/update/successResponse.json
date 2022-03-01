@@ -1,0 +1,37 @@
+{
+  "id": null,
+  "uuid": "4f982b2d-1b86-40de-8710-6bfb4649f1e4",
+  "owner": "e0f97212-4431-448b-bd97-f70235328cd1",
+  "name": "myUpdated",
+  "amount": "45.67",
+  "varyingAmount": false,
+  "payoffAmount": "1234.56",
+  "sharedUsers": [
+    "e0f97212-4431-448b-bd97-f70235328cd1"
+  ],
+  "categories": [
+    {
+      "id": null,
+      "uuid": "4f982b2d-1b86-40de-8710-6bfb4649f1e3",
+      "owner": null,
+      "name": "myCategory",
+      "history": null,
+      "dateCreated": 1638041144389,
+      "dateUpdated": 1638041144389
+    }
+  ],
+  "color": {
+    "id": null,
+    "uuid": "4f982b2d-1b86-40de-8710-6bfb4649f1e5",
+    "red": 1,
+    "green": 1,
+    "blue": 1,
+    "alpha": 1,
+    "history": null,
+    "dateCreated": 1638247836004,
+    "dateUpdated": 1638247836004
+  },
+  "history": null,
+  "dateCreated": 1638247835949,
+  "dateUpdated": 1638247835949
+}

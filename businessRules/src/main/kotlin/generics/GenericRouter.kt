@@ -1,30 +1,28 @@
 package generics
 
 import auth.UsersService
+import com.weesnerdevelopment.shared.auth.HashedUser
+import com.weesnerdevelopment.shared.auth.InvalidUserReason
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.base.*
+import com.weesnerdevelopment.shared.base.Response.Companion.BadRequest
+import com.weesnerdevelopment.shared.base.Response.Companion.Conflict
+import com.weesnerdevelopment.shared.base.Response.Companion.Created
+import com.weesnerdevelopment.shared.base.Response.Companion.NotFound
+import com.weesnerdevelopment.shared.base.Response.Companion.Ok
 import diff
 import history.HistoryService
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.cio.websocket.DefaultWebSocketSession
-import io.ktor.http.cio.websocket.Frame
-import io.ktor.request.receive
+import io.ktor.application.*
+import io.ktor.http.*
+import io.ktor.http.cio.websocket.*
+import io.ktor.request.*
 import io.ktor.routing.*
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.util.pipeline.*
 import loggedUserData
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import parse
 import respond
 import respondErrorAuthorizing
-import shared.auth.HashedUser
-import shared.auth.InvalidUserReason
-import shared.auth.User
-import shared.base.*
-import shared.base.Response.Companion.BadRequest
-import shared.base.Response.Companion.Conflict
-import shared.base.Response.Companion.Created
-import shared.base.Response.Companion.NotFound
-import shared.base.Response.Companion.Ok
 import kotlin.reflect.KType
 
 /**
@@ -45,8 +43,10 @@ import kotlin.reflect.KType
 abstract class GenericRouter<O : GenericItem, T : IdTable>(
     val basePath: String,
     val service: GenericService<O, T>,
-    private val response: GenericResponse<O>? = null
+    private val response: GenericResponse<O>
 ) {
+    abstract fun GenericResponse<O>.parse(): String
+
     lateinit var itemType: KType
 
     /**
@@ -78,10 +78,10 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
      */
     open fun Route.getDefault() {
         get("/") {
-            response?.let {
+            response.let {
                 it.items = service.getAll()
-                respond(Ok(response))
-            } ?: respond(NotFound("Could not get items."))
+                respond(Ok(it.parse()))
+            }
         }
     }
 
@@ -95,7 +95,7 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
             val param = call.parameters["item"] ?: return@get respond(BadRequest("Invalid param."))
             when (val retrieved = service.getSingle { singleEq(param) }) {
                 null -> respond(NotFound("Could not get item for param $param."))
-                else -> respond(Ok(retrieved))
+                else -> respond(Ok(response.apply { items = listOf(retrieved) }.parse()))
             }
         }
     }
@@ -125,7 +125,7 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
 
             when (val added = service.add(item)) {
                 null -> respond(Conflict("An error occurred add item $item."))
-                else -> respond(Created(added))
+                else -> respond(Created(response.apply { items = listOf(added) }.parse()))
             }
         }
     }
@@ -193,8 +193,8 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
 
             when {
                 updated == null -> respond(BadRequest("An error occurred updating $item."))
-                updated.id != item.id -> respond(Created(updated))
-                else -> respond(Ok(updated))
+                updated.id != item.id -> respond(Created(response.apply { items = listOf(updated) }.parse()))
+                else -> respond(Ok(response.apply { items = listOf(updated) }.parse()))
             }
         }
     }

@@ -1,28 +1,28 @@
 import auth.UsersService
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
-import io.ktor.request.receive
+import com.weesnerdevelopment.shared.auth.HashedUser
+import com.weesnerdevelopment.shared.auth.InvalidUserReason
+import com.weesnerdevelopment.shared.base.GenericItem
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.base.OwnedItem
+import com.weesnerdevelopment.shared.base.Response
+import com.weesnerdevelopment.shared.base.Response.Companion.BadRequest
+import com.weesnerdevelopment.shared.base.Response.Companion.NotFound
+import com.weesnerdevelopment.shared.base.Response.Companion.Ok
+import io.ktor.application.*
+import io.ktor.request.*
 import io.ktor.routing.*
-import io.ktor.util.pipeline.PipelineContext
-import shared.auth.HashedUser
-import shared.auth.InvalidUserReason
-import shared.base.GenericItem
-import shared.base.GenericResponse
-import shared.base.OwnedItem
-import shared.base.Response
-import shared.base.Response.Companion.BadRequest
-import shared.base.Response.Companion.NoContent
-import shared.base.Response.Companion.NotFound
-import shared.base.Response.Companion.Ok
+import io.ktor.util.pipeline.*
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubtypeOf
 
 abstract class BaseRouter<I : GenericItem, S : Service<I>>(
-    private val response: GenericResponse<I>,
+    private val genericResponse: GenericResponse<I>,
     override val service: S,
     override val kType: KType
 ) : Router<I, S> {
+    abstract fun GenericResponse<I>.parse(): String
+
     override fun Route.setupRoutes() {
         route("/$basePath") {
             addRequest()
@@ -93,11 +93,11 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
             }
 
             val response =
-                if (filteredItems.isNullOrEmpty()) NoContent(response)
-                else Ok(response.let {
+                if (filteredItems.isNullOrEmpty()) Ok(genericResponse.parse())
+                else Ok(genericResponse.let {
                     it.items = filteredItems
                     it
-                })
+                }.parse())
 
             respond(response)
         }
@@ -169,7 +169,6 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
 
 fun PipelineContext<Unit, ApplicationCall>.getUserInfo() = call.loggedUserData()?.getData()?.let {
     when {
-        it.username != null -> "username" to it.username
         it.uuid != null -> "uuid" to it.uuid
         else -> null
     }

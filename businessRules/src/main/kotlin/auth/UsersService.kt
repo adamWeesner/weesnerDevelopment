@@ -1,15 +1,15 @@
 package auth
 
 import BaseService
+import com.weesnerdevelopment.shared.auth.HashedUser
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.base.InvalidAttributeException
 import diff
 import history.HistoryService
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import parse
-import shared.auth.HashedUser
-import shared.auth.User
-import shared.base.InvalidAttributeException
 
 class UsersService(
     private val historyService: HistoryService

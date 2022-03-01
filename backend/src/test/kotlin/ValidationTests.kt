@@ -1,4 +1,6 @@
 import Path.Server
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.shouldBe
 import com.weesnerdevelopment.validator.ValidatorItem
 import com.weesnerdevelopment.validator.ValidatorResponse
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
@@ -10,7 +12,7 @@ import io.ktor.http.HttpStatusCode.Companion.OK
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
-class ValidationTests : BaseTest() {
+class ValidationTests : BaseTest("application-test.conf") {
     private var counter = 1
     private val item: ValidatorItem
         get() = ValidatorItem(

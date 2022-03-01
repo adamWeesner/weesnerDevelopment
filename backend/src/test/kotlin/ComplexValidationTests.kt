@@ -1,26 +1,24 @@
 import Path.BillMan
 import Path.Server
-import billCategories.BillCategoriesTable
-import categories.CategoriesTable
+import com.weesnerdevelopment.shared.base.History
+import com.weesnerdevelopment.shared.billMan.Category
+import com.weesnerdevelopment.shared.billMan.responses.CategoriesResponse
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.shouldBe
 import com.weesnerdevelopment.validator.complex.ComplexValidatorItem
 import com.weesnerdevelopment.validator.complex.ComplexValidatorResponse
-import com.weesnerdevelopment.validator.complex.ComplexValidatorTable
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.NoContent
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.OK
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import shared.base.History
-import shared.billMan.Category
-import shared.billMan.responses.CategoriesResponse
 
-class ComplexValidationTests : BaseTest() {
+class ComplexValidationTests : BaseTest("application-test.conf") {
     val path = Server.complexValidation
     var counter = 1
     lateinit var category: Category

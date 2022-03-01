@@ -1,10 +1,10 @@
 package breathOfTheWild.critter
 
 import BaseService
+import com.weesnerdevelopment.shared.zelda.Critter
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.zelda.Critter
 
 class CrittersService : BaseService<CrittersTable, Critter>(
     CrittersTable

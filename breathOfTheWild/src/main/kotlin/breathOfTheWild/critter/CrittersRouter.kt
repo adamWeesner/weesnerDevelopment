@@ -1,8 +1,10 @@
 package breathOfTheWild.critter
 
 import BaseRouter
-import shared.zelda.Critter
-import shared.zelda.responses.CrittersResponse
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.toJson
+import com.weesnerdevelopment.shared.zelda.Critter
+import com.weesnerdevelopment.shared.zelda.responses.CrittersResponse
 import kotlin.reflect.full.createType
 
 data class CrittersRouter(
@@ -12,4 +14,6 @@ data class CrittersRouter(
     CrittersResponse(),
     service,
     Critter::class.createType()
-)
+) {
+    override fun GenericResponse<Critter>.parse(): String = this.toJson()
+}

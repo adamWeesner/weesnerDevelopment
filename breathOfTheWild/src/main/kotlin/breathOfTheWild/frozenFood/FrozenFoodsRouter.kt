@@ -1,8 +1,10 @@
 package breathOfTheWild.frozenFood
 
 import BaseRouter
-import shared.zelda.FrozenFood
-import shared.zelda.responses.FrozenFoodsResponse
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.toJson
+import com.weesnerdevelopment.shared.zelda.FrozenFood
+import com.weesnerdevelopment.shared.zelda.responses.FrozenFoodsResponse
 import kotlin.reflect.full.createType
 
 data class FrozenFoodsRouter(
@@ -12,4 +14,6 @@ data class FrozenFoodsRouter(
     FrozenFoodsResponse(),
     service,
     FrozenFood::class.createType()
-)
+) {
+    override fun GenericResponse<FrozenFood>.parse(): String = this.toJson()
+}

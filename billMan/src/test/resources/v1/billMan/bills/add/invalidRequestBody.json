@@ -1,0 +1,21 @@
+{
+  "id": null,
+  "uuid": "4f982b2d-1b86-40de-8710-6bfb4649f1e4",
+  "name": "myBill",
+  "amount": "123.45",
+  "varyingAmounts": 1,
+  "payoffAmount": "1234.56",
+  "sharedUsers": [
+    "e0f97212-4431-448b-bd97-f70235328cd1"
+  ],
+  "categories": [],
+  "color": {
+    "id": null,
+    "uuid": "4f982b2d-1b86-40de-8710-6bfb4649f1e5",
+    "red": 1,
+    "green": 1,
+    "blue": 1,
+    "alpha": 1,
+    "history": null
+  }
+}

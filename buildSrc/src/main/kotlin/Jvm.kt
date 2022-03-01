@@ -1,3 +1,6 @@
+import org.gradle.api.JavaVersion
+
 object Jvm {
-    const val version = "1.8"
+    val javaVersion: JavaVersion = JavaVersion.VERSION_11
+    val version: String = javaVersion.majorVersion
 }

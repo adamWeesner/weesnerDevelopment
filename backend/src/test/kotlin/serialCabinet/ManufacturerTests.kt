@@ -1,7 +1,12 @@
 package serialCabinet
 
-import BaseTest
 import Path
+import com.weesnerdevelopment.shared.serialCabinet.Manufacturer
+import com.weesnerdevelopment.shared.serialCabinet.responses.ManufacturersResponse
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.parseResponse
+import com.weesnerdevelopment.test.utils.shouldBe
+import com.weesnerdevelopment.test.utils.shouldNotBe
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.Created
@@ -11,14 +16,9 @@ import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.util.*
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import parseResponse
-import shared.serialCabinet.Manufacturer
-import shared.serialCabinet.responses.ManufacturersResponse
-import shouldBe
-import shouldNotBe
 
 @KtorExperimentalAPI
-class ManufacturerTests : BaseTest() {
+class ManufacturerTests : BaseTest("application-test.conf") {
     fun newItem(addition: Int, id: Int? = null) = Manufacturer(
         id,
         addition.toString()

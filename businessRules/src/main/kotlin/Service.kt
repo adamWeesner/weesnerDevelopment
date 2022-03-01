@@ -1,10 +1,10 @@
+import com.weesnerdevelopment.shared.base.GenericItem
 import generics.IdTable
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.base.GenericItem
 
 interface Service<I : GenericItem> {
     val table: IdTable

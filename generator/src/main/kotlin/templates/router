@@ -1,8 +1,8 @@
 package #title.#classNameLower
 
 import BaseRouter
-import shared.#sharedFolder.#className
-import shared.#sharedFolder.responses.#classNamesResponse
+import com.weesnerdevelopment.shared.#sharedFolder.#className
+import com.weesnerdevelopment.shared.#sharedFolder.responses.#classNamesResponse
 import kotlin.reflect.full.createType
 
 data class #classNamesRouter(

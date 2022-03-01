@@ -1,7 +1,7 @@
 package breathOfTheWild.otherFoodIngredients
 
-import shared.base.GenericItem
-import shared.currentTimeMillis
+import com.weesnerdevelopment.shared.base.GenericItem
+import com.weesnerdevelopment.shared.currentTimeMillis
 
 data class OtherFoodIngredient(
     override val id: Int?,

@@ -1,13 +1,15 @@
 package socialSecurity
 
 import auth.UsersService
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.taxFetcher.SocialSecurity
+import com.weesnerdevelopment.shared.taxFetcher.responses.SocialSecurityResponse
+import com.weesnerdevelopment.shared.toJson
 import generics.GenericRouter
 import history.HistoryService
-import io.ktor.application.ApplicationCall
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.application.*
+import io.ktor.util.pipeline.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import shared.taxFetcher.SocialSecurity
-import shared.taxFetcher.responses.SocialSecurityResponse
 
 class SocialSecurityRouter(
     basePath: String,
@@ -19,6 +21,8 @@ class SocialSecurityRouter(
     socialSecurityService,
     SocialSecurityResponse()
 ) {
+    override fun GenericResponse<SocialSecurity>.parse(): String = this.toJson()
+
     override suspend fun postQualifier(receivedItem: SocialSecurity) =
         service.getSingle { service.table.year eq receivedItem.year }
 

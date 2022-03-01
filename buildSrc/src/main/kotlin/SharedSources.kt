@@ -1,4 +1,3 @@
-import org.gradle.api.JavaVersion
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSetContainer
@@ -18,5 +17,5 @@ fun RepositoryHandler.sharedRepos() {
 }
 
 fun JavaPluginExtension.javaSource() {
-    sourceCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = Jvm.javaVersion
 }

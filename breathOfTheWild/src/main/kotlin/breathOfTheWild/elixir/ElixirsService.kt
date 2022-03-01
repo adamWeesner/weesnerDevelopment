@@ -5,12 +5,12 @@ import breathOfTheWild.elixirIngredients.ElixirIngredient
 import breathOfTheWild.elixirIngredients.ElixirIngredientsService
 import breathOfTheWild.image.ImagesService
 import breathOfTheWild.image.ImagesTable.src
+import com.weesnerdevelopment.shared.zelda.Elixir
 import isNotValidId
 import org.jetbrains.exposed.sql.Join
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.zelda.Elixir
 
 class ElixirsService(
     private val imagesService: ImagesService,

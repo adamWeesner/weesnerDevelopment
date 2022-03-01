@@ -1,13 +1,15 @@
 package taxWithholding
 
 import auth.UsersService
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.taxFetcher.TaxWithholding
+import com.weesnerdevelopment.shared.taxFetcher.responses.TaxWithholdingResponse
+import com.weesnerdevelopment.shared.toJson
 import generics.GenericRouter
 import history.HistoryService
-import io.ktor.application.ApplicationCall
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.application.*
+import io.ktor.util.pipeline.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import shared.taxFetcher.TaxWithholding
-import shared.taxFetcher.responses.TaxWithholdingResponse
 
 class TaxWithholdingRouter(
     basePath: String,
@@ -19,6 +21,8 @@ class TaxWithholdingRouter(
     taxWithholdingService,
     TaxWithholdingResponse()
 ) {
+    override fun GenericResponse<TaxWithholding>.parse(): String = this.toJson()
+
     override suspend fun postQualifier(receivedItem: TaxWithholding) =
         service.getAll().firstOrNull {
             it.year == receivedItem.year && it.type == receivedItem.type && it.payPeriod == receivedItem.payPeriod

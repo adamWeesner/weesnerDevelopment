@@ -1,0 +1,27 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%-5level] %msg%n</pattern>
+        </encoder>
+    </appender>
+    <root level="trace">
+        <appender-ref ref="STDOUT"/>
+    </root>
+    <logger name="org.eclipse.jetty" level="INFO"/>
+    <logger name="io.netty" level="INFO"/>
+
+    <!-- This disables the logs for the pool creation and updating, disable this if we want to see those.. -->
+    <logger name="com.zaxxer.hikari.HikariDataSource" level="WARN"/>
+    <logger name="com.zaxxer.hikari.HikariConfig" level="WARN"/>
+    <logger name="com.zaxxer.hikari.pool.PoolBase" level="WARN"/>
+    <logger name="com.zaxxer.hikari.pool.HikariPool" level="WARN"/>
+    <logger name="com.zaxxer.hikari.pool.ProxyConnection" level="WARN"/>
+    <logger name="com.zaxxer.hikari.util.DriverDataSource" level="WARN"/>
+    <logger name="Exposed" level="INFO"/>
+    <logger name="ktor.test" level="WARN"/>
+    <logger name="io.kotlintest.runner.junit5.JUnitTestRunnerListener" level="WARN"/>
+    <logger name="io.kotlintest.runner.junit5.KotlinTestEngine" level="WARN"/>
+    <logger name="io.kotlintest.runner.jvm.spec.SpecExecutor" level="WARN"/>
+    <logger name="io.kotlintest.runner.jvm.TestEngine" level="WARN"/>
+    <logger name="io.kotlintest.runner.jvm.TestDiscovery" level="WARN"/>
+</configuration>

@@ -1,7 +1,7 @@
 package breathOfTheWild.ingredientHearts
 
-import shared.base.GenericItem
-import shared.currentTimeMillis
+import com.weesnerdevelopment.shared.base.GenericItem
+import com.weesnerdevelopment.shared.currentTimeMillis
 
 data class IngredientHeart(
     override val id: Int?,

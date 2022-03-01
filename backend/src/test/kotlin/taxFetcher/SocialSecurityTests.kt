@@ -1,23 +1,23 @@
 package taxFetcher
 
-import BaseTest
-import BuiltRequest
 import Path
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.base.History
+import com.weesnerdevelopment.shared.taxFetcher.SocialSecurity
+import com.weesnerdevelopment.shared.taxFetcher.responses.SocialSecurityResponse
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.BuiltRequest
+import com.weesnerdevelopment.test.utils.parseResponse
+import com.weesnerdevelopment.test.utils.shouldBe
+import io.ktor.http.*
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
-import io.ktor.http.HttpStatusCode
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import parseResponse
-import shared.auth.User
-import shared.base.History
-import shared.taxFetcher.SocialSecurity
-import shared.taxFetcher.responses.SocialSecurityResponse
-import shouldBe
 
-class SocialSecurityTests : BaseTest() {
+class SocialSecurityTests : BaseTest("application-test.conf") {
     fun newItem(year: Int) = SocialSecurity(
         year = year,
         percent = 1.45,
@@ -100,7 +100,7 @@ class SocialSecurityTests : BaseTest() {
     @Test
     @Order(7)
     fun `verify updating an added item`() {
-        val userAccount = BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
+        val userAccount = BuiltRequest(engine, Get, "${Path.User.basePath}${Path.User.account}", token).asObject<User>()
         val socialSecurity = BuiltRequest(engine, Post, path, token).asObject(newItem(2004))
         val updatedRequest =
             BuiltRequest(engine, Put, path, token).send(socialSecurity.copy(percent = 1.4, limit = 128000))
@@ -117,8 +117,8 @@ class SocialSecurityTests : BaseTest() {
                     History(
                         addedItem?.history!![0].id,
                         "${addedItem::class.java.simpleName} ${addedItem.id} limit",
-                        127200.0,
-                        128000.0,
+                        "127200.0",
+                        "128000.0",
                         userAccount,
                         addedItem.history!![0].dateCreated,
                         addedItem.history!![0].dateUpdated
@@ -126,8 +126,8 @@ class SocialSecurityTests : BaseTest() {
                     History(
                         addedItem.history!![1].id,
                         "${addedItem::class.java.simpleName} ${addedItem.id} percent",
-                        1.45,
-                        1.4,
+                        "1.45",
+                        "1.4",
                         userAccount,
                         addedItem.history!![1].dateCreated,
                         addedItem.history!![1].dateUpdated

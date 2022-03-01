@@ -1,8 +1,14 @@
 package breathOfTheWild
 
-import BaseTest
 import Path
 import breathOfTheWild.image.ImagesResponse
+import com.weesnerdevelopment.shared.zelda.Elixir
+import com.weesnerdevelopment.shared.zelda.Image
+import com.weesnerdevelopment.shared.zelda.responses.ElixirsResponse
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.parseResponse
+import com.weesnerdevelopment.test.utils.shouldBe
+import com.weesnerdevelopment.test.utils.shouldNotBe
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.Created
@@ -13,15 +19,9 @@ import io.ktor.util.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import parseResponse
-import shared.zelda.Elixir
-import shared.zelda.Image
-import shared.zelda.responses.ElixirsResponse
-import shouldBe
-import shouldNotBe
 
 @KtorExperimentalAPI
-class ElixirTests : BaseTest() {
+class ElixirTests : BaseTest("application-test.conf") {
     private lateinit var image: Image
 
     private fun newItem(addition: Int, id: Int? = null) = Elixir(

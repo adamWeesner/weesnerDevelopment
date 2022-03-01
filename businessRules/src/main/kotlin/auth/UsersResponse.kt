@@ -1,10 +1,10 @@
 package auth
 
-import com.squareup.moshi.JsonClass
-import shared.auth.User
-import shared.base.GenericResponse
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.base.GenericResponse
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class UsersResponse(
-    override var items: List<User>? = null
+    override var items: List<User> = emptyList()
 ) : GenericResponse<User>

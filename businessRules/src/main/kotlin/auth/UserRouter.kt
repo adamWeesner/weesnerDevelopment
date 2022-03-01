@@ -1,25 +1,26 @@
 package auth
 
 import BaseRouter
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
-import io.ktor.auth.authenticate
-import io.ktor.request.receive
-import io.ktor.response.header
+import com.weesnerdevelopment.shared.auth.HashedUser
+import com.weesnerdevelopment.shared.auth.InvalidUserReason
+import com.weesnerdevelopment.shared.auth.TokenResponse
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.base.Response.Companion.BadRequest
+import com.weesnerdevelopment.shared.base.Response.Companion.Conflict
+import com.weesnerdevelopment.shared.base.Response.Companion.Created
+import com.weesnerdevelopment.shared.base.Response.Companion.Ok
+import com.weesnerdevelopment.shared.toJson
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.request.*
+import io.ktor.response.*
 import io.ktor.routing.*
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.util.pipeline.*
 import logRequest
 import loggedUserData
 import respond
 import respondErrorAuthorizing
-import shared.auth.HashedUser
-import shared.auth.InvalidUserReason
-import shared.auth.TokenResponse
-import shared.auth.User
-import shared.base.Response.Companion.BadRequest
-import shared.base.Response.Companion.Conflict
-import shared.base.Response.Companion.Created
-import shared.base.Response.Companion.Ok
 import java.util.*
 import kotlin.reflect.full.createType
 
@@ -35,6 +36,8 @@ class UserRouter(
     service,
     User::class.createType()
 ) {
+    override fun GenericResponse<User>.parse(): String = this.toJson()
+
     override fun Route.setupRoutes() {
         route(basePath) {
             getRequest()
@@ -94,10 +97,12 @@ class UserRouter(
                     service.table.id eq hashedUser?.id!!
                 }
 
+                val updatedUserInfo = service.getUserByUuidRedacted(item.uuid ?: "")
+
                 val response = when {
                     updated == null -> BadRequest("Error occurred updated user information.")
-                    updated != item.id -> Created(it)
-                    else -> Ok(it)
+                    updated != item.id -> Created(updatedUserInfo.toJson())
+                    else -> Ok(updatedUserInfo.toJson())
                 }
 
                 respond(response)
@@ -115,7 +120,7 @@ class UserRouter(
                     val generatedToken = asHashed()?.asToken(jwtProvider) ?: throw Exception("Generate token was null")
 
                     call.response.header("x-auth-token", generatedToken)
-                    respond(Ok(TokenResponse(generatedToken)))
+                    respond(Ok(TokenResponse(generatedToken).toJson()))
                 } ?: respondErrorAuthorizing(InvalidUserReason.NoUserFound)
             }
         }
@@ -141,7 +146,7 @@ class UserRouter(
 
                 val response = when (val added = service.addUser(newUser)) {
                     null -> Conflict("Unable to save user credentials.")
-                    else -> Created(TokenResponse(added.asHashed()?.asToken(jwtProvider)))
+                    else -> Created(TokenResponse(added.asHashed()?.asToken(jwtProvider)).toJson())
                 }
 
                 respond(response)

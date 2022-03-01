@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id(Kotlin.jvm)
     id(Kotlin.kapt)
+    kotlin("plugin.serialization") version Kotlin.version
 }
 
 group = Base.group
@@ -15,15 +16,16 @@ tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
 
 dependencies {
     api(fileTree("../libs") { include("*.jar") })
-    api(Kotlin.stdLib)
     implementation(Ktor.Server.core)
     implementation(Ktor.Server.netty)
+    implementation(Ktor.locations)
     implementation(Ktor.webSockets)
     implementation(Ktor.authJwt)
     implementation(Commons.base64)
     implementation(Ktor.Client.webSockets)
-    implementation(Ktor.Client.okHttp)
-    implementation(Moshi.core)
+    implementation(Ktor.Client.java)
+    implementation(Ktor.serialization)
     implementation(Exposed.core)
+    implementation(Exposed.dao)
     implementation(Kimchi.core)
 }

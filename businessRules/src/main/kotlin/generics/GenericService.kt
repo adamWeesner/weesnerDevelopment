@@ -1,12 +1,12 @@
 package generics
 
+import com.weesnerdevelopment.shared.base.GenericItem
 import dbQuery
 import kimchi.Kimchi
 import model.ChangeType
 import model.Notification
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import shared.base.GenericItem
 
 /**
  * The service for the given item type [O] and table [T].

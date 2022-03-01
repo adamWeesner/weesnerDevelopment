@@ -1,8 +1,10 @@
 package serialCabinet.manufacturer
 
 import BaseRouter
-import shared.serialCabinet.Manufacturer
-import shared.serialCabinet.responses.ManufacturersResponse
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.serialCabinet.Manufacturer
+import com.weesnerdevelopment.shared.serialCabinet.responses.ManufacturersResponse
+import com.weesnerdevelopment.shared.toJson
 import kotlin.reflect.full.createType
 
 data class ManufacturersRouter(
@@ -12,4 +14,6 @@ data class ManufacturersRouter(
     ManufacturersResponse(),
     service,
     Manufacturer::class.createType()
-)
+) {
+    override fun GenericResponse<Manufacturer>.parse(): String = this.toJson()
+}

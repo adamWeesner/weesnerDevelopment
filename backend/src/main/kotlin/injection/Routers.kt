@@ -1,8 +1,9 @@
 package com.weesnerdevelopment.injection
 
 import Path.*
+import auth.Cipher
+import auth.JwtProvider
 import auth.UserRouter
-import bills.BillsRouter
 import breathOfTheWild.cookingPotFood.CookingPotFoodsRouter
 import breathOfTheWild.critter.CrittersRouter
 import breathOfTheWild.effect.EffectsRouter
@@ -13,15 +14,11 @@ import breathOfTheWild.ingredient.IngredientsRouter
 import breathOfTheWild.monsterPart.MonsterPartsRouter
 import breathOfTheWild.otherFood.OtherFoodsRouter
 import breathOfTheWild.roastedFood.RoastedFoodsRouter
-import categories.CategoriesRouter
+import com.weesnerdevelopment.businessRules.AppConfig
 import com.weesnerdevelopment.validator.ValidatorRouter
 import com.weesnerdevelopment.validator.complex.ComplexValidatorRouter
 import federalIncomeTax.FederalIncomeTaxRouter
-import income.IncomeRouter
-import incomeOccurrences.IncomeOccurrenceRouter
-import logging.LoggingRouter
 import medicare.MedicareRouter
-import occurrences.BillOccurrenceRouter
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
@@ -33,11 +30,16 @@ import taxWithholding.TaxWithholdingRouter
 import serialCabinet.category.CategoriesRouter as SerialCategoriesRouter
 
 val routers = Kodein.Module("routers") {
+    bind<JwtProvider>() with singleton {
+        val appConfig = instance<AppConfig>()
+        JwtProvider(appConfig.issuer, appConfig.audience, appConfig.expiresIn, Cipher(appConfig.secret))
+    }
+
     bind<ValidatorRouter>() with singleton { ValidatorRouter(Server.validation, instance()) }
     bind<ComplexValidatorRouter>() with singleton { ComplexValidatorRouter(Server.complexValidation, instance()) }
     // user
     bind<UserRouter>() with singleton {
-        UserRouter(User.base, instance(), instance(), User.account, User.login, User.signUp)
+        UserRouter(User.basePath, instance(), instance(), User.account, User.login, User.signUp)
     }
 
     // taxFetcher
@@ -53,14 +55,6 @@ val routers = Kodein.Module("routers") {
     bind<TaxWithholdingRouter>() with singleton {
         TaxWithholdingRouter(TaxFetcher.taxWithholding, instance(), instance(), instance())
     }
-
-    // billMan
-    bind<BillsRouter>() with singleton { BillsRouter(BillMan.bills, instance()) }
-    bind<CategoriesRouter>() with singleton { CategoriesRouter(BillMan.categories, instance()) }
-    bind<IncomeRouter>() with singleton { IncomeRouter(BillMan.income, instance()) }
-    bind<BillOccurrenceRouter>() with singleton { BillOccurrenceRouter(BillMan.occurrences, instance()) }
-    bind<IncomeOccurrenceRouter>() with singleton { IncomeOccurrenceRouter(BillMan.incomeOccurrences, instance()) }
-    bind<LoggingRouter>() with singleton { LoggingRouter(BillMan.logging, instance()) }
 
     // breathOfTheWild
     bind<CookingPotFoodsRouter>() with singleton { CookingPotFoodsRouter(BreathOfTheWild.cookingPotFoods, instance()) }

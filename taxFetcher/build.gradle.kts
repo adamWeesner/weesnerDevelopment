@@ -16,6 +16,6 @@ tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
 dependencies {
     implementation(project(BusinessRules.project))
     implementation(Ktor.Server.core)
-    implementation(Moshi.core)
+    implementation(Ktor.serialization)
     implementation(Exposed.core)
 }

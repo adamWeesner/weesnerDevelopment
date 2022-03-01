@@ -1,26 +1,26 @@
 package taxFetcher
 
-import BaseTest
-import BuiltRequest
 import Path
+import com.weesnerdevelopment.shared.auth.User
+import com.weesnerdevelopment.shared.base.History
+import com.weesnerdevelopment.shared.taxFetcher.PayPeriod.Biweekly
+import com.weesnerdevelopment.shared.taxFetcher.PayPeriod.Weekly
+import com.weesnerdevelopment.shared.taxFetcher.TaxWithholding
+import com.weesnerdevelopment.shared.taxFetcher.TaxWithholdingTypes.General
+import com.weesnerdevelopment.shared.taxFetcher.responses.TaxWithholdingResponse
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.BuiltRequest
+import com.weesnerdevelopment.test.utils.parseResponse
+import com.weesnerdevelopment.test.utils.shouldBe
+import io.ktor.http.*
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
-import io.ktor.http.HttpStatusCode
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import parseResponse
-import shared.auth.User
-import shared.base.History
-import shared.taxFetcher.PayPeriod.Biweekly
-import shared.taxFetcher.PayPeriod.Weekly
-import shared.taxFetcher.TaxWithholding
-import shared.taxFetcher.TaxWithholdingTypes.General
-import shared.taxFetcher.responses.TaxWithholdingResponse
-import shouldBe
 
-class TaxWithholdingTests : BaseTest() {
+class TaxWithholdingTests : BaseTest("application-test.conf") {
     fun newItem(year: Int) = TaxWithholding(
         year = year,
         amount = 1.23,
@@ -130,7 +130,7 @@ class TaxWithholdingTests : BaseTest() {
     @Test
     @Order(7)
     fun `verify updating an added item`() {
-        val userAccount = BuiltRequest(engine, Get, "${Path.User.base}${Path.User.account}", token).asObject<User>()
+        val userAccount = BuiltRequest(engine, Get, "${Path.User.basePath}${Path.User.account}", token).asObject<User>()
         val taxWithholding = BuiltRequest(engine, Post, path, token).asObject(newItem(2004))
         val updateRequest =
             BuiltRequest(engine, Put, path, token).send(taxWithholding.copy(amount = 1.4, payPeriod = Biweekly))
@@ -149,8 +149,8 @@ class TaxWithholdingTests : BaseTest() {
                     History(
                         addedItem?.history!![0].id,
                         "${addedItem::class.java.simpleName} ${addedItem.id} amount",
-                        1.23,
-                        1.4,
+                        "1.23",
+                        "1.4",
                         userAccount,
                         addedItem.history!![0].dateCreated,
                         addedItem.history!![0].dateUpdated

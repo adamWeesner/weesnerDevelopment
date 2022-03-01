@@ -1,8 +1,10 @@
 package breathOfTheWild.ingredient
 
 import BaseRouter
-import shared.zelda.Ingredient
-import shared.zelda.responses.IngredientsResponse
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.toJson
+import com.weesnerdevelopment.shared.zelda.Ingredient
+import com.weesnerdevelopment.shared.zelda.responses.IngredientsResponse
 import kotlin.reflect.full.createType
 
 data class IngredientsRouter(
@@ -12,4 +14,6 @@ data class IngredientsRouter(
     IngredientsResponse(),
     service,
     Ingredient::class.createType()
-)
+) {
+    override fun GenericResponse<Ingredient>.parse(): String = this.toJson()
+}

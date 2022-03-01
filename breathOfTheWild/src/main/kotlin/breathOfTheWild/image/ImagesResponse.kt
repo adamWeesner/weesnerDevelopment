@@ -1,8 +1,8 @@
 package breathOfTheWild.image
 
-import shared.base.GenericResponse
-import shared.zelda.Image
+import com.weesnerdevelopment.shared.base.GenericResponse
+import com.weesnerdevelopment.shared.zelda.Image
 
 data class ImagesResponse(
-    override var items: List<Image>? = null
+    override var items: List<Image> = emptyList()
 ) : GenericResponse<Image>

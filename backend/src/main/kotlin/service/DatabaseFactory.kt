@@ -1,9 +1,6 @@
 package com.weesnerdevelopment.service
 
 import auth.UsersTable
-import billCategories.BillCategoriesTable
-import billSharedUsers.BillsSharedUsersTable
-import bills.BillsTable
 import breathOfTheWild.cookingPotFood.CookingPotFoodsTable
 import breathOfTheWild.cookingPotFoodIngredients.CookingPotFoodIngredientsTable
 import breathOfTheWild.critter.CrittersTable
@@ -25,25 +22,18 @@ import breathOfTheWild.otherFoodIngredients.OtherFoodIngredientsTable
 import breathOfTheWild.roastedFood.RoastedFoodsTable
 import breathOfTheWild.roastedFoodEffect.RoastedFoodEffectTable
 import breathOfTheWild.roastedFoodIngredients.RoastedFoodIngredientsTable
-import categories.CategoriesTable
-import colors.ColorsTable
 import com.weesnerdevelopment.validator.ValidatorTable
 import com.weesnerdevelopment.validator.complex.ComplexValidatorTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import federalIncomeTax.FederalIncomeTaxesTable
 import history.HistoryTable
-import income.IncomeTable
-import incomeOccurrences.IncomeOccurrencesTable
 import logging.LoggingTable
 import medicare.MedicareLimitsTable
 import medicare.MedicareTable
-import occurrences.BillOccurrencesTable
-import occurrencesSharedUsers.OccurrenceSharedUsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.transactions.transaction
-import payments.PaymentsTable
 import serialCabinet.category.SerialCategoriesTable
 import serialCabinet.electronic.ElectronicsTable
 import serialCabinet.itemCategories.SerialItemCategoriesTable
@@ -75,19 +65,6 @@ object DatabaseFactory {
                 MedicareLimitsTable,
                 TaxWithholdingTable,
                 FederalIncomeTaxesTable
-            )
-            // bill man
-            create(
-                BillsTable,
-                IncomeTable,
-                CategoriesTable,
-                ColorsTable,
-                PaymentsTable,
-                BillOccurrencesTable,
-                BillCategoriesTable,
-                BillsSharedUsersTable,
-                OccurrenceSharedUsersTable,
-                IncomeOccurrencesTable
             )
             // breath of the wild
             create(

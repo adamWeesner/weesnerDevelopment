@@ -1,7 +1,12 @@
 package breathOfTheWild
 
-import BaseTest
 import Path
+import com.weesnerdevelopment.shared.zelda.Critter
+import com.weesnerdevelopment.shared.zelda.responses.CrittersResponse
+import com.weesnerdevelopment.test.utils.BaseTest
+import com.weesnerdevelopment.test.utils.parseResponse
+import com.weesnerdevelopment.test.utils.shouldBe
+import com.weesnerdevelopment.test.utils.shouldNotBe
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.Created
@@ -11,14 +16,9 @@ import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.util.*
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import parseResponse
-import shared.zelda.Critter
-import shared.zelda.responses.CrittersResponse
-import shouldBe
-import shouldNotBe
 
 @KtorExperimentalAPI
-class CritterTests : BaseTest() {
+class CritterTests : BaseTest("application-test.conf") {
     private fun newItem(addition: Int, id: Int? = null) = Critter(
         id,
         addition.toString(),

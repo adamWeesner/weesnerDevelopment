@@ -1,7 +1,9 @@
-**/database.mv.db
+**/*database.mv.db
 /server/weesnerDevelopment.*
 /server
 /**/build
 /**/out
 /**/.gradle
 /.gradle
+/**/run.sh
+/**/.idea

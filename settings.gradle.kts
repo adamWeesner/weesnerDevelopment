@@ -1,11 +1,13 @@
 rootProject.name = "weesnerDevelopment"
-include("auth")
-include("backend")
-include("backendRouter")
-include("businessRules")
-include("taxFetcher")
-include("billMan")
-include("generator")
-include("breathOfTheWild")
-include("serialCabinet")
-include("testUtils")
+include(
+    ":auth",
+    ":backend",
+    ":backendRouter",
+    ":billMan",
+    ":breathOfTheWild",
+    ":businessRules",
+    ":generator",
+    ":serialCabinet",
+    ":taxFetcher",
+    ":testUtils",
+)

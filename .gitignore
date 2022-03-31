@@ -5,5 +5,5 @@
 /**/out
 /**/.gradle
 /.gradle
-/**/run.sh
 /**/.idea
+/**/*.sh

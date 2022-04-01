@@ -2,17 +2,17 @@ package com.weesnerdevelopment.history
 
 import com.weesnerdevelopment.auth.user.UserDao
 import com.weesnerdevelopment.auth.user.toUser
+import com.weesnerdevelopment.businessRules.tryTransaction
 import com.weesnerdevelopment.shared.base.History
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.SizedIterable
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 class HistoryDao(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<HistoryDao>(HistoryTable) {
-        fun <T> action(event: Companion.() -> T) = transaction { event() }
+        fun <T> action(event: Companion.() -> T) = tryTransaction { event() }
     }
 
     var field by HistoryTable.field

@@ -27,6 +27,7 @@ import io.ktor.serialization.*
 import io.ktor.websocket.*
 import kimchi.Kimchi
 import kotlinx.coroutines.launch
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import logging.LoggingService
 import logging.StdOutLogger
@@ -34,10 +35,13 @@ import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 import respondErrorAuthorizing
 import respondErrorServer
-import java.time.Duration
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalSerializationApi::class)
 object DatabaseServer {
+    @OptIn(ExperimentalTime::class)
     fun Application.main() {
         kodeinSetup()
 
@@ -59,7 +63,7 @@ object DatabaseServer {
             header(HttpHeaders.Authorization)
             host("${appConfig.baseUrl}:${appConfig.port}")
             host("localhost:3000")
-            maxAge = Duration.ofDays(1)
+            maxAgeDuration = Duration.days(1)
             allowCredentials = true
             allowNonSimpleContentTypes = true
         }

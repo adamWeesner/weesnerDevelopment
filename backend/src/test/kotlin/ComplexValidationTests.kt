@@ -61,9 +61,9 @@ class ComplexValidationTests : BaseTest("application-test.conf") {
         post(path).sendStatus(item()) shouldBe Created
 
         val getItem = get(path, 1).asObject<ComplexValidatorResponse>()
-        val firstItem = getItem.items?.first()!!
+        val firstItem = getItem.items.first()
 
-        getItem.items?.size shouldBe 1
+        getItem.items.size shouldBe 1
         firstItem shouldBe ComplexValidatorItem(
             1,
             signedInUser,
@@ -88,7 +88,7 @@ class ComplexValidationTests : BaseTest("application-test.conf") {
     @Order(6)
     fun `verify getting base url with items in the database`() {
         val response = get(path).asObject<ComplexValidatorResponse>()
-        response.items?.size shouldBe 2
+        response.items.size shouldBe 2
     }
 
     @Test
@@ -106,10 +106,10 @@ class ComplexValidationTests : BaseTest("application-test.conf") {
         put(path).sendStatus(newItem.copy(id = savedId, amount = 99.99, category = category)) shouldBe OK
 
         val getItem = get(path, savedId).asObject<ComplexValidatorResponse>()
-        val firstItem = getItem.items?.first()!!
+        val firstItem = getItem.items.first()
         val history = firstItem.history!!
 
-        getItem.items?.size shouldBe 1
+        getItem.items.size shouldBe 1
         firstItem.history!!.size shouldBe 2
         history.first() shouldBe History(
             history.first().id,
@@ -151,9 +151,9 @@ class ComplexValidationTests : BaseTest("application-test.conf") {
         put(path).sendStatus(newItem.copy(id = savedId)) shouldBe OK
 
         val getItem = get(path, savedId).asObject<ComplexValidatorResponse>()
-        val firstItem = getItem.items?.first()!!
+        val firstItem = getItem.items.first()
 
-        getItem.items?.size shouldBe 1
+        getItem.items.size shouldBe 1
         firstItem shouldBe ComplexValidatorItem(
             firstItem.id,
             signedInUser,
@@ -181,7 +181,7 @@ class ComplexValidationTests : BaseTest("application-test.conf") {
         delete(path, 7).sendStatus<Unit>() shouldBe OK
 
         val getItem = get(path).asObject<ComplexValidatorResponse>()
-        getItem.items?.firstOrNull { it.id == 7 } shouldBe null
+        getItem.items.firstOrNull { it.id == 7 } shouldBe null
     }
 
     @Test

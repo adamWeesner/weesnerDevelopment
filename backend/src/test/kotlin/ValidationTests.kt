@@ -42,9 +42,9 @@ class ValidationTests : BaseTest("application-test.conf") {
         post(path).sendStatus(item) shouldBe Created
 
         val getItem = get(path, 1).asObject<ValidatorResponse>()
-        val firstItem = getItem.items?.first()!!
+        val firstItem = getItem.items.first()
 
-        getItem.items?.size shouldBe 1
+        getItem.items.size shouldBe 1
         firstItem shouldBe ValidatorItem(
             1,
             "item1",
@@ -66,7 +66,7 @@ class ValidationTests : BaseTest("application-test.conf") {
     @Order(6)
     fun `verify getting base url with items in the database`() {
         val response = get(path).asObject<ValidatorResponse>()
-        response.items?.size shouldBe 2
+        response.items.size shouldBe 2
     }
 
     @Test
@@ -78,14 +78,14 @@ class ValidationTests : BaseTest("application-test.conf") {
         put(path).sendStatus(newItem.copy(id = savedId, amount = 99.99)) shouldBe OK
 
         val getItem = get(path, savedId).asObject<ValidatorResponse>()
-        val firstItem = getItem.items?.first()
+        val firstItem = getItem.items.first()
 
-        getItem.items?.size shouldBe 1
+        getItem.items.size shouldBe 1
         firstItem shouldBe ValidatorItem(
             savedId,
             "item${savedId - 1}",
             99.99,
-            firstItem!!.dateCreated,
+            firstItem.dateCreated,
             firstItem.dateUpdated
         )
     }
@@ -99,9 +99,9 @@ class ValidationTests : BaseTest("application-test.conf") {
         put(path).sendStatus(newItem.copy(id = savedId)) shouldBe OK
 
         val getItem = get(path, savedId).asObject<ValidatorResponse>()
-        val firstItem = getItem.items?.first()!!
+        val firstItem = getItem.items.first()
 
-        getItem.items?.size shouldBe 1
+        getItem.items.size shouldBe 1
         firstItem shouldBe ValidatorItem(
             firstItem.id,
             "item4",

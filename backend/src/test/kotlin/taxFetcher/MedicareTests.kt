@@ -139,7 +139,7 @@ class MedicareTests : BaseTest("application-test.conf") {
     fun `verify deleting and item that has been added`() {
         BuiltRequest(engine, Post, path, token).send(newItem(2007))
         val addedItem =
-            BuiltRequest(engine, Get, path, token).asObject<MedicareResponse>().items?.find { it.year == 2007 }?.year
+            BuiltRequest(engine, Get, path, token).asObject<MedicareResponse>().items.find { it.year == 2007 }?.year
         BuiltRequest(engine, Delete, "$path/${addedItem?.toString()}", token)
             .sendStatus<Unit>() shouldBe HttpStatusCode.OK
     }

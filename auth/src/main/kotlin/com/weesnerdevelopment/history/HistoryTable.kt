@@ -1,10 +1,10 @@
 package com.weesnerdevelopment.history
 
 import com.weesnerdevelopment.auth.user.UserTable
+import com.weesnerdevelopment.businessRules.tryTransaction
 import generics.GenericTable
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
-import org.jetbrains.exposed.sql.transactions.transaction
 
 object HistoryTable : UUIDTable(), GenericTable {
     val field = varchar("field", 255)
@@ -14,5 +14,5 @@ object HistoryTable : UUIDTable(), GenericTable {
     override val dateCreated = long("dateCreated")
     override val dateUpdated = long("dateUpdated")
 
-    fun <T> action(event: HistoryTable.() -> T) = transaction { event() }
+    fun <T> action(event: HistoryTable.() -> T) = tryTransaction { event() }
 }

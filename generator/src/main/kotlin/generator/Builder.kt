@@ -4,6 +4,13 @@ import generator.classes.GenFile
 import generator.classes.GeneratorFile
 import generator.classes.Template
 import java.io.File
+import java.util.*
+
+internal fun String.capitalize() =
+    replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+
+internal fun String.decapitalize() =
+    replaceFirstChar { it.lowercase(Locale.getDefault()) }
 
 data class Builder(
     val title: String,
@@ -13,7 +20,7 @@ data class Builder(
     private lateinit var entryInfo: EntryInfo
 
     private val titleTrimmed = title.split(" ").mapIndexed { index, item ->
-        if (index == 0) item.toLowerCase()
+        if (index == 0) item.lowercase()
         else item.capitalize()
     }.joinToString("")
 
@@ -293,8 +300,8 @@ data class Builder(
         val tables = arrayListOf<File>()
         val names = routers.map { it.name.decapitalize().replace(".kt", "") }
 
-        File(entryInfo.baseDirectory.path).listFiles()?.forEach {
-            if (it.isDirectory) it.listFiles()?.forEach {
+        File(entryInfo.baseDirectory.path).listFiles()?.forEach { file ->
+            if (file.isDirectory) file.listFiles()?.forEach {
                 if (it.name.endsWith("Router.kt")) routers.add(it)
                 if (it.name.endsWith("Service.kt")) services.add(it)
                 if (it.name.endsWith("Table.kt")) tables.add(it)

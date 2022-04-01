@@ -1,23 +1,9 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     application
-    id(Kotlin.jvm)
-    id(Kotlin.kapt)
-    id(ShadowJar.core) version ShadowJar.version
 }
 
 group = Base.group
 version = Backend.version
-
-sourceSets { sharedSources() }
-repositories { sharedRepos() }
-java { javaSource() }
-tasks.withType<KotlinCompile>().all { kotlinOptions.jvmTarget = Jvm.version }
-tasks.withType<Test> { useJUnitPlatform() }
-application { mainClassName = Ktor.Server.mainClass }
-tasks.withType<Jar> { manifest { attributes(mapOf("Main-Class" to application.mainClassName)) } }
-task("stage").dependsOn("installDist")
 
 dependencies {
     implementation(project(BusinessRules.project))

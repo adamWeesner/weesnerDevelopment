@@ -1,25 +1,9 @@
 plugins {
     application
-    id(Kotlin.jvm)
-    id(Kotlin.kapt)
-    id(ShadowJar.core) version ShadowJar.version
 }
 
 group = BillMan.group
 version = BillMan.version
-
-sourceSets { sharedSources() }
-java { javaSource() }
-application { mainClass.set(Ktor.Server.mainClass) }
-tasks.withType<Jar> { manifest { attributes(mapOf("Main-Class" to application.mainClass)) } }
-task("stage").dependsOn("installDist")
-tasks {
-    shadowJar {
-        manifest {
-            attributes(Pair("Main-Class", application.mainClass))
-        }
-    }
-}
 
 dependencies {
     val tcnative_version = rootProject.extra["tcnative_version"]

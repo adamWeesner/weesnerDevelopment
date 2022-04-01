@@ -18,7 +18,6 @@ import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.NoContent
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.OK
-import io.ktor.util.*
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.SchemaUtils.drop
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -31,7 +30,6 @@ import serialCabinet.electronic.ElectronicsTable
 import serialCabinet.itemCategories.SerialItemCategoriesTable
 import serialCabinet.manufacturer.ManufacturersTable
 
-@KtorExperimentalAPI
 class ElectronicTests : BaseTest("application-test.conf") {
     lateinit var startManufacturer: Manufacturer
     lateinit var startCategory: Category
@@ -64,10 +62,10 @@ class ElectronicTests : BaseTest("application-test.conf") {
         createUser()
 
         post(Path.SerialCabinet.categories).send(Category(name = "randomCategory", description = "description"))
-        startCategory = get(Path.SerialCabinet.categories).asObject<CategoriesResponse>().items?.last()!!
+        startCategory = get(Path.SerialCabinet.categories).asObject<CategoriesResponse>().items.last()
 
         post(Path.SerialCabinet.manufacturers).send(Manufacturer(name = "randomManufacturer"))
-        startManufacturer = get(Path.SerialCabinet.manufacturers).asObject<ManufacturersResponse>().items?.last()!!
+        startManufacturer = get(Path.SerialCabinet.manufacturers).asObject<ManufacturersResponse>().items.last()
     }
 
     @AfterAll
@@ -140,14 +138,14 @@ class ElectronicTests : BaseTest("application-test.conf") {
         val updatedName = "electronic4"
         post(path).sendStatus(newItem(4)) shouldBe Created
 
-        val electronic = get(path).asObject<ElectronicsResponse>().items?.last()
+        val electronic = get(path).asObject<ElectronicsResponse>().items.last()
 
-        put(path).sendStatus(electronic?.copy(name = updatedName)) shouldBe OK
+        put(path).sendStatus(electronic.copy(name = updatedName)) shouldBe OK
 
-        val updatedElectronic = get(path, electronic?.id).asObject<ElectronicsResponse>().items?.first()
+        val updatedElectronic = get(path, electronic.id).asObject<ElectronicsResponse>().items.first()
 
         updatedElectronic shouldNotBe null
-        updatedElectronic?.name shouldBe updatedName
+        updatedElectronic.name shouldBe updatedName
 
     }
 
@@ -168,9 +166,9 @@ class ElectronicTests : BaseTest("application-test.conf") {
     fun `verify deleting and item that has been added`() {
         post(path).sendStatus(newItem(7)) shouldBe Created
 
-        val addedItem = get(path).asObject<ElectronicsResponse>().items?.last()
+        val addedItem = get(path).asObject<ElectronicsResponse>().items.last()
 
-        delete(path, addedItem?.id).sendStatus<Unit>() shouldBe OK
+        delete(path, addedItem.id).sendStatus<Unit>() shouldBe OK
     }
 
     @Test

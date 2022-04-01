@@ -15,12 +15,10 @@ import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.NoContent
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.OK
-import io.ktor.util.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
-@KtorExperimentalAPI
 class OtherFoodTests : BaseTest("application-test.conf") {
     private lateinit var image: Image
 
@@ -41,7 +39,7 @@ class OtherFoodTests : BaseTest("application-test.conf") {
         createUser()
 
         post(Path.BreathOfTheWild.images).send(Image(null, "anImage", "srcHere", 12, 12))
-        image = get(Path.BreathOfTheWild.images).asObject<ImagesResponse>().items?.last()!!
+        image = get(Path.BreathOfTheWild.images).asObject<ImagesResponse>().items.last()
     }
 
     @Test
@@ -103,14 +101,14 @@ class OtherFoodTests : BaseTest("application-test.conf") {
         val updatedName = "otherFood4"
         post(path).sendStatus(newItem(4)) shouldBe Created
 
-        val otherFood = get(path).asObject<OtherFoodsResponse>().items?.last()
+        val otherFood = get(path).asObject<OtherFoodsResponse>().items.last()
 
-        put(path).sendStatus(otherFood?.copy(name = updatedName)) shouldBe OK
+        put(path).sendStatus(otherFood.copy(name = updatedName)) shouldBe OK
 
-        val updatedOtherFood = get(path, otherFood?.id).asObject<OtherFoodsResponse>().items?.first()
+        val updatedOtherFood = get(path, otherFood.id).asObject<OtherFoodsResponse>().items.first()
 
         updatedOtherFood shouldNotBe null
-        updatedOtherFood?.name shouldBe updatedName
+        updatedOtherFood.name shouldBe updatedName
     }
 
     @Test
@@ -130,9 +128,9 @@ class OtherFoodTests : BaseTest("application-test.conf") {
     fun `verify deleting and item that has been added`() {
         post(path).sendStatus(newItem(7)) shouldBe Created
 
-        val addedItem = get(path).asObject<OtherFoodsResponse>().items?.last()
+        val addedItem = get(path).asObject<OtherFoodsResponse>().items.last()
 
-        delete(path, addedItem?.id).sendStatus<Unit>() shouldBe OK
+        delete(path, addedItem.id).sendStatus<Unit>() shouldBe OK
     }
 
     @Test

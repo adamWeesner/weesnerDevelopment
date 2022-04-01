@@ -13,11 +13,9 @@ import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.NoContent
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.OK
-import io.ktor.util.*
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
-@KtorExperimentalAPI
 class CritterTests : BaseTest("application-test.conf") {
     private fun newItem(addition: Int, id: Int? = null) = Critter(
         id,
@@ -88,14 +86,14 @@ class CritterTests : BaseTest("application-test.conf") {
         val updatedName = "critter4"
         post(path).sendStatus(newItem(4)) shouldBe Created
 
-        val critter = get(path).asObject<CrittersResponse>().items?.last()
+        val critter = get(path).asObject<CrittersResponse>().items.last()
 
-        put(path).sendStatus(critter?.copy(critter = updatedName)) shouldBe OK
+        put(path).sendStatus(critter.copy(critter = updatedName)) shouldBe OK
 
-        val updatedCritter = get(path, critter?.id).asObject<CrittersResponse>().items?.first()
+        val updatedCritter = get(path, critter.id).asObject<CrittersResponse>().items.first()
 
         updatedCritter shouldNotBe null
-        updatedCritter?.critter shouldBe updatedName
+        updatedCritter.critter shouldBe updatedName
     }
 
     @Test
@@ -115,9 +113,9 @@ class CritterTests : BaseTest("application-test.conf") {
     fun `verify deleting and item that has been added`() {
         post(path).sendStatus(newItem(7)) shouldBe Created
 
-        val addedItem = get(path).asObject<CrittersResponse>().items?.last()
+        val addedItem = get(path).asObject<CrittersResponse>().items.last()
 
-        delete(path, addedItem?.id).sendStatus<Unit>() shouldBe OK
+        delete(path, addedItem.id).sendStatus<Unit>() shouldBe OK
     }
 
     @Test

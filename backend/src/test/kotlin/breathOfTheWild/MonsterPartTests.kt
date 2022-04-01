@@ -13,11 +13,9 @@ import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.NoContent
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.OK
-import io.ktor.util.*
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
-@KtorExperimentalAPI
 class MonsterPartTests : BaseTest("application-test.conf") {
     private fun newItem(addition: Int, id: Int? = null) = MonsterPart(
         id,
@@ -86,14 +84,14 @@ class MonsterPartTests : BaseTest("application-test.conf") {
         val updatedName = "monsterPart4"
         post(path).sendStatus(newItem(4)) shouldBe Created
 
-        val monsterPart = get(path).asObject<MonsterPartsResponse>().items?.last()
+        val monsterPart = get(path).asObject<MonsterPartsResponse>().items.last()
 
-        put(path).sendStatus(monsterPart?.copy(part = updatedName)) shouldBe OK
+        put(path).sendStatus(monsterPart.copy(part = updatedName)) shouldBe OK
 
-        val updatedMonsterPart = get(path, monsterPart?.id).asObject<MonsterPartsResponse>().items?.first()
+        val updatedMonsterPart = get(path, monsterPart.id).asObject<MonsterPartsResponse>().items.first()
 
         updatedMonsterPart shouldNotBe null
-        updatedMonsterPart?.part shouldBe updatedName
+        updatedMonsterPart.part shouldBe updatedName
     }
 
     @Test
@@ -113,9 +111,9 @@ class MonsterPartTests : BaseTest("application-test.conf") {
     fun `verify deleting and item that has been added`() {
         post(path).sendStatus(newItem(7)) shouldBe Created
 
-        val addedItem = get(path).asObject<MonsterPartsResponse>().items?.last()
+        val addedItem = get(path).asObject<MonsterPartsResponse>().items.last()
 
-        delete(path, addedItem?.id).sendStatus<Unit>() shouldBe OK
+        delete(path, addedItem.id).sendStatus<Unit>() shouldBe OK
     }
 
     @Test

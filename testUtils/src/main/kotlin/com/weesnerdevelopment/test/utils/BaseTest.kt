@@ -11,12 +11,10 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
 import io.ktor.server.testing.*
-import io.ktor.util.*
 import kimchi.Kimchi
 import org.junit.jupiter.api.*
 import java.io.File
 
-@OptIn(KtorExperimentalAPI::class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 open class BaseTest(configPath: String) {

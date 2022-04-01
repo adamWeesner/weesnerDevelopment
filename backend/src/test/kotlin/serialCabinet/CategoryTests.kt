@@ -13,11 +13,9 @@ import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.NoContent
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.OK
-import io.ktor.util.*
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
-@KtorExperimentalAPI
 class CategoryTests : BaseTest("application-test.conf") {
     fun newItem(addition: Int, id: Int? = null) = Category(
         id,
@@ -86,14 +84,14 @@ class CategoryTests : BaseTest("application-test.conf") {
         val updatedName = "category4"
         post(path).sendStatus(newItem(4)) shouldBe Created
 
-        val category = get(path).asObject<CategoriesResponse>().items?.last()
+        val category = get(path).asObject<CategoriesResponse>().items.last()
 
-        put(path).sendStatus(category?.copy(name = updatedName)) shouldBe OK
+        put(path).sendStatus(category.copy(name = updatedName)) shouldBe OK
 
-        val updatedCategory = get(path, category?.id).asObject<CategoriesResponse>().items?.first()
+        val updatedCategory = get(path, category.id).asObject<CategoriesResponse>().items.first()
 
         updatedCategory shouldNotBe null
-        updatedCategory?.name shouldBe updatedName
+        updatedCategory.name shouldBe updatedName
     }
 
     @Test
@@ -113,9 +111,9 @@ class CategoryTests : BaseTest("application-test.conf") {
     fun `verify deleting and item that has been added`() {
         post(path).sendStatus(newItem(7)) shouldBe Created
 
-        val addedItem = get(path).asObject<CategoriesResponse>().items?.last()
+        val addedItem = get(path).asObject<CategoriesResponse>().items.last()
 
-        delete(path, addedItem?.id).sendStatus<Unit>() shouldBe OK
+        delete(path, addedItem.id).sendStatus<Unit>() shouldBe OK
     }
 
     @Test

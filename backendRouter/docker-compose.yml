@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  application:
+    build:
+      context: ../
+      dockerfile: backendRouter/Dockerfile
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    environment:
+      - environment
+      - domain
+      - audience
+      - realm
+      - secret
+      - keystore
+      - keyAlias
+      - keyStorePassword
+      - privateKeyPassword

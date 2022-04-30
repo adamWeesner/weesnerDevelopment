@@ -80,30 +80,33 @@ subprojects {
             useJUnitPlatform()
         }
         withType<Copy> {
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
+        withType<Tar> {
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
+        withType<Jar> {
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
+        withType<Zip> {
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
         }
 
         if (project.name in updatedList) {
-            shadowJar {
-                manifest {
-                    attributes(Pair("Main-Class", application.mainClass))
-                }
-            }
-
             afterEvaluate {
+                application {
+                    mainClass.set(Ktor.Server.mainClass)
+                }
+                shadowJar {
+                    manifest {
+                        attributes(Pair("Main-Class", application.mainClass))
+                    }
+                }
                 withType<Jar> {
                     manifest {
                         attributes(mapOf("Main-Class" to application.mainClass))
                     }
                 }
-            }
-        }
-    }
-
-    afterEvaluate {
-        if (project.name in updatedList) {
-            application {
-                mainClass.set(Ktor.Server.mainClass)
             }
         }
     }

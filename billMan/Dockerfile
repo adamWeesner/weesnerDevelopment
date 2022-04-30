@@ -9,8 +9,8 @@ RUN ./gradlew :billMan:clean :billMan:assemble
 
 FROM adoptopenjdk/openjdk11:alpine-jre
 
-EXPOSE 8080:8080
-EXPOSE 8443:8443
+EXPOSE 8082:8082
+EXPOSE 8445:8445
 WORKDIR /app
 COPY --from=0 app/billMan/build/libs/billMan-*-all.jar billMan.jar
 COPY --from=0 app/server /server

@@ -9,8 +9,8 @@ RUN ./gradlew :auth:clean :auth:assemble
 
 FROM adoptopenjdk/openjdk11:alpine-jre
 
-EXPOSE 8080:8080
-EXPOSE 8443:8443
+EXPOSE 8081:8081
+EXPOSE 8444:8444
 WORKDIR /app
 COPY --from=0 app/auth/build/libs/auth-*-all.jar auth.jar
 COPY --from=0 app/server /server

@@ -6,4 +6,5 @@
 /**/.gradle
 /.gradle
 /**/.idea
-/**/*.sh
+/**/runLocal.sh
+/**/.env

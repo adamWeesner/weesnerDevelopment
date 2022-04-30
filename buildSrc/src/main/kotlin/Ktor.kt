@@ -1,7 +1,7 @@
 object Ktor {
     private const val base = "io.ktor:ktor-"
 
-    const val version = "1.6.7"
+    const val version = "1.6.8"
 
     const val authJwt = "${base}auth-jwt:$version"
     const val metrics = "${base}metrics:$version"

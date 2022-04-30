@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  application:
+    build:
+      context: ../
+      dockerfile: billMan/Dockerfile
+    ports:
+      - "8082:8082"
+      - "8445:8445"
+    environment:
+      - environment
+      - domain
+      - audience
+      - realm
+      - secret
+      - keystore
+      - keyAlias
+      - keyStorePassword
+      - privateKeyPassword

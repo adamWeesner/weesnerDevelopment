@@ -163,7 +163,6 @@ suspend fun PipelineContext<Unit, ApplicationCall>.redirectInternally(httpClient
 
     val requestData = getRequestDataFromCall()
 
-
     if (!cp.host.startsWith("api", true) || cp.port == 8080 || cp.port == 8443) {
         Log.warn("Tried to call router server:\n$requestData")
         respondError(BadRequest("An error occurred trying to parse your request"))

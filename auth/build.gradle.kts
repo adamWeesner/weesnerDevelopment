@@ -1,13 +1,26 @@
 plugins {
     application
+    `maven-publish`
 }
 
 group = Auth.group
 version = Auth.version
 
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            setUrl("https://maven.pkg.github.com/adamWeesner/weesnerDevelopment")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+
 dependencies {
     implementation(project(BusinessRules.project))
-    implementation(project(Backend.project))
     implementation(Dropwizard.metricsJmx)
     implementation(Exposed.core)
     implementation(Exposed.dao)

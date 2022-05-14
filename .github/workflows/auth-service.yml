@@ -3,7 +3,7 @@ name: Build, test and publish Auth service
 on:
   push:
     paths:
-      - auth/**
+      - 'auth/**'
     
 env:
   REGISTRY: ghcr.io

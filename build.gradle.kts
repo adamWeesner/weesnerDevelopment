@@ -56,8 +56,28 @@ subprojects {
     apply(plugin = Kotlin.jvm)
     apply(plugin = Kotlin.kapt)
 
-    if (project.name in updatedList)
+    if (project.name in updatedList) {
         apply(plugin = ShadowJar.core)
+        apply(plugin = "maven-publish")
+
+        configure<PublishingExtension> {
+            repositories {
+                maven {
+                    name = "GitHubPackages"
+                    url = uri("https://maven.pkg.github.com/adamWeesner/weesnerDevelopment")
+                    credentials {
+                        username = project.findProperty("gpr.user") as? String? ?: System.getenv("GITHUB_ACTOR")
+                        password = project.findProperty("gpr.key") as? String? ?: System.getenv("GITHUB_TOKEN")
+                    }
+                }
+            }
+            publications {
+                register<MavenPublication>("gpr") {
+                    from(components["java"])
+                }
+            }
+        }
+    }
 
     task("stage").dependsOn("installDist")
 

@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.0-experimental
-FROM gradle:7.1.0-jdk11 as BUILD_IMAGE
+FROM gradle:7.4.2-jdk11 as BUILD_IMAGE
 
 #RUN git clone https://github.com/adamWeesner/weesnerDevelopment.git#authDeploy
 WORKDIR /app

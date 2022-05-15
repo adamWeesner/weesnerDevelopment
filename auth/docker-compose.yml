@@ -8,8 +8,6 @@ services:
       - "8081:8081"
       - "8444:8444"
     environment:
-      - packageVersion
-      - gitToken
       - environment
       - domain
       - audience

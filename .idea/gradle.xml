@@ -12,15 +12,10 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/auth" />
-            <option value="$PROJECT_DIR$/backend" />
             <option value="$PROJECT_DIR$/backendRouter" />
             <option value="$PROJECT_DIR$/billMan" />
-            <option value="$PROJECT_DIR$/breathOfTheWild" />
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/businessRules" />
-            <option value="$PROJECT_DIR$/generator" />
-            <option value="$PROJECT_DIR$/serialCabinet" />
-            <option value="$PROJECT_DIR$/taxFetcher" />
             <option value="$PROJECT_DIR$/testUtils" />
           </set>
         </option>

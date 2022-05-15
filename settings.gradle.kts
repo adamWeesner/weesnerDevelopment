@@ -1,13 +1,13 @@
 rootProject.name = "weesnerDevelopment"
 include(
     ":auth",
-    ":backend",
+//    ":backend",
     ":backendRouter",
     ":billMan",
-    ":breathOfTheWild",
+//    ":breathOfTheWild",
     ":businessRules",
-    ":generator",
-    ":serialCabinet",
-    ":taxFetcher",
+//    ":generator",
+//    ":serialCabinet",
+//    ":taxFetcher",
     ":testUtils",
 )

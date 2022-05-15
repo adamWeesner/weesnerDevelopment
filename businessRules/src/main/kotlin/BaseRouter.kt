@@ -44,8 +44,8 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
 
             if (body is OwnedItem) {
                 val notYourItem = when (userInfo?.first) {
-                    "username" -> body.owner.username != userInfo.second
-                    "uuid" -> body.owner.uuid != userInfo.second
+                    "username" -> body.owner != userInfo.second
+                    "uuid" -> body.owner != userInfo.second
                     else -> false
                 }
 
@@ -84,8 +84,8 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
             val filteredItems = when (isOwnedItem) {
                 true -> {
                     when (userInfo?.first) {
-                        "username" -> items?.filter { (it as OwnedItem).owner.username == userInfo.second }
-                        "uuid" -> items?.filter { (it as OwnedItem).owner.uuid == userInfo.second }
+                        "username" -> items?.filter { (it as OwnedItem).owner == userInfo.second }
+                        "uuid" -> items?.filter { (it as OwnedItem).owner == userInfo.second }
                         else -> items
                     }
                 }
@@ -112,8 +112,8 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
 
             if (body is OwnedItem) {
                 val notYourItem = when (userInfo?.first) {
-                    "username" -> body.owner.username != userInfo.second
-                    "uuid" -> body.owner.uuid != userInfo.second
+                    "username" -> body.owner != userInfo.second
+                    "uuid" -> body.owner != userInfo.second
                     else -> false
                 }
 

@@ -7,7 +7,6 @@ version = Auth.version
 
 dependencies {
     implementation(project(BusinessRules.project))
-    implementation(project(Backend.project))
     implementation(Dropwizard.metricsJmx)
     implementation(Exposed.core)
     implementation(Exposed.dao)

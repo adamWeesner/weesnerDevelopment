@@ -7,6 +7,12 @@ group = Auth.group
 version = Auth.version
 
 publishing {
+    publications {
+        create<MavenPublication>("default") {
+            from(components["java"])
+        }
+    }
+
     repositories {
         maven {
             name = "GitHubPackages"

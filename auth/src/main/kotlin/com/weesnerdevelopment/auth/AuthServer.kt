@@ -138,7 +138,11 @@ object AuthServer {
         install(Routing) {
             route(Paths.User.health) {
                 get {
-                    respond(Response.Ok("Auth ${this.call.request.path().replace("/health", "")} is up and running"))
+                    respond(
+                        Response.Ok(
+                            "Auth ${this.call.request.path().replace("/health", "")} is up and running"
+                        )
+                    )
                 }
             }
 

@@ -35,6 +35,7 @@ jobs:
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
           arguments: :auth:build
+
         #      - name: Publish
         #        id: publish
         #        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
@@ -53,6 +54,7 @@ jobs:
         with:
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAGS }}
+          containerfiles: ./auth/Dockerfile
           base-image: busybox:latest
           entrypoint: |
             bash

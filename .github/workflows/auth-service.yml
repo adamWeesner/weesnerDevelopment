@@ -15,10 +15,6 @@ env:
 jobs:
   auth-service:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        install_latest: [ true, false ]
     permissions:
       contents: read
       packages: write
@@ -53,8 +49,7 @@ jobs:
 
       - name: Install latest podman
         if: matrix.install_latest
-        run: |
-          bash .github/install_latest_podman.sh
+        run: bash .github/install_latest_podman.sh
 
       # Build image using Buildah action
       - name: Build Image

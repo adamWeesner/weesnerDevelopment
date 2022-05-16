@@ -54,7 +54,7 @@ jobs:
         with:
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAGS }}
-          containerfiles: ./auth/Dockerfile
+          containerfiles: auth/Dockerfile
           base-image: busybox:latest
           entrypoint: |
             bash

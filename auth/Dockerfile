@@ -3,6 +3,7 @@ FROM gradle:7.1.0-jdk11 as BUILD_IMAGE
 
 WORKDIR /app
 ADD . /app
+#ADD ../server/*.jks /app
 RUN gradle wrapper
 RUN ./gradlew :auth:clean :auth:assemble
 

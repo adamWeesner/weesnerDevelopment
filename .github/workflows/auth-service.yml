@@ -46,7 +46,7 @@ jobs:
         #        run: echo "${{ toJSON(steps.publish.outputs) }}"
 
       - name: Install latest podman
-        run: bash --log-level debug .github/install_latest_podman.sh
+        run: bash .github/install_latest_podman.sh
 
       # Build image using Buildah action
       - name: Build Image

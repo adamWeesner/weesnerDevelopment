@@ -53,7 +53,7 @@ jobs:
         id: build_image
         uses: redhat-actions/buildah-build@v2
         with:
-          image: weesnerDevelopment
+          image: weesner_development_auth
           tags: latest ${{ github.sha }} auth
           containerfiles: auth/Dockerfile
 

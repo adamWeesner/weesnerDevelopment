@@ -53,12 +53,12 @@ jobs:
         id: build_image
         uses: redhat-actions/buildah-build@v2
         with:
-          image: auth-service
-          tags: latest ${{ github.sha }}
+          image: weesnerDevelopment
+          tags: latest ${{ github.sha }} auth
           containerfiles: auth/Dockerfile
 
       # Push the image to GHCR (Image Registry)
-      - name: Push To GHCR
+      - name: Push To Github Container Registry
         uses: ./
         id: push
         with:

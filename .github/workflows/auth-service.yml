@@ -46,7 +46,7 @@ jobs:
         #        run: echo "${{ toJSON(steps.publish.outputs) }}"
 
       - name: Install latest podman
-        run: bash .github/install_latest_podman.sh
+        run: bash --log-level debug .github/install_latest_podman.sh
 
       # Build image using Buildah action
       - name: Build Image
@@ -56,6 +56,12 @@ jobs:
           image: weesnerdevelopmentauth
           tags: ${{ github.sha }} auth latest
           containerfiles: auth/Dockerfile
+          base-image: busybox:latest
+          entrypoint: |
+            bash
+            -c
+            echo 'hello world'
+          oci: true
 
       # Push the image to GHCR (Image Registry)
       - name: Push To Github Container Registry

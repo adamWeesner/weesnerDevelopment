@@ -6,15 +6,13 @@ on:
       - 'auth/**'
 
 env:
-  IMAGE_NAME: auth-server
-  IMAGE_TAGS: v1 ${{ github.sha }}
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
   REGISTRY_USER: ${{ github.actor }}
   REGISTRY_PASSWORD: ${{ github.token }}
 
 jobs:
   auth-service:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     permissions:
       contents: read
       packages: write
@@ -55,15 +53,9 @@ jobs:
         id: build_image
         uses: redhat-actions/buildah-build@v2
         with:
-          image: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.IMAGE_TAGS }}
+          image: auth-service
+          tags: latest ${{ github.sha }}
           containerfiles: auth/Dockerfile
-          base-image: busybox:latest
-          entrypoint: |
-            bash
-            -c
-            echo 'running build image'
-          oci: true
 
       # Push the image to GHCR (Image Registry)
       - name: Push To GHCR
@@ -75,8 +67,7 @@ jobs:
           registry: ${{ env.IMAGE_REGISTRY }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
-          extra-args: |
-            --disable-content-trust
+          extra-args: --disable-content-trust
 
       - name: Echo outputs
         run: echo "${{ toJSON(steps.push.outputs) }}"

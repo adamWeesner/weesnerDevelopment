@@ -54,7 +54,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: weesnerdevelopment
-          tags: ${{ github.sha }} auth auth:latest
+          tags: ${{ github.sha }} auth latest
           containerfiles: auth/Dockerfile
 
       # Push the image to GHCR (Image Registry)

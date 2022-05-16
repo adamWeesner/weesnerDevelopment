@@ -48,7 +48,6 @@ jobs:
         #        run: echo "${{ toJSON(steps.publish.outputs) }}"
 
       - name: Install latest podman
-        if: matrix.install_latest
         run: bash .github/install_latest_podman.sh
 
       # Build image using Buildah action

@@ -27,7 +27,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ghcr.io/${{ github.repository }}
-          tags: latest auth
+          tags: latest
 
       - name: Build and push
         id: build
@@ -35,7 +35,7 @@ jobs:
         with:
           file: ./auth/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.metadata.outputs.tags }}
 
       - name: Echo outputs
         run: echo "${{ toJSON(steps.build.outputs) }}"

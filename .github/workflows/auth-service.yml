@@ -22,13 +22,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Docker meta
+        id: metadata
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: latest
+
       - name: Build and push
         id: build
         uses: docker/build-push-action@v3
         with:
           file: ./auth/Dockerfile
           push: true
-          tags: weesner-development/auth:latest
+          tags: ${{ steps.meta.outputs.tags }}/auth:latest
 
       - name: Echo outputs
         run: echo "${{ toJSON(steps.build.outputs) }}"

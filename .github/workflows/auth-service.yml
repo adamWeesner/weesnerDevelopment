@@ -2,8 +2,8 @@ name: Build, test and publish Auth service
 
 on:
   push:
-    branches:
-      - main
+#    branches:
+    #      - main
     paths:
       - auth/**
 

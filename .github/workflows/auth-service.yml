@@ -30,7 +30,7 @@ jobs:
           arguments: :auth:build
 
       - name: Set up Docker Buildx
-        if: ${{steps.bat.success()}}
+        if: ${{ steps.bat.outcome == 'success' }}
         uses: docker/setup-buildx-action@v2
 
       - name: Login to DockerHub

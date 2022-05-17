@@ -10,6 +10,8 @@ FROM adoptopenjdk/openjdk11:alpine-jre
 
 EXPOSE 8081:8081
 EXPOSE 8444:8444
+
 WORKDIR /app
 COPY --from=0 app/auth/build/libs/auth-*-all.jar auth.jar
+
 CMD ["java", "-jar", "auth.jar"]

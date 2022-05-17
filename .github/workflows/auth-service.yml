@@ -26,7 +26,6 @@ jobs:
         id: build
         uses: docker/build-push-action@v3
         with:
-          context: .
           file: ./auth/Dockerfile
           push: true
           tags: weesner-development/auth:latest

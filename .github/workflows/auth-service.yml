@@ -22,11 +22,15 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
+        id: build
         uses: docker/build-push-action@v3
         with:
           context: "{{defaultContext}}:auth"
           push: true
           tags: weesner-development-auth:latest
+
+      - name: Echo outputs
+        run: echo "${{ toJSON(steps.build.outputs) }}"
 
     #      - uses: actions/checkout@v2
 

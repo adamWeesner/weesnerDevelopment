@@ -2,10 +2,10 @@ name: Build, test and publish Auth service
 
 on:
   push:
-#    branches:
-    #      - main
-    paths:
-      - auth/**
+  #    branches:
+  #      - main
+#    paths:
+#      - auth/**
 
 jobs:
   auth-service:
@@ -26,7 +26,8 @@ jobs:
         id: build
         uses: docker/build-push-action@v3
         with:
-          context: "{{defaultContext}}:auth"
+          context: .
+          file: auth/Dockerfile
           push: true
           tags: weesner-development/auth:latest
 

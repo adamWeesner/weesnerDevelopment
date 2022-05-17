@@ -27,7 +27,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ghcr.io/${{ github.repository }}
-          tags: latest
+          tags: latest auth:latest auth
 
       - name: Build and push
         id: build

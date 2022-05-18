@@ -13,7 +13,5 @@ EXPOSE 8444:8444
 
 WORKDIR /app
 COPY --from=0 app/auth/build/libs/auth-*-all.jar auth.jar
-RUN which java
-RUN java -version
 
 CMD ["java", "-jar", "auth.jar"]

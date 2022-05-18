@@ -9,6 +9,7 @@ dependencies {
     implementation(project(BusinessRules.project))
     implementation(Dropwizard.metricsJmx)
     implementation(Exposed.core)
+    implementation(Exposed.jdbc)
     implementation(Exposed.dao)
     implementation(H2.database)
     implementation(Hikari.core)

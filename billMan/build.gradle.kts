@@ -1,15 +1,20 @@
+import com.weesnerdevelopment.ProjectGradleModule.BusinessRules
+import com.weesnerdevelopment.ProjectGradleModule.TestUtils
+import com.weesnerdevelopment.implementation
+import com.weesnerdevelopment.testImplementation
+
 plugins {
     application
 }
 
-group = BillMan.group
-version = BillMan.version
+group = "${Base.group}.billman"
+version = "2.0.0"
 
 dependencies {
     val tcnative_version = rootProject.extra["tcnative_version"]
     val tcnative_classifier = rootProject.extra["tcnative_classifier"]
 
-    implementation(project(BusinessRules.project))
+    implementation(BusinessRules)
 
     implementation(Dropwizard.metricsJmx)
     implementation(Exposed.core)
@@ -33,5 +38,5 @@ dependencies {
     implementation("io.netty:netty-tcnative-boringssl-static:$tcnative_version")
     implementation("io.netty:netty-tcnative-boringssl-static:$tcnative_version:$tcnative_classifier")
 
-    testImplementation(project(TestUtils.project))
+    testImplementation(TestUtils)
 }

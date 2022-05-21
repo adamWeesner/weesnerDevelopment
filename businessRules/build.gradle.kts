@@ -2,8 +2,8 @@ plugins {
     kotlin("plugin.serialization") version Kotlin.version
 }
 
-group = Base.group
-version = BusinessRules.version
+group = "${Base.group}.rules"
+version = "1.3.2"
 
 dependencies {
     api(fileTree("../libs") { include("*.jar") })

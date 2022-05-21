@@ -1,3 +1,4 @@
+import com.weesnerdevelopment.ProjectGradleModule
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -41,9 +42,9 @@ buildscript {
 }
 
 val updatedList = listOf(
-    "auth",
-    "backendRouter",
-    "billMan"
+    ProjectGradleModule.Auth.project.replace(":", ""),
+    ProjectGradleModule.BackendRouter.project.replace(":", ""),
+    ProjectGradleModule.BillMan.project.replace(":", ""),
 )
 
 subprojects {

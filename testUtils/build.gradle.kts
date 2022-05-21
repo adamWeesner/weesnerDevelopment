@@ -1,8 +1,11 @@
-group = Base.group
-version = TestUtils.version
+import com.weesnerdevelopment.ProjectGradleModule.BusinessRules
+import com.weesnerdevelopment.implementation
+
+group = "${Base.group}.test"
+version = "1.0.0"
 
 dependencies {
-    implementation(project(BusinessRules.project))
+    implementation(BusinessRules)
     implementation(Kimchi.core)
 
     api(Ktor.serverTest)

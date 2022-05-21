@@ -1,12 +1,17 @@
+import com.weesnerdevelopment.ProjectGradleModule.BusinessRules
+import com.weesnerdevelopment.ProjectGradleModule.TestUtils
+import com.weesnerdevelopment.implementation
+import com.weesnerdevelopment.testImplementation
+
 plugins {
     application
 }
 
-group = Auth.group
-version = Auth.version
+group = "${Base.group}.auth"
+version = "1.0.0"
 
 dependencies {
-    implementation(project(BusinessRules.project))
+    implementation(BusinessRules)
     implementation(Dropwizard.metricsJmx)
     implementation(Exposed.core)
     implementation(Exposed.jdbc)
@@ -23,5 +28,5 @@ dependencies {
     implementation(Ktor.serialization)
     implementation(Logback.core)
 
-    testImplementation(project(TestUtils.project))
+    testImplementation(TestUtils)
 }

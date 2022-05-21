@@ -1,15 +1,20 @@
+import com.weesnerdevelopment.ProjectGradleModule.BusinessRules
+import com.weesnerdevelopment.ProjectGradleModule.TestUtils
+import com.weesnerdevelopment.implementation
+import com.weesnerdevelopment.testImplementation
+
 plugins {
     application
 }
 
-group = Router.group
-version = Router.version
+group = "${Base.group}.router"
+version = "1.0.0"
 
 dependencies {
     val tcnative_version = rootProject.extra["tcnative_version"]
     val tcnative_classifier = rootProject.extra["tcnative_classifier"]
 
-    implementation(project(BusinessRules.project))
+    implementation(BusinessRules)
 
     implementation(Kimchi.core)
     implementation(KodeIn.core)
@@ -24,5 +29,5 @@ dependencies {
     implementation("io.netty:netty-tcnative-boringssl-static:$tcnative_version")
     implementation("io.netty:netty-tcnative-boringssl-static:$tcnative_version:$tcnative_classifier")
 
-    testImplementation(project(TestUtils.project))
+    testImplementation(TestUtils)
 }

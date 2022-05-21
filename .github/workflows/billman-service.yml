@@ -1,10 +1,10 @@
-name: Build, test and publish Auth service
+name: Build, test and publish BillMan service
 
 aliases:
-  - &pathToWatch auth/**
-  - &buildPath :auth:build
-  - &dockerTag :auth:latest
-  - &dockerfilePath ./auth/Dockerfile
+  - &pathToWatch billMan/**
+  - &buildPath :billMan:build
+  - &dockerTag :billMan:latest
+  - &dockerfilePath ./billMan/Dockerfile
 
 on:
   push:

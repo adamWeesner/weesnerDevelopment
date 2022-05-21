@@ -4,9 +4,6 @@ services:
     build:
       context: ../
       dockerfile: auth/Dockerfile
-    ports:
-      - "8081:8081"
-      - "8444:8444"
     environment:
       - environment
       - domain

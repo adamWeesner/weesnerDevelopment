@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "${Base.group}.billman"
-version = "2.0.0"
+version = "2.0.1"
 
 dependencies {
     val tcnative_version = rootProject.extra["tcnative_version"]

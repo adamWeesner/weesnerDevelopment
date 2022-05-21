@@ -12,7 +12,7 @@ on:
     branches:
       - main
     paths:
-      - ${{ env.pathToWatch }}
+      - env.pathToWatch
 
 jobs:
   billman-service:

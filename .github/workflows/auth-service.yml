@@ -1,4 +1,4 @@
-name: Build, test and publish Auth service
+name: Auth service
 
 env:
   pathToWatch: auth/**
@@ -7,6 +7,7 @@ env:
   dockerfilePath: ./auth/Dockerfile
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main

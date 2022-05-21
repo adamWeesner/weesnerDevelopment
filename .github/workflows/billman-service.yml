@@ -1,4 +1,4 @@
-name: Build, test and publish BillMan service
+name: BillMan service
 
 env:
   pathToWatch: billMan/**
@@ -7,6 +7,7 @@ env:
   dockerfilePath: ./billMan/Dockerfile
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main

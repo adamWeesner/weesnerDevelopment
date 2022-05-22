@@ -1,9 +1,7 @@
 package com.weesnerdevelopment.billman
 
 import auth.AuthValidator
-import auth.AuthValidatorJwt
-import auth.Cipher
-import auth.JwtProvider
+import auth.AuthValidatorFake
 import com.weesnerdevelopment.billman.bill.BillsRepository
 import com.weesnerdevelopment.billman.bill.BillsRepositoryImpl
 import com.weesnerdevelopment.billman.bill.BillsRouter
@@ -17,7 +15,6 @@ import com.weesnerdevelopment.billman.category.CategoriesRepositoryImpl
 import com.weesnerdevelopment.billman.category.CategoriesRouter
 import com.weesnerdevelopment.billman.category.CategoriesRouterImpl
 import com.weesnerdevelopment.billman.database.BillManDatabase
-import com.weesnerdevelopment.billman.database.BillManDatabaseProd
 import com.weesnerdevelopment.billman.income.IncomeRepository
 import com.weesnerdevelopment.billman.income.IncomeRepositoryImpl
 import com.weesnerdevelopment.billman.income.IncomeRouter
@@ -26,8 +23,6 @@ import com.weesnerdevelopment.billman.income.occurrence.IncomeOccurrenceReposito
 import com.weesnerdevelopment.billman.income.occurrence.IncomeOccurrenceRepositoryImpl
 import com.weesnerdevelopment.billman.income.occurrence.IncomeOccurrenceRouter
 import com.weesnerdevelopment.billman.income.occurrence.IncomeOccurrenceRouterImpl
-import com.weesnerdevelopment.billman.server.BillManDevServer
-import com.weesnerdevelopment.billman.server.BillManProdServer
 import com.weesnerdevelopment.businessRules.AppConfig
 import com.weesnerdevelopment.businessRules.Environment
 import com.weesnerdevelopment.businessRules.Server
@@ -41,26 +36,24 @@ fun Application.initKodein() {
     kodein {
         bind<AppConfig>() with singleton { AppConfig(environment.config) }
 
-        bind<JwtProvider>() with singleton {
-            val appConfig = instance<AppConfig>()
-            JwtProvider(appConfig.issuer, appConfig.audience, appConfig.expiresIn, Cipher(appConfig.secret))
-        }
         bind<AuthValidator>() with singleton {
             val appConfig = instance<AppConfig>()
 
             when (Environment.valueOf(appConfig.appEnv)) {
-                Environment.development -> AuthValidatorJwt
-                Environment.production -> AuthValidatorJwt
-                Environment.testing -> throw IllegalArgumentException("Should not be using the test implementation")
+                Environment.production, Environment.development ->
+                    throw IllegalArgumentException("Should be using the test implementation")
+                Environment.testing ->
+                    AuthValidatorFake("e0f97212-4431-448b-bd97-f70235328cd1")
             }
         }
         bind<BillManDatabase>() with singleton {
             val appConfig = instance<AppConfig>()
 
             when (Environment.valueOf(appConfig.appEnv)) {
-                Environment.development -> BillManDatabaseProd
-                Environment.production -> BillManDatabaseProd
-                Environment.testing -> throw IllegalArgumentException("Should not be using the test implementation")
+                Environment.production, Environment.development ->
+                    throw IllegalArgumentException("Should be using the test implementation")
+                Environment.testing ->
+                    BillManDatabaseTesting
             }
         }
 
@@ -83,9 +76,10 @@ fun Application.initKodein() {
             val appConfig = instance<AppConfig>()
 
             when (Environment.valueOf(appConfig.appEnv)) {
-                Environment.development -> BillManDevServer
-                Environment.production -> BillManProdServer
-                Environment.testing -> throw IllegalArgumentException("Should not be using the test implementation")
+                Environment.production, Environment.development ->
+                    throw IllegalArgumentException("Should be using the test implementation")
+                Environment.testing ->
+                    BillManTestServer
             }
         }
     }

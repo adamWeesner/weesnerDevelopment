@@ -1,4 +1,4 @@
-package com.weesnerdevelopment.billMan
+package com.weesnerdevelopment.billman
 
 import com.weesnerdevelopment.shared.Paths
 import com.weesnerdevelopment.test.utils.fromFile
@@ -14,14 +14,14 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class TestBillRoutes : BillManTests() {
-    override val baseUrl = Paths.BillMan.bills
+class TestIncomeRoutes : BillManTests() {
+    override val baseUrl = Paths.BillMan.income
 
     @Nested
     @DisplayName("get all")
     inner class GetAll : Testing() {
         @Test
-        fun `get all with no bills returns empty`() = testApp(config) { token ->
+        fun `get all with no incomes returns empty`() = testApp(config) { token ->
             val call = handleRequest(Get, baseUrl, bearerToken = token)
 
             call.response.status() shouldBe HttpStatusCode.OK
@@ -29,10 +29,7 @@ class TestBillRoutes : BillManTests() {
         }
 
         @Test
-        fun `get all with 1 bill returns bills list`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
-            addCat.response.status() shouldBe HttpStatusCode.Created
-
+        fun `get all with 1 income returns incomes list`() = testApp(config) { token ->
             val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
             add.response.status() shouldBe HttpStatusCode.Created
 
@@ -47,24 +44,21 @@ class TestBillRoutes : BillManTests() {
     @DisplayName("get single")
     inner class GetSingle : Testing() {
         @Test
-        fun `get single bill that is not in the database`() = testApp(config) { token ->
+        fun `get single income that is not in the database`() = testApp(config) { token ->
             val call = handleRequest(Get, "$baseUrl?id=4f493b2d-1b86-40de-8710-6bfb5032f1e2", bearerToken = token)
 
             call.response.content shouldBe fromFile(baseUrl, "get/idNotFoundResponse")
         }
 
         @Test
-        fun `get single bill with invalid id`() = testApp(config) { token ->
+        fun `get single income with invalid id`() = testApp(config) { token ->
             val call = handleRequest(Get, "$baseUrl?id=a", bearerToken = token)
 
             call.response.content shouldBe fromFile(baseUrl, "get/idInvalidResponse")
         }
 
         @Test
-        fun `get single bill that is in the database`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
-            addCat.response.status() shouldBe HttpStatusCode.Created
-
+        fun `get single income that is in the database`() = testApp(config) { token ->
             val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
             add.response.status() shouldBe HttpStatusCode.Created
 
@@ -78,17 +72,14 @@ class TestBillRoutes : BillManTests() {
     @DisplayName("add")
     inner class Add : Testing() {
         @Test
-        fun `add new bill`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
-            addCat.response.status() shouldBe HttpStatusCode.Created
-
+        fun `add new income`() = testApp(config) { token ->
             val call = handleRequest(Post, baseUrl, "add/validRequestBody", token)
             call.response.status() shouldBe HttpStatusCode.Created
             call.response.content shouldBe fromFile(baseUrl, "add/successResponse")
         }
 
         @Test
-        fun `add invalid bill`() = testApp(config) { token ->
+        fun `add invalid income`() = testApp(config) { token ->
             val call = handleRequest(Post, baseUrl, "add/invalidRequestBody", token)
             call.response.status() shouldBe HttpStatusCode.BadRequest
             call.response.content shouldBe fromFile(baseUrl, "add/invalidResponse")
@@ -99,10 +90,7 @@ class TestBillRoutes : BillManTests() {
     @DisplayName("update")
     inner class Update : Testing() {
         @Test
-        fun `update existing bill`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
-            addCat.response.status() shouldBe HttpStatusCode.Created
-
+        fun `update existing income`() = testApp(config) { token ->
             val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
             add.response.status() shouldBe HttpStatusCode.Created
 
@@ -114,14 +102,14 @@ class TestBillRoutes : BillManTests() {
         }
 
         @Test
-        fun `update non-existing bill`() = testApp(config) { token ->
+        fun `update non-existing income`() = testApp(config) { token ->
             val call = handleRequest(Put, baseUrl, "update/validRequestBody", token)
             call.response.status() shouldBe HttpStatusCode.BadRequest
             call.response.content shouldBe fromFile(baseUrl, "update/nonExistResponse")
         }
 
         @Test
-        fun `update invalid bill`() = testApp(config) { token ->
+        fun `update invalid income`() = testApp(config) { token ->
             val call = handleRequest(Put, baseUrl, "update/invalidRequestBody", token)
             call.response.status() shouldBe HttpStatusCode.BadRequest
             call.response.content shouldBe fromFile(baseUrl, "update/invalidResponse")
@@ -132,10 +120,7 @@ class TestBillRoutes : BillManTests() {
     @DisplayName("delete")
     inner class Delete : Testing() {
         @Test
-        fun `delete existing bill`() = testApp(config) { token ->
-            val addCat = handleRequest(Post, Paths.BillMan.categories, "add/validRequestBodyNoOwner", token)
-            addCat.response.status() shouldBe HttpStatusCode.Created
-
+        fun `delete existing income`() = testApp(config) { token ->
             val add = handleRequest(Post, baseUrl, "add/validRequestBody", token)
             add.response.status() shouldBe HttpStatusCode.Created
 
@@ -144,14 +129,14 @@ class TestBillRoutes : BillManTests() {
         }
 
         @Test
-        fun `delete non-existing bill`() = testApp(config) { token ->
+        fun `delete non-existing income`() = testApp(config) { token ->
             val call = handleRequest(Delete, "$baseUrl?id=4f493b2d-1b86-40de-8710-6bfb5032f1e2", bearerToken = token)
             call.response.status() shouldBe HttpStatusCode.NotFound
             call.response.content shouldBe fromFile(baseUrl, "delete/nonExistResponse")
         }
 
         @Test
-        fun `delete invalid bill`() = testApp(config) { token ->
+        fun `delete invalid income`() = testApp(config) { token ->
             val call = handleRequest(Delete, "$baseUrl?id=123", bearerToken = token)
             call.response.status() shouldBe HttpStatusCode.BadRequest
             call.response.content shouldBe fromFile(baseUrl, "delete/invalidResponse")

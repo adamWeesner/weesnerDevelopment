@@ -82,10 +82,7 @@ infix fun Int.shouldBeAtMost(expected: Int) = assert(this <= expected)
 /**
  * Wraps [withTestApplication] with our [Application::module] to make things simpler to use
  */
-fun testApp(configPath: String, test: TestApplicationEngine.(token: String) -> Unit) {
-    val token = """
-
-        """.trimIndent()
+fun testApp(configPath: String, token: String = "", test: TestApplicationEngine.(token: String) -> Unit) {
     val engine = TestApplicationEngine(createTestEnvironment {
         config = HoconApplicationConfig(ConfigFactory.load(configPath))
     })

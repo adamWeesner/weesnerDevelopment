@@ -1,5 +1,6 @@
 package com.weesnerdevelopment.billman
 
+import auth.AuthValidatorJwt
 import auth.CustomPrincipal
 import auth.JwtProvider
 import com.auth0.jwt.exceptions.JWTVerificationException
@@ -35,7 +36,7 @@ import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalTime::class, ExperimentalSerializationApi::class)
 object BillManServer {
     fun Application.main() {
-        initKodein()
+        initKodein(AuthValidatorJwt)
 
         val appConfig by kodein().instance<AppConfig>()
         val jwtProvider by kodein().instance<JwtProvider>()
@@ -55,9 +56,9 @@ object BillManServer {
                 ContentType.Application.Json.withParameter("charset", Charsets.UTF_8.toString()).toString()
             )
         }
-        if (appConfig.isDevelopment || appConfig.isTesting)
+        if (appConfig.isDevelopment)
             install(CallLogging)
-        if (!appConfig.isTesting && !appConfig.isDevelopment) {
+        if (!appConfig.isDevelopment) {
             install(HSTS)
             install(HttpsRedirect)
         }
@@ -67,7 +68,7 @@ object BillManServer {
             header(HttpHeaders.Authorization)
             host("${appConfig.baseUrl}:${appConfig.sslPort}", schemes = listOf("https"))
             host(appConfig.baseUrl, schemes = listOf("https"))
-            if (appConfig.isTesting || appConfig.isDevelopment) {
+            if (appConfig.isDevelopment) {
                 host("${appConfig.baseUrl}:${appConfig.port}", schemes = listOf("http"))
                 host("localhost:3000")
             }
@@ -75,7 +76,7 @@ object BillManServer {
             allowCredentials = true
             allowNonSimpleContentTypes = true
         }
-        if (!appConfig.isTesting) {
+        if (!appConfig.isDevelopment) {
             install(DropwizardMetrics) {
 //            Slf4jReporter.forRegistry(registry)
 //                .outputTo(log)
@@ -140,7 +141,9 @@ object BillManServer {
                 }
             }
 
-            routes()
+            authenticate {
+                this@install.routes()
+            }
         }
     }
 }

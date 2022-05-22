@@ -1,5 +1,6 @@
 package com.weesnerdevelopment.billman
 
+import auth.AuthValidator
 import auth.Cipher
 import auth.JwtProvider
 import com.weesnerdevelopment.billman.bill.BillsRepository
@@ -29,7 +30,9 @@ import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 import org.kodein.di.ktor.kodein
 
-fun Application.initKodein() {
+fun Application.initKodein(
+    authValidator: AuthValidator
+) {
     kodein {
         bind<AppConfig>() with singleton { AppConfig(environment.config) }
 
@@ -38,19 +41,21 @@ fun Application.initKodein() {
             JwtProvider(appConfig.issuer, appConfig.audience, appConfig.expiresIn, Cipher(appConfig.secret))
         }
 
+        bind<AuthValidator>() with singleton { authValidator }
+
         bind<BillsRepository>() with singleton { BillsRepositoryImpl }
-        bind<BillsRouter>() with singleton { BillsRouterImpl(instance(), instance()) }
+        bind<BillsRouter>() with singleton { BillsRouterImpl(instance(), instance(), instance()) }
 
         bind<BillOccurrenceRepository>() with singleton { BillOccurrenceRepositoryImpl }
-        bind<BillOccurrenceRouter>() with singleton { BillOccurrenceRouterImpl(instance()) }
+        bind<BillOccurrenceRouter>() with singleton { BillOccurrenceRouterImpl(instance(), instance()) }
 
         bind<CategoriesRepository>() with singleton { CategoriesRepositoryImpl }
-        bind<CategoriesRouter>() with singleton { CategoriesRouterImpl(instance()) }
+        bind<CategoriesRouter>() with singleton { CategoriesRouterImpl(instance(), instance()) }
 
         bind<IncomeRepository>() with singleton { IncomeRepositoryImpl }
-        bind<IncomeRouter>() with singleton { IncomeRouterImpl(instance()) }
+        bind<IncomeRouter>() with singleton { IncomeRouterImpl(instance(), instance()) }
 
         bind<IncomeOccurrenceRepository>() with singleton { IncomeOccurrenceRepositoryImpl }
-        bind<IncomeOccurrenceRouter>() with singleton { IncomeOccurrenceRouterImpl(instance()) }
+        bind<IncomeOccurrenceRouter>() with singleton { IncomeOccurrenceRouterImpl(instance(), instance()) }
     }
 }

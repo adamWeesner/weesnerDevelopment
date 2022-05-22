@@ -1,9 +1,12 @@
 package com.weesnerdevelopment.auth.user
 
+import auth.AuthValidator
 import auth.JwtProvider
 import auth.asToken
-import com.weesnerdevelopment.businessRules.*
 import com.weesnerdevelopment.businessRules.get
+import com.weesnerdevelopment.businessRules.post
+import com.weesnerdevelopment.businessRules.put
+import com.weesnerdevelopment.businessRules.respond
 import com.weesnerdevelopment.shared.auth.HashedUser
 import com.weesnerdevelopment.shared.auth.TokenResponse
 import com.weesnerdevelopment.shared.auth.User
@@ -12,13 +15,13 @@ import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.locations.*
-import io.ktor.locations.delete
 import io.ktor.routing.*
 
 @OptIn(KtorExperimentalLocationsAPI::class)
 data class UserRouterImpl(
     private val repo: UserRepository,
-    private val jwtProvider: JwtProvider
+    private val jwtProvider: JwtProvider,
+    private val authValidator: AuthValidator
 ) : UserRouter {
     /**
      * Reduces typing to get the param for `?id=` :)
@@ -42,18 +45,7 @@ data class UserRouterImpl(
         routing.apply {
             authenticate {
                 get<UserAccountEndpoint> {
-                    val id = getBearerUuid()
-
-                    if (id == null) {
-                        return@get respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id attempting to get account."
-                            )
-                        )
-                    }
+                    val id = authValidator.getUuid(this)
 
                     when (val foundUser = repo.account(id.toString())) {
                         null -> {
@@ -73,18 +65,7 @@ data class UserRouterImpl(
                 }
 
                 get<UserInfoEndpoint> {
-                    val id = getBearerUuid()
-
-                    if (id == null) {
-                        return@get respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id attempting to get account."
-                            )
-                        )
-                    }
+                    val id = authValidator.getUuid(this)
 
                     when (val foundUser = repo.info(id.toString())) {
                         null -> {
@@ -214,7 +195,7 @@ data class UserRouterImpl(
 
                 delete<UserEndpoint> {
                     val id = call.userId
-                    val authUuid = getBearerUuid().toString()
+                    val authUuid = authValidator.getUuid(this)
 
                     if (id.isNullOrBlank()) {
                         return@delete respond(

@@ -1,4 +1,4 @@
-package com.weesnerdevelopment.billMan
+package com.weesnerdevelopment.billman
 
 import com.weesnerdevelopment.shared.Paths
 import com.weesnerdevelopment.test.utils.fromFile

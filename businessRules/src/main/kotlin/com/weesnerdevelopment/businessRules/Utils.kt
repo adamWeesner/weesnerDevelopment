@@ -21,7 +21,6 @@ import io.ktor.util.pipeline.*
 import kimchi.Kimchi
 import kimchi.logger.KimchiLogger
 import logRequest
-import loggedUserData
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.sql.Table
@@ -97,10 +96,6 @@ suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.respond
             Log.debug("<-- END HTTP (${parsedResponse.toByteArray().size}-byte body)")
         }
     }
-
-fun PipelineContext<Unit, ApplicationCall>.getBearerUuid() = call.loggedUserData()?.getData()?.let {
-    UUID.fromString(it.uuid)
-}
 
 val String?.asUuid
     get() = runCatching { UUID.fromString(this) }.getOrNull() ?: UUID.randomUUID()

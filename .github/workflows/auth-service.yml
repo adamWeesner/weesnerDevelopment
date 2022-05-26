@@ -3,7 +3,7 @@ name: Auth service
 env:
   pathToWatch: auth/**
   buildPath: :auth:build
-  dockerTag: :auth:latest
+  dockerTag: auth:latest
   dockerfilePath: ./auth/Dockerfile
 
 on:

@@ -6,7 +6,6 @@ import com.weesnerdevelopment.businessRules.get
 import com.weesnerdevelopment.businessRules.post
 import com.weesnerdevelopment.businessRules.put
 import com.weesnerdevelopment.businessRules.respond
-import com.weesnerdevelopment.shared.base.ServerError
 import com.weesnerdevelopment.shared.billMan.Bill
 import com.weesnerdevelopment.shared.billMan.responses.BillsResponse
 import io.ktor.application.*
@@ -39,27 +38,11 @@ data class BillsRouterImpl(
                 }
 
                 if (runCatching { UUID.fromString(id) }.getOrNull() == null)
-                    return@get respond(
-                        HttpStatusCode.BadRequest,
-                        ServerError(
-                            HttpStatusCode.BadRequest.description,
-                            HttpStatusCode.BadRequest.value,
-                            "Invalid id '$id' attempting to get bill."
-                        )
-                    )
+                    return@get respond(HttpStatusCode.BadRequest, "Invalid id '$id' attempting to get bill.")
 
-                when (val foundBill = repo.get(authUuid, id)) {
-                    null ->
-                        return@get respond(
-                            HttpStatusCode.NotFound,
-                            ServerError(
-                                HttpStatusCode.NotFound.description,
-                                HttpStatusCode.NotFound.value,
-                                "No bill with id '$id' found."
-                            )
-                        )
-                    else ->
-                        return@get respond(HttpStatusCode.OK, foundBill)
+                return@get when (val foundBill = repo.get(authUuid, id)) {
+                    null -> respond(HttpStatusCode.NotFound, "No bill with id '$id' found.")
+                    else -> respond(HttpStatusCode.OK, foundBill)
                 }
             }
 
@@ -67,68 +50,26 @@ data class BillsRouterImpl(
                 authValidator.getUuid(this)
 
                 if (bill == null)
-                    return@post respond(
-                        HttpStatusCode.BadRequest,
-                        ServerError(
-                            HttpStatusCode.BadRequest.description,
-                            HttpStatusCode.BadRequest.value,
-                            "Cannot add invalid bill."
-                        )
-                    )
+                    return@post respond(HttpStatusCode.BadRequest, "Cannot add invalid bill.")
 
-                when (val newBill = repo.add(bill)) {
-                    null ->
-                        return@post respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "An error occurred attempting to add bill."
-                            )
-                        )
-                    else ->
-                        return@post respond(HttpStatusCode.Created, newBill)
-
+                return@post when (val newBill = repo.add(bill)) {
+                    null -> respond(HttpStatusCode.BadRequest, "An error occurred attempting to add bill.")
+                    else -> respond(HttpStatusCode.Created, newBill)
                 }
             }
 
             put<BillsEndpoint, Bill> { bill ->
                 val authUuid = authValidator.getUuid(this)
 
-                if (bill == null) {
-                    return@put respond(
-                        HttpStatusCode.BadRequest,
-                        ServerError(
-                            HttpStatusCode.BadRequest.description,
-                            HttpStatusCode.BadRequest.value,
-                            "Cannot update invalid bill."
-                        )
-                    )
-                }
+                if (bill == null)
+                    return@put respond(HttpStatusCode.BadRequest, "Cannot update invalid bill.")
 
-                if (!bill.sharedUsers.contains(authUuid)) {
-                    return@put respond(
-                        HttpStatusCode.NotFound,
-                        ServerError(
-                            HttpStatusCode.NotFound.description,
-                            HttpStatusCode.NotFound.value,
-                            "No bill with id '${bill.id}' found."
-                        )
-                    )
-                }
+                if (!bill.sharedUsers.contains(authUuid))
+                    return@put respond(HttpStatusCode.NotFound, "No bill with id '${bill.id}' found.")
 
-                when (val updatedBill = repo.update(bill)) {
-                    null ->
-                        return@put respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "An error occurred attempting to update bill."
-                            )
-                        )
-                    else ->
-                        return@put respond(HttpStatusCode.OK, updatedBill)
+                return@put when (val updatedBill = repo.update(bill)) {
+                    null -> respond(HttpStatusCode.BadRequest, "An error occurred attempting to update bill.")
+                    else -> respond(HttpStatusCode.OK, updatedBill)
                 }
             }
 
@@ -136,27 +77,12 @@ data class BillsRouterImpl(
                 val id = call.billId
                 val authUuid = authValidator.getUuid(this)
 
-                if (id.isNullOrBlank() || runCatching { UUID.fromString(id) }.getOrNull() == null) {
-                    return@delete respond(
-                        HttpStatusCode.BadRequest,
-                        ServerError(
-                            HttpStatusCode.BadRequest.description,
-                            HttpStatusCode.BadRequest.value,
-                            "Invalid id '$id' attempting to delete bill."
-                        )
-                    )
-                }
+                if (id.isNullOrBlank() || runCatching { UUID.fromString(id) }.getOrNull() == null)
+                    return@delete respond(HttpStatusCode.BadRequest, "Invalid id '$id' attempting to delete bill.")
 
-                when (val deletedBill = repo.delete(authUuid, id)) {
-                    false -> return@delete respond(
-                        HttpStatusCode.NotFound,
-                        ServerError(
-                            HttpStatusCode.NotFound.description,
-                            HttpStatusCode.NotFound.value,
-                            "No bill with id '$id' found."
-                        )
-                    )
-                    else -> return@delete respond(HttpStatusCode.OK, deletedBill)
+                return@delete when (val deletedBill = repo.delete(authUuid, id)) {
+                    false -> respond(HttpStatusCode.NotFound, "No bill with id '$id' found.")
+                    else -> respond(HttpStatusCode.OK, deletedBill)
                 }
             }
         }

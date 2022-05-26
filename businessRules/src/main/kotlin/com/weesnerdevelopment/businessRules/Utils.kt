@@ -5,6 +5,7 @@ import callItems
 import com.weesnerdevelopment.shared.Paths
 import com.weesnerdevelopment.shared.base.GenericItem
 import com.weesnerdevelopment.shared.base.Response
+import com.weesnerdevelopment.shared.base.ServerError
 import com.weesnerdevelopment.shared.toJson
 import io.ktor.application.*
 import io.ktor.features.*
@@ -73,7 +74,7 @@ inline fun <reified T : Any> Route.delete(
 }
 
 /**
- * Helper function to [respond] with a [Response] and body.
+ * Helper function to [respondWithError] with a [Response] and body.
  */
 suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.respond(status: HttpStatusCode, response: T) =
     response.run {
@@ -96,6 +97,14 @@ suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.respond
             Log.debug("<-- END HTTP (${parsedResponse.toByteArray().size}-byte body)")
         }
     }
+
+/**
+ * Simply respond with a [status] and a [message].
+ */
+suspend inline fun <reified S : HttpStatusCode> PipelineContext<*, ApplicationCall>.respondWithError(
+    status: S,
+    message: String
+) = respond(status, ServerError(status.description, status.value, message))
 
 val String?.asUuid
     get() = runCatching { UUID.fromString(this) }.getOrNull() ?: UUID.randomUUID()

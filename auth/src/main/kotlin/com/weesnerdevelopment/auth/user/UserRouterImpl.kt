@@ -16,6 +16,7 @@ import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.locations.*
 import io.ktor.routing.*
+import java.util.*
 
 @OptIn(KtorExperimentalLocationsAPI::class)
 data class UserRouterImpl(
@@ -41,29 +42,16 @@ data class UserRouterImpl(
     private val ApplicationCall.password
         get() = request.queryParameters[UserEndpoint::password.name]
 
+    private fun hasValidCredentials(username: String?, password: String?): Boolean {
+        val parsedUsername = runCatching { Base64.getDecoder().decode(username) }.getOrNull()
+        val parsedPassword = runCatching { Base64.getDecoder().decode(password) }.getOrNull()
+
+        return parsedUsername != null && parsedPassword != null
+    }
+
     override fun setup(routing: Routing) {
         routing.apply {
             authenticate {
-                get<UserAccountEndpoint> {
-                    val id = authValidator.getUuid(this)
-
-                    when (val foundUser = repo.account(id.toString())) {
-                        null -> {
-                            return@get respond(
-                                HttpStatusCode.NotFound,
-                                ServerError(
-                                    HttpStatusCode.NotFound.description,
-                                    HttpStatusCode.NotFound.value,
-                                    "No account with id '$id' found."
-                                )
-                            )
-                        }
-                        else -> {
-                            return@get respond(HttpStatusCode.OK, foundUser.redact)
-                        }
-                    }
-                }
-
                 get<UserInfoEndpoint> {
                     val id = authValidator.getUuid(this)
 
@@ -89,7 +77,7 @@ data class UserRouterImpl(
                 val username = call.username
                 val password = call.password
 
-                if (!username.isNullOrBlank() && !password.isNullOrBlank()) {
+                if (!username.isNullOrBlank() && !password.isNullOrBlank() && hasValidCredentials(username, password)) {
                     val user = repo.login(HashedUser(username, password))
                     if (user == null) {
                         return@get respond(
@@ -138,7 +126,7 @@ data class UserRouterImpl(
             }
 
             post<UserEndpoint, User> { user ->
-                if (user == null) {
+                if (user == null || !hasValidCredentials(user.username, user.password)) {
                     return@post respond(
                         HttpStatusCode.BadRequest,
                         ServerError(
@@ -166,8 +154,28 @@ data class UserRouterImpl(
             }
 
             authenticate {
+                get<UserAccountEndpoint> {
+                    val id = authValidator.getUuid(this)
+
+                    when (val foundUser = repo.account(id)) {
+                        null -> {
+                            return@get respond(
+                                HttpStatusCode.NotFound,
+                                ServerError(
+                                    HttpStatusCode.NotFound.description,
+                                    HttpStatusCode.NotFound.value,
+                                    "No account with id '$id' found."
+                                )
+                            )
+                        }
+                        else -> {
+                            return@get respond(HttpStatusCode.OK, foundUser.redact)
+                        }
+                    }
+                }
+
                 put<UserEndpoint, User> { user ->
-                    if (user == null) {
+                    if (user == null || !hasValidCredentials(user.username, user.password)) {
                         return@put respond(
                             HttpStatusCode.BadRequest,
                             ServerError(

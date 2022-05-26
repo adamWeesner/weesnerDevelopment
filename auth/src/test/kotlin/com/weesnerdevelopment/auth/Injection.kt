@@ -1,7 +1,9 @@
 package com.weesnerdevelopment.auth
 
 import auth.AuthValidator
-import auth.AuthValidatorFake
+import auth.AuthValidatorJwt
+import auth.Cipher
+import auth.JwtProvider
 import com.weesnerdevelopment.auth.database.AuthDatabase
 import com.weesnerdevelopment.auth.user.UserRepository
 import com.weesnerdevelopment.auth.user.UserRepositoryImpl
@@ -20,6 +22,10 @@ fun Application.initKodein() {
     kodein {
         bind<AppConfig>() with singleton { AppConfig(environment.config) }
 
+        bind<JwtProvider>() with singleton {
+            val appConfig = instance<AppConfig>()
+            JwtProvider(appConfig.issuer, appConfig.audience, appConfig.expiresIn, Cipher(appConfig.secret))
+        }
         bind<AuthValidator>() with singleton {
             val appConfig = instance<AppConfig>()
 
@@ -27,7 +33,7 @@ fun Application.initKodein() {
                 Environment.production, Environment.development ->
                     throw IllegalArgumentException("Should be using the test implementation")
                 Environment.testing ->
-                    AuthValidatorFake("e0f97212-4431-448b-bd97-f70235328cd1")
+                    AuthValidatorJwt
             }
         }
         bind<AuthDatabase>() with singleton {

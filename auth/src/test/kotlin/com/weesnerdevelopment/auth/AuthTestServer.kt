@@ -24,7 +24,6 @@ import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 import respondErrorAuthorizing
 import respondErrorServer
-import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class, ExperimentalSerializationApi::class)
@@ -44,18 +43,6 @@ object AuthTestServer : Server {
                 )
             }
             install(CallLogging)
-            install(CORS) {
-                method(HttpMethod.Options)
-                header(HttpHeaders.ContentType)
-                header(HttpHeaders.Authorization)
-                host("${appConfig.baseUrl}:${appConfig.sslPort}", schemes = listOf("https"))
-                host(appConfig.baseUrl, schemes = listOf("https"))
-                host("${appConfig.baseUrl}:${appConfig.port}", schemes = listOf("http"))
-                host("localhost:3000")
-                maxAgeDuration = Duration.days(1)
-                allowCredentials = true
-                allowNonSimpleContentTypes = true
-            }
             install(ContentNegotiation) {
                 json(com.weesnerdevelopment.shared.json {
                     prettyPrint = true

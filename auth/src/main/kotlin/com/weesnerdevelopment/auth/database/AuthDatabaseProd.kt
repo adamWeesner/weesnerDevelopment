@@ -21,6 +21,6 @@ object AuthDatabaseProd : AuthDatabase {
         )
 
         Database.connect(database)
-        createTables(true)
+        createTables(false)
     }
 }

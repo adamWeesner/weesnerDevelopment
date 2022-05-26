@@ -61,6 +61,6 @@ jobs:
         id: build
         uses: docker/build-push-action@v3
         with:
-          file: ${{ env.dockerFilePath }}
+          file: ${{ env.dockerfilePath }}
           push: true
           tags: ${{ steps.metadata.outputs.tags }}

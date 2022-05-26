@@ -12,7 +12,7 @@ on:
     branches:
       - main
     paths:
-      - $pathToWatch
+      - env.pathToWatch
 
 jobs:
   auth-service:
@@ -34,7 +34,7 @@ jobs:
         id: bat
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
-          arguments: $buildPath
+          arguments: ${{ env.buildPath }}
 
       - name: Set up Docker Buildx
         if: ${{ steps.bat.outcome == 'success' }}
@@ -54,13 +54,13 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ghcr.io/${{ github.repository }}
-          tags: $dockerTag
+          tags: ${{ env.dockerTag }}
 
       - name: Build and push
         if: ${{ steps.bat.outcome == 'success' }}
         id: build
         uses: docker/build-push-action@v3
         with:
-          file: $dockerfilePath
+          file: ${{ env.dockerFilePath }}
           push: true
           tags: ${{ steps.metadata.outputs.tags }}

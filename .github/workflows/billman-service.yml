@@ -3,7 +3,7 @@ name: BillMan service
 env:
   pathToWatch: billMan/**
   buildPath: :billMan:build
-  dockerTag: :billMan:latest
+  dockerTag: billMan:latest
   dockerfilePath: ./billMan/Dockerfile
 
 on:

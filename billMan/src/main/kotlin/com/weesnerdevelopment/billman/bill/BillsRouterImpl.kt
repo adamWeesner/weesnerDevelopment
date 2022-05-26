@@ -2,15 +2,14 @@ package com.weesnerdevelopment.billman.bill
 
 import auth.AuthValidator
 import com.weesnerdevelopment.billman.category.CategoriesRepository
+import com.weesnerdevelopment.businessRules.*
 import com.weesnerdevelopment.businessRules.get
-import com.weesnerdevelopment.businessRules.post
-import com.weesnerdevelopment.businessRules.put
-import com.weesnerdevelopment.businessRules.respond
 import com.weesnerdevelopment.shared.billMan.Bill
 import com.weesnerdevelopment.shared.billMan.responses.BillsResponse
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.locations.*
+import io.ktor.locations.delete
 import io.ktor.routing.*
 import java.util.*
 
@@ -38,10 +37,10 @@ data class BillsRouterImpl(
                 }
 
                 if (runCatching { UUID.fromString(id) }.getOrNull() == null)
-                    return@get respond(HttpStatusCode.BadRequest, "Invalid id '$id' attempting to get bill.")
+                    return@get respondWithError(HttpStatusCode.BadRequest, "Invalid id '$id' attempting to get bill.")
 
                 return@get when (val foundBill = repo.get(authUuid, id)) {
-                    null -> respond(HttpStatusCode.NotFound, "No bill with id '$id' found.")
+                    null -> respondWithError(HttpStatusCode.NotFound, "No bill with id '$id' found.")
                     else -> respond(HttpStatusCode.OK, foundBill)
                 }
             }
@@ -50,10 +49,10 @@ data class BillsRouterImpl(
                 authValidator.getUuid(this)
 
                 if (bill == null)
-                    return@post respond(HttpStatusCode.BadRequest, "Cannot add invalid bill.")
+                    return@post respondWithError(HttpStatusCode.BadRequest, "Cannot add invalid bill.")
 
                 return@post when (val newBill = repo.add(bill)) {
-                    null -> respond(HttpStatusCode.BadRequest, "An error occurred attempting to add bill.")
+                    null -> respondWithError(HttpStatusCode.BadRequest, "An error occurred attempting to add bill.")
                     else -> respond(HttpStatusCode.Created, newBill)
                 }
             }
@@ -62,13 +61,13 @@ data class BillsRouterImpl(
                 val authUuid = authValidator.getUuid(this)
 
                 if (bill == null)
-                    return@put respond(HttpStatusCode.BadRequest, "Cannot update invalid bill.")
+                    return@put respondWithError(HttpStatusCode.BadRequest, "Cannot update invalid bill.")
 
                 if (!bill.sharedUsers.contains(authUuid))
-                    return@put respond(HttpStatusCode.NotFound, "No bill with id '${bill.id}' found.")
+                    return@put respondWithError(HttpStatusCode.NotFound, "No bill with id '${bill.id}' found.")
 
                 return@put when (val updatedBill = repo.update(bill)) {
-                    null -> respond(HttpStatusCode.BadRequest, "An error occurred attempting to update bill.")
+                    null -> respondWithError(HttpStatusCode.BadRequest, "An error occurred attempting to update bill.")
                     else -> respond(HttpStatusCode.OK, updatedBill)
                 }
             }
@@ -78,10 +77,13 @@ data class BillsRouterImpl(
                 val authUuid = authValidator.getUuid(this)
 
                 if (id.isNullOrBlank() || runCatching { UUID.fromString(id) }.getOrNull() == null)
-                    return@delete respond(HttpStatusCode.BadRequest, "Invalid id '$id' attempting to delete bill.")
+                    return@delete respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "Invalid id '$id' attempting to delete bill."
+                    )
 
                 return@delete when (val deletedBill = repo.delete(authUuid, id)) {
-                    false -> respond(HttpStatusCode.NotFound, "No bill with id '$id' found.")
+                    false -> respondWithError(HttpStatusCode.NotFound, "No bill with id '$id' found.")
                     else -> respond(HttpStatusCode.OK, deletedBill)
                 }
             }

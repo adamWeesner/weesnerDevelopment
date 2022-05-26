@@ -35,13 +35,13 @@ data class IncomeOccurrenceRouterImpl(
                 }
 
                 if (runCatching { UUID.fromString(id) }.getOrNull() == null)
-                    return@get respond(
+                    return@get respondWithError(
                         HttpStatusCode.BadRequest,
                         "Invalid id '$id' attempting to get income occurrence."
                     )
 
                 return@get when (val foundIncomeOccurrence = repo.get(userUuid, id)) {
-                    null -> respond(HttpStatusCode.NotFound, "No income occurrence with id '$id' found.")
+                    null -> respondWithError(HttpStatusCode.NotFound, "No income occurrence with id '$id' found.")
                     else -> respond(HttpStatusCode.OK, foundIncomeOccurrence)
                 }
             }
@@ -50,15 +50,15 @@ data class IncomeOccurrenceRouterImpl(
                 val userUuid = authValidator.getUuid(this)
 
                 if (incomeOccurrence == null)
-                    return@post respond(HttpStatusCode.BadRequest, "Cannot add invalid income occurrence.")
+                    return@post respondWithError(HttpStatusCode.BadRequest, "Cannot add invalid income occurrence.")
 
                 if (incomeOccurrence.owner != userUuid) {
                     Log.warn("The owner of the income occurrence attempting to add and the bearer token did not match. Bearer id $userUuid income occurrence $incomeOccurrence")
-                    return@post respond(HttpStatusCode.BadRequest, "Cannot add income occurrence.")
+                    return@post respondWithError(HttpStatusCode.BadRequest, "Cannot add income occurrence.")
                 }
 
                 return@post when (val newIncomeOccurrence = repo.add(incomeOccurrence)) {
-                    null -> respond(
+                    null -> respondWithError(
                         HttpStatusCode.BadRequest,
                         "An error occurred attempting to add income occurrence."
                     )
@@ -70,15 +70,15 @@ data class IncomeOccurrenceRouterImpl(
                 val userUuid = authValidator.getUuid(this)
 
                 if (incomeOccurrence == null)
-                    return@put respond(HttpStatusCode.BadRequest, "Cannot update invalid income occurrence.")
+                    return@put respondWithError(HttpStatusCode.BadRequest, "Cannot update invalid income occurrence.")
 
                 if (incomeOccurrence.owner != userUuid) {
                     Log.warn("The owner of the income occurrence attempting to update and the bearer token did not match. Bearer id $userUuid income occurrence $incomeOccurrence")
-                    return@put respond(HttpStatusCode.BadRequest, "Cannot update income occurrence.")
+                    return@put respondWithError(HttpStatusCode.BadRequest, "Cannot update income occurrence.")
                 }
 
                 return@put when (val updatedIncomeOccurrence = repo.update(incomeOccurrence)) {
-                    null -> respond(
+                    null -> respondWithError(
                         HttpStatusCode.BadRequest,
                         "An error occurred attempting to update income occurrence."
                     )
@@ -91,13 +91,13 @@ data class IncomeOccurrenceRouterImpl(
                 val authUuid = authValidator.getUuid(this)
 
                 if (id.isNullOrBlank() || runCatching { UUID.fromString(id) }.getOrNull() == null)
-                    return@delete respond(
+                    return@delete respondWithError(
                         HttpStatusCode.BadRequest,
                         "Invalid id '$id' attempting to delete income occurrence."
                     )
 
                 return@delete when (val deletedIncomeOccurrence = repo.delete(authUuid, id)) {
-                    false -> respond(HttpStatusCode.NotFound, "No income occurrence with id '$id' found.")
+                    false -> respondWithError(HttpStatusCode.NotFound, "No income occurrence with id '$id' found.")
                     else -> respond(HttpStatusCode.OK, deletedIncomeOccurrence)
                 }
             }

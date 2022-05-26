@@ -1,15 +1,14 @@
 package com.weesnerdevelopment.billman.category
 
 import auth.AuthValidator
+import com.weesnerdevelopment.businessRules.*
 import com.weesnerdevelopment.businessRules.get
-import com.weesnerdevelopment.businessRules.post
-import com.weesnerdevelopment.businessRules.put
-import com.weesnerdevelopment.businessRules.respond
 import com.weesnerdevelopment.shared.billMan.Category
 import com.weesnerdevelopment.shared.billMan.responses.CategoriesResponse
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.locations.*
+import io.ktor.locations.delete
 import io.ktor.routing.*
 import java.util.*
 
@@ -36,20 +35,23 @@ data class CategoriesRouterImpl(
                 }
 
                 if (runCatching { UUID.fromString(id) }.getOrNull() == null)
-                    return@get respond(HttpStatusCode.BadRequest, "Invalid id '$id' attempting to get category.")
+                    return@get respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "Invalid id '$id' attempting to get category."
+                    )
 
                 return@get when (val foundCategory = repo.get(userUuid, id)) {
-                    null -> respond(HttpStatusCode.NotFound, "No category with id '$id' found.")
+                    null -> respondWithError(HttpStatusCode.NotFound, "No category with id '$id' found.")
                     else -> respond(HttpStatusCode.OK, foundCategory)
                 }
             }
 
             post<CategoriesEndpoint, Category> { category ->
                 if (category == null)
-                    return@post respond(HttpStatusCode.BadRequest, "Cannot add invalid category.")
+                    return@post respondWithError(HttpStatusCode.BadRequest, "Cannot add invalid category.")
 
                 return@post when (val newCategory = repo.add(category)) {
-                    null -> respond(HttpStatusCode.BadRequest, "An error occurred attempting to add category.")
+                    null -> respondWithError(HttpStatusCode.BadRequest, "An error occurred attempting to add category.")
                     else -> respond(HttpStatusCode.Created, newCategory)
                 }
             }
@@ -58,13 +60,16 @@ data class CategoriesRouterImpl(
                 val userUuid = authValidator.getUuid(this)
 
                 if (category == null)
-                    return@put respond(HttpStatusCode.BadRequest, "Cannot update invalid category.")
+                    return@put respondWithError(HttpStatusCode.BadRequest, "Cannot update invalid category.")
 
                 if (category.owner == null || category.owner != userUuid)
-                    return@put respond(HttpStatusCode.BadRequest, "Cannot update category.")
+                    return@put respondWithError(HttpStatusCode.BadRequest, "Cannot update category.")
 
                 return@put when (val updatedCategory = repo.update(category)) {
-                    null -> respond(HttpStatusCode.BadRequest, "An error occurred attempting to update category.")
+                    null -> respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "An error occurred attempting to update category."
+                    )
                     else -> respond(HttpStatusCode.OK, updatedCategory)
                 }
             }
@@ -74,10 +79,13 @@ data class CategoriesRouterImpl(
                 val authUuid = authValidator.getUuid(this)
 
                 if (id.isNullOrBlank() || runCatching { UUID.fromString(id) }.getOrNull() == null)
-                    return@delete respond(HttpStatusCode.BadRequest, "Invalid id '$id' attempting to delete category.")
+                    return@delete respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "Invalid id '$id' attempting to delete category."
+                    )
 
                 return@delete when (val deletedCategory = repo.delete(authUuid, id)) {
-                    false -> respond(HttpStatusCode.NotFound, "No category with id '$id' found.")
+                    false -> respondWithError(HttpStatusCode.NotFound, "No category with id '$id' found.")
                     else -> respond(HttpStatusCode.OK, deletedCategory)
                 }
             }

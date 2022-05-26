@@ -93,9 +93,10 @@ class UsersService(
         dateCreated = row[table.dateCreated],
         dateUpdated = row[table.dateUpdated]
     ).let {
-        row[table.history]?.let { _ ->
-            it.copy(history = historyService.getFor<User>(row[table.id], it))
-        } ?: it
+//        row[table.history]?.let { _ ->
+//            it.copy(history = historyService.getFor<User>(row[table.id], it))
+//        } ?: it
+        it
     }
 
     suspend fun toItemRedacted(row: ResultRow) = toItem(row).redacted().parse<User>()

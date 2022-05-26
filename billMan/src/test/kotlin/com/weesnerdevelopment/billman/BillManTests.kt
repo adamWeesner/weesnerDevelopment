@@ -1,4 +1,4 @@
-package com.weesnerdevelopment.billMan
+package com.weesnerdevelopment.billman
 
 import com.weesnerdevelopment.billman.bill.BillHistoryTable
 import com.weesnerdevelopment.billman.bill.BillSharedUsersTable

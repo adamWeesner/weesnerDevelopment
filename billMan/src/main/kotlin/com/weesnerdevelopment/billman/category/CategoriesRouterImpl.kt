@@ -1,12 +1,11 @@
 package com.weesnerdevelopment.billman.category
 
+import auth.AuthValidator
 import com.weesnerdevelopment.businessRules.*
 import com.weesnerdevelopment.businessRules.get
-import com.weesnerdevelopment.shared.base.ServerError
 import com.weesnerdevelopment.shared.billMan.Category
 import com.weesnerdevelopment.shared.billMan.responses.CategoriesResponse
 import io.ktor.application.*
-import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.locations.*
 import io.ktor.locations.delete
@@ -15,7 +14,8 @@ import java.util.*
 
 @OptIn(KtorExperimentalLocationsAPI::class)
 data class CategoriesRouterImpl(
-    val repo: CategoriesRepository
+    val repo: CategoriesRepository,
+    val authValidator: AuthValidator
 ) : CategoriesRouter {
     /**
      * Reduces typing to get the param for `?id=` :)
@@ -25,132 +25,68 @@ data class CategoriesRouterImpl(
 
     override fun setup(routing: Routing) {
         routing.apply {
-            authenticate {
-                get<CategoriesEndpoint> {
-                    val id = call.categoryId
-                    val userUuid = getBearerUuid().toString()
+            get<CategoriesEndpoint> {
+                val id = call.categoryId
+                val userUuid = authValidator.getUuid(this)
 
-                    if (id.isNullOrBlank()) {
-                        val categories = repo.getAll(userUuid)
-                        return@get respond(HttpStatusCode.OK, CategoriesResponse(categories))
-                    }
-
-                    if (runCatching { UUID.fromString(id) }.getOrNull() == null) {
-                        return@get respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id '$id' attempting to get category."
-                            )
-                        )
-                    }
-
-                    return@get when (val foundCategory = repo.get(userUuid, id)) {
-                        null -> respond(
-                            HttpStatusCode.NotFound,
-                            ServerError(
-                                HttpStatusCode.NotFound.description,
-                                HttpStatusCode.NotFound.value,
-                                "No category with id '$id' found."
-                            )
-                        )
-                        else -> respond(HttpStatusCode.OK, foundCategory)
-                    }
+                if (id.isNullOrBlank()) {
+                    val categories = repo.getAll(userUuid)
+                    return@get respond(HttpStatusCode.OK, CategoriesResponse(categories))
                 }
 
-                post<CategoriesEndpoint, Category> { category ->
-                    if (category == null)
-                        return@post respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot add invalid category."
-                            )
-                        )
+                if (runCatching { UUID.fromString(id) }.getOrNull() == null)
+                    return@get respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "Invalid id '$id' attempting to get category."
+                    )
 
-                    val newCategory = repo.add(category)
-                    if (newCategory == null) {
-                        return@post respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "An error occurred attempting to add category."
-                            )
-                        )
-                    }
-
-                    return@post respond(HttpStatusCode.Created, newCategory)
+                return@get when (val foundCategory = repo.get(userUuid, id)) {
+                    null -> respondWithError(HttpStatusCode.NotFound, "No category with id '$id' found.")
+                    else -> respond(HttpStatusCode.OK, foundCategory)
                 }
+            }
 
-                put<CategoriesEndpoint, Category> { category ->
-                    val userUuid = getBearerUuid().toString()
+            post<CategoriesEndpoint, Category> { category ->
+                if (category == null)
+                    return@post respondWithError(HttpStatusCode.BadRequest, "Cannot add invalid category.")
 
-                    if (category == null) {
-                        return@put respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot update invalid category."
-                            )
-                        )
-                    }
-
-                    if (category.owner == null || category.owner != userUuid) {
-                        return@put respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot update category."
-                            )
-                        )
-                    }
-
-                    val updatedCategory = repo.update(category)
-                    if (updatedCategory == null) {
-                        return@put respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "An error occurred attempting to update category."
-                            )
-                        )
-                    }
-
-                    return@put respond(HttpStatusCode.OK, updatedCategory)
+                return@post when (val newCategory = repo.add(category)) {
+                    null -> respondWithError(HttpStatusCode.BadRequest, "An error occurred attempting to add category.")
+                    else -> respond(HttpStatusCode.Created, newCategory)
                 }
+            }
 
-                delete<CategoriesEndpoint> {
-                    val id = call.categoryId
-                    val authUuid = getBearerUuid().toString()
+            put<CategoriesEndpoint, Category> { category ->
+                val userUuid = authValidator.getUuid(this)
 
-                    if (id.isNullOrBlank() || runCatching { UUID.fromString(id) }.getOrNull() == null) {
-                        return@delete respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id '$id' attempting to delete category."
-                            )
-                        )
-                    }
+                if (category == null)
+                    return@put respondWithError(HttpStatusCode.BadRequest, "Cannot update invalid category.")
 
-                    when (val deletedCategory = repo.delete(authUuid, id)) {
-                        false -> return@delete respond(
-                            HttpStatusCode.NotFound,
-                            ServerError(
-                                HttpStatusCode.NotFound.description,
-                                HttpStatusCode.NotFound.value,
-                                "No category with id '$id' found."
-                            )
-                        )
-                        else -> return@delete respond(HttpStatusCode.OK, deletedCategory)
-                    }
+                if (category.owner == null || category.owner != userUuid)
+                    return@put respondWithError(HttpStatusCode.BadRequest, "Cannot update category.")
+
+                return@put when (val updatedCategory = repo.update(category)) {
+                    null -> respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "An error occurred attempting to update category."
+                    )
+                    else -> respond(HttpStatusCode.OK, updatedCategory)
+                }
+            }
+
+            delete<CategoriesEndpoint> {
+                val id = call.categoryId
+                val authUuid = authValidator.getUuid(this)
+
+                if (id.isNullOrBlank() || runCatching { UUID.fromString(id) }.getOrNull() == null)
+                    return@delete respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "Invalid id '$id' attempting to delete category."
+                    )
+
+                return@delete when (val deletedCategory = repo.delete(authUuid, id)) {
+                    false -> respondWithError(HttpStatusCode.NotFound, "No category with id '$id' found.")
+                    else -> respond(HttpStatusCode.OK, deletedCategory)
                 }
             }
         }

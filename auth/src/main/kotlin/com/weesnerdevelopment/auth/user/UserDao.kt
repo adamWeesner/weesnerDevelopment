@@ -1,8 +1,6 @@
 package com.weesnerdevelopment.auth.user
 
 import com.weesnerdevelopment.businessRules.tryTransaction
-import com.weesnerdevelopment.history.HistoryDao
-import com.weesnerdevelopment.history.toHistories
 import com.weesnerdevelopment.shared.auth.User
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -34,7 +32,7 @@ class UserDao(id: EntityID<UUID>) : UUIDEntity(id) {
     var password by UserTable.password
     var dateCreated by UserTable.dateCreated
     var dateUpdated by UserTable.dateUpdated
-    val history: SizedIterable<HistoryDao>? by HistoryDao via UserHistoryTable
+//    val history: SizedIterable<HistoryDao>? by HistoryDao via UserHistoryTable
 
     fun <T> action(event: UserDao.() -> T) = tryTransaction(event)
 }
@@ -49,7 +47,7 @@ fun UserDao.toUser(): User? = action {
         password = password,
         dateCreated = dateCreated,
         dateUpdated = dateUpdated,
-        history = history?.toHistories()
+//        history = history?.toHistories()
     )
 }
 

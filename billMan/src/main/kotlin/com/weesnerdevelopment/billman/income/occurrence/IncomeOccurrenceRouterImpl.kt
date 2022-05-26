@@ -1,12 +1,11 @@
 package com.weesnerdevelopment.billman.income.occurrence
 
+import auth.AuthValidator
 import com.weesnerdevelopment.businessRules.*
 import com.weesnerdevelopment.businessRules.get
-import com.weesnerdevelopment.shared.base.ServerError
 import com.weesnerdevelopment.shared.billMan.IncomeOccurrence
 import com.weesnerdevelopment.shared.billMan.responses.IncomeOccurrencesResponse
 import io.ktor.application.*
-import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.locations.*
 import io.ktor.locations.delete
@@ -15,7 +14,8 @@ import java.util.*
 
 @OptIn(KtorExperimentalLocationsAPI::class)
 data class IncomeOccurrenceRouterImpl(
-    val repo: IncomeOccurrenceRepository
+    val repo: IncomeOccurrenceRepository,
+    val authValidator: AuthValidator
 ) : IncomeOccurrenceRouter {
     /**
      * Reduces typing to get the param for `?id=` :)
@@ -25,146 +25,80 @@ data class IncomeOccurrenceRouterImpl(
 
     override fun setup(routing: Routing) {
         routing.apply {
-            authenticate {
-                get<IncomeOccurrenceEndpoint> {
-                    val id = call.occurrenceId
-                    val userUuid = getBearerUuid().toString()
+            get<IncomeOccurrenceEndpoint> {
+                val id = call.occurrenceId
+                val userUuid = authValidator.getUuid(this)
 
-                    if (id.isNullOrBlank()) {
-                        val occurrences = repo.getAll(userUuid)
-                        return@get respond(HttpStatusCode.OK, IncomeOccurrencesResponse(occurrences))
-                    }
-
-                    val isValidUuid = runCatching { UUID.fromString(id) }.getOrNull()
-
-                    if (isValidUuid == null) {
-                        return@get respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id '$id' attempting to get income occurrence."
-                            )
-                        )
-                    }
-
-                    return@get when (val foundIncomeOccurrence = repo.get(userUuid, id)) {
-                        null -> respond(
-                            HttpStatusCode.NotFound,
-                            ServerError(
-                                HttpStatusCode.NotFound.description,
-                                HttpStatusCode.NotFound.value,
-                                "No income occurrence with id '$id' found."
-                            )
-                        )
-                        else -> respond(HttpStatusCode.OK, foundIncomeOccurrence)
-                    }
+                if (id.isNullOrBlank()) {
+                    val occurrences = repo.getAll(userUuid)
+                    return@get respond(HttpStatusCode.OK, IncomeOccurrencesResponse(occurrences))
                 }
 
-                post<IncomeOccurrenceEndpoint, IncomeOccurrence> { incomeOccurrence ->
-                    val userUuid = getBearerUuid().toString()
+                if (runCatching { UUID.fromString(id) }.getOrNull() == null)
+                    return@get respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "Invalid id '$id' attempting to get income occurrence."
+                    )
 
-                    if (incomeOccurrence == null)
-                        return@post respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot add invalid income occurrence."
-                            )
-                        )
+                return@get when (val foundIncomeOccurrence = repo.get(userUuid, id)) {
+                    null -> respondWithError(HttpStatusCode.NotFound, "No income occurrence with id '$id' found.")
+                    else -> respond(HttpStatusCode.OK, foundIncomeOccurrence)
+                }
+            }
 
-                    if (incomeOccurrence.owner != userUuid) {
-                        Log.warn("The owner of the income occurrence attempting to add and the bearer token did not match. Bearer id $userUuid income occurrence $incomeOccurrence")
-                        return@post respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot add income occurrence."
-                            )
-                        )
-                    }
+            post<IncomeOccurrenceEndpoint, IncomeOccurrence> { incomeOccurrence ->
+                val userUuid = authValidator.getUuid(this)
 
-                    val newIncomeOccurrence = repo.add(incomeOccurrence)
-                    if (newIncomeOccurrence == null)
-                        return@post respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "An error occurred attempting to add income occurrence."
-                            )
-                        )
+                if (incomeOccurrence == null)
+                    return@post respondWithError(HttpStatusCode.BadRequest, "Cannot add invalid income occurrence.")
 
-                    return@post respond(HttpStatusCode.Created, newIncomeOccurrence)
+                if (incomeOccurrence.owner != userUuid) {
+                    Log.warn("The owner of the income occurrence attempting to add and the bearer token did not match. Bearer id $userUuid income occurrence $incomeOccurrence")
+                    return@post respondWithError(HttpStatusCode.BadRequest, "Cannot add income occurrence.")
                 }
 
-                put<IncomeOccurrenceEndpoint, IncomeOccurrence> { incomeOccurrence ->
-                    val userUuid = getBearerUuid().toString()
+                return@post when (val newIncomeOccurrence = repo.add(incomeOccurrence)) {
+                    null -> respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "An error occurred attempting to add income occurrence."
+                    )
+                    else -> respond(HttpStatusCode.Created, newIncomeOccurrence)
+                }
+            }
 
-                    if (incomeOccurrence == null)
-                        return@put respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot update invalid income occurrence."
-                            )
-                        )
+            put<IncomeOccurrenceEndpoint, IncomeOccurrence> { incomeOccurrence ->
+                val userUuid = authValidator.getUuid(this)
 
-                    if (incomeOccurrence.owner != userUuid) {
-                        Log.warn("The owner of the income occurrence attempting to update and the bearer token did not match. Bearer id $userUuid income occurrence $incomeOccurrence")
-                        return@put respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot update income occurrence."
-                            )
-                        )
-                    }
+                if (incomeOccurrence == null)
+                    return@put respondWithError(HttpStatusCode.BadRequest, "Cannot update invalid income occurrence.")
 
-                    val updatedIncomeOccurrence = repo.update(incomeOccurrence)
-                    if (updatedIncomeOccurrence == null)
-                        return@put respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "An error occurred attempting to update income occurrence."
-                            )
-                        )
-
-                    return@put respond(HttpStatusCode.OK, updatedIncomeOccurrence)
+                if (incomeOccurrence.owner != userUuid) {
+                    Log.warn("The owner of the income occurrence attempting to update and the bearer token did not match. Bearer id $userUuid income occurrence $incomeOccurrence")
+                    return@put respondWithError(HttpStatusCode.BadRequest, "Cannot update income occurrence.")
                 }
 
-                delete<IncomeOccurrenceEndpoint> {
-                    val id = call.occurrenceId
-                    val authUuid = getBearerUuid().toString()
+                return@put when (val updatedIncomeOccurrence = repo.update(incomeOccurrence)) {
+                    null -> respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "An error occurred attempting to update income occurrence."
+                    )
+                    else -> respond(HttpStatusCode.OK, updatedIncomeOccurrence)
+                }
+            }
 
-                    if (id.isNullOrBlank() || runCatching { UUID.fromString(id) }.getOrNull() == null) {
-                        return@delete respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id '$id' attempting to delete income occurrence."
-                            )
-                        )
-                    }
+            delete<IncomeOccurrenceEndpoint> {
+                val id = call.occurrenceId
+                val authUuid = authValidator.getUuid(this)
 
-                    when (val deletedIncomeOccurrence = repo.delete(authUuid.toString(), id)) {
-                        false -> return@delete respond(
-                            HttpStatusCode.NotFound,
-                            ServerError(
-                                HttpStatusCode.NotFound.description,
-                                HttpStatusCode.NotFound.value,
-                                "No income occurrence with id '$id' found."
-                            )
-                        )
-                        else -> return@delete respond(HttpStatusCode.OK, deletedIncomeOccurrence)
-                    }
+                if (id.isNullOrBlank() || runCatching { UUID.fromString(id) }.getOrNull() == null)
+                    return@delete respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "Invalid id '$id' attempting to delete income occurrence."
+                    )
+
+                return@delete when (val deletedIncomeOccurrence = repo.delete(authUuid, id)) {
+                    false -> respondWithError(HttpStatusCode.NotFound, "No income occurrence with id '$id' found.")
+                    else -> respond(HttpStatusCode.OK, deletedIncomeOccurrence)
                 }
             }
         }

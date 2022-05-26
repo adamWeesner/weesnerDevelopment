@@ -1,12 +1,11 @@
 package com.weesnerdevelopment.billman.bill.occurrence
 
+import auth.AuthValidator
 import com.weesnerdevelopment.businessRules.*
 import com.weesnerdevelopment.businessRules.get
-import com.weesnerdevelopment.shared.base.ServerError
 import com.weesnerdevelopment.shared.billMan.BillOccurrence
 import com.weesnerdevelopment.shared.billMan.responses.BillOccurrencesResponse
 import io.ktor.application.*
-import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.locations.*
 import io.ktor.locations.delete
@@ -17,7 +16,8 @@ import io.ktor.locations.put as locationPut
 
 @OptIn(KtorExperimentalLocationsAPI::class)
 data class BillOccurrenceRouterImpl(
-    val repo: BillOccurrenceRepository
+    val repo: BillOccurrenceRepository,
+    val authValidator: AuthValidator
 ) : BillOccurrenceRouter {
     /**
      * Reduces typing to get the param for `?id=` :)
@@ -30,208 +30,116 @@ data class BillOccurrenceRouterImpl(
 
     override fun setup(routing: Routing) {
         routing.apply {
-            authenticate {
-                get<BillOccurrenceEndpoint> {
-                    val id = call.occurrenceId
-                    val userUuid = getBearerUuid().toString()
+            get<BillOccurrenceEndpoint> {
+                val id = call.occurrenceId
+                val userUuid = authValidator.getUuid(this)
 
-                    if (id.isNullOrBlank()) {
-                        val occurrences = repo.getAll(userUuid)
-                        return@get respond(HttpStatusCode.OK, BillOccurrencesResponse(occurrences))
-                    }
-
-                    val isValidUuid = runCatching { UUID.fromString(id) }.getOrNull()
-
-                    if (isValidUuid == null) {
-                        return@get respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id '$id' attempting to get bill occurrence."
-                            )
-                        )
-                    }
-
-                    return@get when (val foundBillOccurrence = repo.get(userUuid, id)) {
-                        null -> respond(
-                            HttpStatusCode.NotFound,
-                            ServerError(
-                                HttpStatusCode.NotFound.description,
-                                HttpStatusCode.NotFound.value,
-                                "No bill occurrence with id '$id' found."
-                            )
-                        )
-                        else -> respond(HttpStatusCode.OK, foundBillOccurrence)
-                    }
+                if (id.isNullOrBlank()) {
+                    val occurrences = repo.getAll(userUuid)
+                    return@get respond(HttpStatusCode.OK, BillOccurrencesResponse(occurrences))
                 }
 
-                post<BillOccurrenceEndpoint, BillOccurrence> { billOccurrence ->
-                    val userUuid = getBearerUuid().toString()
+                if (runCatching { UUID.fromString(id) }.getOrNull() == null)
+                    return@get respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "Invalid id '$id' attempting to get bill occurrence."
+                    )
 
-                    if (billOccurrence == null)
-                        return@post respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot add invalid bill occurrence."
-                            )
-                        )
+                return@get when (val foundBillOccurrence = repo.get(userUuid, id)) {
+                    null -> respondWithError(HttpStatusCode.NotFound, "No bill occurrence with id '$id' found.")
+                    else -> respond(HttpStatusCode.OK, foundBillOccurrence)
+                }
+            }
 
-                    if (billOccurrence.owner != userUuid) {
-                        Log.warn("The owner of the bill occurrence attempting to add and the bearer token did not match. Bearer id $userUuid bill occurrence $billOccurrence")
-                        return@post respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot add bill occurrence."
-                            )
-                        )
-                    }
+            post<BillOccurrenceEndpoint, BillOccurrence> { billOccurrence ->
+                val userUuid = authValidator.getUuid(this)
 
-                    val newBillOccurrence = repo.add(billOccurrence)
-                    if (newBillOccurrence == null) {
-                        return@post respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "An error occurred attempting to add bill occurrence."
-                            )
-                        )
-                    }
+                if (billOccurrence == null)
+                    return@post respondWithError(HttpStatusCode.BadRequest, "Cannot add invalid bill occurrence.")
 
-                    return@post respond(HttpStatusCode.Created, newBillOccurrence)
+                if (billOccurrence.owner != userUuid) {
+                    Log.warn("The owner of the bill occurrence attempting to add and the bearer token did not match. Bearer id $userUuid bill occurrence $billOccurrence")
+                    return@post respondWithError(HttpStatusCode.BadRequest, "Cannot add bill occurrence.")
                 }
 
-                locationPut<BillOccurrencePayEndpoint> {
-                    logRequest(null)
+                return@post when (val newBillOccurrence = repo.add(billOccurrence)) {
+                    null -> respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "An error occurred attempting to add bill occurrence."
+                    )
+                    else -> respond(HttpStatusCode.Created, newBillOccurrence)
+                }
+            }
 
-                    val userUuid = getBearerUuid().toString()
+            locationPut<BillOccurrencePayEndpoint> {
+                logRequest(null)
 
-                    val id = call.occurrenceId
-                    val paymentAmount = call.payment
+                val userUuid = authValidator.getUuid(this)
 
-                    if (id == null || paymentAmount == null || runCatching { UUID.fromString(id) }.getOrNull() == null) {
-                        return@locationPut respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot pay for a bill occurrence with invalid id or paymentAmount."
-                            )
-                        )
-                    }
+                val id = call.occurrenceId
+                val paymentAmount = call.payment
 
-                    val foundOccurrence = repo.get(userUuid, id)
+                if (id == null || paymentAmount == null || runCatching { UUID.fromString(id) }.getOrNull() == null)
+                    return@locationPut respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "Cannot pay for a bill occurrence with invalid id or paymentAmount."
+                    )
 
-                    if (foundOccurrence == null) {
-                        return@locationPut respond(
-                            HttpStatusCode.NotFound,
-                            ServerError(
-                                HttpStatusCode.NotFound.description,
-                                HttpStatusCode.NotFound.value,
-                                "No bill occurrence with id '$id' found."
-                            )
-                        )
-                    }
+                val foundOccurrence = repo.get(userUuid, id)
 
-                    if (foundOccurrence.sharedUsers?.contains(userUuid) == false) {
-                        Log.warn("The owner of the bill occurrence attempting to update and the bearer token did not match. Bearer id $userUuid bill occurrence $foundOccurrence")
-                        return@locationPut respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot update bill occurrence."
-                            )
-                        )
-                    }
+                if (foundOccurrence == null)
+                    return@locationPut respondWithError(
+                        HttpStatusCode.NotFound,
+                        "No bill occurrence with id '$id' found."
+                    )
 
-                    val payment = repo.pay(id, paymentAmount)
-                    if (payment == null) {
-                        return@locationPut respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "An error occurred attempting to pay for bill occurrence."
-                            )
-                        )
-                    }
-
-                    return@locationPut respond(HttpStatusCode.OK, payment)
+                if (foundOccurrence.sharedUsers?.contains(userUuid) == false) {
+                    Log.warn("The owner of the bill occurrence attempting to update and the bearer token did not match. Bearer id $userUuid bill occurrence $foundOccurrence")
+                    return@locationPut respondWithError(HttpStatusCode.BadRequest, "Cannot update bill occurrence.")
                 }
 
-                put<BillOccurrenceEndpoint, BillOccurrence> { billOccurrence ->
-                    val userUuid = getBearerUuid().toString()
+                return@locationPut when (val payment = repo.pay(id, paymentAmount)) {
+                    null -> respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "An error occurred attempting to pay for bill occurrence."
+                    )
+                    else -> respond(HttpStatusCode.OK, payment)
+                }
+            }
 
-                    if (billOccurrence == null) {
-                        return@put respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot update invalid bill occurrence."
-                            )
-                        )
-                    }
+            put<BillOccurrenceEndpoint, BillOccurrence> { billOccurrence ->
+                val userUuid = authValidator.getUuid(this)
 
-                    if (billOccurrence.sharedUsers?.contains(userUuid) == false) {
-                        Log.warn("The owner of the bill occurrence attempting to update and the bearer token did not match. Bearer id $userUuid bill occurrence $billOccurrence")
-                        return@put respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot update bill occurrence."
-                            )
-                        )
-                    }
+                if (billOccurrence == null)
+                    return@put respondWithError(HttpStatusCode.BadRequest, "Cannot update invalid bill occurrence.")
 
-                    val updatedBillOccurrence = repo.update(billOccurrence)
-                    if (updatedBillOccurrence == null) {
-                        return@put respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "An error occurred attempting to update bill occurrence."
-                            )
-                        )
-                    }
-
-                    return@put respond(HttpStatusCode.OK, updatedBillOccurrence)
+                if (billOccurrence.sharedUsers?.contains(userUuid) == false) {
+                    Log.warn("The owner of the bill occurrence attempting to update and the bearer token did not match. Bearer id $userUuid bill occurrence $billOccurrence")
+                    return@put respondWithError(HttpStatusCode.BadRequest, "Cannot update bill occurrence.")
                 }
 
-                delete<BillOccurrenceEndpoint> {
-                    val id = call.occurrenceId
-                    val authUuid = getBearerUuid().toString()
+                return@put when (val updatedBillOccurrence = repo.update(billOccurrence)) {
+                    null -> respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "An error occurred attempting to update bill occurrence."
+                    )
+                    else -> respond(HttpStatusCode.OK, updatedBillOccurrence)
+                }
+            }
 
-                    if (id.isNullOrBlank() || runCatching { UUID.fromString(id) }.getOrNull() == null) {
-                        return@delete respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id '$id' attempting to delete bill occurrence."
-                            )
-                        )
-                    }
+            delete<BillOccurrenceEndpoint> {
+                val id = call.occurrenceId
+                val authUuid = authValidator.getUuid(this)
 
-                    when (val deletedBillOccurrence = repo.delete(authUuid, id)) {
-                        false -> return@delete respond(
-                            HttpStatusCode.NotFound,
-                            ServerError(
-                                HttpStatusCode.NotFound.description,
-                                HttpStatusCode.NotFound.value,
-                                "No bill occurrence with id '$id' found."
-                            )
-                        )
-                        else -> return@delete respond(HttpStatusCode.OK, deletedBillOccurrence)
-                    }
+                if (id.isNullOrBlank() || runCatching { UUID.fromString(id) }.getOrNull() == null)
+                    return@delete respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "Invalid id '$id' attempting to delete bill occurrence."
+                    )
+
+                return@delete when (val deletedBillOccurrence = repo.delete(authUuid, id)) {
+                    false -> respondWithError(HttpStatusCode.NotFound, "No bill occurrence with id '$id' found.")
+                    else -> respond(HttpStatusCode.OK, deletedBillOccurrence)
                 }
             }
         }

@@ -1,24 +1,28 @@
 package com.weesnerdevelopment.auth.user
 
+import auth.AuthValidator
 import auth.JwtProvider
 import auth.asToken
-import com.weesnerdevelopment.businessRules.*
 import com.weesnerdevelopment.businessRules.get
+import com.weesnerdevelopment.businessRules.post
+import com.weesnerdevelopment.businessRules.put
+import com.weesnerdevelopment.businessRules.respond
+import com.weesnerdevelopment.businessRules.respondWithError
 import com.weesnerdevelopment.shared.auth.HashedUser
 import com.weesnerdevelopment.shared.auth.TokenResponse
 import com.weesnerdevelopment.shared.auth.User
-import com.weesnerdevelopment.shared.base.ServerError
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.locations.*
-import io.ktor.locations.delete
 import io.ktor.routing.*
+import java.util.*
 
 @OptIn(KtorExperimentalLocationsAPI::class)
 data class UserRouterImpl(
     private val repo: UserRepository,
-    private val jwtProvider: JwtProvider
+    private val jwtProvider: JwtProvider,
+    private val authValidator: AuthValidator
 ) : UserRouter {
     /**
      * Reduces typing to get the param for `?id=` :)
@@ -38,68 +42,22 @@ data class UserRouterImpl(
     private val ApplicationCall.password
         get() = request.queryParameters[UserEndpoint::password.name]
 
+    private fun hasValidCredentials(username: String?, password: String?): Boolean {
+        val parsedUsername = runCatching { Base64.getDecoder().decode(username) }.getOrNull()
+        val parsedPassword = runCatching { Base64.getDecoder().decode(password) }.getOrNull()
+
+        return parsedUsername != null && parsedPassword != null
+    }
+
     override fun setup(routing: Routing) {
         routing.apply {
             authenticate {
-                get<UserAccountEndpoint> {
-                    val id = getBearerUuid()
-
-                    if (id == null) {
-                        return@get respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id attempting to get account."
-                            )
-                        )
-                    }
-
-                    when (val foundUser = repo.account(id.toString())) {
-                        null -> {
-                            return@get respond(
-                                HttpStatusCode.NotFound,
-                                ServerError(
-                                    HttpStatusCode.NotFound.description,
-                                    HttpStatusCode.NotFound.value,
-                                    "No account with id '$id' found."
-                                )
-                            )
-                        }
-                        else -> {
-                            return@get respond(HttpStatusCode.OK, foundUser.redact)
-                        }
-                    }
-                }
-
                 get<UserInfoEndpoint> {
-                    val id = getBearerUuid()
+                    val id = authValidator.getUuid(this)
 
-                    if (id == null) {
-                        return@get respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id attempting to get account."
-                            )
-                        )
-                    }
-
-                    when (val foundUser = repo.info(id.toString())) {
-                        null -> {
-                            return@get respond(
-                                HttpStatusCode.NotFound,
-                                ServerError(
-                                    HttpStatusCode.NotFound.description,
-                                    HttpStatusCode.NotFound.value,
-                                    "No account with id '$id' found."
-                                )
-                            )
-                        }
-                        else -> {
-                            return@get respond(HttpStatusCode.OK, foundUser.redact)
-                        }
+                    return@get when (val foundUser = repo.info(id)) {
+                        null -> respondWithError(HttpStatusCode.NotFound, "No account with id '$id' found.")
+                        else -> respond(HttpStatusCode.OK, foundUser.redact)
                     }
                 }
             }
@@ -108,137 +66,71 @@ data class UserRouterImpl(
                 val username = call.username
                 val password = call.password
 
-                if (!username.isNullOrBlank() && !password.isNullOrBlank()) {
+                if (!username.isNullOrBlank() && !password.isNullOrBlank() && hasValidCredentials(username, password)) {
                     val user = repo.login(HashedUser(username, password))
-                    if (user == null) {
-                        return@get respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid login credentials."
-                            )
-                        )
-                    } else {
-                        val jwtToken = user.asToken(jwtProvider)
-                        return@get respond(HttpStatusCode.OK, TokenResponse(jwtToken))
-                    }
+                    return@get if (user == null)
+                        respondWithError(HttpStatusCode.BadRequest, "Invalid login credentials.")
+                    else
+                        respond(HttpStatusCode.OK, TokenResponse(user.asToken(jwtProvider)))
                 }
 
                 val id = call.userId
 
-                if (id.isNullOrBlank()) {
-                    return@get respond(
-                        HttpStatusCode.BadRequest,
-                        ServerError(
-                            HttpStatusCode.BadRequest.description,
-                            HttpStatusCode.BadRequest.value,
-                            "?id={id} needed to get account."
-                        )
-                    )
-                }
+                if (id.isNullOrBlank())
+                    return@get respondWithError(HttpStatusCode.BadRequest, "?id={id} needed to get account.")
 
-                when (val foundUser = repo.account(id)) {
-                    null -> {
-                        return@get respond(
-                            HttpStatusCode.NotFound,
-                            ServerError(
-                                HttpStatusCode.NotFound.description,
-                                HttpStatusCode.NotFound.value,
-                                "No account with id '$id' found."
-                            )
-                        )
-                    }
-                    else -> {
-                        val jwtToken = foundUser.asToken(jwtProvider)
-                        return@get respond(HttpStatusCode.OK, TokenResponse(jwtToken))
-                    }
+                return@get when (val foundUser = repo.account(id)) {
+                    null -> respondWithError(HttpStatusCode.NotFound, "No account with id '$id' found.")
+                    else -> respond(HttpStatusCode.OK, TokenResponse(foundUser.asToken(jwtProvider)))
                 }
             }
 
             post<UserEndpoint, User> { user ->
-                if (user == null) {
-                    return@post respond(
-                        HttpStatusCode.BadRequest,
-                        ServerError(
-                            HttpStatusCode.BadRequest.description,
-                            HttpStatusCode.BadRequest.value,
-                            "Cannot add invalid user."
-                        )
-                    )
-                }
+                if (user == null || !hasValidCredentials(user.username, user.password))
+                    return@post respondWithError(HttpStatusCode.BadRequest, "Cannot add invalid user.")
 
-                val newUser = repo.create(user)
-                if (newUser == null) {
-                    return@post respond(
-                        HttpStatusCode.BadRequest,
-                        ServerError(
-                            HttpStatusCode.BadRequest.description,
-                            HttpStatusCode.BadRequest.value,
-                            "Cannot add invalid user."
-                        )
-                    )
+                return@post when (val newUser = repo.create(user)) {
+                    null -> respondWithError(HttpStatusCode.BadRequest, "Cannot add invalid user.")
+                    else -> respond(HttpStatusCode.Created, TokenResponse(user.asToken(jwtProvider)))
                 }
-
-                val token = newUser.asToken(jwtProvider)
-                return@post respond(HttpStatusCode.Created, TokenResponse(token))
             }
 
             authenticate {
+                get<UserAccountEndpoint> {
+                    val id = authValidator.getUuid(this)
+
+                    return@get when (val foundUser = repo.account(id)) {
+                        null -> respondWithError(HttpStatusCode.NotFound, "No account with id '$id' found.")
+                        else -> respond(HttpStatusCode.OK, foundUser.redact)
+                    }
+                }
+
                 put<UserEndpoint, User> { user ->
-                    if (user == null) {
-                        return@put respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot update invalid user."
-                            )
-                        )
-                    }
+                    if (user == null || !hasValidCredentials(user.username, user.password))
+                        return@put respondWithError(HttpStatusCode.BadRequest, "Cannot update invalid user.")
 
-                    val updatedUser = repo.update(user)
-                    if (updatedUser == null) {
-                        return@put respond(
+                    return@put when (val updatedUser = repo.update(user)) {
+                        null -> respondWithError(
                             HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "An error occurred attempting to update user."
-                            )
+                            "An error occurred attempting to update user."
                         )
+                        else -> respond(HttpStatusCode.OK, updatedUser)
                     }
-
-                    return@put respond(HttpStatusCode.OK, updatedUser)
                 }
 
                 delete<UserEndpoint> {
                     val id = call.userId
-                    val authUuid = getBearerUuid().toString()
+                    val authUuid = authValidator.getUuid(this)
 
-                    if (id.isNullOrBlank()) {
-                        return@delete respond(
+                    if (id.isNullOrBlank())
+                        return@delete respondWithError(
                             HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id '$id' attempting to delete user."
-                            )
+                            "Invalid id '$id' attempting to delete user."
                         )
-                    }
 
-                    when (val deletedUser = repo.delete(authUuid)) {
-                        false ->
-                            return@delete respond(
-                                HttpStatusCode.NotFound,
-                                ServerError(
-                                    HttpStatusCode.NotFound.description,
-                                    HttpStatusCode.NotFound.value,
-                                    "No user with id '$authUuid' found."
-                                )
-                            )
-                        else ->
-                            return@delete respond(HttpStatusCode.OK, deletedUser)
+                    return@delete when (val deletedUser = repo.delete(authUuid)) {
+                        false -> respondWithError(HttpStatusCode.NotFound, "No user with id '$authUuid' found.")
+                        else -> respond(HttpStatusCode.OK, deletedUser)
                     }
                 }
             }

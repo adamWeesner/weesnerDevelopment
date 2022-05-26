@@ -1,12 +1,11 @@
 package com.weesnerdevelopment.billman.income
 
+import auth.AuthValidator
 import com.weesnerdevelopment.businessRules.*
 import com.weesnerdevelopment.businessRules.get
-import com.weesnerdevelopment.shared.base.ServerError
 import com.weesnerdevelopment.shared.billMan.Income
 import com.weesnerdevelopment.shared.billMan.responses.IncomeResponse
 import io.ktor.application.*
-import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.locations.*
 import io.ktor.locations.delete
@@ -15,7 +14,8 @@ import java.util.*
 
 @OptIn(KtorExperimentalLocationsAPI::class)
 data class IncomeRouterImpl(
-    val repo: IncomeRepository
+    val repo: IncomeRepository,
+    val authValidator: AuthValidator
 ) : IncomeRouter {
     /**
      * Reduces typing to get the param for `?id=` :)
@@ -25,130 +25,67 @@ data class IncomeRouterImpl(
 
     override fun setup(routing: Routing) {
         routing.apply {
-            authenticate {
-                get<IncomesEndpoint> {
-                    val id = call.incomeId
-                    val authUuid = getBearerUuid().toString()
+            get<IncomesEndpoint> {
+                val id = call.incomeId
+                val authUuid = authValidator.getUuid(this)
 
-                    if (id.isNullOrBlank()) {
-                        val incomes = repo.getAll(authUuid)
-                        return@get respond(HttpStatusCode.OK, IncomeResponse(incomes))
-                    }
-
-                    val isValidUuid = runCatching { UUID.fromString(id) }.getOrNull()
-
-                    if (isValidUuid == null)
-                        return@get respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id '$id' attempting to get income."
-                            )
-                        )
-
-                    when (val foundIncome = repo.get(authUuid, id)) {
-                        null -> return@get respond(
-                            HttpStatusCode.NotFound,
-                            ServerError(
-                                HttpStatusCode.NotFound.description,
-                                HttpStatusCode.NotFound.value,
-                                "No income with id '$id' found."
-                            )
-                        )
-                        else -> return@get respond(HttpStatusCode.OK, foundIncome)
-                    }
+                if (id.isNullOrBlank()) {
+                    val incomes = repo.getAll(authUuid)
+                    return@get respond(HttpStatusCode.OK, IncomeResponse(incomes))
                 }
 
-                post<IncomesEndpoint, Income> { income ->
-                    if (income == null)
-                        return@post respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot add invalid income."
-                            )
-                        )
+                if (runCatching { UUID.fromString(id) }.getOrNull() == null)
+                    return@get respondWithError(HttpStatusCode.BadRequest, "Invalid id '$id' attempting to get income.")
 
-                    val newIncome = repo.add(income)
-                    if (newIncome == null)
-                        return@post respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "An error occurred attempting to add income."
-                            )
-                        )
-
-                    return@post respond(HttpStatusCode.Created, newIncome)
+                return@get when (val foundIncome = repo.get(authUuid, id)) {
+                    null -> respondWithError(HttpStatusCode.NotFound, "No income with id '$id' found.")
+                    else -> respond(HttpStatusCode.OK, foundIncome)
                 }
+            }
 
-                put<IncomesEndpoint, Income> { income ->
-                    val authUuid = getBearerUuid().toString()
+            post<IncomesEndpoint, Income> { income ->
+                authValidator.getUuid(this)
 
-                    if (income == null)
-                        return@put respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Cannot update invalid income."
-                            )
-                        )
+                if (income == null)
+                    return@post respondWithError(HttpStatusCode.BadRequest, "Cannot add invalid income.")
 
-                    if (income.owner != authUuid) {
-                        return@put respond(
-                            HttpStatusCode.NotFound,
-                            ServerError(
-                                HttpStatusCode.NotFound.description,
-                                HttpStatusCode.NotFound.value,
-                                "No income with id '${income.id}' found."
-                            )
-                        )
-                    }
-
-                    val updatedIncome = repo.update(income)
-                    if (updatedIncome == null)
-                        return@put respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "An error occurred attempting to update income."
-                            )
-                        )
-
-                    return@put respond(HttpStatusCode.OK, updatedIncome)
+                return@post when (val newIncome = repo.add(income)) {
+                    null -> respondWithError(HttpStatusCode.BadRequest, "An error occurred attempting to add income.")
+                    else -> respond(HttpStatusCode.Created, newIncome)
                 }
+            }
 
-                delete<IncomesEndpoint> {
-                    val id = call.incomeId
-                    val authUuid = getBearerUuid().toString()
+            put<IncomesEndpoint, Income> { income ->
+                val authUuid = authValidator.getUuid(this)
 
-                    if (id.isNullOrBlank() || runCatching { UUID.fromString(id) }.getOrNull() == null) {
-                        return@delete respond(
-                            HttpStatusCode.BadRequest,
-                            ServerError(
-                                HttpStatusCode.BadRequest.description,
-                                HttpStatusCode.BadRequest.value,
-                                "Invalid id '$id' attempting to delete income."
-                            )
-                        )
-                    }
+                if (income == null)
+                    return@put respondWithError(HttpStatusCode.BadRequest, "Cannot update invalid income.")
 
-                    when (val deletedIncome = repo.delete(authUuid, id)) {
-                        false -> return@delete respond(
-                            HttpStatusCode.NotFound,
-                            ServerError(
-                                HttpStatusCode.NotFound.description,
-                                HttpStatusCode.NotFound.value,
-                                "No income with id '$id' found."
-                            )
-                        )
-                        else -> return@delete respond(HttpStatusCode.OK, deletedIncome)
-                    }
+                if (income.owner != authUuid)
+                    return@put respondWithError(HttpStatusCode.NotFound, "No income with id '${income.id}' found.")
+
+                return@put when (val updatedIncome = repo.update(income)) {
+                    null -> respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "An error occurred attempting to update income."
+                    )
+                    else -> respond(HttpStatusCode.OK, updatedIncome)
+                }
+            }
+
+            delete<IncomesEndpoint> {
+                val id = call.incomeId
+                val authUuid = authValidator.getUuid(this)
+
+                if (id.isNullOrBlank() || runCatching { UUID.fromString(id) }.getOrNull() == null)
+                    return@delete respondWithError(
+                        HttpStatusCode.BadRequest,
+                        "Invalid id '$id' attempting to delete income."
+                    )
+
+                return@delete when (val deletedIncome = repo.delete(authUuid, id)) {
+                    false -> respondWithError(HttpStatusCode.NotFound, "No income with id '$id' found.")
+                    else -> respond(HttpStatusCode.OK, deletedIncome)
                 }
             }
         }

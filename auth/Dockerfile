@@ -6,7 +6,7 @@ FROM gradle:7.1.0-jdk11 as BUILD_IMAGE
 WORKDIR /app
 ADD . /app
 RUN gradle wrapper
-RUN ./gradlew :${app}:clean :${app}:assemble --stacktrace
+RUN ./gradlew :${app}:clean :${app}:assemble
 
 FROM adoptopenjdk/openjdk11:armv7l-ubuntu-jre-11.0.15_10
 

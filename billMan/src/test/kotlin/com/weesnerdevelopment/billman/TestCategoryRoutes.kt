@@ -65,7 +65,7 @@ class TestCategoryRoutes : BillManTests() {
             val call = handleRequest(Get, "$baseUrl?id=4f982b2d-1b86-40de-8710-6bfb4649f1e3", bearerToken = token)
 
             call.response.status() shouldBe HttpStatusCode.OK
-            call.response.content shouldBe fromFile(baseUrl, "get/SuccessResponseNoOwner")
+            call.response.content shouldBe fromFile(baseUrl, "get/successResponseNoOwner")
         }
     }
 

@@ -1,4 +1,4 @@
-ARG app=auth
+ENV app=auth
 
 # syntax = docker/dockerfile:1.0-experimental
 FROM gradle:7.1.0-jdk11 as BUILD_IMAGE

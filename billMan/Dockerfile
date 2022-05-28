@@ -1,4 +1,4 @@
-ARG app=billMan
+ENV app=billMan
 
 # syntax = docker/dockerfile:1.0-experimental
 FROM gradle:7.1.0-jdk11 as BUILD_IMAGE

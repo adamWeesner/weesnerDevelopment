@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import parse
 
-class UserTests : AuthTests() {
+class TestUserRoutes : AuthTests() {
     override val baseUrl = Paths.User.basePath
     private val testUser = "dGVzdA=="
     private val testPass = "dGVzdA=="

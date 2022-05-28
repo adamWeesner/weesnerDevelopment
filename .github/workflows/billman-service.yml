@@ -1,6 +1,7 @@
 name: BillMan service
 
 env:
+  appName: billMan
   pathToWatch: billMan/**
   buildPath: :billMan:build
   dockerTag: billMan:latest
@@ -60,6 +61,8 @@ jobs:
         if: ${{ steps.bat.outcome == 'success' }}
         id: build
         uses: docker/build-push-action@v3
+        env:
+          app: ${{ env.appName }}
         with:
           file: ${{ env.dockerfilePath }}
           push: true

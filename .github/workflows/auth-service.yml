@@ -1,6 +1,7 @@
 name: Auth service
 
 env:
+  appName: billMan
   pathToWatch: auth/**
   buildPath: :auth:build
   dockerTag: auth:latest
@@ -60,6 +61,8 @@ jobs:
         if: ${{ steps.bat.outcome == 'success' }}
         id: build
         uses: docker/build-push-action@v3
+        env:
+          app: ${{ env.appName }}
         with:
           file: ${{ env.dockerfilePath }}
           push: true

@@ -8,12 +8,12 @@ env:
   dockerfilePath: ./billMan/Dockerfile
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
     paths:
       - env.pathToWatch
+  workflow_dispatch:
 
 jobs:
   billman-service:
@@ -35,7 +35,7 @@ jobs:
         id: bat
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
-          arguments: ${{ env.buildPath }}
+          arguments: ${{ env.buildPath }} --stacktrace
 
       - name: Set up Docker Buildx
         if: ${{ steps.bat.outcome == 'success' }}

@@ -13,6 +13,6 @@ FROM adoptopenjdk/openjdk11:armv7l-ubuntu-jre-11.0.15_10
 ENV app=billMan
 
 WORKDIR /app
-COPY --from=0 app/${app}/build/libs/${app}-*-all.jar ${app}.jar
+COPY --from=0 app/${app}/build/libs/${app}-*-all.jar app.jar
 
-CMD ["java", "-jar", "${app}.jar"]
+CMD ["java", "-jar", "app.jar"]

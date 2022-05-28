@@ -1,7 +1,7 @@
 name: Auth service
 
 env:
-  appName: billMan
+  appName: auth
   pathToWatch: auth/**
   buildPath: :auth:build
   dockerTag: auth:latest

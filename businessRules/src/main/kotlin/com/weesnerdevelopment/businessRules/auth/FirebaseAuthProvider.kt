@@ -18,9 +18,11 @@ import java.io.InputStream
 
 data class FirebaseAuthProvider(
     private val configuration: AuthConfig,
-    private val accountFileBasePath: String = ""
+    private val accountFileBasePath: String = System.getenv("firebaseJson") ?: ""
 ) : AuthProvider, AuthenticationProvider(configuration) {
-    private val accountFile = File("${accountFileBasePath}firebase-admin.json")
+    private val accountFile = File(accountFileBasePath).also {
+        Log.debug("firebase json exists `${it.exists()}` at location `$accountFileBasePath`")
+    }
     private val serviceAccount: InputStream = FileInputStream(accountFile)
 
     private val options: FirebaseOptions = FirebaseOptions.builder()

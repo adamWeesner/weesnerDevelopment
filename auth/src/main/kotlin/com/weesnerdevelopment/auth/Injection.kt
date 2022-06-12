@@ -62,6 +62,6 @@ fun Application.initKodein() {
             }
         }
         bind<AuthConfig>() with singleton { FirebaseAuthConfiguration(null) }
-        bind<AuthProvider>() with singleton { FirebaseAuthProvider(instance(), "../") }
+        bind<AuthProvider>() with singleton { FirebaseAuthProvider(instance()) }
     }
 }

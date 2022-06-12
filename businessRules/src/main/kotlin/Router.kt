@@ -1,5 +1,5 @@
 import com.weesnerdevelopment.shared.base.GenericItem
-import io.ktor.routing.*
+import io.ktor.server.routing.*
 import kotlin.reflect.KType
 
 interface Router<I : GenericItem, S : Service<I>> {

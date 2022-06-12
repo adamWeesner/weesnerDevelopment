@@ -1,45 +1,30 @@
 package com.weesnerdevelopment.billman.server
 
-import auth.CustomPrincipal
-import auth.JwtProvider
-import com.auth0.jwt.exceptions.JWTVerificationException
-import com.auth0.jwt.exceptions.TokenExpiredException
 import com.codahale.metrics.jmx.JmxReporter
 import com.weesnerdevelopment.billman.routes
-import com.weesnerdevelopment.businessRules.AppConfig
-import com.weesnerdevelopment.businessRules.Server
+import com.weesnerdevelopment.businessRules.*
+import com.weesnerdevelopment.businessRules.auth.AuthProvider
 import com.weesnerdevelopment.shared.Paths
-import com.weesnerdevelopment.shared.auth.InvalidUserReason
 import com.weesnerdevelopment.shared.base.Response
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.auth.jwt.*
-import io.ktor.features.*
-import io.ktor.http.*
-import io.ktor.http.auth.*
-import io.ktor.locations.*
-import io.ktor.metrics.dropwizard.*
-import io.ktor.request.*
-import io.ktor.routing.*
-import io.ktor.serialization.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.locations.*
+import io.ktor.server.metrics.dropwizard.*
+import io.ktor.server.plugins.hsts.*
+import io.ktor.server.plugins.httpsredirect.*
+import io.ktor.server.request.*
+import io.ktor.server.routing.*
 import kimchi.Kimchi
-import kotlinx.serialization.ExperimentalSerializationApi
 import logging.StdOutLogger
-import org.kodein.di.generic.instance
-import org.kodein.di.ktor.kodein
-import respond
-import respondErrorAuthorizing
-import respondErrorServer
+import org.kodein.di.instance
+import org.kodein.di.ktor.closestDI
 import java.util.concurrent.TimeUnit
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalTime::class, ExperimentalSerializationApi::class)
 object BillManProdServer : Server {
     override fun start(app: Application) {
         with(app) {
-            val appConfig by kodein().instance<AppConfig>()
-            val jwtProvider by kodein().instance<JwtProvider>()
+            val appConfig by closestDI().instance<AppConfig>()
+            val authProvider by closestDI().instance<AuthProvider>()
 //        val loggingService by kodein().instance<LoggingService>()
 
 //        if (!appConfig.isTesting)
@@ -47,25 +32,13 @@ object BillManProdServer : Server {
 
             Kimchi.addLog(StdOutLogger)
 
-            install(DefaultHeaders) {
-                header(HttpHeaders.AcceptCharset, Charsets.UTF_8.toString())
-                header(
-                    HttpHeaders.Accept,
-                    ContentType.Application.Json.withParameter("charset", Charsets.UTF_8.toString()).toString()
-                )
-            }
+            installDefaultHeaders()
             install(HSTS)
             install(HttpsRedirect)
-            install(CORS) {
-                method(HttpMethod.Options)
-                header(HttpHeaders.ContentType)
-                header(HttpHeaders.Authorization)
-                host("${appConfig.baseUrl}:${appConfig.sslPort}", schemes = listOf("https"))
-                host(appConfig.baseUrl, schemes = listOf("https"))
-                maxAgeDuration = Duration.days(1)
-                allowCredentials = true
-                allowNonSimpleContentTypes = true
-            }
+            installCORS(
+                CORSHost("${appConfig.baseUrl}:${appConfig.sslPort}", HttpScheme.Https),
+                CORSHost(appConfig.baseUrl, HttpScheme.Https)
+            )
             install(DropwizardMetrics) {
 //            Slf4jReporter.forRegistry(registry)
 //                .outputTo(log)
@@ -80,47 +53,9 @@ object BillManProdServer : Server {
                     .build()
                     .start()
             }
-            install(ContentNegotiation) {
-                json(com.weesnerdevelopment.shared.json {
-                    prettyPrint = true
-                    prettyPrintIndent = "  "
-                    isLenient = true
-                })
-            }
-            install(StatusPages) {
-                exception<Throwable> { e ->
-                    when (e) {
-                        is TokenExpiredException -> respondErrorAuthorizing(InvalidUserReason.Expired)
-                        is JWTVerificationException -> respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
-                        else -> respondErrorServer(e)
-                    }
-                }
-                status(HttpStatusCode.Unauthorized) {
-                    try {
-                        jwtProvider.decodeJWT((call.request.parseAuthorizationHeader() as HttpAuthHeader.Single).blob)
-                    } catch (e: Exception) {
-                        return@status when (e) {
-                            // usually happens when no token was passed...
-                            is ClassCastException -> respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
-                            is TokenExpiredException -> respondErrorAuthorizing(InvalidUserReason.Expired)
-                            is JWTVerificationException -> respondErrorAuthorizing(InvalidUserReason.InvalidJwt)
-                            else -> respondErrorAuthorizing(InvalidUserReason.General)
-                        }
-                    }
-
-                    respondErrorAuthorizing(InvalidUserReason.General)
-                }
-            }
-            install(Authentication) {
-                jwt {
-                    verifier(jwtProvider.verifier)
-                    this.realm = appConfig.realm
-                    validate { credential ->
-                        if (credential.payload.audience.contains(appConfig.audience)) CustomPrincipal(credential.payload)
-                        else null
-                    }
-                }
-            }
+            installContentNegotiation()
+            installStatusPages()
+            installAuthentication(authProvider)
             install(Locations)
             install(Routing) {
                 route(Paths.BillMan.health) {

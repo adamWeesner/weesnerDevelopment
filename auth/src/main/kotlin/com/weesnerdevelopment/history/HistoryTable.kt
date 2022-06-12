@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.history
 
-import com.weesnerdevelopment.auth.user.UserTable
+import com.weesnerdevelopment.auth.exposed.UserTable
 import com.weesnerdevelopment.businessRules.tryTransaction
 import generics.GenericTable
 import org.jetbrains.exposed.dao.id.UUIDTable

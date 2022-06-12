@@ -3,7 +3,7 @@ plugins {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 tasks.named("compileKotlin").get().dependsOn("generateProjectModules")
@@ -69,8 +69,6 @@ abstract class ProjectModuleGeneratorTask : DefaultTask() {
         }
 
         val modulesEnum = """
-            package $basePackage
-            
             import org.gradle.kotlin.dsl.DependencyHandlerScope
             import org.gradle.kotlin.dsl.project
             

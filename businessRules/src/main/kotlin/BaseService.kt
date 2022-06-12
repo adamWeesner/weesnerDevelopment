@@ -1,3 +1,4 @@
+import com.weesnerdevelopment.businessRules.dbQuery
 import com.weesnerdevelopment.shared.base.GenericItem
 import generics.IdTable
 import org.jetbrains.exposed.exceptions.ExposedSQLException

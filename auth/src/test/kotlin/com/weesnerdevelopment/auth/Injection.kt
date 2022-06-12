@@ -5,21 +5,25 @@ import auth.AuthValidatorJwt
 import auth.Cipher
 import auth.JwtProvider
 import com.weesnerdevelopment.auth.database.AuthDatabase
-import com.weesnerdevelopment.auth.user.UserRepository
-import com.weesnerdevelopment.auth.user.UserRepositoryImpl
-import com.weesnerdevelopment.auth.user.UserRouter
-import com.weesnerdevelopment.auth.user.UserRouterImpl
+import com.weesnerdevelopment.auth.repository.UserRepository
+import com.weesnerdevelopment.auth.repository.UserRepositoryImpl
+import com.weesnerdevelopment.auth.router.UserRouter
+import com.weesnerdevelopment.auth.router.UserRouterImpl
 import com.weesnerdevelopment.businessRules.AppConfig
 import com.weesnerdevelopment.businessRules.Environment
 import com.weesnerdevelopment.businessRules.Server
-import io.ktor.application.*
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
-import org.kodein.di.ktor.kodein
+import com.weesnerdevelopment.businessRules.auth.AuthConfig
+import com.weesnerdevelopment.businessRules.auth.AuthProvider
+import com.weesnerdevelopment.businessRules.auth.PrincipalUser
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.ktor.di
+import org.kodein.di.singleton
 
 fun Application.initKodein() {
-    kodein {
+    di {
         bind<AppConfig>() with singleton { AppConfig(environment.config) }
 
         bind<JwtProvider>() with singleton {
@@ -30,34 +34,44 @@ fun Application.initKodein() {
             val appConfig = instance<AppConfig>()
 
             when (Environment.valueOf(appConfig.appEnv)) {
-                Environment.production, Environment.development ->
-                    throw IllegalArgumentException("Should be using the test implementation")
-                Environment.testing ->
-                    AuthValidatorJwt
+                Environment.production, Environment.development -> throw IllegalArgumentException("Should be using the test implementation")
+                Environment.testing -> AuthValidatorJwt
             }
         }
         bind<AuthDatabase>() with singleton {
             val appConfig = instance<AppConfig>()
 
             when (Environment.valueOf(appConfig.appEnv)) {
-                Environment.production, Environment.development ->
-                    throw IllegalArgumentException("Should be using the test implementation")
-                Environment.testing ->
-                    AuthDatabaseTesting
+                Environment.production, Environment.development -> throw IllegalArgumentException("Should be using the test implementation")
+                Environment.testing -> AuthDatabaseTesting
             }
         }
 
-        bind<UserRepository>() with singleton { UserRepositoryImpl }
+        bind<UserRepository>() with singleton { UserRepositoryImpl(instance()) }
         bind<UserRouter>() with singleton { UserRouterImpl(instance(), instance(), instance()) }
 
+        bind<AuthConfig>() with singleton {
+            object : AuthConfig(null) {
+                override fun build(): AuthProvider = instance()
+            }
+        }
+        bind<AuthProvider>() with singleton {
+            object : AuthProvider, AuthenticationProvider(instance()) {
+                override fun configure(authConfig: AuthenticationConfig) {
+                    authConfig.register(this)
+                }
+
+                override suspend fun onAuthenticate(context: AuthenticationContext) {
+                    context.principal(PrincipalUser("", "", ""))
+                }
+            }
+        }
         bind<Server>() with singleton {
             val appConfig = instance<AppConfig>()
 
             when (Environment.valueOf(appConfig.appEnv)) {
-                Environment.production, Environment.development ->
-                    throw IllegalArgumentException("Should be using the test implementation")
-                Environment.testing ->
-                    AuthTestServer
+                Environment.production, Environment.development -> throw IllegalArgumentException("Should be using the test implementation")
+                Environment.testing -> AuthTestServer
             }
         }
     }

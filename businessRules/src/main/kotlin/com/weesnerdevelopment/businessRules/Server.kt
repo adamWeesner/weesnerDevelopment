@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.businessRules
 
-import io.ktor.application.*
+import io.ktor.server.application.*
 
 interface Server {
     fun start(app: Application)

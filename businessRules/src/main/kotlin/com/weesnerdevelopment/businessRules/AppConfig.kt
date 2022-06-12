@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.businessRules
 
-import io.ktor.config.*
+import io.ktor.server.config.*
 import kimchi.Kimchi
 import java.net.InetAddress
 

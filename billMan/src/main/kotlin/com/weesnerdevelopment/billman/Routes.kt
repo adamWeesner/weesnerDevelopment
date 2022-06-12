@@ -5,16 +5,16 @@ import com.weesnerdevelopment.billman.bill.occurrence.BillOccurrenceRouter
 import com.weesnerdevelopment.billman.category.CategoriesRouter
 import com.weesnerdevelopment.billman.income.IncomeRouter
 import com.weesnerdevelopment.billman.income.occurrence.IncomeOccurrenceRouter
-import io.ktor.routing.*
-import org.kodein.di.generic.instance
-import org.kodein.di.ktor.kodein
+import io.ktor.server.routing.*
+import org.kodein.di.instance
+import org.kodein.di.ktor.closestDI
 
 fun Routing.routes() {
-    val billsRouter by kodein().instance<BillsRouter>()
-    val billOccurrencesRouter by kodein().instance<BillOccurrenceRouter>()
-    val categoriesRouter by kodein().instance<CategoriesRouter>()
-    val incomesRouter by kodein().instance<IncomeRouter>()
-    val incomeOccurrencesRouter by kodein().instance<IncomeOccurrenceRouter>()
+    val billsRouter by closestDI().instance<BillsRouter>()
+    val billOccurrencesRouter by closestDI().instance<BillOccurrenceRouter>()
+    val categoriesRouter by closestDI().instance<CategoriesRouter>()
+    val incomesRouter by closestDI().instance<IncomeRouter>()
+    val incomeOccurrencesRouter by closestDI().instance<IncomeOccurrenceRouter>()
 
     billsRouter.setup(this)
     billOccurrencesRouter.setup(this)

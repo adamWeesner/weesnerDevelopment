@@ -1,9 +1,10 @@
 package auth
 
 import com.auth0.jwt.exceptions.JWTVerificationException
-import io.ktor.application.*
+import com.weesnerdevelopment.businessRules.auth.parseAuthorizationToken
+import com.weesnerdevelopment.businessRules.loggedUserData
+import io.ktor.server.application.*
 import io.ktor.util.pipeline.*
-import loggedUserData
 import java.util.*
 
 interface AuthValidator {
@@ -17,6 +18,11 @@ object AuthValidatorJwt : AuthValidator {
                 UUID.fromString(it.uuid)?.toString()
             }.getOrNull()
         } ?: throw JWTVerificationException("Jwt data could not be parsed")
+}
+
+object AuthValidatorFirebase : AuthValidator {
+    override fun getUuid(call: PipelineContext<Unit, ApplicationCall>): String =
+        call.call.request.parseAuthorizationToken() ?: ""
 }
 
 class AuthValidatorFake(

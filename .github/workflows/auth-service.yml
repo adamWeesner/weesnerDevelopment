@@ -35,7 +35,7 @@ jobs:
         id: bat
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
-          arguments: ${{ env.buildPath }} --stacktrace
+          arguments: ${{ env.buildPath }} -x :auth:test --stacktrace
 
       - name: Set up Docker Buildx
         if: ${{ steps.bat.outcome == 'success' }}

@@ -1,28 +1,24 @@
 package generics
 
 import auth.UsersService
+import com.weesnerdevelopment.businessRules.loggedUserData
+import com.weesnerdevelopment.businessRules.parse
+import com.weesnerdevelopment.businessRules.respond
+import com.weesnerdevelopment.businessRules.respondUnauthorized
 import com.weesnerdevelopment.shared.auth.HashedUser
 import com.weesnerdevelopment.shared.auth.InvalidUserReason
 import com.weesnerdevelopment.shared.auth.User
 import com.weesnerdevelopment.shared.base.*
-import com.weesnerdevelopment.shared.base.Response.Companion.BadRequest
-import com.weesnerdevelopment.shared.base.Response.Companion.Conflict
-import com.weesnerdevelopment.shared.base.Response.Companion.Created
-import com.weesnerdevelopment.shared.base.Response.Companion.NotFound
-import com.weesnerdevelopment.shared.base.Response.Companion.Ok
+import com.weesnerdevelopment.shared.base.Response.*
 import diff
 import history.HistoryService
-import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.http.cio.websocket.*
-import io.ktor.request.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
-import loggedUserData
+import io.ktor.websocket.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import parse
-import respond
-import respondErrorAuthorizing
 import kotlin.reflect.KType
 
 /**
@@ -119,9 +115,9 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
      */
     open fun Route.postDefault() {
         post("/") {
-            val item = call.receive<O>(itemType)
+            val item = call.receive<GenericItem>()
 
-            if (postQualifier(item) != null) return@post respond(Conflict("Item matching $item already in db."))
+            if (postQualifier(item as O) != null) return@post respond(Conflict("Item matching $item already in db."))
 
             when (val added = service.add(item)) {
                 null -> respond(Conflict("An error occurred add item $item."))
@@ -145,7 +141,7 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
         val user = tokenAsUser(usersService)
 
         if (user == null) {
-            respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+            call.respondUnauthorized(InvalidUserReason.NoUserFound)
             return null
         }
 
@@ -160,7 +156,7 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
     suspend fun PipelineContext<Unit, ApplicationCall>.tokenAsUser(usersService: UsersService) =
         call.loggedUserData()?.getData()?.let {
             if (it.username == null || it.password == null) {
-                respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+                call.respondUnauthorized(InvalidUserReason.NoUserFound)
                 return null
             } else {
                 usersService.getUserFromHash(HashedUser(it.username, it.password))?.redacted()?.parse<User>()
@@ -177,10 +173,10 @@ abstract class GenericRouter<O : GenericItem, T : IdTable>(
      */
     open fun Route.putDefault() {
         put("/") {
-            val item = call.receive<O>(itemType)
+            val item = call.receive<GenericItem>()
             val oldItem = item.id?.let { service.getSingle { service.table.id eq it } }
 
-            var updated = putQualifier(item)
+            var updated = putQualifier(item as O)
 
             if (oldItem != null && updated != null) {
                 try {

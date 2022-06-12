@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.billman.category
 
-import io.ktor.routing.*
+import io.ktor.server.routing.*
 
 interface CategoriesRouter {
     fun setup(routing: Routing)

@@ -1,4 +1,3 @@
-import com.weesnerdevelopment.ProjectGradleModule
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -11,7 +10,6 @@ group = Base.group
 version = Base.version
 
 repositories {
-    maven(url = "https://jitpack.io")
     mavenCentral()
     jcenter()
 }
@@ -49,9 +47,7 @@ val updatedList = listOf(
 
 subprojects {
     repositories {
-        maven(url = "https://jitpack.io")
         mavenCentral()
-        jcenter()
     }
 
     apply(plugin = Kotlin.jvm)

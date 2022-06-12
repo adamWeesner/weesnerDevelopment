@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.billman.income
 
-import io.ktor.routing.*
+import io.ktor.server.routing.*
 
 interface IncomeRouter {
     fun setup(routing: Routing)

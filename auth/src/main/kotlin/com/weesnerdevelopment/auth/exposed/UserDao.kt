@@ -1,4 +1,4 @@
-package com.weesnerdevelopment.auth.user
+package com.weesnerdevelopment.auth.exposed
 
 import com.weesnerdevelopment.businessRules.tryTransaction
 import com.weesnerdevelopment.shared.auth.User
@@ -11,7 +11,6 @@ import java.util.*
 val User.redact
     get() = User(
         uuid = this.uuid,
-        name = this.name,
         email = this.email,
         photoUrl = this.photoUrl,
         username = String(Base64.getDecoder().decode(this.username)),
@@ -25,7 +24,6 @@ class UserDao(id: EntityID<UUID>) : UUIDEntity(id) {
     }
 
     val uuid by UserTable.id
-    var name by UserTable.name
     var email by UserTable.email
     var photoUrl by UserTable.photoUrl
     var username by UserTable.username
@@ -40,7 +38,6 @@ class UserDao(id: EntityID<UUID>) : UUIDEntity(id) {
 fun UserDao.toUser(): User? = action {
     User(
         uuid = uuid.value.toString(),
-        name = name,
         email = email,
         photoUrl = photoUrl,
         username = username,

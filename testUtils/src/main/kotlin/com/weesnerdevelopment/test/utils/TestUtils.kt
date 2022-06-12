@@ -1,13 +1,13 @@
 package com.weesnerdevelopment.test.utils
 
 import com.typesafe.config.ConfigFactory
+import com.weesnerdevelopment.businessRules.parse
 import com.weesnerdevelopment.shared.base.Response
 import com.weesnerdevelopment.shared.base.ServerError
 import com.weesnerdevelopment.shared.toJson
-import io.ktor.config.*
 import io.ktor.http.*
+import io.ktor.server.config.*
 import io.ktor.server.testing.*
-import parse
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -39,7 +39,7 @@ class BuiltRequest(
      * [send] the request returning the response as [T].
      */
     inline fun <reified T> asObject(body: T? = null) =
-        send(body).response.content.parse<Response>().message.let {
+        send(body).response.content.parse<Response<T>>().message.let {
             when (it) {
                 is String -> it.parse<T>()
                 else -> it.toJson().parse<T>()
@@ -64,7 +64,7 @@ class BuiltRequest(
     inline fun <reified T> sendStatus(body: T? = null) = send(body).response.status()
 }
 
-inline fun <reified T> String?.parseResponse() = this.parse<Response>().let {
+inline fun <reified T> String?.parseResponse() = this.parse<Response<T>>().let {
     if (it.status.code.toString().startsWith("4")) null
     else {
         when (val message = it.message) {

@@ -1,7 +1,7 @@
 package generics
 
+import com.weesnerdevelopment.businessRules.dbQuery
 import com.weesnerdevelopment.shared.base.GenericItem
-import dbQuery
 import kimchi.Kimchi
 import model.ChangeType
 import model.Notification

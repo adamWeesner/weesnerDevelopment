@@ -1,7 +1,7 @@
 package auth
 
 import com.auth0.jwt.interfaces.Payload
-import io.ktor.auth.Principal
+import io.ktor.server.auth.*
 
 /**
  * Principal for WeesnerDevelopment that gets the attr fields from the Jwt token.

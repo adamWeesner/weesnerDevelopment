@@ -1,6 +1,6 @@
 package logging
 
-import HttpLog
+import com.weesnerdevelopment.businessRules.HttpLog
 import kimchi.logger.LogLevel
 import kimchi.logger.LogWriter
 import java.time.LocalDateTime

@@ -1,4 +1,4 @@
-package com.weesnerdevelopment.auth.user
+package com.weesnerdevelopment.auth.exposed
 
 import com.weesnerdevelopment.businessRules.tryTransaction
 import generics.GenericTable

@@ -1,9 +1,7 @@
 package com.weesnerdevelopment.router
 
-import com.weesnerdevelopment.businessRules.AppConfig
 import com.weesnerdevelopment.businessRules.Log
 import com.weesnerdevelopment.shared.Paths
-import com.weesnerdevelopment.shared.base.Response.Companion.BadRequest
 import io.ktor.application.*
 import io.ktor.client.*
 import io.ktor.client.engine.java.*
@@ -20,9 +18,6 @@ import io.ktor.util.pipeline.*
 import kimchi.Kimchi
 import kotlinx.serialization.ExperimentalSerializationApi
 import logging.StdOutLogger
-import org.kodein.di.generic.instance
-import org.kodein.di.ktor.kodein
-import respondError
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
@@ -31,7 +26,7 @@ object RouterServer {
     fun Application.main() {
         initKodein()
 
-        val appConfig by kodein().instance<AppConfig>()
+//        val appConfig by kodein().instance<AppConfig>()
 //        val loggingService by kodein().instance<LoggingService>()
 
 //        if (!appConfig.isTesting)
@@ -44,19 +39,19 @@ object RouterServer {
                 val data = getRequestDataFromCall()
 
                 Log.warn("A java connect exception happened\n$data\n", cause)
-                respondError(BadRequest("An error occurred trying to parse your request"))
+//                respondError(BadRequest("An error occurred trying to parse your request"))
             }
             exception<io.ktor.http.UnsafeHeaderException> { cause ->
                 val data = getRequestDataFromCall()
 
                 Log.warn("A unsafe header exception happened\n$data\n", cause)
-                respondError(BadRequest("An error occurred trying to parse your request"))
+//                respondError(BadRequest("An error occurred trying to parse your request"))
             }
             exception<java.lang.IllegalArgumentException> { cause ->
                 val data = getRequestDataFromCall()
 
                 Log.warn("A illegal argument exception happened\n$data\n", cause)
-                respondError(BadRequest("An error occurred trying to parse your request"))
+//                respondError(BadRequest("An error occurred trying to parse your request"))
             }
         }
 
@@ -67,19 +62,19 @@ object RouterServer {
                 ContentType.Application.Json.withParameter("charset", Charsets.UTF_8.toString()).toString()
             )
         }
-        if (appConfig.isDevelopment || appConfig.isTesting)
+//        if (appConfig.isDevelopment || appConfig.isTesting)
             install(CallLogging)
         install(HSTS)
         install(CORS) {
             method(HttpMethod.Options)
             header(HttpHeaders.ContentType)
             header(HttpHeaders.Authorization)
-            host("${appConfig.baseUrl}:${appConfig.sslPort}", schemes = listOf("https"))
-            host(appConfig.baseUrl, schemes = listOf("https"))
-            if (appConfig.isTesting || appConfig.isDevelopment) {
-                host("${appConfig.baseUrl}:${appConfig.port}", schemes = listOf("http"))
-                host("localhost:3000")
-            }
+//            host("${appConfig.baseUrl}:${appConfig.sslPort}", schemes = listOf("https"))
+//            host(appConfig.baseUrl, schemes = listOf("https"))
+//            if (appConfig.isTesting || appConfig.isDevelopment) {
+//                host("${appConfig.baseUrl}:${appConfig.port}", schemes = listOf("http"))
+//                host("localhost:3000")
+//            }
             maxAgeDuration = Duration.days(1)
             allowCredentials = true
             allowNonSimpleContentTypes = true
@@ -165,7 +160,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.redirectInternally(httpClient
 
     if (!cp.host.startsWith("api", true) || cp.port == 8080 || cp.port == 8443) {
         Log.warn("Tried to call router server:\n$requestData")
-        respondError(BadRequest("An error occurred trying to parse your request"))
+//        respondError(BadRequest("An error occurred trying to parse your request"))
         return
     }
 

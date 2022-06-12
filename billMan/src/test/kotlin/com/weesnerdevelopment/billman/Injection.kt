@@ -26,14 +26,14 @@ import com.weesnerdevelopment.billman.income.occurrence.IncomeOccurrenceRouterIm
 import com.weesnerdevelopment.businessRules.AppConfig
 import com.weesnerdevelopment.businessRules.Environment
 import com.weesnerdevelopment.businessRules.Server
-import io.ktor.application.*
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
-import org.kodein.di.ktor.kodein
+import io.ktor.server.application.*
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.ktor.di
+import org.kodein.di.singleton
 
 fun Application.initKodein() {
-    kodein {
+    di {
         bind<AppConfig>() with singleton { AppConfig(environment.config) }
 
         bind<AuthValidator>() with singleton {

@@ -3,8 +3,8 @@ package logging
 import BaseRouter
 import com.weesnerdevelopment.shared.base.GenericResponse
 import com.weesnerdevelopment.shared.toJson
-import io.ktor.http.cio.websocket.*
-import io.ktor.routing.*
+import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlin.reflect.full.createType
 

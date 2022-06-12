@@ -1,4 +1,4 @@
-package com.weesnerdevelopment.auth.user
+package com.weesnerdevelopment.auth.exposed
 
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table

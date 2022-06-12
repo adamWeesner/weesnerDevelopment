@@ -5,11 +5,11 @@ import com.weesnerdevelopment.shared.Paths
 import com.weesnerdevelopment.shared.auth.HashedUser
 import com.weesnerdevelopment.shared.auth.TokenResponse
 import com.weesnerdevelopment.shared.auth.User
-import io.ktor.config.*
 import io.ktor.http.HttpMethod.Companion.Delete
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpMethod.Companion.Put
+import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import kimchi.Kimchi
 import org.junit.jupiter.api.*
@@ -39,7 +39,6 @@ open class BaseTest(configPath: String) {
     fun createUser() {
         token = post(Paths.User.basePath + Paths.User.signUp, usingToken = null).asClass<User, TokenResponse>(
             User(
-                name = "test",
                 email = "test@email.com",
                 username = "test",
                 password = "test"

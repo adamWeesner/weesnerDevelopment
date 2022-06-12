@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.billman.bill
 
-import io.ktor.routing.*
+import io.ktor.server.routing.*
 
 interface BillsRouter {
     fun setup(routing: Routing)

@@ -1,7 +1,7 @@
 package com.weesnerdevelopment.history
 
-import com.weesnerdevelopment.auth.user.UserDao
-import com.weesnerdevelopment.auth.user.toUser
+import com.weesnerdevelopment.auth.exposed.UserDao
+import com.weesnerdevelopment.auth.exposed.toUser
 import com.weesnerdevelopment.businessRules.tryTransaction
 import com.weesnerdevelopment.shared.base.History
 import org.jetbrains.exposed.dao.UUIDEntity

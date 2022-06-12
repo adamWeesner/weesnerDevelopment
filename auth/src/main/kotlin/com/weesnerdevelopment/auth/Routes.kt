@@ -1,12 +1,12 @@
 package com.weesnerdevelopment.auth
 
-import com.weesnerdevelopment.auth.user.UserRouter
-import io.ktor.routing.*
-import org.kodein.di.generic.instance
-import org.kodein.di.ktor.kodein
+import com.weesnerdevelopment.auth.router.UserRouter
+import io.ktor.server.routing.*
+import org.kodein.di.instance
+import org.kodein.di.ktor.closestDI
 
 fun Routing.routes() {
-    val userRouter by kodein().instance<UserRouter>()
+    val userRouter by closestDI().instance<UserRouter>()
 
     userRouter.setup(this)
 }

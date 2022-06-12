@@ -1,6 +1,7 @@
 package auth
 
 import BaseService
+import com.weesnerdevelopment.businessRules.parse
 import com.weesnerdevelopment.shared.auth.HashedUser
 import com.weesnerdevelopment.shared.auth.User
 import com.weesnerdevelopment.shared.base.InvalidAttributeException
@@ -9,7 +10,6 @@ import history.HistoryService
 import io.ktor.http.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import parse
 
 class UsersService(
     private val historyService: HistoryService
@@ -85,7 +85,6 @@ class UsersService(
     override suspend fun toItem(row: ResultRow): User = User(
         id = row[table.id],
         uuid = row[table.uuid],
-        name = row[table.name],
         email = row[table.email],
         photoUrl = row[table.photoUrl],
         username = row[table.username],
@@ -103,7 +102,6 @@ class UsersService(
 
     override fun UpdateBuilder<Int>.toRow(item: User) {
         this[table.uuid] = item.uuid ?: throw InvalidAttributeException("uuid")
-        this[table.name] = item.name ?: throw InvalidAttributeException("name")
         this[table.email] = item.email ?: throw InvalidAttributeException("email")
         this[table.photoUrl] = item.photoUrl
         this[table.username] = item.username ?: throw InvalidAttributeException("username")

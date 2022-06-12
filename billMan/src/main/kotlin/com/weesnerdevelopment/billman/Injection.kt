@@ -1,7 +1,7 @@
 package com.weesnerdevelopment.billman
 
 import auth.AuthValidator
-import auth.AuthValidatorJwt
+import auth.AuthValidatorFirebase
 import auth.Cipher
 import auth.JwtProvider
 import com.weesnerdevelopment.billman.bill.BillsRepository
@@ -31,16 +31,19 @@ import com.weesnerdevelopment.billman.server.BillManProdServer
 import com.weesnerdevelopment.businessRules.AppConfig
 import com.weesnerdevelopment.businessRules.Environment
 import com.weesnerdevelopment.businessRules.Server
-import io.ktor.application.*
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
-import org.kodein.di.ktor.kodein
+import com.weesnerdevelopment.businessRules.auth.AuthConfig
+import com.weesnerdevelopment.businessRules.auth.AuthProvider
+import com.weesnerdevelopment.businessRules.auth.FirebaseAuthConfiguration
+import com.weesnerdevelopment.businessRules.auth.FirebaseAuthProvider
+import io.ktor.server.application.*
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.ktor.di
+import org.kodein.di.singleton
 
 fun Application.initKodein() {
-    kodein {
+    di {
         bind<AppConfig>() with singleton { AppConfig(environment.config) }
-
         bind<JwtProvider>() with singleton {
             val appConfig = instance<AppConfig>()
             JwtProvider(appConfig.issuer, appConfig.audience, appConfig.expiresIn, Cipher(appConfig.secret))
@@ -49,8 +52,8 @@ fun Application.initKodein() {
             val appConfig = instance<AppConfig>()
 
             when (Environment.valueOf(appConfig.appEnv)) {
-                Environment.development -> AuthValidatorJwt
-                Environment.production -> AuthValidatorJwt
+                Environment.development -> AuthValidatorFirebase
+                Environment.production -> AuthValidatorFirebase
                 Environment.testing -> throw IllegalArgumentException("Should not be using the test implementation")
             }
         }
@@ -88,5 +91,7 @@ fun Application.initKodein() {
                 Environment.testing -> throw IllegalArgumentException("Should not be using the test implementation")
             }
         }
+        bind<AuthConfig>() with singleton { FirebaseAuthConfiguration(null) }
+        bind<AuthProvider>() with singleton { FirebaseAuthProvider(instance(), "../") }
     }
 }

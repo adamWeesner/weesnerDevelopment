@@ -2,15 +2,15 @@ package com.weesnerdevelopment.auth
 
 import com.weesnerdevelopment.auth.database.AuthDatabase
 import com.weesnerdevelopment.businessRules.Server
-import io.ktor.application.*
-import org.kodein.di.generic.instance
-import org.kodein.di.ktor.kodein
+import io.ktor.server.application.*
+import org.kodein.di.instance
+import org.kodein.di.ktor.closestDI
 
 fun Application.main() {
     initKodein()
 
-    val database by kodein().instance<AuthDatabase>()
-    val server by kodein().instance<Server>()
+    val database by closestDI().instance<AuthDatabase>()
+    val server by closestDI().instance<Server>()
 
     database.setup()
     server.start(this)

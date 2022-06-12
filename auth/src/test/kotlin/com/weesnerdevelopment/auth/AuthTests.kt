@@ -1,6 +1,6 @@
 package com.weesnerdevelopment.auth
 
-import com.weesnerdevelopment.auth.user.UserTable
+import com.weesnerdevelopment.auth.exposed.UserTable
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterEach

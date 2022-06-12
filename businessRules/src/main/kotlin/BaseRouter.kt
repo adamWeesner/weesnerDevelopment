@@ -1,16 +1,18 @@
 import auth.UsersService
+import com.weesnerdevelopment.businessRules.logRequest
+import com.weesnerdevelopment.businessRules.loggedUserData
+import com.weesnerdevelopment.businessRules.respond
+import com.weesnerdevelopment.businessRules.respondUnauthorized
 import com.weesnerdevelopment.shared.auth.HashedUser
 import com.weesnerdevelopment.shared.auth.InvalidUserReason
 import com.weesnerdevelopment.shared.base.GenericItem
 import com.weesnerdevelopment.shared.base.GenericResponse
 import com.weesnerdevelopment.shared.base.OwnedItem
 import com.weesnerdevelopment.shared.base.Response
-import com.weesnerdevelopment.shared.base.Response.Companion.BadRequest
-import com.weesnerdevelopment.shared.base.Response.Companion.NotFound
-import com.weesnerdevelopment.shared.base.Response.Companion.Ok
-import io.ktor.application.*
-import io.ktor.request.*
-import io.ktor.routing.*
+import com.weesnerdevelopment.shared.base.Response.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
@@ -34,13 +36,13 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
 
     override fun Route.addRequest() {
         post {
-            val body = call.receive<I>(kType)
+            val body = call.receive<GenericItem>()
             val userInfo = getUserInfo()
 
             logRequest(body)
 
             if (userInfo == null && isOwnedItem)
-                return@post respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
+                return@post call.respondUnauthorized(InvalidUserReason.InvalidUserInfo)
 
             if (body is OwnedItem) {
                 val notYourItem = when (userInfo?.first) {
@@ -53,7 +55,7 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
                     return@post respond(BadRequest("Failed to add $body."))
             }
 
-            val response = when (val addedItem = service.add(body)) {
+            val response = when (val addedItem = service.add(body as I)) {
                 null -> BadRequest("Failed to add $body.")
                 -1 -> Response.Conflict("Item with name $body already in database.")
                 else -> Response.Created("Added item to database with id $addedItem.")
@@ -70,7 +72,7 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
             logRequest<I>()
 
             if (userInfo == null && isOwnedItem)
-                return@get respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
+                return@get call.respondUnauthorized(InvalidUserReason.InvalidUserInfo)
 
             val itemId = call.request.queryParameters["id"]
 
@@ -105,7 +107,7 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
 
     override fun Route.updateRequest() {
         put {
-            val body = call.receive<I>(kType)
+            val body = call.receive<GenericItem>()
             val userInfo = getUserInfo()
 
             logRequest(body)
@@ -125,7 +127,7 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
                 if (body.id == null) {
                     BadRequest("Cannot update item without id")
                 } else {
-                    when (val updatedItem = service.update(body) {
+                    when (val updatedItem = service.update(body as I) {
                         service.table.id eq body.id!!
                     }) {
                         null -> BadRequest("Failed to update $body.")
@@ -144,7 +146,7 @@ abstract class BaseRouter<I : GenericItem, S : Service<I>>(
             logRequest<I>()
 
             if (userInfo == null && isOwnedItem)
-                return@delete respondErrorAuthorizing(InvalidUserReason.InvalidUserInfo)
+                return@delete call.respondUnauthorized(InvalidUserReason.InvalidUserInfo)
 
             val itemId = call.request.queryParameters["id"]
                 ?: return@delete respond(BadRequest("?id=(itemId) is needed."))
@@ -177,7 +179,7 @@ fun PipelineContext<Unit, ApplicationCall>.getUserInfo() = call.loggedUserData()
 suspend fun PipelineContext<Unit, ApplicationCall>.tokenAsUser(usersService: UsersService) =
     call.loggedUserData()?.getData()?.let {
         if (it.username == null || it.password == null) {
-            respondErrorAuthorizing(InvalidUserReason.NoUserFound)
+            call.respondUnauthorized(InvalidUserReason.NoUserFound)
             return null
         } else {
             usersService.getUserFromHash(HashedUser(it.username, it.password))

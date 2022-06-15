@@ -24,8 +24,8 @@ data class IncomeRouterImpl(
     private val ApplicationCall.incomeId
         get() = request.queryParameters[IncomesEndpoint::id.name]
 
-    override fun setup(routing: Routing) {
-        routing.apply {
+    override fun setup(route: Route) {
+        route.apply {
             get<IncomesEndpoint> {
                 val id = call.incomeId
                 val authUuid = authValidator.getUuid(this)

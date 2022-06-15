@@ -24,8 +24,8 @@ data class CategoriesRouterImpl(
     private val ApplicationCall.categoryId
         get() = request.queryParameters[CategoriesEndpoint::id.name]
 
-    override fun setup(routing: Routing) {
-        routing.apply {
+    override fun setup(route: Route) {
+        route.apply {
             get<CategoriesEndpoint> {
                 val id = call.categoryId
                 val userUuid = authValidator.getUuid(this)

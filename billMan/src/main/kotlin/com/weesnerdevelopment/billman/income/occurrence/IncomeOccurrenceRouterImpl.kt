@@ -23,8 +23,8 @@ data class IncomeOccurrenceRouterImpl(
     private val ApplicationCall.occurrenceId
         get() = request.queryParameters[IncomeOccurrenceEndpoint::id.name]
 
-    override fun setup(routing: Routing) {
-        routing.apply {
+    override fun setup(route: Route) {
+        route.apply {
             get<IncomeOccurrenceEndpoint> {
                 val id = call.occurrenceId
                 val userUuid = authValidator.getUuid(this)

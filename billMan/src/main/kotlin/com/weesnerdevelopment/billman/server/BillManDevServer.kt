@@ -49,7 +49,7 @@ object BillManDevServer : Server {
                 }
 
                 authenticate {
-                    this@install.routes()
+                    routes()
                 }
             }
         }

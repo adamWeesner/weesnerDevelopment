@@ -30,7 +30,6 @@ data class FirebaseAuthProvider(
         .build()
 
     private val token: (ApplicationCall) -> String? get() = configuration.token
-    private val principal: ((uid: String) -> Principal?)? get() = configuration.principal
 
     init {
         runCatching {
@@ -46,14 +45,8 @@ data class FirebaseAuthProvider(
 
             val user = FirebaseAuth.getInstance().verifyIdToken(token)
 
-            configuration.principal =
-                { PrincipalUser(uid = user.uid, name = user.name, email = user.email) }
-
-            principal?.let {
-                it(user.uid)?.let { principal ->
-                    context.principal(principal)
-                }
-            }
+            val principal = PrincipalUser(uid = user.uid, name = user.name, email = user.email)
+            context.principal(principal)
         } catch (cause: Throwable) {
             val message = if (cause is FirebaseAuthException) {
                 "Authentication failed: ${cause.message ?: cause.javaClass.simpleName}"
@@ -67,6 +60,9 @@ data class FirebaseAuthProvider(
     }
 
     override fun configure(authConfig: AuthenticationConfig) {
-        authConfig.register(this)
+        with(authConfig) {
+            val provider = FirebaseAuthConfiguration.build()
+            register(provider)
+        }
     }
 }

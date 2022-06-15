@@ -9,7 +9,5 @@ import io.ktor.server.auth.*
 abstract class AuthConfig(name: String?) : AuthenticationProvider.Config(name) {
     internal var token: (ApplicationCall) -> String? = { call -> call.request.parseAuthorizationToken() }
 
-    internal var principal: ((uid: String) -> Principal?)? = null
-
     abstract fun build(): AuthProvider
 }

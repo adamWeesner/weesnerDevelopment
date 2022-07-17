@@ -26,8 +26,8 @@ data class BillOccurrenceRouterImpl(
     private val ApplicationCall.payment
         get() = request.queryParameters[BillOccurrencePayEndpoint::payment.name]
 
-    override fun setup(routing: Routing) {
-        routing.apply {
+    override fun setup(route: Route) {
+        route.apply {
             get<BillOccurrenceEndpoint> {
                 val id = call.occurrenceId
                 val userUuid = authValidator.getUuid(this)

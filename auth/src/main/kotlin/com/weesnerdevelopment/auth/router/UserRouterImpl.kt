@@ -6,6 +6,8 @@ import com.weesnerdevelopment.auth.endpoints.UserAccountEndpoint
 import com.weesnerdevelopment.auth.endpoints.UserEndpoint
 import com.weesnerdevelopment.auth.endpoints.UserInfoEndpoint
 import com.weesnerdevelopment.auth.repository.UserRepository
+import com.weesnerdevelopment.auth.repository.firebase.UserRepositoryFirebase
+import com.weesnerdevelopment.businessRules.auth.parseAuthorizationToken
 import com.weesnerdevelopment.businessRules.get
 import com.weesnerdevelopment.businessRules.post
 import com.weesnerdevelopment.businessRules.put
@@ -17,6 +19,7 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.locations.*
 import io.ktor.server.routing.*
+import io.ktor.util.pipeline.*
 import java.util.*
 
 @OptIn(KtorExperimentalLocationsAPI::class)
@@ -43,11 +46,14 @@ data class UserRouterImpl(
     private val ApplicationCall.password
         get() = request.queryParameters[UserEndpoint::password.name]
 
-    private fun hasValidCredentials(username: String?, password: String?): Boolean {
-        val parsedUsername = runCatching { Base64.getDecoder().decode(username) }.getOrNull()
-        val parsedPassword = runCatching { Base64.getDecoder().decode(password) }.getOrNull()
+    /**
+     * for firebase this needs to be the bearer token
+     */
+    private fun PipelineContext<Unit, ApplicationCall>.getIdentifier(): String {
+        val id = authValidator.getUuid(this)
+        val token = call.request.parseAuthorizationToken() ?: ""
 
-        return parsedUsername != null && parsedPassword != null
+        return if (repo is UserRepositoryFirebase) token else id
     }
 
     override fun setup(routing: Routing) {
@@ -55,7 +61,7 @@ data class UserRouterImpl(
             authenticate {
                 // get another account info
                 get<UserInfoEndpoint> {
-                    val id = authValidator.getUuid(this)
+                    val id = getIdentifier()
 
                     val response = repo.info(id)
                     return@get when {
@@ -99,7 +105,8 @@ data class UserRouterImpl(
                 if (id.isNullOrBlank())
                     return@get respond(Response.BadRequest("?id={id} needed to get account."))
 
-                val response = repo.account(id)
+                // for firebase this needs to be the bearer token
+                val response = repo.account(getIdentifier())
                 return@get when {
                     response.isSuccess -> {
                         val user = response.getOrNull()
@@ -116,7 +123,7 @@ data class UserRouterImpl(
 
             // create account
             post<UserEndpoint, User> { user ->
-                if (user == null || !hasValidCredentials(user.username, user.password))
+                if (user == null)
                     return@post respond(Response.BadRequest("Cannot add invalid user."))
 
                 val response = repo.create(user)
@@ -138,7 +145,7 @@ data class UserRouterImpl(
             authenticate {
                 // get user info
                 get<UserAccountEndpoint> {
-                    val id = authValidator.getUuid(this)
+                    val id = getIdentifier()
 
                     val response = repo.account(id)
                     return@get when {
@@ -178,7 +185,7 @@ data class UserRouterImpl(
                 // delete account
                 delete<UserEndpoint> {
                     val id = call.userId
-                    val authUuid = authValidator.getUuid(this)
+                    val authUuid = getIdentifier()
 
                     if (id.isNullOrBlank())
                         return@delete respond(Response.BadRequest("Invalid id '$id' attempting to delete user."))

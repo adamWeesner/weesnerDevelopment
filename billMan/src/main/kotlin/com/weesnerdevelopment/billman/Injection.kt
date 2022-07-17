@@ -91,7 +91,7 @@ fun Application.initKodein() {
                 Environment.testing -> throw IllegalArgumentException("Should not be using the test implementation")
             }
         }
-        bind<AuthConfig>() with singleton { FirebaseAuthConfiguration(null) }
-        bind<AuthProvider>() with singleton { FirebaseAuthProvider(instance(), "../") }
+        bind<AuthConfig>() with singleton { FirebaseAuthConfiguration }
+        bind<AuthProvider>() with singleton { FirebaseAuthProvider(instance()) }
     }
 }

@@ -1,9 +1,7 @@
 package com.weesnerdevelopment.auth.repository.firebase
 
 internal sealed class FirebaseEndpoint(endpoint: String) {
-    private val apiKey = System.getenv("firebaseApiKey").also {
-        println("api key is $it")
-    }
+    private val apiKey = System.getenv("firebaseApiKey")
 
     val url = "https://identitytoolkit.googleapis.com/v1/accounts:$endpoint?key=$apiKey"
 }

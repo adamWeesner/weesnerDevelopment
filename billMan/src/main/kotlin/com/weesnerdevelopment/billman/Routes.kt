@@ -9,7 +9,7 @@ import io.ktor.server.routing.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
-fun Routing.routes() {
+fun Route.routes() {
     val billsRouter by closestDI().instance<BillsRouter>()
     val billOccurrencesRouter by closestDI().instance<BillOccurrenceRouter>()
     val categoriesRouter by closestDI().instance<CategoriesRouter>()

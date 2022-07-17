@@ -26,8 +26,8 @@ data class BillsRouterImpl(
     private val ApplicationCall.billId
         get() = request.queryParameters[BillsEndpoint::id.name]
 
-    override fun setup(routing: Routing) {
-        routing.apply {
+    override fun setup(route: Route) {
+        route.apply {
             get<BillsEndpoint> {
                 val id = call.billId
                 val authUuid = authValidator.getUuid(this)

@@ -1,9 +1,10 @@
 package auth
 
 import com.auth0.jwt.exceptions.JWTVerificationException
-import com.weesnerdevelopment.businessRules.auth.parseAuthorizationToken
+import com.weesnerdevelopment.businessRules.auth.PrincipalUser
 import com.weesnerdevelopment.businessRules.loggedUserData
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.util.pipeline.*
 import java.util.*
 
@@ -22,7 +23,7 @@ object AuthValidatorJwt : AuthValidator {
 
 object AuthValidatorFirebase : AuthValidator {
     override fun getUuid(call: PipelineContext<Unit, ApplicationCall>): String =
-        call.call.request.parseAuthorizationToken() ?: ""
+        call.call.principal<PrincipalUser>()?.uid ?: ""
 }
 
 class AuthValidatorFake(

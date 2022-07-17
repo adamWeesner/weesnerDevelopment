@@ -71,7 +71,7 @@ object BillManProdServer : Server {
                 }
 
                 authenticate {
-                    this@install.routes()
+                    routes()
                 }
             }
         }

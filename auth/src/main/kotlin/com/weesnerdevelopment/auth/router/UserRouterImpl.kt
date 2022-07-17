@@ -46,13 +46,6 @@ data class UserRouterImpl(
     private val ApplicationCall.password
         get() = request.queryParameters[UserEndpoint::password.name]
 
-    private fun hasValidCredentials(username: String?, password: String?): Boolean {
-        val parsedUsername = runCatching { Base64.getDecoder().decode(username) }.getOrNull()
-        val parsedPassword = runCatching { Base64.getDecoder().decode(password) }.getOrNull()
-
-        return parsedUsername != null && parsedPassword != null
-    }
-
     /**
      * for firebase this needs to be the bearer token
      */
@@ -130,7 +123,7 @@ data class UserRouterImpl(
 
             // create account
             post<UserEndpoint, User> { user ->
-                if (user == null || !hasValidCredentials(user.username, user.password))
+                if (user == null)
                     return@post respond(Response.BadRequest("Cannot add invalid user."))
 
                 val response = repo.create(user)
